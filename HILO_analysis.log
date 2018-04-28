@@ -1,0 +1,24 @@
+# log for reproducing HILO data analysis
+
+# Tue Oct 24 11:58:17 PDT 2017
+# Alignment of first set of data
+First download v4 of maize genome AGPv4 in fasta format from
+https://www.ebi.ac.uk/ena/data/view/GCA_000005005.6
+
+Use bwa for index, then alignment
+cd data
+~/Software/bwa.kit/bwa index AGPv4/AGPv4.fasta
+
+Change the chromosome labels to something simpler, chr1, chr2 etc.
+~/Software/bioawk/bioawk -c fastx '{print ">"$comment"\n"$seq}' AGPv4/AGPv4.fasta | sed 's/Zea mays cultivar B73 chromosome /chr/' | sed 's/, whole genome shotgun sequence.//' > AGPv4/AGPv4_simple.fasta
+~/Software/bwa.kit/bwa index AGPv4/AGPv4_simple.fasta
+
+Align one set of paired-end raw reads:
+~/Software/bwa.kit/bwa mem AGPv4/AGPv4.fasta 
+HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_1.fq.gz 
+HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_2.fq.gz
+ | gzip -3 > HILO_01.sam.gz
+
+Aborted and made batch run in parallel instead piping directly into BAM format using samtools
+~/Software/bwa.kit/bwa index AGPv4/AGPv4_simple.fasta; parallel --noswap --joblog hilo_alignment.log --jobs 6 '~/Software/bwa.kit/bwa mem -R "@RG\tID:batch_1\tSM:hilo_{1}" AGPv4/AGPv4_simple.fasta HILO_data/raw_data/HILO{1}/HILO{1}_*_1.fq.gz HILO_data/raw_data/HILO{1}/HILO{1}_*_2.fq.gz | ~/Software/bwa.kit/samtools view -b - > HILO_data/bam_files/HILO_{1}.bam' ::: {1..40}
+
