@@ -1,0 +1,11 @@
+This file contains the population labels for the 282 diversity panel of sequenced maize.
+Source: https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1365-313X.2005.02591.x 
+Supportin info file downloaded 5/1/18
+Flint-Garcia 2005. Maize association population: a high-resolution platform for quantitative trait locus dissection. The plant journal.
+
+The pedigree column makes it clear that some of these lines are in close family relationships with others, e.g. "(SC76*B52); sister line of NC334"
+There is also significant population structure and biased sampling of temperate population maize.
+I may want to use only tropical-sub-tropical lines for allele counts in 'maize', filtering for close relatives.
+I saved the table from the doc file as a csv file labelled 282_labels.csv.
+I also downloaded the phylogenetic tree figure (tpj_2591_sm_figs1.ppt).
+There are more than 282 lines in the tree and in the table, so perhaps related maize was already filtered, but I am not sure.
