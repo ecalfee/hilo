@@ -1,0 +1,26 @@
+# Genotypes from mexican landrace maize populations, sequenced to high depth
+# these would be an alternative to the 282 maize dataset as a maize reference panel
+# advantage is that they are more locally sourced and evenly sampled across 5 pops
+# but disadvantage is that they are not necessarily admixture free
+
+# copied data over from farm server
+# invariant sites (in case these don't match the reference maize pop)
+# I did not copy these over, but it could be done (152G)
+hilo/data/landrace_maize_mexico$ scp -P 2022 -p ecalfee@farm.cse.ucdavis.edu:/group/jrigrp6/RILAB_data/LR_filt/no_indel/invariants_pop/LR.allpop.invariants.filtered.final.vcf.recode.vcf .
+# bi-allelic sites
+hilo/data/landrace_maize_mexico$ scp -P 2022 -p ecalfee@farm.cse.ucdavis.edu:/group/jrigrp6/RILAB_data/LR_filt/no_indel/LR.allpop.variants.filtered.final.vcf .
+
+# I started, but aborted copying scp these files (quite large)
+# If I need them I can summarize on farm and then copy over
+
+# notes on filtering from Anne lorant <anne.lorant1@gmail.com> :
+#Hi Erin,
+
+#the LR VCF is ready, you can find the file in /group/jrigrp6/RILAB_data/LR_filt/no_indel/LR.allpop.variants.filtered.final.vcf
+#This file contains 5 populations 10 individuals per populations (in order the 10 first individuals are from the same pop, ...)
+#I filtered the file or SNP calling quality (which is MQ, BQ, position on the read,...)
+#I removed the indels and kept only biallelic SNPs
+#I filtered on single individual for min depth of 10 and max depth of 60
+#I kept only sites with at least 80% of data over all the populations,
+#I filtered for HWE (p0.1) for each population separately and removed these sites on all the populations together.
+
