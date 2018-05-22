@@ -28,11 +28,4 @@ HILO105_USPD16085642-AK6871_hky2mccxy_L6_1.fq.gz  MD5.txt
 
 interactive session run:
 srun -p bigmemh -t 2:00:00 --mem 2000 --pty bash
-# made output directory
-/group/jrigrp6/RILAB_data/HILO$ mkdir filtered_bam_EC
-
-SAMtools:
--Q minimum base quality
--q minimum mapping quality
--- output (outputfile)
 
