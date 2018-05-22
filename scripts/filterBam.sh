@@ -14,18 +14,16 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-
 # load samtools for quality read filtering
 module load samtools
 # load java to run picardtools
 module load java
 # load picardtools for removing PCR duplicate reads
-module load picardtools
+module load picardtools # saves path to loaded versin in $PICARD variable
 # make directory to store output (if doesn't yet exist)
 mkdir -p filtered_bam
-cd filtered_bam # move to that directory
 # make a local ‘scratch’ directory for temporary files (@ end check that it’s empty)
-mkdir –p /scratch/ecalfee   # temporary sort files will be written to local node
+mkdir -p /scratch/ecalfee   # temporary sort files will be written to local node
 
 # apply filtering with SAMtools & PICARD
 echo "filtering BAM for hilo $SLURM_ARRAY_TASK_ID"
@@ -33,19 +31,20 @@ echo "filtering BAM for hilo $SLURM_ARRAY_TASK_ID"
 # (0) Start with raw bam file DIRECTORY/HILOX/aln.bam
 
 # (1) SAMTOOLS sort reads by coordinate position > name.sort.bam
-samtools sort -m 4G –T /scratch/ecalfee/ \
+samtools sort -m 4G -T /scratch/ecalfee/ \
 -o /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam \
 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam
 
+ls /scratch/ecalfee/
 # (2) Picard MarkDuplicate marks and removes PCR duplicates (pipes directly to next step)
 # note that –Xmx8G means anything over 8G memory will be written to the temporary directory TMP_DIR
 
 # (3) SAMTOOLS removes low mapping quality reads (<30) > name.sort.dedup.bam
-java –Xmx8G -jar ~/Software/picard/picard.jar MarkDuplicates \
+java -Xmx6g -jar $PICARD/picard.jar MarkDuplicates \
 INPUT=/scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam OUTPUT=/dev/stdout QUIET=true \
 REMOVE_DUPLICATES=true TMP_DIR=/scratch/ecalfee \
-METRICS_FILE=hilo_$SLURM_ARRAY_TASK_ID.metrics.txt | samtools view -b -q 30 \
-hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam
+METRICS_FILE=filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.metrics.txt | samtools view -b -q 30 \
+-o filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam -
 
 # (4) remove intermediate file
 rm /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam
