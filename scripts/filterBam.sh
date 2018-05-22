@@ -2,8 +2,8 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J hiloFiltBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/out-%j_%a.txt
-#SBATCH -e /home/ecalfee/hilo/slurm-log/error-%j_%a.txt
+#SBATCH -o /home/ecalfee/hilo/slurm-log/out-hiloFiltBam_%j_%a.txt
+#SBATCH -e /home/ecalfee/hilo/slurm-log/error-hiloFiltBam_%j_%a.txt
 #SBATCH -t 1:00:00
 
 # to run (e.g. hilo1-hilo40): sbatch filterBam.sh --array=1-40
