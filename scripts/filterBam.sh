@@ -1,10 +1,10 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
-#SBATCH -J hiloFiltBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/out-hiloFiltBam_%j_%a.txt
-#SBATCH -e /home/ecalfee/hilo/slurm-log/error-hiloFiltBam_%j_%a.txt
-#SBATCH -t 1:00:00
+#SBATCH -J hiloDedup
+#SBATCH -o /home/ecalfee/hilo/slurm-log/out-hiloDedup_%j_%a.txt
+#SBATCH -e /home/ecalfee/hilo/slurm-log/error-hiloDedup_%j_%a.txt
+#SBATCH -t 4:00:00
 
 # to run (e.g. hilo1-hilo40): sbatch filterBam.sh --array=1-40
 
@@ -48,3 +48,4 @@ METRICS_FILE=filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.metrics.txt | samtools view 
 
 # (4) remove intermediate file
 rm /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam
+echo "sort file scratched for array %A job %j task %a"

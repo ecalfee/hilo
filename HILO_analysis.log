@@ -22,10 +22,21 @@ HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_2.fq.gz
 Aborted and made batch run in parallel instead piping directly into BAM format using samtools
 ~/Software/bwa.kit/bwa index AGPv4/AGPv4_simple.fasta; parallel --noswap --joblog hilo_alignment.log --jobs 6 '~/Software/bwa.kit/bwa mem -R "@RG\tID:batch_1\tSM:hilo_{1}" AGPv4/AGPv4_simple.fasta HILO_data/raw_data/HILO{1}/HILO{1}_*_1.fq.gz HILO_data/raw_data/HILO{1}/HILO{1}_*_2.fq.gz | ~/Software/bwa.kit/samtools view -b - > HILO_data/bam_files/HILO_{1}.bam' ::: {1..40}
 
+
+# Starting from reads aligned by Dan using bwa
 ecalfee@bigmem8:/group/jrigrp6/DanAlignments/HILO105$ ls
 aln.bam						  HILO105_USPD16085642-AK6871_hky2mccxy_L6_2.fq.gz
 HILO105_USPD16085642-AK6871_hky2mccxy_L6_1.fq.gz  MD5.txt
 
 interactive session run:
-srun -p bigmemh -t 2:00:00 --mem 2000 --pty bash
+srun -p bigmemm -t 2:00:00 --mem 2000 --pty bash
 
+ran test batch (finished fine)
+hilo/scripts$ sbatch --array=1-2 filterBam.sh
+completed: 19908139_1  19908138_2
+
+ran filtering on all of the as of yet aligned individuals from HILO
+hilo/scripts$ sbatch --array=3-40,100-179 filterBam.sh 
+
+I can't really tell why some jobs failed and at what stage. I am running just 40 tasks now with more allocated time (4hrs not 1hr)
+hilo/scripts$ sbatch --array=1-40 filterBam.sh
