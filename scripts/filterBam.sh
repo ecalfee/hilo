@@ -6,7 +6,7 @@
 #SBATCH -e /home/ecalfee/hilo/slurm-log/%x_%A_%j_%a.err
 #SBATCH -t 4:00:00
 #SBATCH --tmp=30G
-#SBATCH --exclude=bigmemm2
+#SBATCH --exclude=bigmem2
 
 # jobs were failing due to lack of scratch memory so I exclude nodes with <30G
 # available and I additionally exlude node bigmemm2 due to permissions issues
