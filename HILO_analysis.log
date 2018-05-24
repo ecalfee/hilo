@@ -40,3 +40,8 @@ hilo/scripts$ sbatch --array=3-40,100-179 filterBam.sh
 
 I can't really tell why some jobs failed and at what stage. I am running just 40 tasks now with more allocated time (4hrs not 1hr)
 hilo/scripts$ sbatch --array=1-40 filterBam.sh
+
+# basically nothing ran properly, even files stating 'complete'
+# I have requested to avoid bigmemm2 (permissions error) and only use nodes with at least 30G available temporary disk space for scratch 
+# and in addition I put in exit 3 and exit 4 flags to stop execution if it fails to make temp folders
+hilo/scripts$ sbatch --array=1-40 filterBam.sh
