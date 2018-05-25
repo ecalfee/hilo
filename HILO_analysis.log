@@ -45,3 +45,8 @@ hilo/scripts$ sbatch --array=1-40 filterBam.sh
 # I have requested to avoid bigmemm2 (permissions error) and only use nodes with at least 30G available temporary disk space for scratch 
 # and in addition I put in exit 3 and exit 4 flags to stop execution if it fails to make temp folders
 hilo/scripts$ sbatch --array=1-40 filterBam.sh
+
+# got permissions on bigmem2 and changed script to exclude bigmem1 (lack of memory)
+# re-running just a short sample set before the complete aligment set is ready
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 filterBam.sh 
+Submitted batch job 19970756
