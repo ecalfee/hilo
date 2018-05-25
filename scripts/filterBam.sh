@@ -2,11 +2,9 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J filterBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/%x_%A_%j_%a.out
-#SBATCH -e /home/ecalfee/hilo/slurm-log/%x_%A_%j_%a.err
+#SBATCH -o /home/ecalfee/hilo/slurm-log/filterBam_%j_%A_%a.out
 #SBATCH -t 4:00:00
-#SBATCH --tmp=30G
-#SBATCH --exclude=bigmem2
+#SBATCH -x bigmem1
 
 # jobs were failing due to lack of scratch memory so I exclude nodes with <30G
 # available and I additionally exlude node bigmemm2 due to permissions issues
@@ -19,6 +17,9 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
+# variable to keep track of any failed parts of the script
+fails=false
+
 # load samtools for quality read filtering
 module load samtools
 # load java to run picardtools
@@ -26,9 +27,9 @@ module load java
 # load picardtools for removing PCR duplicate reads
 module load picardtools # saves path to loaded versin in $PICARD variable
 # make directory to store output (if doesn't yet exist)
-mkdir -p filtered_bam || exit 3
+mkdir -p filtered_bam || fails=true
 # make a local ‘scratch’ directory for temporary files (@ end check that it’s empty)
-mkdir -p /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID || exit 4   # temporary sort files will be written to local node
+mkdir -p /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID || fails=true   # temporary sort files will be written to local node
 
 # apply filtering with SAMtools & PICARD
 echo "filtering BAM for hilo $SLURM_ARRAY_TASK_ID"
@@ -38,9 +39,9 @@ echo "filtering BAM for hilo $SLURM_ARRAY_TASK_ID"
 # (1) SAMTOOLS sort reads by coordinate position > name.sort.bam
 samtools sort -m 6G -T /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID \
 -o /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam \
-/group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam
+/group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam || fails=true
 
-rm -r /scratch/ecalfee/hlo_$SLURM_ARRAY_TASK_ID # remove temporary scratch folder
+rm -r /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID # remove temporary scratch folder
 ls /scratch/ecalfee/
 # (2) Picard MarkDuplicate marks and removes PCR duplicates (pipes directly to next step)
 # note that –Xmx8G means anything over 8G memory will be written to the temporary directory TMP_DIR
@@ -48,10 +49,14 @@ ls /scratch/ecalfee/
 # (3) SAMTOOLS removes low mapping quality reads (<30) > name.sort.dedup.bam
 java -Xmx6g -jar $PICARD/picard.jar MarkDuplicates \
 INPUT=/scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam OUTPUT=/dev/stdout QUIET=true \
-REMOVE_DUPLICATES=false TMP_DIR=/scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID \
+REMOVE_DUPLICATES=true TMP_DIR=/scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID \
 METRICS_FILE=filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.metrics.txt | samtools view -b -q 30 \
--o filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.mrkdup.bam -
+-o filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam - || fails=true
 
 # (4) remove intermediate file
 rm /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam
-echo "sort file scratched for hilo $SLURM_ARRAY_TASK_ID""
+
+# print confirmation that all parts ran without errors
+if ! $fails; then
+    echo 'NoFail - this script ran without errors on hilo $SLURM_ARRAY_TASK_ID'
+
