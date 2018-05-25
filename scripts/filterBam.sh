@@ -41,7 +41,6 @@ samtools sort -m 6G -T /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID \
 -o /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam \
 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam || fails=true
 
-rm -r /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID # remove temporary scratch folder
 ls /scratch/ecalfee/
 # (2) Picard MarkDuplicate marks and removes PCR duplicates (pipes directly to next step)
 # note that –Xmx8G means anything over 8G memory will be written to the temporary directory TMP_DIR
@@ -53,8 +52,9 @@ REMOVE_DUPLICATES=true TMP_DIR=/scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID \
 METRICS_FILE=filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.metrics.txt | samtools view -b -q 30 \
 -o filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam - || fails=true
 
-# (4) remove intermediate file
+# (4) remove intermediate file and temporary scratch directory
 rm /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam
+rm -r /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID # remove temporary scratch folder
 
 # print confirmation that all parts ran without errors
 if ! $fails; then
