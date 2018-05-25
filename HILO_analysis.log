@@ -59,3 +59,10 @@ Submitted batch job 19970894
 # running 11-30; only change to script is when the scratch folder is deleted
 ecalfee@farm:~/hilo/scripts$ sbatch --array=11-40 filterBam.sh 
 Submitted batch job 19971006
+
+# running the rest of the files up to ind. 200 except for the following exclusions:
+# 41, 42, 43, 80 excluded because haven't finished alignment (no aln.bam file exists yet)
+# 34, 109, 113 excluded because alignment needs to be re-run (timed-out -> truncated bam)
+ecalfee@farm:~/hilo/scripts$ sbatch --array=44-79,81-108,110-112,114-200 filterBam.sh
+Submitted batch job 20011145
+
