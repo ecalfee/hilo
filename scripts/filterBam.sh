@@ -59,4 +59,4 @@ rm /scratch/ecalfee/hilo_$SLURM_ARRAY_TASK_ID.sort.bam
 # print confirmation that all parts ran without errors
 if ! $fails; then
     echo 'NoFail - this script ran without errors on hilo $SLURM_ARRAY_TASK_ID'
-
+fi
