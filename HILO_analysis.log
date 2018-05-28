@@ -66,3 +66,6 @@ Submitted batch job 19971006
 ecalfee@farm:~/hilo/scripts$ sbatch --array=44-79,81-108,110-112,114-200 filterBam.sh
 Submitted batch job 20011145
 
+# many failed due to time-out; re-started those jobs that failed plus 34, 109, 113 because they have been re-run
+ecalfee@farm:~/hilo/scripts$ sbatch --array=34,101-105,109-114,117,119,121,125,127,130,131,133-135,137,139,141,142,161-163,165,169,170,172,174-177 filterBam.sh
+Submitted batch job 20102438
