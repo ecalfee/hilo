@@ -69,3 +69,14 @@ Submitted batch job 20011145
 # many failed due to time-out; re-started those jobs that failed plus 34, 109, 113 because they have been re-run
 ecalfee@farm:~/hilo/scripts$ sbatch --array=34,101-105,109-114,117,119,121,125,127,130,131,133-135,137,139,141,142,161-163,165,169,170,172,174-177 filterBam.sh
 Submitted batch job 20102438
+
+# all jobs except those excluded finished (ie. 41-43, 80).
+# make list of BAMS for first pass analysis:
+data$ for i in {1..40} {44..79} {81..200}; do echo hilo_$i.sort.dedup.bam >> pass1_bam.all.list; done
+# run angsd to find variable sites within all individuals > 0.1 MAF 
+# short test run (in srun):
+angsd -GL 1 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -baq 1 -minMapQ 30 -minQ 20 \
+-doMaf 4 -minMaf 0.1 -rmTriallelic 1e-5 -bam testBAM.list -r 1:10000-20000 -out testANGSD
+
+
+
