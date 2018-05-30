@@ -4,7 +4,7 @@
 #SBATCH -J varAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsd_%j_%A_%a.out
 #SBATCH -t 36:00:00
-#SBATCH --mem=10G
+#SBATCH --mem=100G
 #SBATCH -n 4
 
 # general bash script settings to make sure if any errors in the pipeline fail
@@ -20,7 +20,7 @@ module load angsd
 mkdir -p var_sites/pass1
 
 # apply filtering with SAMtools & PICARD
-echo "calling variants using ANGSD on BAMS for hilo $SLURM_ARRAY_TASK_ID"
+echo "calling variants using ANGSD on BAMS for hilo CHR$SLURM_ARRAY_TASK_ID"
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosome individually, find variant sites
@@ -30,13 +30,16 @@ angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 -doMajorMinor 4 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
 -bam pass1_bam.all.list \
 -GL 1 -doGlf 2 \
+-remove_bads 1 \
 -minMapQ 30 -minQ 20 \
--minMaf 0.1 -doMaf 2 \
--minInd 50 \
+-minMaf 0.05 -doMaf 2 \
+-SNP_pval 2e-5 \
+-minInd 100 \
 -P 4
 
 # settings:
 # -r specifies which region to work on
+# -remove_bads removes reads with flags like duplicates
 # -doMajorMinor 4: pre-specify major allele from reference genome and infer minor allele from genotype likelihood
 # -bam list of bams to include (all newly sequenced allopatric mex. and sympatric mexicana & maize pops)
 # -GL 1: use samtools genotype likelihood method
@@ -45,7 +48,9 @@ angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 # (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality, 
 # so this is equivalend to -baq 2 option here)
 # -doMaf 2 : output minor allele freq
-# an alternative would be to use AlleleCounts method (-doMaf 8)
-# -minMaf 0.1: and then do a cutoff to only include variant sites with >10% diff. from reference allele
-# -minInd 50: only keep sites with information (at least one read) from 50 individuals
+# an alternative would be to use AlleleCounts method (-doMaf 8) with -doCounts
+# which doesn't consider base quality and ignores all reads with non-target alleles
+# but also doesn't rely on HW equlibrium assumptions to get ML allele freq from genotype freqs
+# -minMaf x: and then do a cutoff to only include variant sites with >x diff. from reference allele
+# -minInd N: only keep sites with information (at least one read) from N individuals
 # -P 4 means use 4 threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
