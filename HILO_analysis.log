@@ -80,6 +80,11 @@ Submitted batch job 20107398
 data$ for i in {1..40} {44..79} {81..200}; do echo hilo_$i.sort.dedup.bam >> pass1_bam.all.list; done
 # run angsd to find variable sites within all individuals > 0.1 MAF 
 # short test run (in srun):
-angsd -GL 1 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -baq 1 -minMapQ 30 -minQ 20 \
--doMaf 4 -minMaf 0.1 -rmTriallelic 1e-5 -bam testBAM.list -r 1:10000-20000 -out testANGSD
+ecalfee@bigmem10:~/hilo/data$ angsd -GL 1 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -baq 1 -minMapQ 30 -minQ 20 -doMaf 2 -doGlf 2 -minMaf 0.1 -doMajorMinor 4 -bam TEST/testBAM.list -r 1:10000-20000 -out testANGSD
+### HOW DO I ADD -P 10 to slurm so it knows??
+
+# need to index BAMS
+ecalfee@bigmem10:~/hilo/data/filtered_bam$ module load samtools
+Module samtools/1.3.1 loaded 
+ecalfee@bigmem10:~/hilo/data/filtered_bam$ for i in {3..40} {44..79} {81..200}; do samtools index hilo_$i.sort.dedup.bam; done
 
