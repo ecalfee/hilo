@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data/filtered_bam
 #SBATCH -J addBAQBam
 #SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBam_%j_%A_%a.out
-#SBATCH -t 24:00:00
+#SBATCH -t 12:00:00
 
 # this script caps base quality scores with samtools adjusted scores (BAQ)
 # which accounts for higher uncertainty in alignment around indels.
@@ -27,8 +27,8 @@ echo "calculating BAQ for hilo $SLURM_ARRAY_TASK_ID"
 # (0) Start with sorted and deduplicated bam file: hilo_X.sort.dedup.bam
 
 # (1) SAMTOOLS calculate BAQ > name.sort.dedup.baq.bam
-samtools calmd -bAr hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam \
--ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa > hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam 
+samtools calmd -bAr --reference /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
+hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam > hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
 
 echo "done calculating BAQ"
 # (2) SAMTOOLS index
