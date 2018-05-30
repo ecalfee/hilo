@@ -73,3 +73,7 @@ Submitted batch job 20102438
 # final failed jobs due to lack of space; re-running those jobs
 ecalfee@farm:~/hilo/scripts$ sbatch --array=121,127,133,135,141,162,176,177 filterBam.sh
 Submitted batch job 20107398
+
+# indexing reference
+ecalfee@farm:~/hilo/scripts$ sbatch indexRef.sh
+Submitted batch job 20107852
