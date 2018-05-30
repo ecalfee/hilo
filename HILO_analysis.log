@@ -95,5 +95,8 @@ ecalfee@bigmem10:~/hilo/data/filtered_bam$ for i in {3..40} {44..79} {81..200}; 
 
 # now pre-calculating BAQ to speed up GL in angsd and to use again when counting reads
 # script caps base quality at the lower of raw base quality and BAQ from samtools
+# using extended BAQ calculation -E option; recommended for improved sensitivity (will be new default)
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-40,44-79,80-200 addBAQBam.sh
-Submitted batch job 20146395
+Submitted batch job 20147251
+ecalfee@farm:~/hilo/scripts$ date
+Tue May 29 19:29:51 PDT 2018
