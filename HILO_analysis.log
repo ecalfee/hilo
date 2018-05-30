@@ -106,3 +106,7 @@ data$ for i in {1..40} {44..79} {81..200}; do echo filtered_bam/hilo_$i.sort.ded
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
 Submitted batch job 20182952
 Wed May 30 09:16:56 PDT 2018
+# -CANCELLED (problems = low memory and wrong individuals .. doubled)
+# fixed and re-running 15:53 pm:
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
+Submitted batch job 20203873
