@@ -116,3 +116,6 @@ Submitted batch job 20203873
 # NOTE: this wouldn't find a fixed difference between maize 282 and the current sample
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
 Submitted batch job 20245129
+# Problem was a file-dumping error because I had in a check from SNP_pval; resolved by removing that part
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
+Submitted batch job 20265142

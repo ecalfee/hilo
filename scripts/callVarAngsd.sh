@@ -31,7 +31,6 @@ angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doCounts 1 -minMaf 0.05 -doMaf 8 \
--SNP_pval 2e-5 \
 -minInd 150 \
 -P 4
 
