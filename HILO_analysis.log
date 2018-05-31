@@ -119,3 +119,7 @@ Submitted batch job 20245129
 # Problem was a file-dumping error because I had in a check from SNP_pval; resolved by removing that part
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20265142
+# Took < 2hrs to run. Decided I wanted more SNPs, so I reduced the threshold to 100 individuals with information (> half).
+# put old files in old_pass1/
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
+Submitted batch job 20278967
