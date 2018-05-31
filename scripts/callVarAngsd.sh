@@ -24,17 +24,15 @@ echo "calling variants using ANGSD on BAMS for hilo CHR$SLURM_ARRAY_TASK_ID"
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosome individually, find variant sites
-
 angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 -r $SLURM_ARRAY_TASK_ID \
--doMajorMinor 4 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
+-doMajorMinor 2 \
 -bam pass1_bam.all.list \
--GL 1 -doGlf 2 \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
--minMaf 0.05 -doMaf 2 \
+-doCounts 1 -minMaf 0.05 -doMaf 8 \
 -SNP_pval 2e-5 \
--minInd 100 \
+-minInd 150 \
 -P 4
 
 # settings:
@@ -44,8 +42,8 @@ angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 # -bam list of bams to include (all newly sequenced allopatric mex. and sympatric mexicana & maize pops)
 # -GL 1: use samtools genotype likelihood method
 # -doGlf 2: output beagle likelihood file
-# -minMapQ 30 -minQ 20: filter out sites with low mapping quality or base/BAQ quality 
-# (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality, 
+# -minMapQ 30 -minQ 20: filter out sites with low mapping quality or base/BAQ quality
+# (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality,
 # so this is equivalend to -baq 2 option here)
 # -doMaf 2 : output minor allele freq
 # an alternative would be to use AlleleCounts method (-doMaf 8) with -doCounts

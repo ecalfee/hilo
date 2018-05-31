@@ -110,3 +110,9 @@ Wed May 30 09:16:56 PDT 2018
 # fixed and re-running 15:53 pm:
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
 Submitted batch job 20203873
+# -CANCELLED. Talked to Jeff and decided to only look for SNPs > 0.5 freq using a non-HW based method
+# I will do something different to find SNPs for local ancestry inference, but this doesn't use the reference
+# and only counts reads supporting the two most common bases, after quality filters
+# NOTE: this wouldn't find a fixed difference between maize 282 and the current sample
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
+Submitted batch job 20245129
