@@ -119,7 +119,10 @@ Submitted batch job 20245129
 # Problem was a file-dumping error because I had in a check from SNP_pval; resolved by removing that part
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20265142
-# Took < 2hrs to run. Decided I wanted more SNPs, so I reduced the threshold to 100 individuals with information (> half).
+# Took < 2hrs to run. Decided I wanted more SNPs, so I reduced the threshold to 50 individuals with information (> half).
 # put old files in old_pass1/
+# it's recommended in the NGSadmix paper to avoid sites with > 80% missing data, so 50+ ind with info is slightly conservative
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
-Submitted batch job 20278967
+Submitted batch job 20280102
+ecalfee@farm:~/hilo/scripts$ date
+Thu May 31 10:38:49 PDT 2018

@@ -4,7 +4,7 @@
 #SBATCH -J varAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsd_%j_%A_%a.out
 #SBATCH -t 10:00:00
-#SBATCH --mem=30G
+#SBATCH --mem=50G
 #SBATCH -n 4
 
 # general bash script settings to make sure if any errors in the pipeline fail
@@ -31,7 +31,7 @@ angsd -out var_sites/pass1/chr$SLURM_ARRAY_TASK_ID \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doCounts 1 -minMaf 0.05 -doMaf 8 \
--minInd 100 \
+-minInd 50 \
 -P 4
 
 # settings:
