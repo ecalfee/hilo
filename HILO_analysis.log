@@ -131,7 +131,9 @@ ecalfee@farm:~/hilo/scripts$ sbatch --array=1 callVarAngsd.sh
 Submitted batch job 20419175
 # made a python script to prune sites to approximately unlinked (no more than 1 SNP per 10kb).
 # which I wrapped in a bash script pruneFixed.sh
-
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-9 pruneFixed.sh
+Submitted batch job 20420257
+run next: sbatch --array=1,10 pruneFixed.sh
 # After pruning, I combine across all chromosomes; this leaves ## SNPs. (interactive srun)
 # next find samtools genotype likelihood for those sites across all individuals.
 # and running NGSadmix.

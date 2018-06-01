@@ -5,7 +5,6 @@
 #SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixed_%j_%A_%a.out
 #SBATCH -t 00:30:00
 #SBATCH --mem=2G
-#SBATCH --array=1-10
 
 # general bash script settings to make sure if any errors in the pipeline fail
 set –o pipefail

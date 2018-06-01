@@ -26,10 +26,10 @@ with gzip.open(fileOut, mode = "wt") as file1:
             writer.writerow(next(reader)) # prints header to output file
         for row in reader:
             if row[colChr] == chr1 and pos1 != None and (int(row[colN]) - pos1) < minL: # if same chromosome and too close, skip SNP
-                print("skip position", row[colN])
+                #print("skip position", row[colN])
                 pass
             else:
-                print("write position", row[colN])
+                #print("write position", row[colN])
                 chr1 = row[colChr] # update current chromosome
                 pos1 = int(row[colN]) # update current position
                 writer.writerow(row) # print line (SNP included) 
