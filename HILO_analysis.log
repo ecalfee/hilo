@@ -126,6 +126,9 @@ ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20280102
 ecalfee@farm:~/hilo/scripts$ date
 Thu May 31 10:38:49 PDT 2018
+# only chr1 failed (largest). I reduced requested memory to get it back on queue
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1 callVarAngsd.sh 
+Submitted batch job 20419175
 # made a python script to prune sites to approximately unlinked (no more than 1 SNP per 10kb).
 # which I wrapped in a bash script pruneFixed.sh
 

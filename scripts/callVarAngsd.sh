@@ -4,7 +4,7 @@
 #SBATCH -J varAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsd_%j_%A_%a.out
 #SBATCH -t 10:00:00
-#SBATCH --mem=50G
+#SBATCH --mem=15G
 #SBATCH -n 4
 
 # general bash script settings to make sure if any errors in the pipeline fail
