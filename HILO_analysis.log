@@ -129,6 +129,13 @@ Thu May 31 10:38:49 PDT 2018
 # only chr1 failed (largest). I reduced requested memory to get it back on queue
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1 callVarAngsd.sh 
 Submitted batch job 20419175
+# chr1 failed again for too much memory, so I split it into 10 chunks:
+hilo/scripts$ sbatch --array=0-9 callVarAngsd_split_chr1.sh 
+Submitted batch job 20591724
+Mon Jun  4 14:38:49 PDT 2018
+# where now 0-9 above indicate the indeces of each chunk ~30000 kbp long
+# I will need to concatenate chunks before pruning (below)
+
 # made a python script to prune sites to approximately unlinked (no more than 1 SNP per 10kb).
 # which I wrapped in a bash script pruneFixed.sh
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-9 pruneFixed.sh
