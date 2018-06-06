@@ -135,12 +135,26 @@ Submitted batch job 20591724
 Mon Jun  4 14:38:49 PDT 2018
 # where now 0-9 above indicate the indeces of each chunk ~30000 kbp long
 # I will need to concatenate chunks before pruning (below)
+# in srun concatenating (without intermediate headers)
+data/var_sites/pass1$ zcat chr1_chunk0.mafs.gz | gzip > chr1.mafs.gz; \
+for i in {1..9}; do zcat chr1_chunk$i.mafs.gz | tail -n +2 | gzip >> chr1.mafs.gz; done
+# then moving all chunk files to their own subfolder:
+data/var_sites/pass1$ mv chr1_chunk* chr1_chunks/
 
 # made a python script to prune sites to approximately unlinked (no more than 1 SNP per 10kb).
 # which I wrapped in a bash script pruneFixed.sh
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-9 pruneFixed.sh
 Submitted batch job 20420257
-run next: sbatch --array=1,10 pruneFixed.sh
-# After pruning, I combine across all chromosomes; this leaves ## SNPs. (interactive srun)
-# next find samtools genotype likelihood for those sites across all individuals.
-# and running NGSadmix.
+~/hilo/scripts$ sbatch --array=1,10 pruneFixed.sh
+Submitted batch job 20603410
+# After pruning, I combine across all chromosomes (and unzip/decompress); this leaves ~170k SNPs. 
+~hilo/data/var_sites/pass1$ mkdir pruned
+~/hilo/data/var_sites/pass1$ zcat chr1.pruned.mafs.gz > pruned/all.positions; \
+for i in {2..10}; do zcat chr$i.pruned.mafs.gz | tail -n +2 >> pruned/all.positions; done
+# then I divide into chunks, each containing 1000 SNPs, for parallel analysis in ANGSD
+~/hilo/data/var_sites/pass1/pruned$ split all.positions -d -a 3 -l 1000 positions_chunk
+
+# next find samtools genotype likelihood for those sites across all individuals. 
+~/hilo/scripts$ sbatch --array=0-169 calcGL4Pruned.sh
+Submitted batch job 20606382
+# and then combine output and running NGSadmix.
