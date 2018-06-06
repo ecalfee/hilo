@@ -147,14 +147,19 @@ ecalfee@farm:~/hilo/scripts$ sbatch --array=1-9 pruneFixed.sh
 Submitted batch job 20420257
 ~/hilo/scripts$ sbatch --array=1,10 pruneFixed.sh
 Submitted batch job 20603410
-# After pruning, I combine across all chromosomes (and unzip/decompress); this leaves ~170k SNPs. 
+# After pruning, I combine across all chromosomes and remove all header (and unzip/decompress); 
+# this leaves ~170k SNPs. 
 ~hilo/data/var_sites/pass1$ mkdir pruned
-~/hilo/data/var_sites/pass1$ zcat chr1.pruned.mafs.gz > pruned/all.positions; \
-for i in {2..10}; do zcat chr$i.pruned.mafs.gz | tail -n +2 >> pruned/all.positions; done
-# then I divide into chunks, each containing 1000 SNPs, for parallel analysis in ANGSD
-~/hilo/data/var_sites/pass1/pruned$ split all.positions -d -a 3 -l 1000 positions_chunk
+~/hilo/data/var_sites/pass1$ for i in {1..10}; do zcat chr$i.pruned.mafs.gz | tail -n +2 >> pruned/all.positions; done
+# then I divide into chunks, each containing 250 SNPs, for parallel analysis in ANGSD
+~/hilo/data/var_sites/pass1/pruned$ split all.positions -d -a 3 -l 250 positions_chunk
 
 # next find samtools genotype likelihood for those sites across all individuals. 
-~/hilo/scripts$ sbatch --array=0-169 calcGL4Pruned.sh
-Submitted batch job 20606382
+# made small test file first 
+~/hilo/data/var_sites/pass1/pruned$ head positions_chunk000 > positions_chunk999
+~/hilo/scripts$ sbatch --array=999 --mem=2G -t 1:00:00 calcGL4Pruned.sh 
+Submitted batch job 20619027
+# now all 678 chunks
+~/hilo/scripts$ sbatch --array=0-677 calcGL4Pruned.sh
+
 # and then combine output and running NGSadmix.

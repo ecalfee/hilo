@@ -3,9 +3,8 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J calcGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/calcGL_%j_%A_%a.out
-#SBATCH -t 5:00:00
-#SBATCH --mem=15G
-#SBATCH -n 4
+#SBATCH -t 10:00:00
+#SBATCH --mem=30G
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -41,8 +40,7 @@ angsd -out geno_lik/pass1/pruned_chunks/chunk_$TASK_ID \
 -GL 1 -doGlf 2 \
 -minMapQ 30 -minQ 20 \
 -bam pass1_bam.all.list \
--remove_bads 1 \
--P 4
+-remove_bads 1
 
 # settings:
 # -sites and -rf specify which positions and chromosomes to calculate GL's for
@@ -54,4 +52,3 @@ angsd -out geno_lik/pass1/pruned_chunks/chunk_$TASK_ID \
 # -minMapQ 30 -minQ 20: filter out sites with low mapping quality or base/BAQ quality
 # (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality,
 # so this is equivalend to -baq 2 option here)
-# -P 4 means use 4 threads/nodes for each angsd task
