@@ -102,6 +102,11 @@ Tue May 29 19:29:51 PDT 2018
 # making list of BAMS for fist pass analysis:
 data$ for i in {1..40} {44..79} {81..200}; do echo filtered_bam/hilo_$i.sort.dedup.baq.bam >> pass1_bam.all.list; done
 
+# counting # reads that mapped & passed mapping quality and non-duplicate read quality filtering for each pass1 indiviudal:
+# (this is an estimate of coverage/data quality for each sequenced individual)
+~/hilo/data/filtered_bam$ for i in {1..200}; do samtools flagstat hilo_$i.sort.dedup.baq.bam | \
+awk -v i="$i" '{print "hilo"i" "$0}' | grep 'total' >> pass1.all.metrics.Nreads; done
+
 # finding variable sites with ANGSD, each of 10 chrom at a time (4 nodes requested per chrom):
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
 Submitted batch job 20182952
@@ -157,14 +162,19 @@ Submitted batch job 20603410
 # next find samtools genotype likelihood for those sites across all individuals. 
 # made (very!) small test file first - 2 positions 
 ~/hilo/data/var_sites/pass1/pruned_positions$ head positions_chunk000 -n 2 > positions_chunk999
-
-# ran on slurm
+# ran test file on slurm
 ~/hilo/scripts$ sbatch --array=999 -t 1:00:00 calcGL4Pruned.sh 
 Submitted batch job 20652316
 
-# now all 677 chunks
+# now running all 677 chunks
 ~/hilo/scripts$ sbatch --array=0-677 calcGL4Pruned.sh
 Submitted batch job 20652343
 
-# and then combine output and running NGSadmix.
+# and then combine output (in srun)
+~/hilo/data/geno_lik/pass1/pruned_chunks$ zcat chunk_000.beagle.gz | gzip >> ../pruned_all.beagle.gz; \
+for i in {001..677}; do zcat chunk_$i.beagle.gz | tail -n +2 | gzip >> ../pruned_all.beagle.gz; done
 
+# and running NGSadmix
+~/hilo/scripts$ sbatch runNGSadmix.sh
+Submitted batch job 20781908
+Mon Jun 11 22:36:54 PDT 2018
