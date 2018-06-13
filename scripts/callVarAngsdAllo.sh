@@ -1,11 +1,10 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
-#SBATCH -J varAngsdSymp
-#SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsdSymp_%j_%A_%a.out
+#SBATCH -J varAllo
+#SBATCH -o /home/ecalfee/hilo/slurm-log/varAllo_%j_%A_%a.out
 #SBATCH -t 10:00:00
-#SBATCH --mem=15G
-#SBATCH -n 4
+#SBATCH --mem=30G
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -17,28 +16,28 @@ set –o nounset
 module load angsd
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p var_sites/pass1/sympatric/
+mkdir -p var_sites/pass1/allopatric/
 
 # apply filtering with SAMtools & PICARD
-echo "calling variants using ANGSD on sympatric BAMS for hilo CHR$SLURM_ARRAY_TASK_ID"
+echo "calling variants using ANGSD on allopatric mexicana BAMS for hilo chr region $SLURM_ARRAY_TASK_ID"
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosome individually, find variant sites
 angsd -out var_sites/pass1/sympatric/region_$SLURM_ARRAY_TASK_ID \
 -r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
--doMajorMinor 2 \
--bam pass1_bam.onlySympatric.list \
+-doMajorMinor 3 \
+-ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
+-bam pass1_bam.onlyAllopatricMex.list \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
--doCounts 1 -minMaf 0.05 -doMaf 8 \
--minInd 50 \
--P 4
+-doCounts 1 -minMaf 0.3 -doMaf 8 \
+-minInd 17
 
 # settings:
 # -r specifies which region to work on
 # -remove_bads removes reads with flags like duplicates
-# -doMajorMinor 4: pre-specify major allele from reference genome and infer minor allele from genotype likelihood
-# -bam list of bams to include (all newly sequenced sympatric mexicana & maize pops)
+# -doMajorMinor 3: pre-specify major allele from reference genome and infer minor allele from genotype likelihood
+# -bam list of bams to include (only allopatric mexicana)
 # -GL 1: use samtools genotype likelihood method
 # -doGlf 2: output beagle likelihood file
 # -minMapQ 30 -minQ 20: filter out sites with low mapping quality or base/BAQ quality

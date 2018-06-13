@@ -183,7 +183,6 @@ Mon Jun 11 22:36:54 PDT 2018
 # running with same SNPs for K = 3 & 4
 ~/hilo/scripts$ sbatch --array=3,4 runNGSadmix.sh
 Submitted batch job 20803690
-<<<<<<< HEAD
 
 # I divide the genome into manageable 50Mb chunks based on .fa.fai reference file [comp. Barbara; scp results to Farm]
 hilo/scripts$ mkdir -p ../data/refMaize/divide_50Mb
@@ -191,16 +190,21 @@ hilo/scripts$ python divRefRegions.py 50000000 ../data/refMaize/Zea_mays.AGPv4.d
 
 # new bam lists:
 # sympatric populations only, and individuals must have bam & est. coverage > 0.05
-hilo/data$ awk '$3 != 20 && $3 != 22 && $3 != 33 && $5 != "NA" && $6 > 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.onlySympatric.list
+hilo/data$ awk '$1 != "n" && $3 != 20 && $3 != 22 && $3 != 33 && $5 != "NA" && $6 > 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.onlySympatric.list
 
 # allopatric mexicana only, no minimum coverage
-hilo/data$ awk '($3 == 20 || $3 == 22 || $3 == 33) && $5 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.onlyAllopatricMex.list
+hilo/data$ awk '$1 != "n" && ($3 == 20 || $3 == 22 || $3 == 33) && $5 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.onlyAllopatricMex.list
 
 # excluded ind's (fit into neither category above)
-hilo/data$ awk '$5 == "NA" || ($3 != 20 && $3 != 22 && $3 != 33 && $6 <= 0.05) {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.excluded.list
+hilo/data$ awk '$1 != "n" && ($5 == "NA" || ($3 != 20 && $3 != 22 && $3 != 33 && $6 <= 0.05)) {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.excluded.list
 
 # now finding new set of variant sites using ANGSD for only sympatric individuals (all)
-to run: sbatch --array=0-46 callVarAngsdSymp.sh
+~/hilo/scripts$ sbatch --array=0-46 callVarAngsdSymp.sh 
+Submitted batch job 20811827
+# when I filter for low LD I can try different filters for nInd and MAF (more stringent)
+# to maximize information across individuals for the LD
 
-# now need to find all variant sites between reference and allopatric teosinte at >=30% freq. Then find all variant sites between reference and allopatric maize at >=30% freq .. put them together and exclude sites with less than a cutoff # individuals and allele frequency difference between mexicana & maize of 40%
-
+# now need to find all variant sites between reference and allopatric teosinte at >=30% freq. 
+# Then find all variant sites between reference and allopatric maize at >=30% freq .. put them together and exclude sites with less than a cutoff # individuals and allele frequency difference between mexicana & maize of 40%
+# not quite working -- look at slurm log
+~/hilo/scripts$ sbatch --array=0 callVarAngsdAllo.sh
