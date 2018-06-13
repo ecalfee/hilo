@@ -183,6 +183,7 @@ Mon Jun 11 22:36:54 PDT 2018
 # running with same SNPs for K = 3 & 4
 ~/hilo/scripts$ sbatch --array=3,4 runNGSadmix.sh
 Submitted batch job 20803690
+<<<<<<< HEAD
 
 # I divide the genome into manageable 50Mb chunks based on .fa.fai reference file [comp. Barbara; scp results to Farm]
 hilo/scripts$ mkdir -p ../data/refMaize/divide_50Mb
