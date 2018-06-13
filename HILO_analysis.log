@@ -201,6 +201,11 @@ hilo/data$ awk '$1 != "n" && ($5 == "NA" || ($3 != 20 && $3 != 22 && $3 != 33 &&
 # now finding new set of variant sites using ANGSD for only sympatric individuals (all)
 ~/hilo/scripts$ sbatch --array=0-46 callVarAngsdSymp.sh 
 Submitted batch job 20811827
+# everything ran but region_0 doesn't appear to be properly gipped and can't be opened
+# so I am re-running just that region (problem was I wrote over just this file accidentally with test run of callVarAngsdAllo.sh)
+~/hilo/scripts$ sbatch --array=0 callVarAngsdSymp.sh
+Submitted batch job 20816879
+
 # when I filter for low LD I can try different filters for nInd and MAF (more stringent)
 # to maximize information across individuals for the LD
 
@@ -208,3 +213,6 @@ Submitted batch job 20811827
 # Then find all variant sites between reference and allopatric maize at >=30% freq .. put them together and exclude sites with less than a cutoff # individuals and allele frequency difference between mexicana & maize of 40%
 # not quite working -- look at slurm log
 ~/hilo/scripts$ sbatch --array=0 callVarAngsdAllo.sh
+# fixed and after another small typo false start now running all regions
+~/hilo/scripts$ sbatch --array=0-46 callVarAngsdAllo.sh
+Submitted batch job 20817741
