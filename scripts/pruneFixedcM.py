@@ -1,7 +1,7 @@
 # this script prunes a set of SNPs, read from a gzipped tab deliminated file,
 # so that no two are closer than L cM (RECOMBINATION DISTANCE -- to reduce LD)
 
-# to run: hilo/scripts/$ python pruneFixedcM.py 0.5 55 0.1 ../data/TEST/10SNPS.prunedR.mafs ../data/TEST/10SNPS.mafs.gz 
+# to run: hilo/scripts/$ python3 pruneFixedcM.py 0.0001 55 0.1 ../data/TEST/10SNPS.prunedR.mafs ../data/TEST/10SNPS.mafs.gz ../data/TEST/10SNPS.B.mafs.gz
 import sys
 import csv
 import gzip
@@ -46,24 +46,26 @@ with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
                         print("skipping header line: " + str(row))
                         continue
                     if float(row[colMAF]) < minMAF or int(row[colNInd]) < minInd:
+                        #print("no pass, MAF=" + row[colMAF] + ", NInd=" + row[colNInd])
                         pass # doesn't meet minimum criteria
-                    else:
+                    else: # SNP passes minimum criteria
                         # get new chrom
                         chr2 = int(row[colChr])
                         # get new recombination position 
                         pos2 = calcMapPos.calcMapPos(chrom = chr2, pos = posBP2, rmap = rmapALL)
-                        if chr2 == chr1 and (pos2 - pos1) < minL:
+                        #print("at SNP " + str(chr2)+ ":" + str(pos2) + "cM") 
+                        if chr2 == chr1 and (pos2 - pos1) < minL: # if same chromosome and too close, skip SNP
                             if pos1 is not None and pos2 < pos1:
                                 raise ValueError("Positions must be in order on each chromosome! Error at Chr" + str(chr2) + ":" + str(pos2) + " coming before Chr" + str(chr1) + ":" + str(pos1))
-                                pass # if same chromosome and too close, skip SNP
-                            else: # include if SNP passes minimum criteria and not too close
-                                writerSNP.writerow(row) # print line (SNP included)
-                                if chr2 != chr1: # first SNP included from a chromosome
-                                    writerPOS.write(str(1) + "\n") # arbitrary but starts with difference = 1
-                                else: # print difference in Morgans
-                                    writerPOS.write(str((pos2 - pos1)/100) + "\n") 
-                                chr1 = chr2 # update current chromosome
-                                pos1 = pos2 # update current position
-print("Done pruning.")
+                            pass 
+                        else: # include if on diff chrom or not too close
+                            writerSNP.writerow(row) # print line (SNP included)
+                            if chr2 != chr1: # first SNP included from a chromosome
+                                writerPOS.write(str(1) + "\n") # arbitrary but starts with difference = 1
+                            else: # print difference in Morgans
+                                writerPOS.write(str((pos2 - pos1)/100) + "\n") 
+                            chr1 = chr2 # update current chromosome
+                            pos1 = pos2 # update current position
+print("Done pruning by fixed cM distance.")
 
 

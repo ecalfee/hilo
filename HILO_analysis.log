@@ -187,6 +187,8 @@ Submitted batch job 20803690
 # I divide the genome into manageable 50Mb chunks based on .fa.fai reference file [comp. Barbara; scp results to Farm]
 hilo/scripts$ mkdir -p ../data/refMaize/divide_50Mb
 hilo/scripts$ python divRefRegions.py 50000000 ../data/refMaize/Zea_mays.AGPv4.dna.chr.fa.fai ../data/refMaize/divide_50Mb
+# save a file with a list of regions: chr, start, end, region #, regions file name
+~/hilo/data/refMaize/divide_50Mb$ for i in {0..46}; do awk -v i=$i 'gsub(":|-", "\t", $0){print $0"\t"i"\t""region_"i".txt"}' region_$i.txt >> ALL_regions.list; done
 
 # new bam lists:
 # sympatric populations only, and individuals must have bam & est. coverage > 0.05
@@ -222,3 +224,13 @@ pruneFixedcM.py
 # running with two diff. thresholds for minimum # individuals, 75 and 100: (loads module anaconda3 for use of pandas)
 ~/hilo/scripts$ sbatch pruneFixedcM.sh
 Submitted batch job 20930024
+# did not work -- fixed error and added a way to set minInd as an evironmental variable and run each chromosome separately 
+# (can't break up further b/c of min cM across regions w/in chromosomes)
+# running with default MIN_IND=75
+scripts$ sbatch pruneFixedcM.sh
+# runnign again with MIN_IND=100
+scripts$ sbatch --export=MIN_IND=100 pruneFixedcM.sh
+
+
+
+
