@@ -228,9 +228,10 @@ Submitted batch job 20930024
 # (can't break up further b/c of min cM across regions w/in chromosomes)
 # running with default MIN_IND=75
 scripts$ sbatch pruneFixedcM.sh
-# runnign again with MIN_IND=100
-scripts$ sbatch --export=MIN_IND=100 pruneFixedcM.sh
-
+Submitted batch job 20950468
+# running again with MIN_IND=100
+~/hilo/scripts$ sbatch --export=MIN_IND=100 pruneFixedcM.sh
+Submitted batch job 20950469
 
 
 
