@@ -14,7 +14,7 @@ print(calcMapPos.calcMapPos(chrom = 10, pos = 1428910, rmap = rmapALL) == -2.2)
 print(calcMapPos.calcMapPos(chrom = 10, pos = (1477852+1428910)/2, rmap = rmapALL) == -2.1)
 # way under:
 print(calcMapPos.calcMapPos(chrom = 5, pos = 14, rmap = rmapALL) == (154.4 - 35.6) / (223716975-75378623) * (14 - 75378623) + 35.6)
-
+print(calcMapPos.calcMapPos(chrom = 5, pos = 1426, rmap = rmapALL))
 
 
 
