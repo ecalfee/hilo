@@ -216,3 +216,8 @@ Submitted batch job 20816879
 # fixed and after another small typo false start now running all regions
 ~/hilo/scripts$ sbatch --array=0-46 callVarAngsdAllo.sh
 Submitted batch job 20817741
+
+# added script to prune based on fixed cM width and Ogut_2015 map, rather than fixed bp (0.01 cM ~ 10kb on avg but varies across genome)
+pruneFixedcM.py
+# running with two diff. thresholds for minimum # individuals, 75 and 100: (loads module anaconda3 for use of pandas)
+hilo/scripts$ sbatch pruneFixedcM.sh

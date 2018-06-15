@@ -11,7 +11,7 @@ import calcMapPos # helper function to calculate map position in cM from bp pos
 
 # get input 
 minL = float(sys.argv[1]) # minimum length (in cM) between 2 SNPs that are kept 
-minInd = int(sys.argv[2]) # minimum number of individuals wiht data
+minInd = int(sys.argv[2]) # minimum number of individuals with data
 minMAF = float(sys.argv[3]) # column number specifying 
 fileOut = sys.argv[4] # file/path to write results to (.gz will be added for gzip compressed)
 listIn = sys.argv[5:] # list of files/paths to read in (gzipped) 
@@ -42,16 +42,19 @@ with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
                 for row in reader:
                     try:
                         posBP2 = int(row[colPosBP])
-                        if row[colMAF] < minMAF or row[colNInd] < minInd:
-                            pass # doesn't meet minimum criteria
-                        else:
-                            # get new chrom
-                            chr2 = int(row[colChr])
-                            # get new recombination position 
-                            pos2 = calcMapPos.calcMapPos(chrom = chr2, pos = posBP2, rmap = rmapALL)
-                            if chr2 == chr1 and (pos2 - pos1) < minL:
-                                if pos1 is not None and pos2 < pos1:
-                                    raise ValueError("Positions must be in order on each chromosome! Error at Chr" + chr2 + ":" + pos2)
+                    except ValueError: # if row[colPosBP] isn't an integer, skip and go to next line because current line is a header
+                        print("skipping header line: " + str(row))
+                        continue
+                    if float(row[colMAF]) < minMAF or int(row[colNInd]) < minInd:
+                        pass # doesn't meet minimum criteria
+                    else:
+                        # get new chrom
+                        chr2 = int(row[colChr])
+                        # get new recombination position 
+                        pos2 = calcMapPos.calcMapPos(chrom = chr2, pos = posBP2, rmap = rmapALL)
+                        if chr2 == chr1 and (pos2 - pos1) < minL:
+                            if pos1 is not None and pos2 < pos1:
+                                raise ValueError("Positions must be in order on each chromosome! Error at Chr" + str(chr2) + ":" + str(pos2) + " coming before Chr" + str(chr1) + ":" + str(pos1))
                                 pass # if same chromosome and too close, skip SNP
                             else: # include if SNP passes minimum criteria and not too close
                                 writerSNP.writerow(row) # print line (SNP included)
@@ -61,9 +64,6 @@ with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
                                     writerPOS.write(str((pos2 - pos1)/100) + "\n") 
                                 chr1 = chr2 # update current chromosome
                                 pos1 = pos2 # update current position
-                    except ValueError: # if row[colPosBP] isn't an integer, skip and go to next line because current line is a header
-                        print("skipping header line: " + str(row))
-                        continue
 print("Done pruning.")
 
 
