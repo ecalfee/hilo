@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data/
+#SBATCH -D /home/ecalfee/hilo/scripts/
 #SBATCH -J pruneFixcM
 #SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixcM_%j_%A_%a.out
 #SBATCH -t 16:00:00
