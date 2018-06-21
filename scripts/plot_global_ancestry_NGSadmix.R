@@ -69,4 +69,4 @@ het2 <- mean(freqs$anc2 * (1-freqs$anc2))
 # rather than the mean of two equal sized hypothetical pops
 hetTot <- mean(freqs$mean * (1-freqs$mean))
 # differentiation is fairly low between the two identified genetic clusters
-Fst <- (hetTot - mean(het1, het2))/hetTot
+Fst <- (hetTot - mean(het1, het2))/hetTot # [1] 0.03903411
