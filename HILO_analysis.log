@@ -258,9 +258,14 @@ $ split all.positions -d -a 3 -l 250 position_chunks/chunk
 # note: must set ALL variables separated by commas to overrule one variable
 scripts$ sbatch --export=OUT_DIR=geno_lik/pass1/sympatricVar/pruned_chunks,IN_DIR=var_sites/pass1/sympatric/pruned/minN100/position_chunks/,BAM_LIST=pass1_bam.all.list \
 --array=000-184 calcGL4Pruned.sh
-Submitted batch job 21659563
+Submitted batch job 21659878
 
+# put it together into one GL file for NGSadmix
+data/geno_lik/pass1/sympatricVar/pruned_chunks$ zcat chunk_000.beagle.gz | gzip >> ../pruned_all.beagle.gz; \
+for i in {001..184}; do zcat chunk_$i.beagle.gz | tail -n +2 | gzip >> ../pruned_all.beagle.gz; done
 
+# run new SNPs in NGSadmix for K=2,3,4 (modified runNGSadmix.sh to take in variables for IN and OUT files):
+scripts$ sbatch --array=2-4 --export=GL_FILE=geno_lik/pass1/sympatricVar/pruned_all.beagle.gz,OUT_DIR=NGSadmix/pass1/sympatricVar/allInd/ runNGSadmix.sh
 
 # pulling out genotype likelihood data for NGSadmix for just allopatric teosinte and sympatric maize
 # to see how well it differentiates these groups
