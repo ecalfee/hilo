@@ -6,7 +6,7 @@
 #SBATCH -t 24:00:00
 #SBATCH --mem=30G
 #SBATCH -n 4
-#SBATCH --export=OUT_DIR=geno_lik/pass1/pruned_chunks
+#SBATCH --export=OUT_DIR=geno_lik/pass1/pruned_chunks/
 #SBATCH --export=IN_DIR=var_sites/pass1/pruned_positions/positions_
 #SBATCH --export=BAM_LIST=pass1_bam.all.list
 
@@ -20,13 +20,14 @@ set –o nounset
 module load angsd
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p "$OUT_DIR"
+mkdir -p $OUT_DIR
 
 # set variables
 # pad the task id with leading zeros
 printf -v TASK_ID "%03g" $SLURM_ARRAY_TASK_ID
 # necessary becuase slurm array task ID doesn't hold leading zeros
-POS_FILE="$IN_DIR"chunk"$TASK_ID"
+POS_FILE=$IN_DIR"chunk"$TASK_ID
+echo "position file: $POS_FILE"
 
 # apply filtering with SAMtools & PICARD
 echo "finding genotype likelihood using ANGSD on BAMS for hilo pruned SNPs chunk $SLURM_ARRAY_TASK_ID"
