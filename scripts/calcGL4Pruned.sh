@@ -6,7 +6,7 @@
 #SBATCH -t 24:00:00
 #SBATCH --mem=30G
 #SBATCH -n 4
-#SBATCH --export=OUT_DIR=geno_lik/pass1/pruned_chunks/,IN_DIR=var_sites/pass1/pruned_positions/positions_,BAM_LIST=pass1_bam.all.list
+#SBATCH --export=OUT_DIR=geno_lik/pass1/pruned_chunks,IN_DIR=var_sites/pass1/pruned_positions/positions_,BAM_LIST=pass1_bam.all.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
