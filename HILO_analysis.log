@@ -233,5 +233,16 @@ Submitted batch job 20950468
 ~/hilo/scripts$ sbatch --export=MIN_IND=100 pruneFixedcM.sh
 Submitted batch job 20950469
 
+# Thu Jun 21 23:44:06 PDT 2018
+# out-of-order markers in the Ogut 2015 map need to be solved -- started process with clean_ogut_2015_map.R 
+# from Jeff: "Map and/or assembly error; Snp is in correct spot physically but stuck with mapping position 
+# assigned using bad genome" so I will drop all bad SNPs -- note they are clustered (e.g. on chr7 and affect ~3-5% markers)
+# for now will use fixed BP pruning of sites until map issues are solved:
 
+# updated pruneFixedBP.py from pruneFixed.py to take in multiple files and filter for MAF and number of ind's with data
+# running w/ default min. ind. = 75 and separately w/ min. ind. = 100:
+~/hilo/scripts$ sbatch pruneFixedBP.sh
+~/hilo/scripts$ sbatch --export=MIN_IND=100 pruneFixedBP.sh
 
+# pulling out genotype likelihood data for NGSadmix for just allopatric teosinte and sympatric maize
+# to see how well it differentiates these groups
