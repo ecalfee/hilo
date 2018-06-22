@@ -29,7 +29,7 @@ chr1 = None # starting chromosome
 with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
     writerSNP = csv.writer(fileSNP, delimiter = "\t")
     # second output file has recombination position only for all included SNPs
-    with open(fileOut + ".rpos", mode = "w") as writerPOS:
+    with open(fileOut + ".rpos", mode = "w") as writerPOS: # not being used right now..
         # for each input file, find SNPs to include
         for fileIn in listIn:
             with gzip.open(fileIn, mode = "rt") as fileRead:

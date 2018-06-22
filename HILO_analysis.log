@@ -242,7 +242,27 @@ Submitted batch job 20950469
 # updated pruneFixedBP.py from pruneFixed.py to take in multiple files and filter for MAF and number of ind's with data
 # running w/ default min. ind. = 75 and separately w/ min. ind. = 100:
 ~/hilo/scripts$ sbatch pruneFixedBP.sh
+Submitted batch job 21645706
 ~/hilo/scripts$ sbatch --export=MIN_IND=100 pruneFixedBP.sh
+Submitted batch job 21645898
+# both completed within a few minutes, pruning down to ~115k and ~46k
+# I will start analysis with the 46K SNPs here at least 100 individuals have some data/reads
+
+# breaking down 46k snps into chunks for beagle likelihood in angsd
+~/hilo/data/var_sites/pass1/sympatric/pruned/minN100$ mkdir position_chunks
+# combine and unzip; extract relevant columns (there are no headers .. so no need to take tail)
+$ for i in {1..10}; do zcat thin10kb_chr$i.mafs.gz; done | cut -f 1-4 > all.positions
+# split into chunks
+$ split all.positions -d -a 3 -l 250 position_chunks/chunk
+# run ANGSD - modified calcGL4Pruned.sh to take in variables as needed
+scripts$ sbatch --export=OUT_DIR=geno_lik/pass1/sympatricVar/pruned_chunks/ \
+--export=IN_DIR=var_sites/pass1/pass1/sympatric/pruned/minN100/position_chunks/ \
+--array=000-184 --export=BAM_LIST=pass1_bam.included.list calcGL4Pruned.sh
+
+
+#SBATCH --export=BAM_LIST=pass1_bam.all.list
+~/hilo/data/var_sites/pass1/sympatric/pruned/minN100/position_chunks
+
 
 # pulling out genotype likelihood data for NGSadmix for just allopatric teosinte and sympatric maize
 # to see how well it differentiates these groups

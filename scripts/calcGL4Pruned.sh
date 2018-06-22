@@ -6,6 +6,9 @@
 #SBATCH -t 24:00:00
 #SBATCH --mem=30G
 #SBATCH -n 4
+#SBATCH --export=OUT_DIR=geno_lik/pass1/pruned_chunks
+#SBATCH --export=IN_DIR=var_sites/pass1/pruned_positions/positions_
+#SBATCH --export=BAM_LIST=pass1_bam.all.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -17,13 +20,13 @@ set –o nounset
 module load angsd
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p geno_lik/pass1/pruned_chunks/
+mkdir -p "$OUT_DIR"
 
 # set variables
 # pad the task id with leading zeros
 printf -v TASK_ID "%03g" $SLURM_ARRAY_TASK_ID
 # necessary becuase slurm array task ID doesn't hold leading zeros
-POS_FILE=var_sites/pass1/pruned_positions/positions_chunk$TASK_ID
+POS_FILE="$IN_DIR"chunk"$TASK_ID"
 
 # apply filtering with SAMtools & PICARD
 echo "finding genotype likelihood using ANGSD on BAMS for hilo pruned SNPs chunk $SLURM_ARRAY_TASK_ID"
@@ -43,12 +46,12 @@ $POS_FILE | head -n 1)-$(awk -v i="$i" '$1 == i {print $2}' \
 $POS_FILE | tail -n 1) >> $POS_FILE.chr; done
 # (3) calculate genotype likelihoods using samtools algorithm and quality filters
 
-angsd -out geno_lik/pass1/pruned_chunks/chunk_$TASK_ID \
+angsd -out "$OUT_DIR"/chunk_$TASK_ID \
 -doMajorMinor 3 \
 -sites $POS_FILE -rf $POS_FILE.chr \
 -GL 1 -doGlf 2 \
 -minMapQ 30 -minQ 20 \
--bam pass1_bam.all.list \
+-bam $BAM_LIST \
 -remove_bads 1 \
 -P 4
 
