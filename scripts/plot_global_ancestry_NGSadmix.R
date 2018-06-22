@@ -18,20 +18,34 @@ qualUnsorted <- read.table("../data/filtered_bam/pass1.all.Nreads.sorted.csv",
 qualUnsorted$n <- as.numeric(gsub("hilo", "", qualUnsorted$ID))
 qual <- arrange(qualUnsorted, n)
 # histogram of coverage
-hist(qual$est_coverage)
+png('../plots/pass1_hist_coverage_passQC.png', width = 800, height = 600)
+hist(qual$est_coverage, breaks = 20, 
+     main = "pass1 est. coverage post filtering", 
+     xlab = "(# reads pass QC * 150bp) / 2.3Gb")
+abline(v = median(qual$est_coverage), col = "blue")
+abline(v = mean(qual$est_coverage), col = "red")
+dev.off()
+
 # number of individuals with higher coverage
 sum(qual$est_coverage>.1)
 sum(qual$est_coverage>.5)
+
+# add in pass1 ind numbers (matches GL file, skips ind's with no seq data, not in 'qual'):
+qual$pass1_ID <- paste0("Ind", 0:195)
 
 meta <- read.table("../data/HILO_DAN_IDs_modEC.csv", stringsAsFactors = F)
 colnames(meta) <- c("n", "ID", "fam")
 meta <- separate(data = meta, col = fam, sep = "_", c("popN", "plate"), extra = "merge")
 meta$popN <- as.numeric(meta$popN)
+# label maize/mexicana and sympatric/allopatric using population number
+meta$zea <- ifelse(meta$popN >= 100, "maize", "mexicana")
+meta$symp_allo <- ifelse(meta$popN %in% c(20, 22, 33), "allopatric", "sympatric")
 
 # print quality with IDs for all individuals in HILO_DAN_IDs_modEC.csv
-write.table(left_join(meta,
-                      qual[, c("num_read_pass", "est_coverage", "n")],
-                      by = "n"), "../data/HILO_IDs_cov_pass1.csv", 
+info = left_join(meta,
+                 qual[, c("num_read_pass", "est_coverage", "n", "pass1_ID")],
+                 by = "n")
+write.table(info, "../data/HILO_IDs_cov_pass1.csv", 
             quote = F, col.names = T, row.names = F)
 
 # join meta data to list of included IDs
@@ -45,11 +59,123 @@ barplot(t(dPass[ , colnames(admix)]),col=rainbow(K),
         space=0,border=NA,
         xlab="Individuals",
         ylab="admixture")
+# now other subsets of data & SNP options
+
+d1 <- bind_cols(read.table(paste0("../data/NGSadmix/pass1/sympatricVar/allInd/K", 
+                                K, "_pruned_all.qopt")), 
+                info[!is.na(info$est_coverage), ]) %>%
+                arrange(., popN) %>%
+                arrange(., zea) %>%
+                arrange(., symp_allo)
+admix_plot_prefix = "../plots/pass1_ngsadmix_SympVar_"
+barplot(t(d1[ , c("V1", "V2")]),col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+png(paste0(admix_plot_prefix, "alloMex.png"), width = 800, height = 600)
+barplot(t(d1[ d1$symp_allo == "allopatric" & d1$zea == "mexicana", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+png(paste0(admix_plot_prefix, "sympMaize.png"), width = 800, height = 600)
+barplot(t(d1[ d1$symp_allo == "sympatric" & d1$zea == "maize", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+png(paste0(admix_plot_prefix, "sympMex.png"), width = 800, height = 600)
+barplot(t(d1[ d1$symp_allo == "sympatric" & d1$zea == "mexicana", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+
+# d1 subset is just allopatric mexicana and sympatric maize
+infosub <- info[((info$zea == "mexicana" & info$symp_allo == "allopatric") | 
+  (info$zea == "maize" & info$symp_allo == "sympatric")) & 
+  info$est_coverage >= 0.05 & !is.na(info$est_coverage), ]
+d1sub <- bind_cols(read.table(paste0("../data/NGSadmix/pass1/sympatricVar/SympMaizeAlloMex05/K", 
+                                  K, "_pruned_all.qopt")), 
+                infosub) %>%
+                arrange(., popN) %>%
+                arrange(., zea)
+admix_plot_prefix = "../plots/pass1_ngsadmix_SympVar_SympMaizeAlloMex"
+barplot(t(d1sub[ , c("V1", "V2")]),col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+png(paste0(admix_plot_prefix, "alloMex.png"), width = 800, height = 600)
+barplot(t(d1sub[ d1sub$symp_allo == "allopatric" & d1sub$zea == "mexicana", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+png(paste0(admix_plot_prefix, "sympMaize.png"), width = 800, height = 600)
+barplot(t(d1sub[ d1sub$symp_allo == "sympatric" & d1sub$zea == "maize", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+
+
+# using original SNPs but just allopatric teosinte and sympatric maize
+dsub <- bind_cols(read.table(paste0("../data/NGSadmix/pass1/allVar/SympMaizeAlloMex05/K", 
+                                     K, "_pruned_all.qopt")), 
+                   infosub) %>%
+  arrange(., popN) %>%
+  arrange(., zea)
+admix_plot_prefix = "../plots/pass1_ngsadmix_allVar_SympMaizeAlloMex"
+barplot(t(dsub[ , c("V1", "V2")]),col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+png(paste0(admix_plot_prefix, "alloMex.png"), width = 800, height = 600)
+barplot(t(dsub[ dsub$symp_allo == "allopatric" & dsub$zea == "mexicana", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+png(paste0(admix_plot_prefix, "sympMaize.png"), width = 800, height = 600)
+barplot(t(dsub[ dsub$symp_allo == "sympatric" & dsub$zea == "maize", c("V1", "V2")]),
+        col=rainbow(K),
+        space=0,border=NA,
+        xlab="Individuals",
+        ylab="admixture")
+dev.off()
+
+
+
+
 # allopatric populations
-barplot(t(dPass[dPass$popN %in% c(20, 22, 33), colnames(admix)]),col=rainbow(K),
+admix_plot_prefix = "../plots/pass1_ngsadmix_SNPs1_"
+png(paste0(admix_plot_prefix, "alloMex.png"), width = 800, height = 600)
+barplot(t(dPass[dPass$symp_allo == "allopatric", colnames(admix)]),col=rainbow(K),
         space=0,border=NA,
         xlab="Allopatric mexicana ind.'s",
         ylab="admixture")
+dev.off()
+# sympatric maize
+png(paste0(admix_plot_prefix, "sympMaize.png"), width = 800, height = 600)
+barplot(t(dPass[dPass$zea == "maize", colnames(admix)]),col=rainbow(K),
+        space=0,border=NA,
+        xlab="Sympatric maize ind.'s",
+        ylab="admixture")
+dev.off()
+# sympatric mexicana
+png(paste0(admix_plot_prefix, "sympMex.png"), width = 800, height = 600)
+barplot(t(dPass[dPass$zea == "mexicana" & dPass$symp_allo == "sympatric", colnames(admix)]),col=rainbow(K),
+        space=0,border=NA,
+        xlab="Sympatric mexicana ind.'s",
+        ylab="admixture")
+dev.off()
+
 # single pop visualize
 barplot(t(dPass[dPass$popN == 22, colnames(admix)]),col=rainbow(K),
         space=0,border=NA,

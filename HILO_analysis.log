@@ -183,6 +183,7 @@ Mon Jun 11 22:36:54 PDT 2018
 # running with same SNPs for K = 3 & 4
 ~/hilo/scripts$ sbatch --array=3,4 runNGSadmix.sh
 Submitted batch job 20803690
+Submitted batch job 21671940 -- accidentally resubmitted job and re-ran files (completed & should be same output)
 
 # I divide the genome into manageable 50Mb chunks based on .fa.fai reference file [comp. Barbara; scp results to Farm]
 hilo/scripts$ mkdir -p ../data/refMaize/divide_50Mb
@@ -191,6 +192,7 @@ hilo/scripts$ python divRefRegions.py 50000000 ../data/refMaize/Zea_mays.AGPv4.d
 ~/hilo/data/refMaize/divide_50Mb$ for i in {0..46}; do awk -v i=$i 'gsub(":|-", "\t", $0){print $0"\t"i"\t""region_"i".txt"}' region_$i.txt >> ALL_regions.list; done
 
 # new bam lists:
+# data/HILO_IDs_cov_pass1.csv is created in plot_global_ancestry_NGSadmix & saves the # reads that pass filtering + estimated coverage = (# reads * 150bp/read)/2.3Gb as well as meta data on pops and HILO_id as well as IndN for pass1 & GL_beagle_file_ID (skips unaligned ind's)
 # sympatric populations only, and individuals must have bam & est. coverage > 0.05
 hilo/data$ awk '$1 != "n" && $3 != 20 && $3 != 22 && $3 != 33 && $5 != "NA" && $6 > 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.onlySympatric.list
 
@@ -267,5 +269,28 @@ for i in {001..184}; do zcat chunk_$i.beagle.gz | tail -n +2 | gzip >> ../pruned
 # run new SNPs in NGSadmix for K=2,3,4 (modified runNGSadmix.sh to take in variables for IN and OUT files):
 scripts$ sbatch --array=2-4 --export=GL_FILE=geno_lik/pass1/sympatricVar/pruned_all.beagle.gz,OUT_DIR=NGSadmix/pass1/sympatricVar/allInd/ runNGSadmix.sh
 
+Submitted batch job 21672755
+
 # pulling out genotype likelihood data for NGSadmix for just allopatric teosinte and sympatric maize
 # to see how well it differentiates these groups
+# first I get the GL header for all individuals in pass1: ~/hilo/data/pass1_bam.all.GLheader
+# then I use R to extract the column # for individuals I am interested in: findGLColN.R
+# saved in file data/pass1_bam.SympMaizeAlloMex05.GLcolN
+~/hilo/data/geno_lik/pass1/sympatricVar$ zcat pruned_all.beagle.gz | cut -f$(cat ../../../pass1_bam.SympMaizeAlloMex05.GLcolN) | gzip >> pruned_SympMaizeAlloMex05.beagle.gz
+# and re-running in NGSadmix:
+scripts$ sbatch --array=2-4 --export=GL_FILE=geno_lik/pass1/sympatricVar/pruned_SympMaizeAlloMex05.beagle.gz,OUT_DIR=NGSadmix/pass1/sympatricVar/SympMaizeAlloMex05/ runNGSadmix.sh
+Submitted batch job 21673267
+
+# and same for first set of SNPs (globally ascertained including low cov. ind's and allopatric teosinte)
+~/hilo/data/geno_lik/pass1$ zcat pruned_all.beagle.gz | cut -f$(cat ../../pass1_bam.SympMaizeAlloMex05.GLcolN) | gzip >> pruned_SympMaizeAlloMex05.beagle.gz
+scripts$ sbatch --array=2-4 --export=GL_FILE=geno_lik/pass1/pruned_SympMaizeAlloMex05.beagle.gz,OUT_DIR=NGSadmix/pass1/SympMaizeAlloMex05/ runNGSadmix.sh
+Submitted batch job 21673279
+
+# getting a full set of SNPs with MAF > 0.05 freq in all sequenced ind's
+# modified allVarAngsdGL.sh to get a count-based MAF and also output SAMtools style GL file
+scripts$ sbatch allVarAngsdGL.sh
+
+
+
+
+
