@@ -258,6 +258,7 @@ $ split all.positions -d -a 3 -l 250 position_chunks/chunk
 scripts$ sbatch --export=OUT_DIR=geno_lik/pass1/sympatricVar/pruned_chunks/ \
 --export=IN_DIR=var_sites/pass1/sympatric/pruned/minN100/position_chunks/ \
 --array=000-184 calcGL4Pruned.sh
+Submitted batch job 21657964
 
 
 

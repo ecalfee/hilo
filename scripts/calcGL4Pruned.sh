@@ -46,8 +46,9 @@ do echo $i:$(awk -v i="$i" '$1 == i {print $2}' \
 $POS_FILE | head -n 1)-$(awk -v i="$i" '$1 == i {print $2}' \
 $POS_FILE | tail -n 1) >> $POS_FILE.chr; done
 # (3) calculate genotype likelihoods using samtools algorithm and quality filters
+echo "out: "$OUT_DIR"/chunk_"$TASK_ID
 
-angsd -out "$OUT_DIR"/chunk_$TASK_ID \
+angsd -out $OUT_DIR"/chunk_"$TASK_ID \
 -doMajorMinor 3 \
 -sites $POS_FILE -rf $POS_FILE.chr \
 -GL 1 -doGlf 2 \
