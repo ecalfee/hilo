@@ -24,6 +24,8 @@ def calcMapPos(chrom, pos, rmap):
     rate = (right["pos_cM"] - left["pos_cM"]) / (right["pos_bp"] - left["pos_bp"])
     #print("cM/bp rate is " + str(rate)) 
     map_pos = left["pos_cM"] + (pos - left["pos_bp"])*rate
+    if rate <= 0:
+        raise ValueError("Recomb. rate calculated is NOT strictly positive, pos = " + str(pos))
 
     return(map_pos) # returns position in cM (note: may be negative! b/c mapped positions go negative from some previous 0)
         

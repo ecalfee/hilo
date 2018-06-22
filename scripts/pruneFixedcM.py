@@ -56,7 +56,7 @@ with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
                         #print("at SNP " + str(chr2)+ ":" + str(pos2) + "cM") 
                         if chr2 == chr1 and (pos2 - pos1) < minL: # if same chromosome and too close, skip SNP
                             if pos1 is not None and pos2 < pos1:
-                                raise ValueError("Positions must be in order on each chromosome! Error at Chr" + str(chr1) + ":" + str(pos1) + " coming before Chr" + str(chr2) + ":" + str(pos2) + " at bp-position " + str(posBP2) + " file " + fileIn)
+                                raise ValueError("Positions must be in order on each chromosome! Error at Chr" + str(chr2) + ":" + str(pos2) + "at bp-position " + str(postBP2) + " should not come after Chr" + str(chr1) + ":" + str(pos1) + " at bp-position " + str(posBP1) + " file " + fileIn)
                             pass 
                         else: # include if on diff chrom or not too close
                             writerSNP.writerow(row) # print line (SNP included)
@@ -65,7 +65,8 @@ with gzip.open(fileOut + ".gz", mode = "wt") as fileSNP:
                             else: # print difference in Morgans
                                 writerPOS.write(str((pos2 - pos1)/100) + "\n") 
                             chr1 = chr2 # update current chromosome
-                            pos1 = pos2 # update current position
+                            pos1 = pos2 # update current position (cM)
+                            posBP1 = posBP2 # update current bp position
 print("Done pruning by fixed cM distance.")
 
 
