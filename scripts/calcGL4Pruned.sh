@@ -20,7 +20,7 @@ set –o nounset
 module load angsd
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p $OUT_DIR
+mkdir -p "$OUT_DIR"
 
 # set variables
 # pad the task id with leading zeros
@@ -28,6 +28,7 @@ printf -v TASK_ID "%03g" $SLURM_ARRAY_TASK_ID
 # necessary becuase slurm array task ID doesn't hold leading zeros
 POS_FILE=$IN_DIR"chunk"$TASK_ID
 echo "position file: $POS_FILE"
+echo "out directory: $OUT_DIR"
 
 # apply filtering with SAMtools & PICARD
 echo "finding genotype likelihood using ANGSD on BAMS for hilo pruned SNPs chunk $SLURM_ARRAY_TASK_ID"
@@ -46,9 +47,9 @@ do echo $i:$(awk -v i="$i" '$1 == i {print $2}' \
 $POS_FILE | head -n 1)-$(awk -v i="$i" '$1 == i {print $2}' \
 $POS_FILE | tail -n 1) >> $POS_FILE.chr; done
 # (3) calculate genotype likelihoods using samtools algorithm and quality filters
-echo "out: "$OUT_DIR"/chunk_"$TASK_ID
+echo "out: $OUT_DIR/chunk_$TASK_ID"
 
-angsd -out $OUT_DIR"/chunk_"$TASK_ID \
+angsd -out "$OUT_DIR/chunk_$TASK_ID" \
 -doMajorMinor 3 \
 -sites $POS_FILE -rf $POS_FILE.chr \
 -GL 1 -doGlf 2 \
