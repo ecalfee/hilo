@@ -289,7 +289,29 @@ Submitted batch job 21673279
 # getting a full set of SNPs with MAF > 0.05 freq in all sequenced ind's
 # modified allVarAngsdGL.sh to get a count-based MAF and also output SAMtools style GL file
 scripts$ sbatch allVarAngsdGL.sh
+Submitted batch job 21690039
 
+# I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
+
+# Now I am working on getting a PCA using PCAngsd. This is better than NGStools PCA option because NGStools puts a prior on one population allele frequency -- so low coverage individuals end up near the center, whereas PCAngsd uses individually estimated allele frequencies (somehow without assuming they are indep.).
+
+# I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
+# to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
+# each meta population (no filtering for coverage except skipping files with no alignment in pass1)
+~/hilo/data$ awk '$5 == "maize" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/maize.symp.list
+~/hilo/data$ awk '$5 == "mexicana" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.symp.list
+~/hilo/data$ awk '$5 == "mexicana" && $6 == "allopatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.allo.list
+# give these numerical copies for ease:
+~/hilo/data/pass1_bam_pops$ cp maize.symp.list pop1000.list
+~/hilo/data/pass1_bam_pops$ cp mexicana.symp.list pop2000.list
+~/hilo/data/pass1_bam_pops$ cp mexicana.allo.list pop3000.list
+# each individual population
+~/hilo/data$ for i in $(awk '$1 != "n" && $7 != "NA" {print $3}' HILO_IDs_cov_pass1.csv | sort | uniq); do awk -v i=$i '$3 == i && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/pop$i.list; done
+
+# all steps to SFS are listed here: http://www.popgen.dk/angsd/index.php/Fst
+# should use many cores for step 2 and need to download realSFS software
+# step 1: calculate individual site allele frequencies for each pop
+scripts$ sbatch calcSAFAngsd.sh
 
 
 
