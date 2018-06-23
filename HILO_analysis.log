@@ -312,6 +312,7 @@ Submitted batch job 21690039
 # should use many cores for step 2 and need to download realSFS software
 # step 1: calculate individual site allele frequencies for each pop
 scripts$ sbatch calcSAFAngsd.sh
+Submitted batch job 21693057
 
 
 

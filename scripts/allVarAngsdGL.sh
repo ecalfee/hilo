@@ -25,7 +25,7 @@ echo "calling variants and GL using ANGSD on BAMS for hilo CHR$SLURM_ARRAY_TASK_
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
-angsd -out geno_like/pass1/allVar/region_$SLURM_ARRAY_TASK_ID \
+angsd -out geno_lik/pass1/allVar/region_$SLURM_ARRAY_TASK_ID \
 -r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
