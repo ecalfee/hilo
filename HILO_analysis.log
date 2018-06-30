@@ -290,10 +290,21 @@ Submitted batch job 21673279
 # modified allVarAngsdGL.sh to get a count-based MAF and also output SAMtools style GL file
 scripts$ sbatch allVarAngsdGL.sh
 Submitted batch job 21690039
+# some failed due to time-out at 36 hours (re-doing):
+scripts$ sbatch --array=0,21,26,31,37 --mem=20G -t 108:00:00 allVarAngsdGL.sh
+Submitted batch job 22351904
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
 
 # Now I am working on getting a PCA using PCAngsd. This is better than NGStools PCA option because NGStools puts a prior on one population allele frequency -- so low coverage individuals end up near the center, whereas PCAngsd uses individually estimated allele frequencies (somehow without assuming they are indep.).
+# to install python2.7 dependencies, I set up a python virtual environment for python 2.7.14 on my user on farm:
+~/hilo$ module load python
+~/hilo$ virtualenv --no-site-packages venv
+# the --no-site-packages option is necessary to avoid conflicts between global packages and the ones in my venv
+# activate virtual environment (need to add to top of any of my code now using this venv)
+~/hilo$ source venv/bin/activate
+~/bin/pcangsd$ pip install numpy Cython
+~/bin/pcangsd$ pip install -r python_packages.txt
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
@@ -309,10 +320,17 @@ Submitted batch job 21690039
 ~/hilo/data$ for i in $(awk '$1 != "n" && $7 != "NA" {print $3}' HILO_IDs_cov_pass1.csv | sort | uniq); do awk -v i=$i '$3 == i && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/pop$i.list; done
 
 # all steps to SFS are listed here: http://www.popgen.dk/angsd/index.php/Fst
-# should use many cores for step 2 and need to download realSFS software
+# should use many cores for step 2 and need to download realSFS software (actually it's part of ANGSD version already on farm)
+
 # step 1: calculate individual site allele frequencies for each pop
 scripts$ sbatch calcSAFAngsd.sh
+Submitted batch job 21693057
+# re-doing the 2 that didn't finish (time out cancellation):
+scripts$ sbatch --mem=20G --array=1000,2000 -t 108:00:00 calcSAFAngsd.sh
+Submitted batch job 22356436
 
+# step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
+s.t. like hilo$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then echo $i $j; fi; done; done
 
 
 
