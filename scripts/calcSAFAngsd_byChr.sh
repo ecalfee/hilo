@@ -22,13 +22,13 @@ set –o nounset
 # angsd --version
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p SFS/pass1/pop$POP
+mkdir -p SAF/pass1/pop$POP
 
-echo "finding allele frequencies for pop$POP, chr$SLURM_ARRAY_TASK_ID"
+echo "finding allele frequencies for pop"$POP", chr"$SLURM_ARRAY_TASK_ID
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) Use all sites to estimate site allele frequency
-angsd -out SFS/pass1/pop$POP/chr$SLURM_ARRAY_TASK_ID \
+angsd -out SAF/pass1/pop$POP/chr$SLURM_ARRAY_TASK_ID \
 -anc /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -fold 1 \
 -r $SLURM_ARRAY_TASK_ID \
 -bam pass1_bam_pops/pop$POP.list \
