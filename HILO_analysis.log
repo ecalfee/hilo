@@ -14,8 +14,8 @@ Change the chromosome labels to something simpler, chr1, chr2 etc.
 ~/Software/bwa.kit/bwa index AGPv4/AGPv4_simple.fasta
 
 Align one set of paired-end raw reads:
-~/Software/bwa.kit/bwa mem AGPv4/AGPv4.fasta 
-HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_1.fq.gz 
+~/Software/bwa.kit/bwa mem AGPv4/AGPv4.fasta
+HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_1.fq.gz
 HILO_data/raw_data/HILO1/HILO1_USPD16082576-K2560_H3HFWCCXY_L7_2.fq.gz
  | gzip -3 > HILO_01.sam.gz
 
@@ -36,28 +36,28 @@ hilo/scripts$ sbatch --array=1-2 filterBam.sh
 completed: 19908139_1  19908138_2
 
 ran filtering on all of the as of yet aligned individuals from HILO
-hilo/scripts$ sbatch --array=3-40,100-179 filterBam.sh 
+hilo/scripts$ sbatch --array=3-40,100-179 filterBam.sh
 
 I can't really tell why some jobs failed and at what stage. I am running just 40 tasks now with more allocated time (4hrs not 1hr)
 hilo/scripts$ sbatch --array=1-40 filterBam.sh
 
 # basically nothing ran properly, even files stating 'complete'
-# I have requested to avoid bigmemm2 (permissions error) and only use nodes with at least 30G available temporary disk space for scratch 
+# I have requested to avoid bigmemm2 (permissions error) and only use nodes with at least 30G available temporary disk space for scratch
 # and in addition I put in exit 3 and exit 4 flags to stop execution if it fails to make temp folders
 hilo/scripts$ sbatch --array=1-40 filterBam.sh
 
 # got permissions on bigmem2 and changed script to exclude bigmem1 (lack of memory)
 # re-running just a short sample set before the complete aligment set is ready
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 filterBam.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 filterBam.sh
 Submitted batch job 19970756
 # this had an end of script/file error, that I fixed and re-ran
 # deleting intermediate scratch files first
 ecalfee@farm:~/hilo/scripts$ ssh bigmem10 'rm -r /scratch/ecalfee'
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 filterBam.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 filterBam.sh
 Submitted batch job 19970894
 
 # running 11-30; only change to script is when the scratch folder is deleted
-ecalfee@farm:~/hilo/scripts$ sbatch --array=11-40 filterBam.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=11-40 filterBam.sh
 Submitted batch job 19971006
 
 # running the rest of the files up to ind. 200 except for the following exclusions:
@@ -80,7 +80,7 @@ Submitted batch job 20107852
 
 # Tue May 29 15:26:50 PDT 2018
 # all jobs except those excluded finished (ie. 41-43, 80).
-# run angsd to find variable sites within all individuals > 0.1 MAF 
+# run angsd to find variable sites within all individuals > 0.1 MAF
 # short test run (in srun):
 ecalfee@bigmem10:~/hilo/data$ angsd -GL 1 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
 -baq 1 -minMapQ 30 -minQ 20 -doMaf 2 -doGlf 2 -minMaf 0.1 -doMajorMinor 4 -bam TEST/testBAM.list \
@@ -88,7 +88,7 @@ ecalfee@bigmem10:~/hilo/data$ angsd -GL 1 -ref /group/jrigrp/Share/assemblies/Ze
 
 # indexed BAMS so they could be used
 ecalfee@bigmem10:~/hilo/data/filtered_bam$ module load samtools
-Module samtools/1.3.1 loaded 
+Module samtools/1.3.1 loaded
 ecalfee@bigmem10:~/hilo/data/filtered_bam$ for i in {3..40} {44..79} {81..200}; do samtools index hilo_$i.sort.dedup.bam; done
 
 # now pre-calculating BAQ to speed up GL in angsd and to use again when counting reads
@@ -108,18 +108,18 @@ data$ for i in {1..40} {44..79} {81..200}; do echo filtered_bam/hilo_$i.sort.ded
 awk -v i="$i" '{print "hilo"i" "$0}' | grep 'total' >> pass1.all.metrics.Nreads; done
 
 # finding variable sites with ANGSD, each of 10 chrom at a time (4 nodes requested per chrom):
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20182952
 Wed May 30 09:16:56 PDT 2018
 # -CANCELLED (problems = low memory and wrong individuals .. doubled)
 # fixed and re-running 15:53 pm:
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20203873
 # -CANCELLED. Talked to Jeff and decided to only look for SNPs > 0.5 freq using a non-HW based method
 # I will do something different to find SNPs for local ancestry inference, but this doesn't use the reference
 # and only counts reads supporting the two most common bases, after quality filters
 # NOTE: this wouldn't find a fixed difference between maize 282 and the current sample
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20245129
 # Problem was a file-dumping error because I had in a check from SNP_pval; resolved by removing that part
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
@@ -132,10 +132,10 @@ Submitted batch job 20280102
 ecalfee@farm:~/hilo/scripts$ date
 Thu May 31 10:38:49 PDT 2018
 # only chr1 failed (largest). I reduced requested memory to get it back on queue
-ecalfee@farm:~/hilo/scripts$ sbatch --array=1 callVarAngsd.sh 
+ecalfee@farm:~/hilo/scripts$ sbatch --array=1 callVarAngsd.sh
 Submitted batch job 20419175
 # chr1 failed again for too much memory, so I split it into 10 chunks:
-hilo/scripts$ sbatch --array=0-9 callVarAngsd_split_chr1.sh 
+hilo/scripts$ sbatch --array=0-9 callVarAngsd_split_chr1.sh
 Submitted batch job 20591724
 Mon Jun  4 14:38:49 PDT 2018
 # where now 0-9 above indicate the indeces of each chunk ~30000 kbp long
@@ -152,18 +152,18 @@ ecalfee@farm:~/hilo/scripts$ sbatch --array=1-9 pruneFixed.sh
 Submitted batch job 20420257
 ~/hilo/scripts$ sbatch --array=1,10 pruneFixed.sh
 Submitted batch job 20603410
-# After pruning, I combine across all chromosomes and remove all header (and unzip/decompress); 
-# this leaves ~170k SNPs. 
+# After pruning, I combine across all chromosomes and remove all header (and unzip/decompress);
+# this leaves ~170k SNPs.
 ~hilo/data/var_sites/pass1$ mkdir pruned_positions
 ~/hilo/data/var_sites/pass1$ for i in {1..10}; do zcat chr$i.pruned.mafs.gz | tail -n +2 | cut -f 1-4 >> pruned_positions/all.positions; done
 # then I divide into chunks, each containing 250 SNPs, for parallel analysis in ANGSD
 ~/hilo/data/var_sites/pass1/pruned_positions$ split all.positions -d -a 3 -l 250 positions_chunk
 
-# next find samtools genotype likelihood for those sites across all individuals. 
-# made (very!) small test file first - 2 positions 
+# next find samtools genotype likelihood for those sites across all individuals.
+# made (very!) small test file first - 2 positions
 ~/hilo/data/var_sites/pass1/pruned_positions$ head positions_chunk000 -n 2 > positions_chunk999
 # ran test file on slurm
-~/hilo/scripts$ sbatch --array=999 -t 1:00:00 calcGL4Pruned.sh 
+~/hilo/scripts$ sbatch --array=999 -t 1:00:00 calcGL4Pruned.sh
 Submitted batch job 20652316
 
 # now running all 677 chunks
@@ -203,7 +203,7 @@ hilo/data$ awk '$1 != "n" && ($3 == 20 || $3 == 22 || $3 == 33) && $5 != "NA" {p
 hilo/data$ awk '$1 != "n" && ($5 == "NA" || ($3 != 20 && $3 != 22 && $3 != 33 && $6 <= 0.05)) {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam.excluded.list
 
 # now finding new set of variant sites using ANGSD for only sympatric individuals (all)
-~/hilo/scripts$ sbatch --array=0-46 callVarAngsdSymp.sh 
+~/hilo/scripts$ sbatch --array=0-46 callVarAngsdSymp.sh
 Submitted batch job 20811827
 # everything ran but region_0 doesn't appear to be properly gipped and can't be opened
 # so I am re-running just that region (problem was I wrote over just this file accidentally with test run of callVarAngsdAllo.sh)
@@ -213,7 +213,7 @@ Submitted batch job 20816879
 # when I filter for low LD I can try different filters for nInd and MAF (more stringent)
 # to maximize information across individuals for the LD
 
-# now need to find all variant sites between reference and allopatric teosinte at >=30% freq. 
+# now need to find all variant sites between reference and allopatric teosinte at >=30% freq.
 # Then find all variant sites between reference and allopatric maize at >=30% freq .. put them together and exclude sites with less than a cutoff # individuals and allele frequency difference between mexicana & maize of 40%
 # not quite working -- look at slurm log
 ~/hilo/scripts$ sbatch --array=0 callVarAngsdAllo.sh
@@ -226,7 +226,7 @@ pruneFixedcM.py
 # running with two diff. thresholds for minimum # individuals, 75 and 100: (loads module anaconda3 for use of pandas)
 ~/hilo/scripts$ sbatch pruneFixedcM.sh
 Submitted batch job 20930024
-# did not work -- fixed error and added a way to set minInd as an evironmental variable and run each chromosome separately 
+# did not work -- fixed error and added a way to set minInd as an evironmental variable and run each chromosome separately
 # (can't break up further b/c of min cM across regions w/in chromosomes)
 # running with default MIN_IND=75
 scripts$ sbatch pruneFixedcM.sh
@@ -236,8 +236,8 @@ Submitted batch job 20950468
 Submitted batch job 20950469
 
 # Thu Jun 21 23:44:06 PDT 2018
-# out-of-order markers in the Ogut 2015 map need to be solved -- started process with clean_ogut_2015_map.R 
-# from Jeff: "Map and/or assembly error; Snp is in correct spot physically but stuck with mapping position 
+# out-of-order markers in the Ogut 2015 map need to be solved -- started process with clean_ogut_2015_map.R
+# from Jeff: "Map and/or assembly error; Snp is in correct spot physically but stuck with mapping position
 # assigned using bad genome" so I will drop all bad SNPs -- note they are clustered (e.g. on chr7 and affect ~3-5% markers)
 # for now will use fixed BP pruning of sites until map issues are solved:
 
@@ -293,6 +293,9 @@ Submitted batch job 21690039
 # some failed due to time-out at 36 hours (re-doing):
 scripts$ sbatch --array=0,21,26,31,37 --mem=20G -t 108:00:00 allVarAngsdGL.sh
 Submitted batch job 22351904
+# region 0 failed due to insufficient memory at t = 12hrs; all others completed (not sure why they now took < 36hrs)
+scripts$ sbatch --array=0 --mem=40G -t 96:00:00 allVarAngsdGL.sh
+Submitted batch job 22502000
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
 
@@ -328,9 +331,27 @@ Submitted batch job 21693057
 # re-doing the 2 that didn't finish (time out cancellation):
 scripts$ sbatch --mem=20G --array=1000,2000 -t 108:00:00 calcSAFAngsd.sh
 Submitted batch job 22356436
+# for groups of populations (allopatric, sympatric, maize, mexicana) re-doing SAF split by chromosome:
 
 # step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
 s.t. like hilo$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then echo $i $j; fi; done; done
-
-
-
+# problem: getting the following error: (***NEED TO UPDATE ANGSD***AND REDO SAF FILES***)
+realSFS print TEST/pop31.pop22.old.fst.gz
+	-> Version of fname:TEST/pop31.pop22.old.fst.gz is:0
+	-> Looks like you are trying to use a version of realSFS that is incompatible with the old binary output from ANGSD
+	-> Please use realSFS.old instead (or consider redoing the saf files )
+	-> Will exit
+  # updating ANGSD on farm:
+  ecalfee@bigmem2:~/bin$ module load zlib
+  Module zlib/1.2.8 loaded
+  ecalfee@bigmem2:~/bin$ module load htslib
+  Module htslib/1.3.2 loaded
+  # download newest angsd official release and accompanying htslib:
+  ~/bin$ wget http://popgen.dk/software/download/angsd/angsd0.920.tar.gz
+  # unzip
+  ~/bin$ tar xf angsd0.920.tar.gz
+  # install htslib
+  ~/software/htslib$ make install prefix=../bin
+  # install angsd using link to my local htslib directory
+  ~/software/angsd$ make HTSSRC=../htslib/
+  # moved exec. file software/angsd/angsd to bin/ and software/angsd/misc/realSFS to bin/ too and v1.6 of tabix and htsfile too
