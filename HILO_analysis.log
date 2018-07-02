@@ -297,8 +297,17 @@ Submitted batch job 22351904
 scripts$ sbatch --array=0 --mem=40G -t 96:00:00 allVarAngsdGL.sh
 Submitted batch job 22502000
 # now completed in 9 hrs
+# concatenating all beagle gz files together for one genome-wide GL file: 
+# takes too long to do interactively:
+sbatch catBeagleGL.sh
+# taking just every 100th position/line:
+sbatch catBeagleGL_nth.sh
+
+
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
+
+
 
 # Now I am working on getting a PCA using PCAngsd. This is better than NGStools PCA option because NGStools puts a prior on one population allele frequency -- so low coverage individuals end up near the center, whereas PCAngsd uses individually estimated allele frequencies (somehow without assuming they are indep.).
 # to install python2.7 dependencies, I set up a python virtual environment for python 2.7.14 on my user on farm:
@@ -307,8 +316,36 @@ Submitted batch job 22502000
 # the --no-site-packages option is necessary to avoid conflicts between global packages and the ones in my venv
 # activate virtual environment (need to add to top of any of my code now using this venv)
 ~/hilo$ source venv/bin/activate
-~/bin/pcangsd$ pip install numpy Cython
+~/bin/pcangsd$ pip install numpy Cython enum
 ~/bin/pcangsd$ pip install -r python_packages.txt
+# problem installing numba due to llvm:
+RuntimeError: llvm-config failed executing, please point LLVM_CONFIG to the path for llvm-config
+# install llvm:
+wget http://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+~/software$ tar xf clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+(venv) ecalfee@bigmem2:~/hilo$ export LLVM_CONFIG=/home/ecalfee/software/clang+llvm-6.0.0-x86_64-linux-gnu-ubuntu-16.04/bin/llvm-config
+# based on online forum
+~/hilo$ pip install funcsigs
+# NONE OF THIS WORKED -- likely clang vs. gcc compiler issues (!)
+# alternative route -- I've installed anaconda2
+# to use, first set path to anaconda2 files:
+export PATH=/home/ecalfee/software/anaconda2/bin:$PATH
+# this time only, I create a new conda environment:
+~/hilo$ conda create -y -n condaEnv
+# every time, I need to activate the condaEnv:
+~/hilo$ source activate condaEnv
+# to this environment, I install llvmlite
+(condaEnv) ecalfee@c8-62:~/hilo$ conda install -y llvmlite
+# when I open python2, I can import all the pcangsd dependencies: numpy, scipy, pandas, numba
+# so they appear to be pre-installed
+# this example file now runs -- great!
+(condaEnv) ecalfee@c8-62:~/hilo/data/TEST$ python2 ~/bin/pcangsd/pcangsd.py -beagle testANGSD.beagle.gz -threads 1 -iter 100 -o TESTpcangsd
+
+# running PCA on set of pruned SNPs
+scripts$ sbatch #SBATCH --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh 
+
+# will also run PCA on data for all hilo individuals, at all SNPs in 'allVar'
+scripts$ sbatch runPCAngsd.sh
 
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
