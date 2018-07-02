@@ -296,6 +296,7 @@ Submitted batch job 22351904
 # region 0 failed due to insufficient memory at t = 12hrs; all others completed (not sure why they now took < 36hrs)
 scripts$ sbatch --array=0 --mem=40G -t 96:00:00 allVarAngsdGL.sh
 Submitted batch job 22502000
+# now completed in 9 hrs
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
 
@@ -308,6 +309,7 @@ Submitted batch job 22502000
 ~/hilo$ source venv/bin/activate
 ~/bin/pcangsd$ pip install numpy Cython
 ~/bin/pcangsd$ pip install -r python_packages.txt
+
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
@@ -330,12 +332,23 @@ scripts$ sbatch calcSAFAngsd.sh
 Submitted batch job 21693057
 # re-doing the 2 that didn't finish (time out cancellation):
 scripts$ sbatch --mem=20G --array=1000,2000 -t 108:00:00 calcSAFAngsd.sh
-Submitted batch job 22356436
-# for groups of populations (allopatric, sympatric, maize, mexicana) re-doing SAF split by chromosome:
+Submitted batch job 22356436 -- will not finish (way too long)
+# also an error with angsd -- too low a version, so I updated (see error & update log below)
+# re-doing SAF split by chromosome:
+# first for groups of pops, needs lots of memory and time:
+~/hilo/scripts$ for i in 1000 2000 3000; do sbatch --export=POP=$i calcSAFAngsd_byChr.sh; done
+Submitted batch job 22625518
+Submitted batch job 22625519
+Submitted batch job 22625520
+# then for all individual pops, requires less memory. First put popN in a list:
+~/hilo/scripts$ for i in {18..31} {33..35} {360..363} {365..374}; do echo $i >> ../data/pass1_bam_pops/all_pops.numbers; done
+~/hilo/scripts$ for i in $(cat ../data/pass1_bam_pops/all_pops.numbers); do sbatch --mem=15G -t 24:00:00 --export=POP=$i calcSAFAngsd_byChr.sh; done
+Submitted batch job 22628540-22628570
+
 
 # step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
 s.t. like hilo$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then echo $i $j; fi; done; done
-# problem: getting the following error: (***NEED TO UPDATE ANGSD***AND REDO SAF FILES***)
+# problem: getting the following error:
 realSFS print TEST/pop31.pop22.old.fst.gz
 	-> Version of fname:TEST/pop31.pop22.old.fst.gz is:0
 	-> Looks like you are trying to use a version of realSFS that is incompatible with the old binary output from ANGSD
