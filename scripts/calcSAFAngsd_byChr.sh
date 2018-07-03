@@ -4,8 +4,8 @@
 #SBATCH -J SAFByChr
 #SBATCH -o /home/ecalfee/hilo/slurm-log/SAFByChr_%j_%A_%a.out
 #SBATCH -t 64:00:00
-#SBATCH --mem=25G
-#SBATCH -n 3
+#SBATCH --mem=4G
+#SBATCH -n 6
 #SBATCH --array=1-10
 
 # POP variable needs to be set when calling the script
@@ -34,7 +34,7 @@ angsd -out SAF/pass1/pop$POP/chr$SLURM_ARRAY_TASK_ID \
 -bam pass1_bam_pops/pop$POP.list \
 -remove_bads 1 -minMapQ 30 \
 -GL 1 -dosaf 1 \
--P 3
+-P 6
 echo "done with SAF"
 
 # settings:
