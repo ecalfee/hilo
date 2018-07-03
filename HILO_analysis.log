@@ -352,9 +352,15 @@ export PATH=/home/ecalfee/software/anaconda2/bin:$PATH
 # running PCA on set of pruned SNPs
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh 
 Submitted batch job 22757232
+# added -admix option and re-did:
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all --mem=1G -t 3:00:00 runPCAngsd.sh
+Submitted batch job 22758865
 # and running PCA on set of pruned SNPs that vary within sympatric populations maize/teosinte
 ~/hilo/scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/sympatricVar/pruned_all runPCAngsd.sh
 Submitted batch job 22757408
+# added -admix option and re-did:
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/sympatricVar/pruned_all --mem=1G -t 3:00:00 runPCAngsd.sh
+Submitted batch job 22758855
 # will also run PCA on data for all hilo individuals, at all SNPs in 'allVar'
 scripts$ sbatch runPCAngsd.sh (TO DO)
 
