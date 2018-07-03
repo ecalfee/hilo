@@ -22,6 +22,9 @@ source activate condaEnv
 
 # run PCAngsd
 # assumes GL data is already filtered for a minimum MAF; doesn't re-filter
-python2 ../bin/pcangsd/pcangsd.py -beagle $GL_PREFIX.beagle.gz -threads 10 -iter 100 -minMaf 0 -o $GL_PREFIX
+python2 ../bin/pcangsd/pcangsd.py -beagle $GL_PREFIX.beagle.gz -threads 10 -iter 100 -minMaf 0 -admix -o $GL_PREFIX
+
+# -admix option calculates admixture proportions in addition to genotype covariance matrix for PCA
+# -iter specifies number of EM steps
 
 echo "done running PCAngsd"
