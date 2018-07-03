@@ -310,6 +310,7 @@ Submitted batch job 22757239
 # first I see if there are large differences in % reads that do not map
 # I create a script to count the reads that align (map at all), do not map, pass mapQ >=30 and pass de-duplication
 scripts$ sbatch countReadsFiltered.sh
+Submitted batch job 22758110
 # saves output in text file, e.g. countReads/hilo_40.counts
 
 # I can also zoom in and look at individuals' depth across specific regions:
