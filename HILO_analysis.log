@@ -299,14 +299,21 @@ Submitted batch job 22502000
 # now completed in 9 hrs
 # concatenating all beagle gz files together for one genome-wide GL file: 
 # takes too long to do interactively:
-sbatch catBeagleGL.sh
+scripts$ sbatch catBeagleGL.sh
+Submitted batch job 22757237
 # taking just every 100th position/line:
-sbatch catBeagleGL_nth.sh
-
+scripts$ sbatch catBeagleGL_nth.sh
+Submitted batch job 22757239
 
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
+# first I see if there are large differences in % reads that do not map
+# I create a script to count the reads that align (map at all), do not map, pass mapQ >=30 and pass de-duplication
+scripts$ sbatch countReadsFiltered.sh
+# saves output in text file, e.g. countReads/hilo_40.counts
 
+# I can also zoom in and look at individuals' depth across specific regions:
+~/hilo/data/filtered_bam$ samtools depth -r 1:400-500 hilo_18.sort.dedup.bam hilo_19.sort.dedup.bam
 
 
 # Now I am working on getting a PCA using PCAngsd. This is better than NGStools PCA option because NGStools puts a prior on one population allele frequency -- so low coverage individuals end up near the center, whereas PCAngsd uses individually estimated allele frequencies (somehow without assuming they are indep.).
@@ -342,10 +349,13 @@ export PATH=/home/ecalfee/software/anaconda2/bin:$PATH
 (condaEnv) ecalfee@c8-62:~/hilo/data/TEST$ python2 ~/bin/pcangsd/pcangsd.py -beagle testANGSD.beagle.gz -threads 1 -iter 100 -o TESTpcangsd
 
 # running PCA on set of pruned SNPs
-scripts$ sbatch #SBATCH --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh 
-
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh 
+Submitted batch job 22757232
+# and running PCA on set of pruned SNPs that vary within sympatric populations maize/teosinte
+~/hilo/scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/sympatricVar/pruned_all runPCAngsd.sh
+Submitted batch job 22757408
 # will also run PCA on data for all hilo individuals, at all SNPs in 'allVar'
-scripts$ sbatch runPCAngsd.sh
+scripts$ sbatch runPCAngsd.sh (TO DO)
 
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
