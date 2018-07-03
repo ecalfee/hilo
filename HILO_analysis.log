@@ -297,7 +297,7 @@ Submitted batch job 22351904
 scripts$ sbatch --array=0 --mem=40G -t 96:00:00 allVarAngsdGL.sh
 Submitted batch job 22502000
 # now completed in 9 hrs
-# concatenating all beagle gz files together for one genome-wide GL file: 
+# concatenating all beagle gz files together for one genome-wide GL file:
 # takes too long to do interactively:
 scripts$ sbatch catBeagleGL.sh
 Submitted batch job 22757237
@@ -350,7 +350,7 @@ export PATH=/home/ecalfee/software/anaconda2/bin:$PATH
 (condaEnv) ecalfee@c8-62:~/hilo/data/TEST$ python2 ~/bin/pcangsd/pcangsd.py -beagle testANGSD.beagle.gz -threads 1 -iter 100 -o TESTpcangsd
 
 # running PCA on set of pruned SNPs
-scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh 
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all runPCAngsd.sh
 Submitted batch job 22757232
 # added -admix option and re-did:
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/pruned_all --mem=1G -t 3:00:00 runPCAngsd.sh
@@ -362,8 +362,11 @@ Submitted batch job 22757408
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/sympatricVar/pruned_all --mem=1G -t 3:00:00 runPCAngsd.sh
 Submitted batch job 22758855
 # will also run PCA on data for all hilo individuals, at all SNPs in 'allVar'
-scripts$ sbatch runPCAngsd.sh (TO DO)
-
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome --mem=2G -t 96:00:00 runPCAngsd.sh
+Submitted batch job 22762726
+# subset of all SNPs in 'allVar'
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome_pruned_by100 --mem=1G -t 36:00:00 runPCAngsd.sh
+Submitted batch job 22762723
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
