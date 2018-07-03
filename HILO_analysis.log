@@ -401,6 +401,14 @@ Submitted batch job 22625520
 ~/hilo/scripts$ for i in {18..31} {33..35} {360..363} {365..374}; do echo $i >> ../data/pass1_bam_pops/all_pops.numbers; done
 ~/hilo/scripts$ for i in $(cat ../data/pass1_bam_pops/all_pops.numbers); do sbatch --mem=15G -t 24:00:00 --export=POP=$i calcSAFAngsd_byChr.sh; done
 Submitted batch job 22628540-22628570
+# re-submitting 11 jobs that ran out of time (modified script for more threads; less memory per thread):
+sbatch --export=POP=22 --array=1 calcSAFAngsd_byChr.sh
+Submitted batch job 22764908
+sbatch --export=POP=20 --array=1-10 calcSAFAngsd_byChr.sh
+Submitted batch job 22764942
+
+# concatenate results by chromosome back together (skipping pops 20, 22 and larger groups for now):
+scripts$ sbatch --array=18-19,23-31,33-35,360-363,365-374 catSAFAngsd.sh
 
 
 # step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
