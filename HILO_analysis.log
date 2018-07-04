@@ -422,6 +422,11 @@ Submitted batch job 22764942
 # concatenate results by chromosome back together (skipping pops 20, 22 and larger groups for now):
 scripts$ sbatch --array=18-19,23-31,33-35,360-363,365-374 catSAFAngsd.sh
 Submitted batch job 22765120
+# fixed typo with --outname vs -outname & reran:
+scripts$ sbatch --array=18-19,23-31,33-35,360-363,365-374 catSAFAngsd.sh
+Submitted batch job 22800872 -- DIDN'T WORK. fixed true typo -outnames vs. -outnames & order & reran:
+scripts$ sbatch --array=18-19,23-31,33-35,360-363,365-374 catSAFAngsd.s
+Submitted batch job 22801018
 
 # step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
 s.t. like hilo$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then echo $i $j; fi; done; done
@@ -447,6 +452,20 @@ realSFS print TEST/pop31.pop22.old.fst.gz
   # moved exec. file software/angsd/angsd to bin/ and software/angsd/misc/realSFS to bin/ too and v1.6 of tabix and htsfile too
 # to calculate Fst between population pairs:
 # running now for all pop pairs except 20 & 22
-scripts$ for i in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do for j in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then --sbatch --export=POP1=$i,POP2=$j calc2DSFSAngsd.sh; fi; done; done
+scripts$ for i in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do for j in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j calc2DSFSAngsd.sh; fi; done; done
+Submitted batch job 22800219-22800624
+# NOTE : There has to be a better way to organize these jobs into one 'super job'
+
+# This whole Fst estimation should be done with a set of regions. For SAF calculations, I can provide a set of sites or a region
+TEST$ angsd sites index sites_5.txt
+TEST$ realSFS print pop18.saf.idx -sites sites_5.txt
+TEST$ realSFS print pop18.saf.idx -r 1:500-600
+# but a regions file doesn't work
+TEST$ realSFS print pop18.saf.idx -rf regions_5.txt - error
+# I may be able to either loop over a regions file in a short script, and cat together the SAF's in the end
+# or to supply an -rf file to angsd when making the SAF file
+# the following works, where regions.txt has regions e.g. 1:100-200 listed
+*regions must be sorted!!
+data$ angsd -out TEST/SAFbyRegion_test_pop18 -anc /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -fold 1 -rf TEST/regions.txt -bam pass1_bam_pops/pop18.list -remove_bads 1 -minMapQ 30 -GL 1 -dosaf 1
 
 
