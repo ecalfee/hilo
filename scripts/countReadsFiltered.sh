@@ -3,9 +3,9 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J countReads
 #SBATCH -o /home/ecalfee/hilo/slurm-log/countReadsFiltered_%j_%A_%a.out
-#SBATCH -t 4:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=100M
-#SBATCH --array=1-40,44-79,80-200
+#SBATCH --array=1-40,44-79,81-200
 
 # to run (e.g. hilo1-hilo40): sbatch --array=1-40 countReadsFiltered.sh 
 

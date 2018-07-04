@@ -301,9 +301,10 @@ Submitted batch job 22502000
 # takes too long to do interactively:
 scripts$ sbatch catBeagleGL.sh
 Submitted batch job 22757237
-# taking just every 100th position/line:
+# taking just every 100th position/line: _pruned_by100
 scripts$ sbatch catBeagleGL_nth.sh
 Submitted batch job 22757239
+-ISSUE IS THAT THIS OMITS THE FIRST HEADER!
 
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
@@ -312,6 +313,12 @@ Submitted batch job 22757239
 scripts$ sbatch countReadsFiltered.sh
 Submitted batch job 22758110
 # saves output in text file, e.g. countReads/hilo_40.counts
+# re-running files that TIMEOUT -- more time and less memory allotment
+scripts$ sbatch --array=12,17-24,27-29,37,39,40,44-46,48-51,56-58,60-68,71,82,86-98,101,103-105,107,109-114,116-125,127-129,133,135-137,139,141,142,154,155,161,165,168-172,174-178,182,188,200 countReadsFiltered.sh
+Submitted batch job 22765848
+# still had many jobs cancel due to time out at 4 hours (!) - bumped up to 12 hours
+scripts$ sbatch -t 12:00:00 --array=12,17-24,27-29,39,40,45-46,49-51,58,60-61,71,87-98,101,103-105,107,109-114,116-125,127,129,133,135-137,139,141,142,154,155,161,165,168-172,174-178,182,188,200 countReadsFiltered.sh
+Submitted batch job 22799632
 
 # I can also zoom in and look at individuals' depth across specific regions:
 ~/hilo/data/filtered_bam$ samtools depth -r 1:400-500 hilo_18.sort.dedup.bam hilo_19.sort.dedup.bam
@@ -361,12 +368,17 @@ Submitted batch job 22757408
 # added -admix option and re-did:
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/sympatricVar/pruned_all --mem=1G -t 3:00:00 runPCAngsd.sh
 Submitted batch job 22758855
+WORKED
 # will also run PCA on data for all hilo individuals, at all SNPs in 'allVar'
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome --mem=2G -t 96:00:00 runPCAngsd.sh
 Submitted batch job 22762726
+CANCELLED-EXCEEDED MEMORY LIMIT. RE-RUNNING:
+sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome --mem=12G -t 96:00:00 runPCAngsd.sh
+Submitted batch job 22766166
 # subset of all SNPs in 'allVar'
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome_pruned_by100 --mem=1G -t 36:00:00 runPCAngsd.sh
 Submitted batch job 22762723
+ERROR-DID NOT ACCEPT REDUCED FILE BY 100 .. NOT SURE WHY .. PROBLEM IS THAT IT'S MISSING A HEADER - I CAN FIX THAT
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
@@ -409,7 +421,7 @@ Submitted batch job 22764942
 
 # concatenate results by chromosome back together (skipping pops 20, 22 and larger groups for now):
 scripts$ sbatch --array=18-19,23-31,33-35,360-363,365-374 catSAFAngsd.sh
-
+Submitted batch job 22765120
 
 # step2: for each pair of populations, calculate the 2D SFS prior: (this is a lot of Fst calculations!)
 s.t. like hilo$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then echo $i $j; fi; done; done
@@ -433,3 +445,8 @@ realSFS print TEST/pop31.pop22.old.fst.gz
   # install angsd using link to my local htslib directory
   ~/software/angsd$ make HTSSRC=../htslib/
   # moved exec. file software/angsd/angsd to bin/ and software/angsd/misc/realSFS to bin/ too and v1.6 of tabix and htsfile too
+# to calculate Fst between population pairs:
+# running now for all pop pairs except 20 & 22
+scripts$ for i in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do for j in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then --sbatch --export=POP1=$i,POP2=$j calc2DSFSAngsd.sh; fi; done; done
+
+
