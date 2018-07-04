@@ -319,6 +319,9 @@ Submitted batch job 22765848
 # still had many jobs cancel due to time out at 4 hours (!) - bumped up to 12 hours
 scripts$ sbatch -t 12:00:00 --array=12,17-24,27-29,39,40,45-46,49-51,58,60-61,71,87-98,101,103-105,107,109-114,116-125,127,129,133,135-137,139,141,142,154,155,161,165,168-172,174-178,182,188,200 countReadsFiltered.sh
 Submitted batch job 22799632
+# still many jobs cancelled -- make new script that uses samtools built in view -c for 'counts' and trying again - countReadsFiltered2.sh
+scripts$ countReadsFiltered2.sh
+
 
 # I can also zoom in and look at individuals' depth across specific regions:
 ~/hilo/data/filtered_bam$ samtools depth -r 1:400-500 hilo_18.sort.dedup.bam hilo_19.sort.dedup.bam
@@ -473,9 +476,10 @@ data$ angsd -out TEST/SAFbyRegion_test_pop18 -anc /group/jrigrp/Share/assemblies
 hilo/data$ cut -f1,2 /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa.fai | grep -v 't' > refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths
 # now generating 1000 random regions of 100bp each:
 scripts$ sbatch getRandomRegions.sh
-
+Submitted batch job 22934334
 # and calculating SAF off of these regions using an updated calcSAFAngsd.sh script:
 scripts$ sbatch --array=18-31,33-35,360-363,365-374 --mem=4G calcSAFAngsd.sh
-
-scripts$ sbatch --array=1000,2000,3000 --mem=12G calcSAFAngsd.sh
+Submitted batch job 22934857
+scripts$ sbatch --array=1000,2000,3000 --mem=12G -t 24:00:00 calcSAFAngsd.sh
+Submitted batch job 22934957
 
