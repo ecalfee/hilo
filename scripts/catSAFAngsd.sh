@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J catSAF
 #SBATCH -o /home/ecalfee/hilo/slurm-log/catSAF_%j_%A_%a.out
-#SBATCH -t 1:00:00
+#SBATCH -t 4:00:00
 #SBATCH --mem=2G
 #SBATCH --array=18-31,33-35,360-363,365-374,1000,2000,3000
 
@@ -19,6 +19,6 @@ set –o nounset
 # go to folder with results by chromosome
 cd SAF/pass1/pop$SLURM_ARRAY_TASK_ID
 # and concatenate results together
-realSFS cat chr1.saf.idx chr2.saf.idx chr3.saf.idx chr4.saf.idx chr5.saf.idx chr6.saf.idx chr7.saf.idx chr8.saf.idx chr9.saf.idx chr10.saf.idx -outname chrALL
+realSFS cat -outnames chrALL chr1.saf.idx chr2.saf.idx chr3.saf.idx chr4.saf.idx chr5.saf.idx chr6.saf.idx chr7.saf.idx chr8.saf.idx chr9.saf.idx chr10.saf.idx
 
 echo "done merging SAF for pop "$SLURM_ARRAY_TASK_ID
