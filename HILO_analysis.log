@@ -468,4 +468,14 @@ TEST$ realSFS print pop18.saf.idx -rf regions_5.txt - error
 *regions must be sorted!!
 data$ angsd -out TEST/SAFbyRegion_test_pop18 -anc /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -fold 1 -rf TEST/regions.txt -bam pass1_bam_pops/pop18.list -remove_bads 1 -minMapQ 30 -GL 1 -dosaf 1
 
+# Getting a set of random regions from the maize reference genome:
+# bedtools random function will work, but I need to make a 'genome' file with chromosome names & lengths first: 
+hilo/data$ cut -f1,2 /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa.fai | grep -v 't' > refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths
+# now generating 1000 random regions of 100bp each:
+scripts$ sbatch getRandomRegions.sh
+
+# and calculating SAF off of these regions using an updated calcSAFAngsd.sh script:
+scripts$ sbatch --array=18-31,33-35,360-363,365-374 --mem=4G calcSAFAngsd.sh
+
+scripts$ sbatch --array=1000,2000,3000 --mem=12G calcSAFAngsd.sh
 
