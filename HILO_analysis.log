@@ -106,6 +106,11 @@ data$ for i in {1..40} {44..79} {81..200}; do echo filtered_bam/hilo_$i.sort.ded
 # (this is an estimate of coverage/data quality for each sequenced individual)
 ~/hilo/data/filtered_bam$ for i in {1..200}; do samtools flagstat hilo_$i.sort.dedup.baq.bam | \
 awk -v i="$i" '{print "hilo"i" "$0}' | grep 'total' >> pass1.all.metrics.Nreads; done
+# counting # reads pre-filtering, and at de-duplication using PICARD metrics.txt output files
+# (to compare effects of filtering across groups/individuals):
+~/hilo/data/filtered_bam$ grep 'LIBRARY' hilo_1.metrics.txt | awk '{print "StudyID\t"$0}' > pass1.all.metrics.raw.Nreads; \
+for i in {1..200}; do grep 'Unknown Library' hilo_$i.metrics.txt | \
+awk -v i="$i" '{print "hilo"i" "$0}' >> pass1.all.metrics.raw.Nreads; done
 
 # finding variable sites with ANGSD, each of 10 chrom at a time (4 nodes requested per chrom):
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
@@ -310,6 +315,7 @@ Submitted batch job 22757239
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
 # first I see if there are large differences in % reads that do not map
 # I create a script to count the reads that align (map at all), do not map, pass mapQ >=30 and pass de-duplication
+# SKIP THIS PART -- BETTER/FASTER TO USE data/filtered_bam/pass1.all.metrics.Nreads and pass1.all.metrics.raw.Nreads
 scripts$ sbatch countReadsFiltered.sh
 Submitted batch job 22758110
 # saves output in text file, e.g. countReads/hilo_40.counts
@@ -321,7 +327,7 @@ scripts$ sbatch -t 12:00:00 --array=12,17-24,27-29,39,40,45-46,49-51,58,60-61,71
 Submitted batch job 22799632
 # still many jobs cancelled -- make new script that uses samtools built in view -c for 'counts' and trying again - countReadsFiltered2.sh
 scripts$ sbatch countReadsFiltered2.sh
-Submitted batch job 22937206
+Submitted batch job 22937206 - I CANCELLED (SEE ABOVE FOR ALTERNATIVE FILES GENERATED IN filtered_bam/
 
 # I can also zoom in and look at individuals' depth across specific regions:
 ~/hilo/data/filtered_bam$ samtools depth -r 1:400-500 hilo_18.sort.dedup.bam hilo_19.sort.dedup.bam

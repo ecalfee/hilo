@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J count2
 #SBATCH -o /home/ecalfee/hilo/slurm-log/count2_%j_%A_%a.out
-#SBATCH -t 24:00:00
+#SBATCH -t 30:00:00
 #SBATCH --mem=100M
 #SBATCH --array=1-40,44-79,81-200
 
@@ -22,19 +22,19 @@ module load samtools
 mkdir -p countReads2
 
 # count raw reads after initial alignment
-echo "total reads in original aln.bam file:" > countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
-samtools view -c /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
+echo "total reads in original aln.bam file:" > countReads2/hilo_$SLURM_ARRAY_TASK_ID.raw.counts
+samtools view -c /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads2/hilo_$SLURM_ARRAY_TASK_ID.raw.counts
 
 # count mapped reads only
-echo "mapped reads in original aln.bam file:" > countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
-samtools view -c -F 4 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
+echo "mapped reads in original aln.bam file:" > countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapped.counts
+samtools view -c -F 4 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapped.counts
 
 # count reads passing mapping quality filtering
-echo "nreads pass mapQ >= 30 filter: " > countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
-samtools view -c -q 30 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
+echo "nreads pass mapQ >= 30 filter: " > countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapQ30.counts
+samtools view -c -q 30 /group/jrigrp6/DanAlignments/HILO$SLURM_ARRAY_TASK_ID/aln.bam >> countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapQ30.counts
 
 # count reads after de-duplication & map quality filtering
-echo "nreads after mapQ >= 30 and de-duplication filters: " > countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
-samtools view -c -q 30 filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam >> countReads/hilo_$SLURM_ARRAY_TASK_ID.counts
+echo "nreads after mapQ >= 30 and de-duplication filters: " > countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapQ30.dedup.counts
+samtools view -c -q 30 filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam >> countReads2/hilo_$SLURM_ARRAY_TASK_ID.mapQ30.dedup.counts
 
-echo 'pre- and post- filtering read count complete for hilo'$SLURM_ARRAY_TASK_ID
+echo 'read count complete for hilo'$SLURM_ARRAY_TASK_ID
