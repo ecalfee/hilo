@@ -18,6 +18,7 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
+echo "now calculating FST"
 # calculate FST (-whichFst 1 indicates Hudson/Bhatia2013 estimator for Fst)
 realSFS fst index $DIR/pop$POP1.saf.idx $DIR/pop$POP2.saf.idx -sfs $DIR/pop$POP1.pop$POP2.sfs -whichFst 1 -fstout $DIR/pop$POP1.pop$POP2
 # future analyses should rely on 'weighted' Fst (i.e. the ratio of expectations across loci).

@@ -467,10 +467,17 @@ realSFS print TEST/pop31.pop22.old.fst.gz
 scripts$ for i in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do for j in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j calc2DSFSAngsd.sh; fi; done; done
 Submitted batch job 22800219-22800624
 # NOTE : There has to be a better way to organize these jobs into one 'super job'
+
 # just submitting pairs for 2D-SFS between larger groups
-scripts$ sbatch --export=POP1=1000,POP2=2000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh
-scripts$ sbatch --export=POP1=2000,POP2=3000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh
-scripts$ sbatch --export=POP1=1000,POP2=3000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh
+scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; \
+then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; fi; done; done
+Submitted batch job 23013831-3
+
+# and then calculating pairwise Fst using Hudson/Bhatia2013 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3759727/) estimator = 1 (vs. Reynolds estimator = 0). 3rd/4th column in the .fst.idx file are the numerator & denominator of the statistic at each locus (see github discussion/documentation: https://github.com/ANGSD/angsd/issues/61).
+scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; fi; done; done
+Submitted batch job 23014153-5
+# I will use 'weighted' Fst (ratio of averages ... vs unweighted = average of ratios across loci).
+
 
 # This whole Fst estimation should be done with a set of regions. For SAF calculations, I can provide a set of sites or a region
 TEST$ angsd sites index sites_5.txt
