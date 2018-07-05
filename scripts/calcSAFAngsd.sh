@@ -3,9 +3,9 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J SAFAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/SAFAngsd_%j_%A_%a.out
-#SBATCH -t 12:00:00
+#SBATCH -t 3:00:00
 #SBATCH -n 4
-#SBATCH --mem=12G
+#SBATCH --mem=2G
 #SBATCH --export=REGION_FILE=N1000.L100.regions
 #SBATCH --array=18-31,33-35,360-363,365-374,1000,2000,3000
 
@@ -34,12 +34,3 @@ angsd -out SAF/pass1/$REGION_FILE/pop$SLURM_ARRAY_TASK_ID \
 -GL 1 -dosaf 1 \
 -P 4
 echo "done with SAF pop"$SLURM_ARRAY_TASK_ID" regions "$REGION_FILE
-
-# calculate SAF for a set of regions file
-sbatch --export=POP=$SLURM_ARRAY_TASK_ID calcSAFAngsd_byChr.sh
--rf refMaize/random_regions/
-
-# go to folder with results by chromosome
-cd ../data/SAF/pass1/pop$SLURM_ARRAY_TASK_ID/regions
-
-echo "done calculating SAF across regions for pop"$SLURM_ARRAY_TASK_ID

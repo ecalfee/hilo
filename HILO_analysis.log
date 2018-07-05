@@ -327,7 +327,10 @@ scripts$ sbatch -t 12:00:00 --array=12,17-24,27-29,39,40,45-46,49-51,58,60-61,71
 Submitted batch job 22799632
 # still many jobs cancelled -- make new script that uses samtools built in view -c for 'counts' and trying again - countReadsFiltered2.sh
 scripts$ sbatch countReadsFiltered2.sh
-Submitted batch job 22937206 - I CANCELLED (SEE ABOVE FOR ALTERNATIVE FILES GENERATED IN filtered_bam/
+Submitted batch job 22937206  - I CANCELLED
+# not running due to priority -- submitted other job
+scripts$ sbatch -p med -t 24:00:00 countReadsFiltered2.sh
+Submitted batch job 22967048 - I CANCELLED (SEE ABOVE FOR ALTERNATIVE FILES GENERATED IN filtered_bam/
 
 # I can also zoom in and look at individuals' depth across specific regions:
 ~/hilo/data/filtered_bam$ samtools depth -r 1:400-500 hilo_18.sort.dedup.bam hilo_19.sort.dedup.bam
@@ -478,7 +481,7 @@ TEST$ realSFS print pop18.saf.idx -rf regions_5.txt - error
 data$ angsd -out TEST/SAFbyRegion_test_pop18 -anc /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -fold 1 -rf TEST/regions.txt -bam pass1_bam_pops/pop18.list -remove_bads 1 -minMapQ 30 -GL 1 -dosaf 1
 
 # Getting a set of random regions from the maize reference genome:
-# bedtools random function will work, but I need to make a 'genome' file with chromosome names & lengths first: 
+# bedtools random function will work, but I need to make a 'genome' file with chromosome names & lengths first:
 hilo/data$ cut -f1,2 /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa.fai | grep -v 't' > refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths
 # now generating 1000 random regions of 100bp each:
 scripts$ sbatch getRandomRegions.sh
@@ -488,4 +491,3 @@ scripts$ sbatch --array=18-31,33-35,360-363,365-374 --mem=4G calcSAFAngsd.sh
 Submitted batch job 22934857
 scripts$ sbatch --array=1000,2000,3000 --mem=12G -t 24:00:00 calcSAFAngsd.sh
 Submitted batch job 22934957
-
