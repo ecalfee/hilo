@@ -15,7 +15,7 @@ set –o errexit
 set –o nounset
 
 # concatenate
-zcat region_0.beagle.gz | head -n 1 | gzip > whole_Genome_pruned_by1000.beagle.gz; \
+zcat region_0.beagle.gz | head -n 1 | gzip > whole_genome_pruned_by1000.beagle.gz; \
 for i in {0..46}; do zcat region_$i.beagle.gz | tail -n +2 | awk 'NR % 1000 == 0' | gzip >> whole_genome_pruned_by1000.beagle.gz; done
 
 echo "done running with cat beagle.gz every 1000th position"

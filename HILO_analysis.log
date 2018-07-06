@@ -309,7 +309,12 @@ Submitted batch job 22757237
 # taking just every 100th position/line: _pruned_by100
 scripts$ sbatch catBeagleGL_nth.sh
 Submitted batch job 22757239
--ISSUE IS THAT THIS OMITS THE FIRST HEADER!
+# -ISSUE IS THAT THIS OMITS THE FIRST HEADER! - FIXED. Creating file by1000. 
+scripts$ sbatch catBeagleGL_nth.sh
+Submitted batch job 23015476
+# Due to typo had to fix header here too:
+(re-add header due to misslabelling issue)
+hilo/data/geno_lik/pass1/allVar$ zcat whole_Genome_pruned_by1000.beagle.gz | gzip > pruned_by1000.beagle.gz; zcat whole_genome_pruned_by1000.beagle.gz | gzip >> pruned_by1000.beagle.gz
 
 
 # I need to understanding if mapping bias is a problem -- what does mapping look like across groups (e.g. % mapped)? Is there biased mapping across my SNP sets?
@@ -390,7 +395,15 @@ Submitted batch job 22766166
 # subset of all SNPs in 'allVar'
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome_pruned_by100 --mem=1G -t 36:00:00 runPCAngsd.sh
 Submitted batch job 22762723
-ERROR-DID NOT ACCEPT REDUCED FILE BY 100 .. NOT SURE WHY .. PROBLEM IS THAT IT'S MISSING A HEADER - I CAN FIX THAT
+ERROR-DID NOT ACCEPT REDUCED FILE BY 100 .. NOT SURE WHY .. PROBLEM IS THAT IT'S MISSING A HEADER - I CAN FIX THAT:
+hilo/data/geno_lik/pass1/allVar$ zcat whole_genome.beagle.gz | head -n 1 | gzip > whole_genome_every_100th_pos.beagle.gz; zcat whole_genome_pruned_by100.beagle.gz | gzip >> whole_genome_every_100th_pos.beagle.gz
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome_pruned_by100 --mem=12G -t 36:00:00 runPCAngsd.sh
+# the above file also won't run; trying again with ~100K SNPs from 
+# create SNPs using catBeagleGL_nth.sh -- takes every 1000th site
+# run PCAngsd
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/pruned_by1000.beagle.gz --mem=4G -t 16:00:00 runPCAngsd.sh
+Submitted batch job 23021131
+
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
@@ -467,6 +480,18 @@ realSFS print TEST/pop31.pop22.old.fst.gz
 scripts$ for i in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do for j in 18 19 21 {23..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j calc2DSFSAngsd.sh; fi; done; done
 Submitted batch job 22800219-22800624
 # NOTE : There has to be a better way to organize these jobs into one 'super job'
+scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
+do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
+then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
+-t 1:00:00 calc2DSFSAngsd.sh; fi; done; done 
+Submitted batch job 23021289-23021760
+# to run:
+scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
+do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
+then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
+-t 1:00:00 calcFSTAngsd.sh; fi; done; done
+<<<<<<<<<<TO RUN>>>>>>>>
+
 
 # just submitting pairs for 2D-SFS between larger groups
 scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; \
@@ -477,6 +502,7 @@ Submitted batch job 23013831-3
 scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; fi; done; done
 Submitted batch job 23014153-5
 # I will use 'weighted' Fst (ratio of averages ... vs unweighted = average of ratios across loci).
+
 
 
 # This whole Fst estimation should be done with a set of regions. For SAF calculations, I can provide a set of sites or a region
@@ -494,7 +520,7 @@ data$ angsd -out TEST/SAFbyRegion_test_pop18 -anc /group/jrigrp/Share/assemblies
 # Getting a set of random regions from the maize reference genome:
 # bedtools random function will work, but I need to make a 'genome' file with chromosome names & lengths first:
 hilo/data$ cut -f1,2 /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa.fai | grep -v 't' > refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths
-# now generating 1000 random regions of 100bp each:
+# now generating 1000 random regions of 100bp each: data/refMaize/random_regions/N1000.L100.regions
 scripts$ sbatch getRandomRegions.sh
 Submitted batch job 22934334
 # and calculating SAF off of these regions using an updated calcSAFAngsd.sh script:
