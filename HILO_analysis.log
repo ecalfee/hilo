@@ -120,7 +120,7 @@ Wed May 30 09:16:56 PDT 2018
 # fixed and re-running 15:53 pm:
 ecalfee@farm:~/hilo/scripts$ sbatch --array=1-10 callVarAngsd.sh
 Submitted batch job 20203873
-# -CANCELLED. Talked to Jeff and decided to only look for SNPs > 0.5 freq using a non-HW based method
+# -CANCELLED. Talked to Jeff and decided to only look for SNPs > 0.05 freq using a non-HW based method
 # I will do something different to find SNPs for local ancestry inference, but this doesn't use the reference
 # and only counts reads supporting the two most common bases, after quality filters
 # NOTE: this wouldn't find a fixed difference between maize 282 and the current sample
@@ -309,7 +309,7 @@ Submitted batch job 22757237
 # taking just every 100th position/line: _pruned_by100
 scripts$ sbatch catBeagleGL_nth.sh
 Submitted batch job 22757239
-# -ISSUE IS THAT THIS OMITS THE FIRST HEADER! - FIXED. Creating file by1000. 
+# -ISSUE IS THAT THIS OMITS THE FIRST HEADER! - FIXED. Creating file by1000.
 scripts$ sbatch catBeagleGL_nth.sh
 Submitted batch job 23015476
 # Due to typo had to fix header here too:
@@ -398,12 +398,14 @@ Submitted batch job 22762723
 ERROR-DID NOT ACCEPT REDUCED FILE BY 100 .. NOT SURE WHY .. PROBLEM IS THAT IT'S MISSING A HEADER - I CAN FIX THAT:
 hilo/data/geno_lik/pass1/allVar$ zcat whole_genome.beagle.gz | head -n 1 | gzip > whole_genome_every_100th_pos.beagle.gz; zcat whole_genome_pruned_by100.beagle.gz | gzip >> whole_genome_every_100th_pos.beagle.gz
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome_pruned_by100 --mem=12G -t 36:00:00 runPCAngsd.sh
-# the above file also won't run; trying again with ~100K SNPs from 
+# the above file also won't run; trying again with ~100K SNPs from
 # create SNPs using catBeagleGL_nth.sh -- takes every 1000th site
 # run PCAngsd
 scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/pruned_by1000.beagle.gz --mem=4G -t 16:00:00 runPCAngsd.sh
-Submitted batch job 23021131
-
+Submitted batch job 23021131 - CANCELLED (error in file name)
+Submitted batch job 23029600 - CANCELLED
+scripts$ sbatch --export=GL_PREFIX=data/geno_lik/pass1/allVar/pruned_by1000 --mem=2G -p med -t 16:00:00 runPCAngsd.sh
+Submitted batch job 23029537 - RAN, TOOK VERY LITTLE TIME (<10min and <1G)
 
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
@@ -483,26 +485,63 @@ Submitted batch job 22800219-22800624
 scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
 do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
 then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
--t 1:00:00 calc2DSFSAngsd.sh; fi; done; done 
+-t 1:00:00 calc2DSFSAngsd.sh; fi; done; done
 Submitted batch job 23021289-23021760
-# to run:
+4 jobs not running -- requeue-ing 23021318-21 from c10-92:
+scripts$ sbatch --export=POP1=18,POP2=274,DIR=SAF/pass1/N1000.L100.regions \
+-t 1:00:00 calc2DSFSAngsd.sh
+Submitted batch job 23026718
+scripts$ for j in {20..22}; \
+do sbatch --export=POP1=19,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
+-t 1:00:00 calc2DSFSAngsd.sh; done
+Submitted batch job 23026842-4
+
+# now calculating Fst pairwise:
 scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
 do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
 then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
--t 1:00:00 calcFSTAngsd.sh; fi; done; done
-<<<<<<<<<<TO RUN>>>>>>>>
+-t 1:00:00 -x c10-92 calcFSTAngsd.sh; fi; done; done
+Submitted batch job 23026944-23027416 - ALL DONE - rerunning ones missing fst output files:
+scripts$ sbatch --export=POP1=18,POP2=19,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031530 - hung up
+Submitted batch job 23031925
+scripts$ sbatch --export=POP1=18,POP2=30,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031543
+scripts$ sbatch --export=POP1=20,POP2=370,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031546
+scripts$ sbatch --export=POP1=22,POP2=26,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031554
+scripts$ sbatch --export=POP1=27,POP2=362,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031559
+scripts$ sbatch --export=POP1=29,POP2=360,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031568
+scripts$ sbatch --export=POP1=361,POP2=362,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031574
+scripts$ sbatch --export=POP1=362,POP2=363,DIR=SAF/pass1/N1000.L100.regions -t 1:00:00 -x c10-92 calcFSTAngsd.sh
+Submitted batch job 23031581
 
+# combine Fst results into one file:
+hilo/data/SAF/pass1/N1000.L100.regions$ echo -e "pop1 \t pop2 \t Fst_Hudson \t Fst_avg_of_ratios " \
+> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.fst.stats
+hilo/data/SAF/pass1/N1000.L100.regions$ for i in {18..31} {33..35} {360..363} {365..374}; \
+do for j in {18..31} {33..35} {360..363} {365..374}; \
+do if [ $j -gt $i ]; then awk -v i=$i -v j=$j '{print i "\t" j "\t" $1 "\t" $2}' \
+pop$i.pop$j.fst.stats >> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.fst.stats; fi; done; done
 
 # just submitting pairs for 2D-SFS between larger groups
 scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; \
 then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; fi; done; done
-Submitted batch job 23013831-3
+Submitted batch job 23013831-3 - COMPLETED
 
 # and then calculating pairwise Fst using Hudson/Bhatia2013 (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3759727/) estimator = 1 (vs. Reynolds estimator = 0). 3rd/4th column in the .fst.idx file are the numerator & denominator of the statistic at each locus (see github discussion/documentation: https://github.com/ANGSD/angsd/issues/61).
 scripts$ for i in 1000 2000 3000; do for j in 1000 2000 3000; do if [ $j -gt $i ]; then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; fi; done; done
 Submitted batch job 23014153-5
 # I will use 'weighted' Fst (ratio of averages ... vs unweighted = average of ratios across loci).
-
+# creating a summary file of weighted Fst between groups
+hilo/data/SAF/pass1/N1000.L100.regions$ echo -e "pop1 \t pop2 \t Fst_Hudson \t Fst_avg_of_ratios " > ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats
+hilo/data/SAF/pass1/N1000.L100.regions$ for i in 1000 2000 3000; do for j in 1000 2000 3000; \
+do if [ $j -gt $i ]; then awk -v i=$i -v j=$j '{print i "\t" j "\t" $1 "\t" $2}' \
+pop$i.pop$j.fst.stats >> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats; fi; done; done
 
 
 # This whole Fst estimation should be done with a set of regions. For SAF calculations, I can provide a set of sites or a region
@@ -528,3 +567,7 @@ scripts$ sbatch --array=18-31,33-35,360-363,365-374 --mem=4G calcSAFAngsd.sh
 Submitted batch job 22934857
 scripts$ sbatch --array=1000,2000,3000 --mem=12G -t 24:00:00 calcSAFAngsd.sh
 Submitted batch job 22934957
+
+# made new R script to visualize population structure and admixture in my sample - PCA, Fst and mapping to maize for allopatric & sympatric teosinte & sympatric maize
+# scripts/eval_PCA_Fst.R
+# need to add in allopatric maize.
