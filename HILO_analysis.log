@@ -570,4 +570,25 @@ Submitted batch job 22934957
 
 # made new R script to visualize population structure and admixture in my sample - PCA, Fst and mapping to maize for allopatric & sympatric teosinte & sympatric maize
 # scripts/eval_PCA_Fst.R
-# need to add in allopatric maize.
+# need to add in allopatric maize. One potential option is downloading HapMap3 bams, a subset of which are 282, but I'm having trouble identifying tropical/subtropical TS lines from the large # in hapmap3 https://cbsusrv04.tc.cornell.edu/users/panzea/filegateway.aspx?category=Genotypes 
+# to access iplant from farm: 
+module load icommands
+iinit (then follow suggestions by: https://pods.iplantcollaborative.org/wiki/display/DS/Setting+Up+iCommands)
+other icommands (e.g. ils, icd): https://pods.iplantcollaborative.org/wiki/display/DS/Using+iCommands
+# then use crossmap http://crossmap.sourceforge.net/ and a chain to lift over from v3 to APGv4 reference genome: 
+ftp://ftp.ensemblgenomes.org/pub/plants/release-32/assembly_chain/zea_mays/ (chain)
+Another option is to get original reads from NCBI <<but this is a maze of nonexistent plant samples https://www.ncbi.nlm.nih.gov/biosample/7209658 >>
+# the 282 vcf v4 is on farm: /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz
+# these have GL's for SNPs that vary within this sample, GT:AD:GL e.g. 
+# 0/1:7,2:28,0,167 means 0/1 is the called genotype; 7 ref allele & 2 alt allele counts; 28,0,167 are the genotype likelihoods
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the reference and alternate alleles in the order listed">
+##FORMAT=<ID=GL,Number=.,Type=Integer,Description="Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles">
+
+# making new script to calculate coverage per individual for variant sites in HILO pass1:
+scripts$ calcDepthCovSites.sh
+scripts$ calcDepthCovRegions.sh
+
+
+
+
