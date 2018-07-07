@@ -20,7 +20,7 @@ mkdir -p depthCov/pass1
 # apply filtering with SAMtools & PICARD
 echo "calculating depth using ANGSD on BAMS for hilo "$SITES_FILE
 # index positions
-angsd index $SITES_DIR/$SITES_FILE
+angsd sites index $SITES_DIR/$SITES_FILE
 # calculate depth only including bases meeting minQ >20
 angsd -out depthCov/pass1/$SITES_FILE.Q20 \
 -sites $SITES_DIR/$SITES_FILE \
