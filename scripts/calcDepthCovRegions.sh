@@ -13,9 +13,6 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# load angsd
-module load angsd
-
 # make directory to store output (if doesn't yet exist)
 mkdir -p depthCov/pass1
 
@@ -27,6 +24,7 @@ angsd -out depthCov/pass1/$REGIONS_FILE.Q20 \
 -bam pass1_bam.all.list \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
+-doCounts 1 \
 -doDepth 1 
 # calculate depth for bases meeting any base quality
 angsd -out depthCov/pass1/$REGIONS_FILE \
@@ -34,5 +32,6 @@ angsd -out depthCov/pass1/$REGIONS_FILE \
 -bam pass1_bam.all.list \
 -remove_bads 1 \
 -minMapQ 30 \
+-doCounts 1 \
 -doDepth 1 
 echo "done calculating depth using ANGSD on BAMS for hilo "$REGIONS_FILE
