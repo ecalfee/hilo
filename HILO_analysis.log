@@ -586,8 +586,11 @@ Another option is to get original reads from NCBI <<but this is a maze of nonexi
 ##FORMAT=<ID=GL,Number=.,Type=Integer,Description="Genotype likelihoods for 0/0, 0/1, 1/1, or  0/0, 0/1, 0/2, 1/1, 1/2, 2/2 if 2 alt alleles">
 
 # making new script to calculate coverage per individual for variant sites in HILO pass1:
-scripts$ calcDepthCovSites.sh
-scripts$ calcDepthCovRegions.sh
+scripts$ sbatch calcDepthCovSites.sh
+Submitted batch job 23079251 - fixed typo & reran:
+Submitted batch job 23079342
+scripts$ sbatch calcDepthCovRegions.sh 
+Submitted batch job 23079256
 
 
 
