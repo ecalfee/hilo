@@ -99,7 +99,7 @@ Submitted batch job 20147251
 ecalfee@farm:~/hilo/scripts$ date
 Tue May 29 19:29:51 PDT 2018
 
-# making list of BAMS for fist pass analysis:
+# making list of BAMS for first pass analysis:
 data$ for i in {1..40} {44..79} {81..200}; do echo filtered_bam/hilo_$i.sort.dedup.baq.bam >> pass1_bam.all.list; done
 
 # counting # reads that mapped & passed mapping quality and non-duplicate read quality filtering for each pass1 indiviudal:
@@ -210,7 +210,7 @@ hilo/data$ awk '$1 != "n" && ($5 == "NA" || ($3 != 20 && $3 != 22 && $3 != 33 &&
 # now finding new set of variant sites using ANGSD for only sympatric individuals (all)
 ~/hilo/scripts$ sbatch --array=0-46 callVarAngsdSymp.sh
 Submitted batch job 20811827
-# everything ran but region_0 doesn't appear to be properly gipped and can't be opened
+# everything ran but region_0 doesn't appear to be properly gzipped and can't be opened
 # so I am re-running just that region (problem was I wrote over just this file accidentally with test run of callVarAngsdAllo.sh)
 ~/hilo/scripts$ sbatch --array=0 callVarAngsdSymp.sh
 Submitted batch job 20816879
@@ -588,9 +588,33 @@ Another option is to get original reads from NCBI <<but this is a maze of nonexi
 # making new script to calculate coverage per individual for variant sites in HILO pass1:
 scripts$ sbatch calcDepthCovSites.sh
 Submitted batch job 23079251 - fixed typo & reran:
-Submitted batch job 23079342
+Submitted batch job 23079342 - CANCELLED - OUT OF MEMORY > 20g/3nodes at chr2
+hilo/scripts$ sbatch calcDepthCovSites.sh - new edits for more nodes, and arrayed by chromosome
+Submitted batch job 23505206 - COMPLETED; results files split by CHROM
 scripts$ sbatch calcDepthCovRegions.sh 
-Submitted batch job 23079256
+Submitted batch job 23079256 - COMPLETED
+
+# 282 panel doesn't have easy aligned bams -- GL for SNPs is preserved in vcf file. The issue is whether there is significant bias between 282 SNPs and SNPs from admix panel, e.g. fixed differences. If there is, I will have to re-align fastq from 282. Checking SNP overlap:
+scripts$ sbatch checkSNPOverlap282.sh
+
+# I am adding in bams for allopatric Maize from Anne: 4 landrace populations, 10 ind's each (same pop = sequentially together)
+# first I make a list of the bam file locations on farm
+ecalfee@farm:/group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK$ for i in $(ls *removedup_realigned.bam); do echo /group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/$i >> ~/hilo/data/bam.maize4popLowland.list; done
+# and a combined list for calling new SNPs
+ecalfee@farm:~/hilo/data$ cat pass1_bam.all.list bam.maize4popLowland.list > merged_bam.pass1_all.maize4popLowland.list
+# Then I get GL at variant sites across the combined sample, now including lowland maize:
+scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list allVarAngsdGL.sh
+Submitted batch job 23526847 - on hold: (AssocGrpJobsLimit)
+
+# FST
+# I save the allopatric maize list of bams also as pop 4000:
+ecalfee@farm:~/hilo/data$ cp bam.maize4popLowland.list pass1_bam_pops/pop4000.list
+# then I calculate SAF to get Fst between this allopatric maize landraces and the sympatric maize/mex and allopatric mex
+# calcualte SAF for regions:
+scripts$ sbatch --array=4000 calcSAFAngsd.sh -t 10:00:00 --mem=4G
+Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit)
+# and pairwise SFS between 4000 and 1000, 2000, 3000:
+# then Fst pairwise with 4000 and other population groups:
 
 
 

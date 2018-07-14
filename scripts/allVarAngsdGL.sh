@@ -7,6 +7,7 @@
 #SBATCH --mem=40G
 #SBATCH -n 4
 #SBATCH --array=0-46
+#SBATCH --export=DIR_OUT=geno_lik/pass1/allVar,BAM_IN=pass1_bam.all.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -18,18 +19,18 @@ set –o nounset
 module load angsd
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p geno_lik/pass1/allVar
+mkdir -p $DIR_OUT
 
 # apply filtering with SAMtools & PICARD
 echo "calling variants and GL using ANGSD on BAMS for hilo CHR$SLURM_ARRAY_TASK_ID"
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
-angsd -out geno_lik/pass1/allVar/region_$SLURM_ARRAY_TASK_ID \
+angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 -r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
 -ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
--bam pass1_bam.all.list \
+-bam $BAM_IN \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 2 \
