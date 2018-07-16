@@ -570,16 +570,16 @@ Submitted batch job 22934957
 
 # made new R script to visualize population structure and admixture in my sample - PCA, Fst and mapping to maize for allopatric & sympatric teosinte & sympatric maize
 # scripts/eval_PCA_Fst.R
-# need to add in allopatric maize. One potential option is downloading HapMap3 bams, a subset of which are 282, but I'm having trouble identifying tropical/subtropical TS lines from the large # in hapmap3 https://cbsusrv04.tc.cornell.edu/users/panzea/filegateway.aspx?category=Genotypes 
-# to access iplant from farm: 
+# need to add in allopatric maize. One potential option is downloading HapMap3 bams, a subset of which are 282, but I'm having trouble identifying tropical/subtropical TS lines from the large # in hapmap3 https://cbsusrv04.tc.cornell.edu/users/panzea/filegateway.aspx?category=Genotypes
+# to access iplant from farm:
 module load icommands
 iinit (then follow suggestions by: https://pods.iplantcollaborative.org/wiki/display/DS/Setting+Up+iCommands)
 other icommands (e.g. ils, icd): https://pods.iplantcollaborative.org/wiki/display/DS/Using+iCommands
-# then use crossmap http://crossmap.sourceforge.net/ and a chain to lift over from v3 to APGv4 reference genome: 
+# then use crossmap http://crossmap.sourceforge.net/ and a chain to lift over from v3 to APGv4 reference genome:
 ftp://ftp.ensemblgenomes.org/pub/plants/release-32/assembly_chain/zea_mays/ (chain)
 Another option is to get original reads from NCBI <<but this is a maze of nonexistent plant samples https://www.ncbi.nlm.nih.gov/biosample/7209658 >>
 # the 282 vcf v4 is on farm: /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz
-# these have GL's for SNPs that vary within this sample, GT:AD:GL e.g. 
+# these have GL's for SNPs that vary within this sample, GT:AD:GL e.g.
 # 0/1:7,2:28,0,167 means 0/1 is the called genotype; 7 ref allele & 2 alt allele counts; 28,0,167 are the genotype likelihoods
 ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the reference and alternate alleles in the order listed">
@@ -591,7 +591,7 @@ Submitted batch job 23079251 - fixed typo & reran:
 Submitted batch job 23079342 - CANCELLED - OUT OF MEMORY > 20g/3nodes at chr2
 hilo/scripts$ sbatch calcDepthCovSites.sh - new edits for more nodes, and arrayed by chromosome
 Submitted batch job 23505206 - COMPLETED; results files split by CHROM
-scripts$ sbatch calcDepthCovRegions.sh 
+scripts$ sbatch calcDepthCovRegions.sh
 Submitted batch job 23079256 - COMPLETED
 
 # 282 panel doesn't have easy aligned bams -- GL for SNPs is preserved in vcf file. The issue is whether there is significant bias between 282 SNPs and SNPs from admix panel, e.g. fixed differences. If there is, I will have to re-align fastq from 282. Checking SNP overlap:
@@ -604,18 +604,39 @@ ecalfee@farm:/group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK$ for i in $(ls *re
 ecalfee@farm:~/hilo/data$ cat pass1_bam.all.list bam.maize4popLowland.list > merged_bam.pass1_all.maize4popLowland.list
 # Then I get GL at variant sites across the combined sample, now including lowland maize:
 scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list allVarAngsdGL.sh
-Submitted batch job 23526847 - on hold: (AssocGrpJobsLimit)
+Submitted batch job 23526847 -- Did not run: Mt and Pt chromosomes not in bams from Anne (allopatric maize);
+# changed allVarAngsdGL.sh to have a new variable to not check bam headers for same chromosomes;
+# ok because I'm restricting analysis to the shared autosomes 1-10
+scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
+Submitted batch job 23551911 -- ugh, typo (now fixed)
+scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
+Submitted batch job 23552475 - ERROR IN FILE NAMES (1 instead of 01..)
+# creating symlinks for all bams from anne lorant 4 pop lowland maize so that they are local and named consistently
+# and I can re-index
+# creating symbolic link for #1
+~/hilo/data/alloMaize4pop_symlink_bam$ ln -s /group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-1_removedup_realigned.bam maizeLow_01.bam
+# and for the rest:
+for i in {02..40}; do ln -s /group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-"$i"_removedup_realigned.bam maizeLow_"$i".bam; done
+# remaking files with list of bams for lowland
+data$ for i in {01..07} {09..40}; do echo alloMaize4pop_symlink_bam/maizeLow_$i.bam >> bam.maize4popLowland.list; done
+data$ cat pass1_bam.all.list bam.maize4popLowland.list > merged_bam.pass1_all.maize4popLowland.list
+ecalfee@bigmem1:~/hilo/scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
+Submitted batch job 23553309 - did not run. remade symlinks wiht proper "":
+Submitted batch job 23553370 - took out 08 from alloMaize4popLow:
+Submitted batch job 23553429 - RUNNING; I cancelled (needs index files to run)
+# indexing allopatric maize symlinks
+~/hilo/data/alloMaize4pop_symlink_bam$ (!) I put this into a script samtools index maizeLow_"$i".bam
+scripts$ sbatch indexAllo4PopMaize.sh
+Submitted batch job 23553496 - Fixed typo below:
+Submitted batch job 23554317
 
 # FST
+
 # I save the allopatric maize list of bams also as pop 4000:
 ecalfee@farm:~/hilo/data$ cp bam.maize4popLowland.list pass1_bam_pops/pop4000.list
 # then I calculate SAF to get Fst between this allopatric maize landraces and the sympatric maize/mex and allopatric mex
 # calcualte SAF for regions:
 scripts$ sbatch --array=4000 calcSAFAngsd.sh -t 10:00:00 --mem=4G
-Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit)
+Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit) - did not finish because of lack of index files (fixed see above)
 # and pairwise SFS between 4000 and 1000, 2000, 3000:
 # then Fst pairwise with 4000 and other population groups:
-
-
-
-
