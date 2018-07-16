@@ -22,7 +22,7 @@ module load angsd
 mkdir -p $DIR_OUT
 
 # apply filtering with SAMtools & PICARD
-echo "calling variants and GL using ANGSD on BAMS for hilo CHR$SLURM_ARRAY_TASK_ID"
+echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLURM_ARRAY_TASK_ID
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
