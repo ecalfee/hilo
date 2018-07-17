@@ -646,7 +646,14 @@ Submitted batch job 23571407
 # and again in region 38: Trying to access fasta efter end of chromsome+200:8/8 pos=182381402 ref_len=181122637
 # I am re-ordering bams using picard tools -- reorderBam4popAlloMaizeLow.sh (starting with just 16/40 individuals, 4 per pop)
 ~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh
-Submitted batch job 23571569
+Submitted batch job 23571569 - FIXED DIRECTORY TYPO and made scratch directory in my home folder instead of local to each node (lack of space)
+Submitted batch job 23576593 -Failed due to lack of 'sequence dictionary'. will make one. and will make a symlink for reference genome too in makeSeqDictRef.sh script:
+scripts$ sbatch makeSeqDictRef.sh 
+Submitted batch job 23576612 - fix typo:
+Submitted batch job 23576616 - COMPLETED
+# edited reorderBam4popAlloMaizeLow.sh to refer to local reference AGPv4.fa and .dict
+~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
+Submitted batch job 23576622
 
 # FST
 
