@@ -645,7 +645,8 @@ Submitted batch job 23571407
 "geno_lik/merged_pass1_maize4popLowland/allVar/region_42.arg"
 # and again in region 38: Trying to access fasta efter end of chromsome+200:8/8 pos=182381402 ref_len=181122637
 # I am re-ordering bams using picard tools -- reorderBam4popAlloMaizeLow.sh (starting with just 16/40 individuals, 4 per pop)
-
+~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh
+Submitted batch job 23571569
 
 # FST
 
@@ -659,8 +660,8 @@ Submitted batch job 23563858 - NODE FAIL (will rerun excluding bigmem5:)
 scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G -x bigmem5 calcSAFAngsd.sh
 Submitted batch job 23564165 - COMPLETED
 # and pairwise SFS between 4000 and 1000, 2000, 3000:
-scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; done
-Submitted batch job 23570631-3
+scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=4000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; done
+Submitted batch job 23571618-20
 # then Fst pairwise with 4000 and other population groups:
 
 
