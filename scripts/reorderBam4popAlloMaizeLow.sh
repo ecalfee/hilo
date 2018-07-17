@@ -3,12 +3,13 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J reorderBam
 #SBATCH -o /home/ecalfee/hilo/slurm-log/reorderBam_%j_%A_%a.out
-#SBATCH -t 12:00:00
+#SBATCH -t 16:00:00
 #SBATCH --mem=12G
+#SBATCH --array=1-4,11-14,21-24,31-34
 
 # jobs will fail due to lack of scratch memory so I can exclude nodes with low available memory as needed, e.g. -x bigmem1
 
-# to run (e.g. 4 ind's per lowland maize pop): sbatch reorderBam.sh --array=1-4,11-14,21-24,31-34
+# to run (e.g. 4 ind's per lowland maize pop): sbatch --array=1-4,11-14,21-24,31-34 reorderBam4popAlloMaizeLow.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
