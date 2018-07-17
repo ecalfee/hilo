@@ -486,15 +486,15 @@ scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
 do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
 then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh; fi; done; done
-Submitted batch job 23021289-23021760
+Submitted batch job 23021289-23021760 
 4 jobs not running -- requeue-ing 23021318-21 from c10-92:
 scripts$ sbatch --export=POP1=18,POP2=274,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh
-Submitted batch job 23026718
+Submitted batch job 23026718 
 scripts$ for j in {20..22}; \
 do sbatch --export=POP1=19,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh; done
-Submitted batch job 23026842-4
+Submitted batch job 23026842-4 
 
 # now calculating Fst pairwise:
 scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
@@ -606,7 +606,7 @@ ecalfee@farm:~/hilo/data$ cat pass1_bam.all.list bam.maize4popLowland.list > mer
 scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list allVarAngsdGL.sh
 Submitted batch job 23526847 -- Did not run: Mt and Pt chromosomes not in bams from Anne (allopatric maize);
 # changed allVarAngsdGL.sh to have a new variable to not check bam headers for same chromosomes;
-# ok because I'm restricting analysis to the shared autosomes 1-10
+# ok because I'm restricting analysis to the shared autosomes 1-10 -- THIS WAS A BAD IDEA -- IT'S NOT FINDING THE CORRECT CHROMOSOMES (!) -- MANY SNPs @ 50% freq.
 scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
 Submitted batch job 23551911 -- ugh, typo (now fixed)
 scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
@@ -628,7 +628,24 @@ Submitted batch job 23553429 - RUNNING; I cancelled (needs index files to run)
 ~/hilo/data/alloMaize4pop_symlink_bam$ (!) I put this into a script samtools index maizeLow_"$i".bam
 scripts$ sbatch indexAllo4PopMaize.sh
 Submitted batch job 23553496 - Fixed typo below:
-Submitted batch job 23554317
+Submitted batch job 23554317 - COMPLETED
+# now running GL again:
+~/hilo/scripts$ sbatch --export=DIR_OUT=geno_lik/merged_pass1_maize4popLowland/allVar,BAM_IN=merged_bam.pass1_all.maize4popLowland.list,CHECK_BAM_HEADERS=0 allVarAngsdGL.sh
+Submitted batch job 23563805 -- TOO MEMORY INTENSE -- SOME ARE COMPLETE BUT OTHERS NOTE EVEN CLOSE -- WILL NEVER FINISH.
+ALTERNATIVES:
+# (1) I find variable sites first (and then will calculate GL for a subset)
+# (2) I split the genome into a large number of regions across multiple files (approximately retrieving 1/1000th of the maize total genome)
+~/hilo/scripts$ sbatch getRandomRegions_andSplit.sh
+Submitted batch job 23570489 - FIXED TYPO:
+Submitted batch job 23571407
+# after I will use these regions files to create GL files for each set of regions.
+
+# I ALSO NEED TO ADDRESS THIS ERROR -- THERE ARE MANY MANY SNPs at > 50% freq; I THINK THE BAM HEADERS ARE INDEED A PROBLEM, OFFSETTING BY 1 CHRM.
+# error in file: Trying to access fasta efter end of chromsome+200:9/9 pos=181122463 ref_len=159769782
+"geno_lik/merged_pass1_maize4popLowland/allVar/region_42.arg"
+# and again in region 38: Trying to access fasta efter end of chromsome+200:8/8 pos=182381402 ref_len=181122637
+# I am re-ordering bams using picard tools -- reorderBam4popAlloMaizeLow.sh (starting with just 16/40 individuals, 4 per pop)
+
 
 # FST
 
@@ -638,5 +655,13 @@ ecalfee@farm:~/hilo/data$ cp bam.maize4popLowland.list pass1_bam_pops/pop4000.li
 # calcualte SAF for regions:
 scripts$ sbatch --array=4000 calcSAFAngsd.sh -t 10:00:00 --mem=4G
 Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit) - did not finish because of lack of index files (fixed see above)
+Submitted batch job 23563858 - NODE FAIL (will rerun excluding bigmem5:)
+scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G -x bigmem5 calcSAFAngsd.sh
+Submitted batch job 23564165 - COMPLETED
 # and pairwise SFS between 4000 and 1000, 2000, 3000:
+scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; done
+Submitted batch job 23570631-3
 # then Fst pairwise with 4000 and other population groups:
+
+
+
