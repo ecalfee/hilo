@@ -653,7 +653,63 @@ Submitted batch job 23576612 - fix typo:
 Submitted batch job 23576616 - COMPLETED
 # edited reorderBam4popAlloMaizeLow.sh to refer to local reference AGPv4.fa and .dict
 ~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
-Submitted batch job 23576622
+Submitted batch job 23576622 -- produced an error and truncated bams
+
+# making a small test file to avoid future errors in the bams/reordering etc.
+data/alloMaize4pop_symlink_bam$ samtools view -b maizeLow_01.bam "10:10-20" > maizeLow_99.bam # subset of reads
+~/hilo/scripts$ sbatch --array=99 -t 10:00 --mem=1G -p med reorderBam4popAlloMaizeLow.sh
+Submitted batch job 23706200 #e.g. run, tried many; produces no error ONLY IF I don't provide a maizeLow_99.bam.bai index file (or maizeLow_99.bai) from samtools
+# making slightly larger test region:
+data/alloMaize4pop_symlink_bam$ samtools view -b maizeLow_01.bam "10:1000-2000" > maizeLow_98.bam
+scripts$ sbatch --array=98 -t 10:00 --mem=1G -p med reorderBam4popAlloMaizeLow.sh
+Submitted batch job 23706846
+
+
+# also making a small test file for a hilo individual
+data/TEST$ samtools view -b ../filtered_bam/hilo_23.sort.dedup.baq.bam "10:1000-2000" > hilo_23.subset10.1-2k.bam
+data/TEST$ samtools index hilo_23.subset10.1-2k.bam
+TEST$ echo hilo_23.subset10.1-2k.bam > test_veryshort_bams.list
+TEST$ echo maizeLow_98.reordered.bam >> test_veryshort_bams.list
+# ANGSD is able to run with the reordered pair:
+~/hilo/data/TEST$ angsd -out test_small_maizeLow_hilo -ref ../refMaize/AGPv4.fa \
+-bam test_veryshort_bams.list -remove_bads 1 \
+-minMapQ 30 -minQ 20 \
+-doMajorMinor 2 \
+-doCounts 1 -minMaf 0.05 -doMaf 8 \
+-GL 1 -doGlf 2
+
+# REORDERING MAIZE_LOW BAMS:
+# moved all .bai files to /outdated/ to temporarily save
+scripts$ sbatch reorderBam4popAlloMaizeLow.sh
+Submitted batch job 23707049
+-- ALL BUT IND01 CANCELLED BECAUSE IT FOUND THE .BAI FILE FOLLOWNG THE SYMLINK
+# 01 may be wrong too because it 
+# I am trying another solution: just giving a new header to Anne's bams addint mt and pt chromosomes (chr10 will still come out of order, first)
+~/hilo/data$ mkdir -p alloMaize/maizeLow/re_head # make new directory
+~/hilo/data/alloMaize/maizeLow$ samtools view -H /group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-02_removedup_realigned.bam > new_header_with_mt.sam
+# edit header with nano, adding these 2 lines:
+@SQ	SN:Pt	LN:140384
+@SQ	SN:Mt	LN:569630
+
+# modified header of the short bam file
+~/hilo/data/alloMaize/maizeLow$ samtools reheader new_header_with_mt.sam ../../alloMaize4pop_symlink_bam/maizeLow_98.bam > re_head/maizeLow_TEST.bam
+~/hilo/data/alloMaize/maizeLow/re_head$ samtools index maizeLow_TEST.bam
+~/hilo/data/alloMaize/maizeLow/re_head$ mv maizeLow_TEST.bam* ../../../TEST/.
+# test ANGSD for full mini files
+~/hilo/data/TEST$ echo maizeLow_TEST.bam > TEST_ANGSD_GL_rehead_bams.list
+~/hilo/data/TEST$ echo hilo_23.subset10.1-2k.bam >> TEST_ANGSD_GL_rehead_bams.list
+~/hilo/data/TEST$ angsd -out TEST_ANGSD_GL_rehead -ref ../refMaize/AGPv4.fa -minMapQ 30 -minQ 20 -remove_bads 1 -doMajorMinor 2 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -bam TEST_ANGSD_GL_rehead_bams.list
+-- THE ABOVE WILL NOT WORK -- with or without a region -r listed
+# test with the test re-ordered bam
+ecalfee@bigmem7:~/hilo/data/TEST$ echo maizeLow_98.reordered.bam > TEST_ANGSD_GL_reorder_bams.list
+ecalfee@bigmem7:~/hilo/data/TEST$ echo hilo_23.subset10.1-2k.bam >> TEST_ANGSD_GL_reorder_bams.list
+~/hilo/data/TEST$ angsd -out TEST_ANGSD_GL_reorder -ref ../refMaize/AGPv4.fa -minMapQ 30 -minQ 20 -remove_bads 1 -doMajorMinor 2 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -bam TEST_ANGSD_GL_reorder_bams.list 
+-- THE ABOVE WORKED ON TEST FILES --
+# So I am trying reordering again, but where I copy the bams first so they have 
+# no bai files (and I delete intermediate copied pre-reordering bams at the close of the script)
+ecalfee@bigmem7:~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
+Submitted batch job 23752487
+
 
 # FST
 
