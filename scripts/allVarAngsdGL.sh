@@ -15,8 +15,8 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# load angsd
-module load angsd
+# load angsd -- don't load -- updated version 9.20 is local
+#module load angsd
 
 # make directory to store output (if doesn't yet exist)
 mkdir -p $DIR_OUT
@@ -29,7 +29,7 @@ echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLU
 angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 -r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
--ref /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
+-ref refMaize/AGPv4.fa \
 -checkBamHeaders $CHECK_BAM_HEADERS \
 -bam $BAM_IN \
 -remove_bads 1 \

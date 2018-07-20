@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J reorderBam
 #SBATCH -o /home/ecalfee/hilo/slurm-log/reorderBam_%j_%A_%a.out
-#SBATCH -t 16:00:00
+#SBATCH -t 36:00:00
 #SBATCH --mem=12G
 #SBATCH --array=1-4,11-14,21-24,31-34
 
@@ -22,19 +22,20 @@ printf -v TASK_ID "%02g" $SLURM_ARRAY_TASK_ID
 # necessary becuase slurm array task ID doesn't hold leading zeros
 
 # load samtools for quality read filtering
-module load samtools
+#module load samtools
 # load java to run picardtools
 module load java
 # load picardtools for removing PCR duplicate reads
 module load picardtools # saves path to loaded versin in $PICARD variable
 
 # make a ‘scratch’ directory for temporary files (@ end check that it’s empty)
-mkdir -p ./scratch/maizeLow_$TASK_ID   # temporary sort files will be written to local node
+mkdir -p ./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID   # temporary sort files will be written to local node
+cp "/group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-"$TASK_ID"_removedup_realigned.bam" alloMaize/maizeLow/scratch/maizeLow_$TASK_ID/pre_reordering.bam
 
 # reorder chromosomes to match APG4 reference
 java -Xmx11g -jar $PICARD/picard.jar ReorderSam \
-          INPUT=./alloMaize4pop_symlink_bam/maizeLow_$TASK_ID.bam \
-          OUTPUT=./alloMaize4pop_symlink_bam/maizeLow_$TASK_ID.reordered.bam \
+          INPUT=./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID/pre_reordering.bam \
+          OUTPUT=./alloMaize/maizeLow/reordered_$TASK_ID.bam \
           TMP_DIR=./scratch/maizeLow_$TASK_ID \
           REFERENCE=./refMaize/AGPv4.fa \
           CREATE_INDEX=true
@@ -44,7 +45,7 @@ java -Xmx11g -jar $PICARD/picard.jar ReorderSam \
 
 
 # (4) remove intermediate file and temporary scratch directory
-rm -r ./scratch/maizeLow_$TASK_ID # remove temporary scratch folder
+rm -r ./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID # remove temporary scratch folder
 
 # print confirmation that all parts ran without errors
-echo "done re-ordering maizeLow "$TASK_ID" to APGv4"
+echo "done copying then re-ordering maizeLow "$TASK_ID" to APGv4"
