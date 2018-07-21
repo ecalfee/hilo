@@ -590,7 +590,9 @@ scripts$ sbatch calcDepthCovSites.sh
 Submitted batch job 23079251 - fixed typo & reran:
 Submitted batch job 23079342 - CANCELLED - OUT OF MEMORY > 20g/3nodes at chr2
 hilo/scripts$ sbatch calcDepthCovSites.sh - new edits for more nodes, and arrayed by chromosome
-Submitted batch job 23505206 - COMPLETED; results files split by CHROM
+Submitted batch job 23505206 - COMPLETED; results files split by CHROM. CHR1 did not finish.
+hilo/scripts$ sbatch --mem=30G --array=1 calcDepthCovSites.sh
+Submitted batch job 23778351
 scripts$ sbatch calcDepthCovRegions.sh
 Submitted batch job 23079256 - COMPLETED
 
@@ -708,7 +710,11 @@ ecalfee@bigmem7:~/hilo/data/TEST$ echo hilo_23.subset10.1-2k.bam >> TEST_ANGSD_G
 # So I am trying reordering again, but where I copy the bams first so they have 
 # no bai files (and I delete intermediate copied pre-reordering bams at the close of the script)
 ecalfee@bigmem7:~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
-Submitted batch job 23752487
+Submitted batch job 23752487 -- ONLY individual 01 ran without issue. Changed output names & scratch directory (issue was couldn't write to scratch) & running all but ind 01
+~/hilo/scripts$ sbatch --array=2-4,11-14,21-24,31-34 reorderBam4popAlloMaizeLow.sh
+Submitted batch job 23776475
+# copying over file for individual 1 (with index)
+~/hilo/data$ cp alloMaize/maizeLow/reordered_01.bam alloMaize4pop/.
 
 
 # FST
@@ -727,5 +733,10 @@ scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=4000,DIR=SAF/p
 Submitted batch job 23571618-20
 # then Fst pairwise with 4000 and other population groups:
 
+# MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to 
+# their own script: plot_mapping_metrics.R . Then I added othere coverage analyses
+# for (1) Fst regions
+# and (2) a subset of variant sites called in hilo; 
+# var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis).
 
 
