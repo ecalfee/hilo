@@ -715,6 +715,13 @@ Submitted batch job 23752487 -- ONLY individual 01 ran without issue. Changed ou
 Submitted batch job 23776475
 # copying over file for individual 1 (with index)
 ~/hilo/data$ cp alloMaize/maizeLow/reordered_01.bam alloMaize4pop/.
+# made list of new bams
+data$ for i in {01..04} {11..14} {21..24} {31..34}; do echo alloMaize4Low/reordered_$i.bam >> alloMaize4Low_16_bam.list; done
+# and combined list
+data$ cat pass1_bam.all.list alloMaize4Low_16_bam.list merged_bam.pass1_all.alloMaize4Low_16.list
+# re-running; delayed to start when the last reorder job finishes
+scripts$ sbatch --dependency=afterok:23776475_12 --export=DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list allVarAngsdGL.sh
+Submitted batch job 23807271
 
 
 # FST

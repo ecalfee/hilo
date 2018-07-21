@@ -140,7 +140,8 @@ plot_depth_mean = function(dep, label){ # takes in depth dataframe and a label f
          subtitle="Depth mapQ<30 by group") +
     theme(legend.title=element_blank())
   print(plot2) # ggplots must be called explicitly to print
-}
+ggsave(plot2, paste0("../plots/hist of individuals -- mean", label))
+  }
 # plot for all
 depths_list = list(depthF, depthF20, depthS_nochr1, depthS20_nochr1)
 depths_labels = c("depth Fst regions", "depth Fst regions Q>20",
