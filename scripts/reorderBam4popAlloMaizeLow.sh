@@ -28,15 +28,16 @@ module load java
 # load picardtools for removing PCR duplicate reads
 module load picardtools # saves path to loaded versin in $PICARD variable
 
-# make a ‘scratch’ directory for temporary files (@ end check that it’s empty)
-mkdir -p ./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID   # temporary sort files will be written to local node
-cp "/group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-"$TASK_ID"_removedup_realigned.bam" alloMaize/maizeLow/scratch/maizeLow_$TASK_ID/pre_reordering.bam
+# make an output dir and within that a ‘scratch’ directory for temporary files (@ end check that it’s empty)
+mkdir -p ./alloMaize4Low/scratch_$TASK_ID
+
+cp "/group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-"$TASK_ID"_removedup_realigned.bam" alloMaize4Low/unordered_$TASK_ID.bam
 
 # reorder chromosomes to match APG4 reference
 java -Xmx11g -jar $PICARD/picard.jar ReorderSam \
-          INPUT=./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID/pre_reordering.bam \
-          OUTPUT=./alloMaize/maizeLow/reordered_$TASK_ID.bam \
-          TMP_DIR=./scratch/maizeLow_$TASK_ID \
+          INPUT=./alloMaize4Low/unordered_$TASK_ID.bam \
+          OUTPUT=./alloMaize4Low/reordered_$TASK_ID.bam \
+          TMP_DIR=./alloMaize4Low/scratch_$TASK_ID \
           REFERENCE=./refMaize/AGPv4.fa \
           CREATE_INDEX=true
 # (2) Picard ReorderSam re-orders a bam file to the chromosome ordering of a new (but same alignment) reference genome
@@ -45,7 +46,8 @@ java -Xmx11g -jar $PICARD/picard.jar ReorderSam \
 
 
 # (4) remove intermediate file and temporary scratch directory
-rm -r ./alloMaize/maizeLow/scratch/maizeLow_$TASK_ID # remove temporary scratch folder
+rm -r ./alloMaize4Low/scratch_$TASK_ID # remove temporary scratch folder
+rm ./alloMaize4Low/unordered_$TASK_ID.bam # remove unordered file
 
 # print confirmation that all parts ran without errors
 echo "done copying then re-ordering maizeLow "$TASK_ID" to APGv4"

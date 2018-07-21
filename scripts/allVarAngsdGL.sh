@@ -7,7 +7,7 @@
 #SBATCH --mem=40G
 #SBATCH -n 4
 #SBATCH --array=0-46
-#SBATCH --export=DIR_OUT=geno_lik/pass1/allVar,BAM_IN=pass1_bam.all.list,CHECK_BAM_HEADERS=1
+#SBATCH --export=DIR_OUT=geno_lik/pass1/allVar,BAM_IN=pass1_bam.all.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -30,7 +30,6 @@ angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 -r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
 -ref refMaize/AGPv4.fa \
--checkBamHeaders $CHECK_BAM_HEADERS \
 -bam $BAM_IN \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
