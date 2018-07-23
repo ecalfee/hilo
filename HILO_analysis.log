@@ -726,7 +726,7 @@ scripts$ sbatch --dependency=afterok:23776475_12 --export=DIR_OUT=geno_lik/merge
 Submitted batch job 23807271 -- long time to make priority
 # To reduce output time and computations I made a new script to just get variant sites by region:
 scripts$ sbatch --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list callVarAngsd_Regions.sh
-
+Submitted batch job 23905396
 
 
 
