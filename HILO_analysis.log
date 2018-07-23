@@ -714,14 +714,20 @@ Submitted batch job 23752487 -- ONLY individual 01 ran without issue. Changed ou
 ~/hilo/scripts$ sbatch --array=2-4,11-14,21-24,31-34 reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23776475
 # copying over file for individual 1 (with index)
-~/hilo/data$ cp alloMaize/maizeLow/reordered_01.bam alloMaize4pop/.
+~/hilo/data$ cp alloMaize/maizeLow/reordered_01.bam alloMaize4Low/.
+~/hilo/data$ cp alloMaize/maizeLow/reordered_01.bai alloMaize4Low/.
+~/hilo/data$ rm -r alloMaize/
 # made list of new bams
 data$ for i in {01..04} {11..14} {21..24} {31..34}; do echo alloMaize4Low/reordered_$i.bam >> alloMaize4Low_16_bam.list; done
 # and combined list
 data$ cat pass1_bam.all.list alloMaize4Low_16_bam.list merged_bam.pass1_all.alloMaize4Low_16.list
 # re-running; delayed to start when the last reorder job finishes
 scripts$ sbatch --dependency=afterok:23776475_12 --export=DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list allVarAngsdGL.sh
-Submitted batch job 23807271
+Submitted batch job 23807271 -- long time to make priority
+# To reduce output time and computations I made a new script to just get variant sites by region:
+scripts$ sbatch --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list callVarAngsd_Regions.sh
+
+
 
 
 # FST
@@ -734,11 +740,29 @@ scripts$ sbatch --array=4000 calcSAFAngsd.sh -t 10:00:00 --mem=4G
 Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit) - did not finish because of lack of index files (fixed see above)
 Submitted batch job 23563858 - NODE FAIL (will rerun excluding bigmem5:)
 scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G -x bigmem5 calcSAFAngsd.sh
-Submitted batch job 23564165 - COMPLETED
+Submitted batch job 23564165 - COMPLETED.
 # and pairwise SFS between 4000 and 1000, 2000, 3000:
 scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=4000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; done
-Submitted batch job 23571618-20
+Submitted batch job 23571618-20 - COMPLETED
 # then Fst pairwise with 4000 and other population groups:
+scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=4000,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; done
+Submitted batch job 23903001-3 - COMPLETED (and not very different from below..it worked fine despite not re-ordered)
+
+# RE-DOING FST after REORDERING BAMS -- there could be mistakes in original above due to comparing 
+# SAF across individuals with same chromosome names but diff. order (I'm not sure of effect):
+# made new bam list 5000 for 16 bams the that I re-ordered (4 per pop from allopatric lowland Maize):
+~/hilo/data$ cp alloMaize4Low_16_bam.list pass1_bam_pops/pop5000.list
+# calculate SAF for regions:
+scripts$ sbatch --array=5000 -t 12:00:00 --mem=4G calcSAFAngsd.sh 
+Submitted batch job 23902868 - ERROR FROM IND 01. Recopied over reordered bam for this ind & reran:
+Submitted batch job 23903106 - I CANCELLED immediately (arguments after script.sh were being ignored)
+Submitted batch job 23903114 - COMPLETED
+# calculate pairwise SFS between 5000 and 1000, 2000, 3000
+scripts$ for i in 1000 2000 3000; do sbatch --dependency=afterok:23903114 --export=POP1=$i,POP2=5000,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; done
+Submitted batch job 23903227-9 -COMPLETED
+# then calculate pairwise Fst between all groups
+scripts$ for i in 1000 2000 3000; do sbatch --dependency=afterok:23903227,23903228,23903229 --export=POP1=$i,POP2=5000,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; done
+Submitted batch job 23903329-31 - COMPLETED
 
 # MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to 
 # their own script: plot_mapping_metrics.R . Then I added othere coverage analyses
