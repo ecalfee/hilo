@@ -4,6 +4,7 @@ library(scales)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(reshape2)
 
 # ID and population labels:
 hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
@@ -69,25 +70,45 @@ plot_PCA(file = "../data/geno_lik/pass1/pruned_all.cov", name = "SNPs_pruned_all
 plot_PCA_byPop(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = "100K_SNPs")
 
 # plot pairwise Fst results here
-fstG <- read.table("../data/FST/pass1/N1000.L100.regions/pairwise.group.fst.stats",
+fstG <- read.table("../data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats",
                   stringsAsFactors = F, header = T)
-groupN <- c(1000, 2000, 3000)
-groupName <- c("Maize_symp", "Mex_symp", "Mex_allo")
-ggplot(data = fstG, 
-       aes(x=pop1, y=pop2, fill=Fst_Hudson)) + 
-  geom_tile()
-mG <- matrix(0, 3, 3)
-mG[1,2] <- fstG[fstG$pop1==1000 & fstG$pop2==2000, "Fst_Hudson"]
-mG[1,3] <- fstG[fstG$pop1==1000 & fstG$pop2==3000, "Fst_Hudson"]
-mG[2,3] <- fstG[fstG$pop1==2000 & fstG$pop2==3000, "Fst_Hudson"]
+groupN <- c(1000, 2000, 3000, 5000)
+groupName <- c("Maize_symp", "Mex_symp", "Mex_allo", "Maize_allo_lowland")
+#ggplot(data = fstG, 
+#       aes(x=pop1, y=pop2, fill=Fst_Hudson)) + 
+#  geom_tile()
+mG <- matrix(0, length(groupN), length(groupN))
+for (i in fstG[, "pop1"]){
+  for (j in fstG[fstG$pop1 == i, "pop2"]){
+    mG[which(groupN == i), which(groupN == j)] <- fstG[fstG$pop1 == i & fstG$pop2 == j, "Fst_Hudson"]
+    mG[which(groupN == j), which(groupN == i)] <- fstG[fstG$pop1 == i & fstG$pop2 == j, "Fst_Hudson"]
+  }
+}
 colnames(mG) <- groupName
 rownames(mG) <- groupName
 # Fst grid for maize & mexicana groups symp/allo
-mG
+mG <- mG[c(4,1,2,3), c(4,1,2,3)] # reorder to go allopatric maize to allopatric mexicana
+
+# plot Fst nicely
+data_mG <- reshape2::melt(mG[, ]) %>%
+  rename(., Group1=Var1, Group2=Var2)
+
+p <- ggplot(data =  data_mG, aes(x = Group1, y = Group2)) +
+  geom_tile(aes(fill = value), colour = "white") +
+  geom_text(aes(label = sprintf("%1.3f",value)), vjust = 1) +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  ggtitle("Fst (Hudson's) from 1000 regions, each 100bp") + 
+  theme(axis.title.x = element_blank(), 
+       axis.title.y = element_blank())
+p
+ggsave("../plots/Fst_maize_mex_100000bp.png", plot = p, device = png(), 
+       width = 10, height = 8, units = "in",
+       dpi = 100)
+
 
 # Below I get qualitatively similar conclusions from Fst using 1000 regions of 100 bp each 
-# without needing to call variants
-fst <- read.table("../data/FST/pass1/N1000.L100.regions/pairwise.fst.stats",
+# without needing to call variants. All subpopulations plotted below.
+fst <- read.table("../data/SFS/pass1/N1000.L100.regions/pairwise.fst.stats",
                   stringsAsFactors = F, header = T)
 pops = unique(c(fst$pop1, fst$pop2))
 fst$f1 <- as.numeric(factor(fst$pop1, levels = pops))
