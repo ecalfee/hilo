@@ -6,7 +6,7 @@
 #SBATCH -t 10:00:00
 #SBATCH --mem=5G
 #SBATCH -n 1
-#SBATCH --array=0-425%50
+#SBATCH --array=0-425%8
 #SBATCH --export=DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list,DIR_REGIONS=refMaize/divide_5Mb
 
 # %k ensures only k jobs max run at one time
