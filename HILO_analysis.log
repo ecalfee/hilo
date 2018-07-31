@@ -196,6 +196,12 @@ hilo/scripts$ python divRefRegions.py 50000000 ../data/refMaize/Zea_mays.AGPv4.d
 # save a file with a list of regions: chr, start, end, region #, regions file name
 ~/hilo/data/refMaize/divide_50Mb$ for i in {0..46}; do awk -v i=$i 'gsub(":|-", "\t", $0){print $0"\t"i"\t""region_"i".txt"}' region_$i.txt >> ALL_regions.list; done
 
+# repeat for even smaller regions -- 5Mb (created region _0 to 425)
+ecalfee@bigmem3:~/hilo/scripts$ mkdir -p ../data/refMaize/divide_5Mb
+ecalfee@bigmem3:~/hilo/scripts$ python3 divRefRegions.py 5000000 ../data/refMaize/AGPv4.fa.fai ../data/refMaize/divide_5Mb
+scripts$ cd ../data/refMaize/divide_5Mb; for i in {0..425}; do awk -v i=$i 'gsub(":|-", "\t", $0){print $0"\t"i"\t""region_"i".txt"}' region_$i.txt >> ALL_regions.list; done
+
+
 # new bam lists:
 # data/HILO_IDs_cov_pass1.csv is created in plot_global_ancestry_NGSadmix & saves the # reads that pass filtering + estimated coverage = (# reads * 150bp/read)/2.3Gb as well as meta data on pops and HILO_id as well as IndN for pass1 & GL_beagle_file_ID (skips unaligned ind's)
 # sympatric populations only, and individuals must have bam & est. coverage > 0.05
@@ -486,15 +492,15 @@ scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
 do for j in {18..31} {33..35} {360..363} {365..374}; do if [ $j -gt $i ]; \
 then sbatch --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh; fi; done; done
-Submitted batch job 23021289-23021760 
+Submitted batch job 23021289-23021760
 4 jobs not running -- requeue-ing 23021318-21 from c10-92:
 scripts$ sbatch --export=POP1=18,POP2=274,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh
-Submitted batch job 23026718 
+Submitted batch job 23026718
 scripts$ for j in {20..22}; \
 do sbatch --export=POP1=19,POP2=$j,DIR=SAF/pass1/N1000.L100.regions \
 -t 1:00:00 calc2DSFSAngsd.sh; done
-Submitted batch job 23026842-4 
+Submitted batch job 23026842-4
 
 # now calculating Fst pairwise:
 scripts$ for i in {18..31} {33..35} {360..363} {365..374}; \
@@ -650,11 +656,11 @@ Submitted batch job 23571407
 ~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23571569 - FIXED DIRECTORY TYPO and made scratch directory in my home folder instead of local to each node (lack of space)
 Submitted batch job 23576593 -Failed due to lack of 'sequence dictionary'. will make one. and will make a symlink for reference genome too in makeSeqDictRef.sh script:
-scripts$ sbatch makeSeqDictRef.sh 
+scripts$ sbatch makeSeqDictRef.sh
 Submitted batch job 23576612 - fix typo:
 Submitted batch job 23576616 - COMPLETED
 # edited reorderBam4popAlloMaizeLow.sh to refer to local reference AGPv4.fa and .dict
-~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
+~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23576622 -- produced an error and truncated bams
 
 # making a small test file to avoid future errors in the bams/reordering etc.
@@ -685,7 +691,7 @@ TEST$ echo maizeLow_98.reordered.bam >> test_veryshort_bams.list
 scripts$ sbatch reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23707049
 -- ALL BUT IND01 CANCELLED BECAUSE IT FOUND THE .BAI FILE FOLLOWNG THE SYMLINK
-# 01 may be wrong too because it 
+# 01 may be wrong too because it
 # I am trying another solution: just giving a new header to Anne's bams addint mt and pt chromosomes (chr10 will still come out of order, first)
 ~/hilo/data$ mkdir -p alloMaize/maizeLow/re_head # make new directory
 ~/hilo/data/alloMaize/maizeLow$ samtools view -H /group/jrigrp6/RILAB_data/LR/JRIAL11/bam/LR_GATK/JRIAL11-02_removedup_realigned.bam > new_header_with_mt.sam
@@ -705,11 +711,11 @@ Submitted batch job 23707049
 # test with the test re-ordered bam
 ecalfee@bigmem7:~/hilo/data/TEST$ echo maizeLow_98.reordered.bam > TEST_ANGSD_GL_reorder_bams.list
 ecalfee@bigmem7:~/hilo/data/TEST$ echo hilo_23.subset10.1-2k.bam >> TEST_ANGSD_GL_reorder_bams.list
-~/hilo/data/TEST$ angsd -out TEST_ANGSD_GL_reorder -ref ../refMaize/AGPv4.fa -minMapQ 30 -minQ 20 -remove_bads 1 -doMajorMinor 2 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -bam TEST_ANGSD_GL_reorder_bams.list 
+~/hilo/data/TEST$ angsd -out TEST_ANGSD_GL_reorder -ref ../refMaize/AGPv4.fa -minMapQ 30 -minQ 20 -remove_bads 1 -doMajorMinor 2 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -bam TEST_ANGSD_GL_reorder_bams.list
 -- THE ABOVE WORKED ON TEST FILES --
-# So I am trying reordering again, but where I copy the bams first so they have 
+# So I am trying reordering again, but where I copy the bams first so they have
 # no bai files (and I delete intermediate copied pre-reordering bams at the close of the script)
-ecalfee@bigmem7:~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh 
+ecalfee@bigmem7:~/hilo/scripts$ sbatch reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23752487 -- ONLY individual 01 ran without issue. Changed output names & scratch directory (issue was couldn't write to scratch) & running all but ind 01
 ~/hilo/scripts$ sbatch --array=2-4,11-14,21-24,31-34 reorderBam4popAlloMaizeLow.sh
 Submitted batch job 23776475
@@ -727,6 +733,10 @@ Submitted batch job 23807271 -- long time to make priority
 # To reduce output time and computations I made a new script to just get variant sites by region:
 scripts$ sbatch --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list callVarAngsd_Regions.sh
 Submitted batch job 23905396
+# Got permission to run as 'high priority' on bigmemh. Made 0-425 new regions (each 5Mb) and running with just 1 core
+# (no threading) ... and letting 50 tasks run at one time:
+ecalfee@bigmem3:~/hilo/scripts$ sbatch -p bigmemh allVarAngsdGL1.sh
+Submitted batch job 24226853
 
 
 
@@ -748,12 +758,12 @@ Submitted batch job 23571618-20 - COMPLETED
 scripts$ for i in 1000 2000 3000; do sbatch --export=POP1=$i,POP2=4000,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; done
 Submitted batch job 23903001-3 - COMPLETED (and not very different from below..it worked fine despite not re-ordered)
 
-# RE-DOING FST after REORDERING BAMS -- there could be mistakes in original above due to comparing 
+# RE-DOING FST after REORDERING BAMS -- there could be mistakes in original above due to comparing
 # SAF across individuals with same chromosome names but diff. order (I'm not sure of effect):
 # made new bam list 5000 for 16 bams the that I re-ordered (4 per pop from allopatric lowland Maize):
 ~/hilo/data$ cp alloMaize4Low_16_bam.list pass1_bam_pops/pop5000.list
 # calculate SAF for regions:
-scripts$ sbatch --array=5000 -t 12:00:00 --mem=4G calcSAFAngsd.sh 
+scripts$ sbatch --array=5000 -t 12:00:00 --mem=4G calcSAFAngsd.sh
 Submitted batch job 23902868 - ERROR FROM IND 01. Recopied over reordered bam for this ind & reran:
 Submitted batch job 23903106 - I CANCELLED immediately (arguments after script.sh were being ignored)
 Submitted batch job 23903114 - COMPLETED
@@ -766,14 +776,12 @@ Submitted batch job 23903329-31 - COMPLETED
 # add results to summary file
 ~/hilo/data/SAF/pass1/N1000.L100.regions$ for i in 1000 2000 3000; do awk -v i=$i '{print i "\t" 5000 "\t" $1 "\t" $2}' pop$i.pop5000.fst.stats >> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats; done
 
-# MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to 
+# MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to
 # their own script: plot_mapping_metrics.R . Then I added othere coverage analyses
 # for (1) Fst regions
-# and (2) a subset of variant sites called in hilo; 
+# and (2) a subset of variant sites called in hilo;
 # var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis; with over 100 individuals with some data (MORE than cutoff for other SNPs)).
 
 
 # Getting 282 SRAs for download from NCBI
 hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term="SRP108889"[All Fields]'
-
-
