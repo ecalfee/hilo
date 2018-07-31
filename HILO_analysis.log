@@ -726,7 +726,7 @@ scripts$ sbatch --dependency=afterok:23776475_12 --export=DIR_OUT=geno_lik/merge
 Submitted batch job 23807271 -- long time to make priority
 # To reduce output time and computations I made a new script to just get variant sites by region:
 scripts$ sbatch --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list callVarAngsd_Regions.sh
-
+Submitted batch job 23905396
 
 
 
@@ -763,11 +763,17 @@ Submitted batch job 23903227-9 -COMPLETED
 # then calculate pairwise Fst between all groups
 scripts$ for i in 1000 2000 3000; do sbatch --dependency=afterok:23903227,23903228,23903229 --export=POP1=$i,POP2=5000,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; done
 Submitted batch job 23903329-31 - COMPLETED
+# add results to summary file
+~/hilo/data/SAF/pass1/N1000.L100.regions$ for i in 1000 2000 3000; do awk -v i=$i '{print i "\t" 5000 "\t" $1 "\t" $2}' pop$i.pop5000.fst.stats >> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats; done
 
 # MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to 
 # their own script: plot_mapping_metrics.R . Then I added othere coverage analyses
 # for (1) Fst regions
 # and (2) a subset of variant sites called in hilo; 
-# var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis).
+# var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis; with over 100 individuals with some data (MORE than cutoff for other SNPs)).
+
+
+# Getting 282 SRAs for download from NCBI
+hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term="SRP108889"[All Fields]'
 
 
