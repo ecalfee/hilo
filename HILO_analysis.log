@@ -729,14 +729,23 @@ data$ for i in {01..04} {11..14} {21..24} {31..34}; do echo alloMaize4Low/reorde
 data$ cat pass1_bam.all.list alloMaize4Low_16_bam.list merged_bam.pass1_all.alloMaize4Low_16.list
 # re-running; delayed to start when the last reorder job finishes
 scripts$ sbatch --dependency=afterok:23776475_12 --export=DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list allVarAngsdGL.sh
-Submitted batch job 23807271 -- long time to make priority
+Submitted batch job 23807271 -- long time to make priority : CANCELLED (see below, running on smaller regions)
 # To reduce output time and computations I made a new script to just get variant sites by region:
 scripts$ sbatch --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list callVarAngsd_Regions.sh
-Submitted batch job 23905396
+Submitted batch job 23905396 -- CANCELLED. WILL REWRITE FOR SMALLER TASKS AND RUN ON LOW PRIORITY.
 # Got permission to run as 'high priority' on bigmemh. Made 0-425 new regions (each 5Mb) and running with just 1 core
-# (no threading) ... and letting 50 tasks run at one time:
-ecalfee@bigmem3:~/hilo/scripts$ sbatch -p bigmemh allVarAngsdGL1.sh
+# (no threading) ... and letting 50 tasks run at one time: (!) mistake -- only use 8 cpu's at a time on bigmemh!
+ecalfee@bigmem3:~/hilo/scripts$ sbatch -p bigmemh allVarAngsdGL1.sh --Jeff cancelled & restarted
 Submitted batch job 24226853
+# attempting to rerun those that cancelled due to memory surplus as short jobs on low priority
+ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=0,1,25,39,75,81,92,93,97,103 --mem=12G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24263414
+ecalfee@bigmem3:~/hilo/scripts$ sbatch -p bigmeml --array=0 --mem=24G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24264289 (WHY DOES REGION 0 NEED SO MUCH MEMORY?)
+# and cancelled then re-submitted other jobs not yet queued with higher (max-per-node memory = 8G) but lower walltime (3 hrs max)
+# will start after this set of 8 completes
+ecalfee@bigmem2:~/hilo/scripts$ sbatch --dependency=afterany:24230156 --array=148-425%8 -t 3:00:00 --mem=8G allVarAngsdGL1.sh
+Submitted batch job 24263714
 
 
 
