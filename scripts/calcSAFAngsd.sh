@@ -27,7 +27,7 @@ echo "finding allele frequencies for pop"$SLURM_ARRAY_TASK_ID", regions"$REGION_
 # (0) Start with filtered BAM files and reference genome
 # (1) Use all sites to estimate site allele frequency
 angsd -out SAF/pass1/$REGION_FILE/pop$SLURM_ARRAY_TASK_ID \
--anc /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa -fold 1 \
+-anc refMaize/AGPv4.fa -fold 1 \
 -rf refMaize/random_regions/$REGION_FILE \
 -bam pass1_bam_pops/pop$SLURM_ARRAY_TASK_ID.list \
 -remove_bads 1 -minMapQ 30 \
