@@ -741,12 +741,25 @@ Submitted batch job 24226853
 ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=0,1,25,39,75,81,92,93,97,103 --mem=12G -t 2:00:00 allVarAngsdGL1.sh
 Submitted batch job 24263414
 ecalfee@bigmem3:~/hilo/scripts$ sbatch -p bigmeml --array=0 --mem=24G -t 2:00:00 allVarAngsdGL1.sh
-Submitted batch job 24264289 (WHY DOES REGION 0 NEED SO MUCH MEMORY?)
+Submitted batch job 24264289 (WHY DOES REGION 0 NEED SO MUCH MEMORY?) -- DOUBLING MEMORY AGAIN:
+ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=0 --mem=48G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24268274
+# and re-running 39. All other 'low priority' tasks finished:
+ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=39 --mem=24G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24269347 - EXCEEDED MEMORY
+ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=39 --mem=48G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24271818 - COMPLETED
+ecalfee@bigmem2:~/hilo/scripts$ sbatch -p bigmeml --array=127 --mem=24G -t 2:00:00 allVarAngsdGL1.sh
+Submitted batch job 24271599 - COMPLETED
 # and cancelled then re-submitted other jobs not yet queued with higher (max-per-node memory = 8G) but lower walltime (3 hrs max)
 # will start after this set of 8 completes
 ecalfee@bigmem2:~/hilo/scripts$ sbatch --dependency=afterany:24230156 --array=148-425%8 -t 3:00:00 --mem=8G allVarAngsdGL1.sh
 Submitted batch job 24263714
-
+# because I accidentally set it to medium priority, I'll get rid of the task limit and put the last 100 on high priority:
+scontrol update ArrayTaskThrottle=0 JobId=24263714
+scancel 24263714_[325-425]
+ecalfee@bigmem2:~/hilo/scripts$ sbatch --array=325-425%6 -t 3:00:00 --mem=8G -p bigmemh allVarAngsdGL1.sh
+Submitted batch job 24272202
 
 
 # FST
@@ -792,5 +805,9 @@ Submitted batch job 23903329-31 - COMPLETED
 # var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis; with over 100 individuals with some data (MORE than cutoff for other SNPs)).
 
 
-# Getting 282 SRAs for download from NCBI
+# Getting 282 SRAs for download from NCBI - ACTUALLY michelle will align 282 'ts' tropical/subtropical bams for me
 hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term="SRP108889"[All Fields]'
+
+# getting new metadata - cloning from JRI github 'riplasm':
+hilo/data$ git clone https://github.com/rossibarra/riplasm.git
+

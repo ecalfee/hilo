@@ -9,6 +9,12 @@ library(reshape2)
 # ID and population labels:
 hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
 pass1 <- hilo[!is.na(hilo$num_read_pass),] # only include individuals with some pass1 data
+# germplasm data from JRI for all projects ("riplasm"). 
+# RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
+riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
+  mutate(., prefix = substr(RI_ACCESSION, 1, 5)) %>%
+  mutate(., ind = as.integer(substr(RI_ACCESSION, 6, 100))) %>%
+  dplyr::filter(., prefix %in% c("RIMMA", "RIMME"))
 
 # PCA
 plot_PCA = function(file, name, jitter = F, ...){
@@ -59,7 +65,7 @@ plot_PCA(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = "100K_
 plot_PCA(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = "100K_SNPs_byCoverage", 
          cex = pass1$est_coverage)
 plot_PCA(file = "../data/geno_lik/pass1/sympatricVar/pruned_all.cov", name = "SNPs_ascertained_sympatric_pops")
-
+# more restrictive SNP pruning that takes only variants wiht >100 ind's with data (more than half)
 plot_PCA(file = "../data/geno_lik/pass1/pruned_all.cov", name = "SNPs_pruned_all")
 plot_PCA(file = "../data/geno_lik/pass1/pruned_all.cov", name = "SNPs_pruned_all_jittered",
          jitter = T)
@@ -68,6 +74,71 @@ plot_PCA(file = "../data/geno_lik/pass1/pruned_all.cov", name = "SNPs_pruned_all
          jitter = T, cex = pass1$est_coverage)
 # plotting first PCA again, by population, with no clear patterns
 plot_PCA_byPop(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = "100K_SNPs")
+
+# more PCA's
+# just first 40 individuals, then first 98 (plates 1 & 2) look more as expected but don't have allopatric teosinte ind's:
+start_n = 1
+end_n = 98
+#end_n = 196
+m <- as.matrix(read.table(file =  "../data/geno_lik/pass1/allVar/pruned_by1000.cov", 
+                          stringsAsFactors = F, header = F))[start_n:end_n, start_n:end_n]
+e <- eigen(m)
+colors = ifelse(pass1$zea[start_n:end_n]=="maize", "orange", 
+                ifelse(pass1$symp_allo[start_n:end_n]=="sympatric", "blue", "darkblue"))
+plot(e$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
+     main=paste("PCA", "of HILO id's", start_n, "to", end_n),
+     col = alpha(colors, 0.8),
+     pch = 16,
+     cex = pass1$est_coverage[start_n:end_n])
+# additional PC's
+plot(e$vectors[,3:4], lwd=2, ylab="PC 4", xlab="PC 3",
+     main=paste("PCA", "of HILO id's", start_n, "to", end_n),
+     col = alpha(colors, 0.8),
+     pch = 16,
+     cex = pass1$est_coverage[start_n:end_n])
+plot(e$vectors[,6:7], lwd=2, ylab="PC 7", xlab="PC 6",
+     main=paste("PCA", "of HILO id's", start_n, "to", end_n),
+     col = alpha(colors, 0.8),
+     pch = 16,
+     cex = pass1$est_coverage[start_n:end_n])
+  legend("bottomleft", col = c("orange", "blue", "darkblue"), 
+         legend = c("maize symp.", "mex. symp. ", "mex. allo."), 
+         pch = 16, cex = .7)
+
+# visualize pruned SNPs with over 100 ind's with data without jitter (Removing outliers)
+  # this is more restrictive SNP pruning
+  min_cov = .2
+  m1 <- as.matrix(read.table(file =  "../data/geno_lik/pass1/pruned_all.cov", 
+                            stringsAsFactors = F, header = F))[pass1$est_coverage >= min_cov, pass1$est_coverage >= min_cov]
+  e1 <- eigen(m1)
+  colors1 = ifelse(pass1$zea[pass1$est_coverage >= min_cov]=="maize", "orange", 
+                  ifelse(pass1$symp_allo[pass1$est_coverage >= min_cov]=="sympatric", "blue", "darkblue"))
+  # If I include low coverage individuals, all main PC's are just tagging outliers
+  # otherwise, it gets a similar spread to the other PCA (e.g. if including only > .2 ind coverage)
+  plot(e1$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
+       main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
+       col = alpha(colors1, 0.8),
+       pch = 16,
+       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+  plot(e1$vectors[,3:4], lwd=2, ylab="PC 4", xlab="PC 3",
+       main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
+       col = alpha(colors1, 0.8),
+       pch = 16,
+       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+  plot(e1$vectors[,5:6], lwd=2, ylab="PC 6", xlab="PC 5",
+       main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
+       col = alpha(colors1, 0.8),
+       pch = 16,
+       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+  plot(e1$vectors[,11:12], lwd=2, ylab="PC 12", xlab="PC 11",
+       main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
+       col = alpha(colors1, 0.8),
+       pch = 16,
+       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+  legend("bottomleft", col = c("orange", "blue", "darkblue"), 
+         legend = c("maize symp.", "mex. symp. ", "mex. allo."), 
+         pch = 16, cex = .7)  
+  
 
 # plot pairwise Fst results here
 fstG <- read.table("../data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats",

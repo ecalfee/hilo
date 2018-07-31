@@ -41,6 +41,14 @@ meta$popN <- as.numeric(meta$popN)
 meta$zea <- ifelse(meta$popN >= 100, "maize", "mexicana")
 meta$symp_allo <- ifelse(meta$popN %in% c(20, 22, 33), "allopatric", "sympatric")
 
+# meta 2 is a second check from Anne of the hiloID-to-popN link
+meta2 <- read.csv("../data/HILO_samples.csv", stringsAsFactors = F, sep = ",") %>%
+  separate(data = ., col = sample_name, sep = "_", c("popN", "plate"), extra = "merge") %>%
+  mutate(., popN = as.numeric(popN)) %>%
+  mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
+  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
+sum(meta$popN != meta2$popN[1:200] & meta$ID == meta2$Library.name[1:200]) # they are the same -- checks out
+
 # print quality with IDs for all individuals in HILO_DAN_IDs_modEC.csv
 info = left_join(meta,
                  qual[, c("num_read_pass", "est_coverage", "n", "pass1_ID")],
