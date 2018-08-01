@@ -3,9 +3,9 @@
 #SBATCH -D /home/ecalfee/hilo
 #SBATCH -J PCAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/PCAngsd_%j_%A_%a.out
-#SBATCH -t 36:00:00
-#SBATCH --mem=30G
-#SBATCH -n 10
+#SBATCH -t 6:00:00
+#SBATCH --mem=8G
+#SBATCH -n 2
 #SBATCH --export=GL_PREFIX=data/geno_lik/pass1/allVar/whole_genome
 
 # the suffix for the genotype likelihood file in GL_PREFIX is omitted .beagle.gz; 
@@ -22,7 +22,7 @@ source activate condaEnv
 
 # run PCAngsd
 # assumes GL data is already filtered for a minimum MAF; doesn't re-filter
-python2 ../bin/pcangsd/pcangsd.py -beagle $GL_PREFIX.beagle.gz -threads 10 -iter 100 -minMaf 0 -admix -o $GL_PREFIX
+python2 ../bin/pcangsd/pcangsd.py -beagle $GL_PREFIX.beagle.gz -threads 2 -iter 100 -minMaf 0 -admix -o $GL_PREFIX
 
 # -admix option calculates admixture proportions in addition to genotype covariance matrix for PCA
 # -iter specifies number of EM steps

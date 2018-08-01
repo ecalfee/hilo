@@ -757,10 +757,19 @@ ecalfee@bigmem2:~/hilo/scripts$ sbatch --dependency=afterany:24230156 --array=14
 Submitted batch job 24263714
 # because I accidentally set it to medium priority, I'll get rid of the task limit and put the last 100 on high priority:
 scontrol update ArrayTaskThrottle=0 JobId=24263714
-scancel 24263714_[325-425]
+scancel 24263714_[325-425] - RAN WITH SOME CANCELLED (Memory/timeout)
 ecalfee@bigmem2:~/hilo/scripts$ sbatch --array=325-425%6 -t 3:00:00 --mem=8G -p bigmemh allVarAngsdGL1.sh
-Submitted batch job 24272202
+Submitted batch job 24272202 - RAN WITH SOME CANCELLED (memory/timeout)
+Re-running ones that timed out on bigmemh with longer times and 2x the memory:
+~/hilo/scripts$ sbatch --array=324,178,179,181,216,257,262,281%4 -t 6:00:00 --mem=16G -p bigmemh allVarAngsdGL1.sh
+Submitted batch job 24378121 - COMPLETED
+Re-running ones that were memory short on bigmeml with 2 hours and 3x the memory:
+~/hilo/scripts$ sbatch --array=361,358,252,256,298,320 -t 2:00:00 --mem=24G -p bigmeml allVarAngsdGL1.sh
+Submitted batch job 24378629 - COMPLETED
+# Concatenating results into a file for every 1000th SNP:
+scripts$ sbatch -p bigmemh --export=startR=0,endR=425,DIR_GL=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,N=1000 catBeagleGL_nth
 
+scripts$ sbatch -p bigmemh --dependency=afterok: --export=GL_PREFIX=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000 runPCAngsd.sh
 
 # FST
 
@@ -810,4 +819,10 @@ hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.go
 
 # getting new metadata - cloning from JRI github 'riplasm':
 hilo/data$ git clone https://github.com/rossibarra/riplasm.git
+
+# PI / diversity statistics (theta estimates):
+# To get within-pop diversity genomewide, I use a small set of regions and calculate a SFS per pop (on bigmeml)
+scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
+Submitted batch job 24302961
+
 
