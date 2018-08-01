@@ -17,6 +17,6 @@ set –o nounset
 
 # concatenate header from first file with every Nth SNP from each subsequent file
 zcat $DIR_GL/region_$startR.beagle.gz | head -n 1 | gzip > $DIR_GL/whole_genome_pruned_every_$N.beagle.gz; \
-for i in {$startR..$endR}; do zcat region_$i.beagle.gz | tail -n +2; done | awk -v N=$N 'NR % N == 0' | gzip >> $DIR_GL/whole_genome_pruned_every_$N.beagle.gz
+for (( i=startR; i<=endR; i++ )); do zcat region_$i.beagle.gz | tail -n +2; done | awk -v N=$N 'NR % N == 0' | gzip >> $DIR_GL/whole_genome_pruned_every_$N.beagle.gz
 
-echo "done running with cat beagle.gz every "$N"th position, regions "$startN" to "$endN
+echo "done running with cat beagle.gz every $N th position, regions $startN to $endN"
