@@ -28,7 +28,7 @@ echo "finding SFS for pop"$SLURM_ARRAY_TASK_ID", regions"$REGION_FILE
 # (0) Start with filtered BAM files and reference genome
 # (1) Use all sites to estimate the folded site allele frequency using script calcSAFAngsd.sh
 # (2) Then get the maximum likelihood estimate of the SFS
-misc/realSFS SAF/pass1/$REGION_FILE/pop$POP.saf.idx -P 1 > SFS/pass1/$REGION_FILE/pop$POP.folded.sfs
+realSFS SAF/pass1/$REGION_FILE/pop$POP.saf.idx -P 1 > SFS/pass1/$REGION_FILE/pop$POP.folded.sfs
 
 # (3) Calculate thetas -- actually not needed right now for whole-genome approach (vs. scanning for selection/thetas)
 # I will instead calculate pi directly from the estimated genome-wide SFS

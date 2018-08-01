@@ -767,9 +767,16 @@ Re-running ones that were memory short on bigmeml with 2 hours and 3x the memory
 ~/hilo/scripts$ sbatch --array=361,358,252,256,298,320 -t 2:00:00 --mem=24G -p bigmeml allVarAngsdGL1.sh
 Submitted batch job 24378629 - COMPLETED
 # Concatenating results into a file for every 1000th SNP:
-scripts$ sbatch -p bigmemh --export=startR=0,endR=425,DIR_GL=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,N=1000 catBeagleGL_nth
+scripts$ sbatch -p bigmemh --export=startR=0,endR=425,DIR_GL=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,N=1000 catBeagleGL_nth.sh
+Submitted batch job 24402884 -- ERROR FOR LOOP
+Submitted batch job 24402416 -- ERROR BASH VARIABLES
+Submitted batch job 24402989 -- ERROR WORKING DIRECTORY
+scripts$ sbatch -p bigmemh --export=startR=0,endR=425,DIR_GL=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,N=1000 catBeagleGL_nth.sh
+Submitted batch job 24403123
+# and finally calculating PCA for this subset of SNPs
+scripts$ sbatch -p bigmemh --dependency=afterok:24403123 --export=GL_PREFIX=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000 runPCAngsd.sh
+Submitted batch job 24403224
 
-scripts$ sbatch -p bigmemh --dependency=afterok: --export=GL_PREFIX=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000 runPCAngsd.sh
 
 # FST
 
@@ -823,6 +830,7 @@ hilo/data$ git clone https://github.com/rossibarra/riplasm.git
 # PI / diversity statistics (theta estimates):
 # To get within-pop diversity genomewide, I use a small set of regions and calculate a SFS per pop (on bigmeml)
 scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
-Submitted batch job 24302961
+Submitted batch job 24302961 - ERROR in calling SFS program (removed misc/)
+scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
 
 
