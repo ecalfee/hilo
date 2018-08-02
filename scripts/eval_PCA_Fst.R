@@ -14,8 +14,9 @@ allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-3
                      zea = rep("maize", 16),
                      symp_allo = rep("allopatric", 16),
                      ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
+                     est_coverage = rep(2, 16), # underestimate of coverage (but ok for now)
                      stringsAsFactors = F)
-pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo")) %>%
+pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo", "est_coverage")) %>%
   bind_rows(., allo4Low)
 # germplasm data from JRI for all projects ("riplasm"). 
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
@@ -216,8 +217,8 @@ ggplot(data = fst[fst$pop1 < 100 & !(fst$pop1 %in% c(20,22,33)) & fst$pop2 < 100
 
 
 # ADDING IN ALLOPATRIC MAIZE - 16 individuals from 4 lowland populations
-m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.partial.cov",
-                          stringsAsFactors = F, header = F))
+#m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.partial.cov",
+#                          stringsAsFactors = F, header = F))
 m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.cov",
                            stringsAsFactors = F, header = F))
 e2 <- eigen(m2)
@@ -225,12 +226,65 @@ colors2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="
                 ifelse(pass1_allo4Low$symp_allo=="sympatric", "blue", "darkblue"))
 png(paste("../plots/pcangsd_bygroup", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
     height = 5, width = 8, units = "in", res = 150)
-plot(e2$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
-       main=paste("PCA", name),
+plot(e2$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2$values[2], "%"), xlab=paste("PC 1 -", e2$values[1], "%"),
+       main=paste("PCA adding lowland maize"),
        col = alpha(colors2, 0.8),
        pch = 16)
 legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
        legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
        pch = 16, cex = .7)
 dev.off()
+
+# point size by sequencing amount
+png(paste("../plots/pcangsd_bygroup_seqDepth", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
+    height = 5, width = 8, units = "in", res = 150)
+plot(e2$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2$values[2], "%"), xlab=paste("PC 1 -", e2$values[1], "%"),
+     main=paste("PCA adding lowland maize; size = depth"),
+     col = alpha(colors2, 0.8),
+     pch = 16,
+     cex = pass1_allo4Low$est_coverage*2)
+legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
+       legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
+       pch = 16, 
+       cex = 0.7)
+dev.off()
+
+# plot with allopatric maize by group
+png(paste("../plots/pcangsd_bypop", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
+    height = 5, width = 8, units = "in", res = 150)
+largerainbow2 = rainbow(length(unique(pass1_allo4Low$popN)))
+colorsrainbow2 = largerainbow2[factor(pass1_allo4Low$popN)]
+points2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="sympatric", 3, 9), 
+                 ifelse(pass1_allo4Low$symp_allo=="sympatric", 16, 1))
+plot(e2$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2$values[2], "%"), xlab=paste("PC 1 -", e2$values[1], "%"),
+     main=paste("PCA adding lowland maize"),
+     col = alpha(colorsrainbow2, 0.8),
+     pch = points2)
+legend("topright",
+       legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
+       pch = c(9, 3, 16, 1), cex = .7)
+dev.off()
+
+# plot just first 40 sequenced individuals:
+sub = c(1:40,197:212)
+e2sub <- eigen(m2[sub, sub])
+png(paste("../plots/pcangsd_bygroup_hilo1-40_seqDepth", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
+    height = 5, width = 8, units = "in", res = 150)
+plot(e2sub$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2sub$values[2], "%"), xlab=paste("PC 1 -", e2sub$values[1], "%"),
+     main=paste("PCA Hilo 1-40 only adding lowland maize; size = depth"),
+     col = alpha(colors2[sub], 0.8),
+     pch = 16,
+     cex = pass1_allo4Low$est_coverage[sub]*2)
+legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
+       legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
+       pch = 16, 
+       cex = 0.7)
+dev.off()
+
+
+
+
+
+
+
 
