@@ -18,7 +18,7 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-vcftools --gzvcf chr$ARRAY.vcf.gz --remove-indels --thin 10000 --recode --out chr$SLURM_ARRAY_TASK_ID
+vcftools --gzvcf chr$SLURM_ARRAY_TASK_ID.vcf.gz --remove-indels --thin 10000 --recode --out subset_chr$SLURM_ARRAY_TASK_ID
 # filter's variants so that they only include SNPs and no two variants within 10kb of each other
 # --recode means output a new vcf with prefix --out
 # can't filter for multiallelic variants (to remove)
