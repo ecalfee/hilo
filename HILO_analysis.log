@@ -836,7 +836,7 @@ hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.go
 ~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do ln -s /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz chr$i.vcf.gz; done
 # new script to make smaller vcf's with just thinned SNPs for PCA from 282 panel
 scripts$ sbatch -p bigmemh --array=1-10%6 subset_282var_nth.sh
-
+Submitted batch job 24423018
 
 # getting new metadata - cloning from JRI github 'riplasm':
 hilo/data$ git clone https://github.com/rossibarra/riplasm.git
