@@ -218,11 +218,13 @@ ggplot(data = fst[fst$pop1 < 100 & !(fst$pop1 %in% c(20,22,33)) & fst$pop2 < 100
 # ADDING IN ALLOPATRIC MAIZE - 16 individuals from 4 lowland populations
 m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.partial.cov",
                           stringsAsFactors = F, header = F))
+m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.cov",
+                           stringsAsFactors = F, header = F))
 e2 <- eigen(m2)
 colors2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="sympatric", "orange", "yellow"), 
                 ifelse(pass1_allo4Low$symp_allo=="sympatric", "blue", "darkblue"))
-#png(paste("../plots/pcangsd_bygroup", name, ".png"), # saves plot as pin in ../plots/
-#    height = 5, width = 8, units = "in", res = 150)
+png(paste("../plots/pcangsd_bygroup", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
+    height = 5, width = 8, units = "in", res = 150)
 plot(e2$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
        main=paste("PCA", name),
        col = alpha(colors2, 0.8),
@@ -230,4 +232,5 @@ plot(e2$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
 legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
        legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
        pch = 16, cex = .7)
+dev.off()
 

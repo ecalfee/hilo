@@ -836,7 +836,23 @@ hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.go
 ~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do ln -s /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz chr$i.vcf.gz; done
 # new script to make smaller vcf's with just thinned SNPs for PCA from 282 panel
 scripts$ sbatch -p bigmemh --array=1-10%6 subset_282var_nth.sh
-Submitted batch job 24423018
+Submitted batch job 24423018 -- ERROR (FIXED & RERUNNING BELOW)
+Submitted batch job 24484991
+# now pulling out a sites file to use in angsd which has chr, pos, major, minor alleles
+~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do grep -v "#" subset_chr$i.recode.vcf | awk '{print $1"\t"$2"\t"$4"\t"$5}' > subset_chr$i.sites; done
+# and making a matching regions file that just has chr:pos for every site
+~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do grep -v "#" subset_chr$i.recode.vcf | awk '{print $1":"$2}' > subset_chr$i.regions; done
+# now getting genotype likelihoods for all hilo individuals and lowland maize 16 individuals for these sites
+# using samtools GL method:
+~/hilo/scripts$ sbatch --array=1-10%4 -p bigmemh calcGL4maize282sites.sh
+Submitted batch job 24490030 - FIXED QUOTES AROUND VARIABLES:
+Submitted batch job 24490494 - MORE QUOTE FIXES:
+Submitted batch job 24490702 - NEEDED DOUBLE BACKSLASH \\
+Submitted batch job 24490876 - MORE BACKSLASH
+Submitted batch job 24491053 - TO FORWARD SLASH
+Submitted batch job 24491358
+# Now I'll reformat the GL's from the vcf file into ones matching BEAGLE expectations using a python script
+
 
 # getting new metadata - cloning from JRI github 'riplasm':
 hilo/data$ git clone https://github.com/rossibarra/riplasm.git
