@@ -775,7 +775,16 @@ scripts$ sbatch -p bigmemh --export=startR=0,endR=425,DIR_GL=geno_lik/merged_pas
 Submitted batch job 24403123
 # and finally calculating PCA for this subset of SNPs
 scripts$ sbatch -p bigmemh --dependency=afterok:24403123 --export=GL_PREFIX=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000 runPCAngsd.sh
-Submitted batch job 24403224
+Submitted batch job 24403224 - DONE - RENAMED ALL FILES with .partial. so I can rerun below
+# ran but I should re-do PCA etc. because it's missing a 2 segments that didn't complete GL properly:
+~/hilo/scripts$ sbatch --array=261,415 -t 6:00:00 --mem=16G -p bigmemh allVarAngsdGL1.sh
+Submitted batch job 24414246
+scripts$ sbatch -p bigmemh --dependency=afterok:24414246 --export=startR=0,endR=425,DIR_GL=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,N=1000 catBeagleGL_nth.sh
+Submitted batch job 24414522
+~/hilo/scripts$ sbatch -p bigmemh --dependency=afterok:24414522 --export=GL_PREFIX=data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000 runPCAngsd.sh
+Submitted batch job 24414553
+
+
 
 
 # FST
@@ -820,9 +829,14 @@ Submitted batch job 23903329-31 - COMPLETED
 # and (2) a subset of variant sites called in hilo;
 # var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis; with over 100 individuals with some data (MORE than cutoff for other SNPs)).
 
-
+# Adding 282 reference maize data
 # Getting 282 SRAs for download from NCBI - ACTUALLY michelle will align 282 'ts' tropical/subtropical bams for me
 hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term="SRP108889"[All Fields]'
+# made symlinks for vcf files (variants re-possitioned onto genome AGPv4):
+~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do ln -s /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz chr$i.vcf.gz; done
+# new script to make smaller vcf's with just thinned SNPs for PCA from 282 panel
+scripts$ sbatch -p bigmemh --array=1-10%6 subset_282var_nth.sh
+
 
 # getting new metadata - cloning from JRI github 'riplasm':
 hilo/data$ git clone https://github.com/rossibarra/riplasm.git
@@ -832,5 +846,6 @@ hilo/data$ git clone https://github.com/rossibarra/riplasm.git
 scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
 Submitted batch job 24302961 - ERROR in calling SFS program (removed misc/)
 scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
+Submitted batch job 24403505 - RAN & COMPLETED WITHIN SECONDS
 
 

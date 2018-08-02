@@ -9,6 +9,14 @@ library(reshape2)
 # ID and population labels:
 hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
 pass1 <- hilo[!is.na(hilo$num_read_pass),] # only include individuals with some pass1 data
+# metadata for 16 individuals from 4 lowland populations
+allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-30,-30),
+                     zea = rep("maize", 16),
+                     symp_allo = rep("allopatric", 16),
+                     ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
+                     stringsAsFactors = F)
+pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo")) %>%
+  bind_rows(., allo4Low)
 # germplasm data from JRI for all projects ("riplasm"). 
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
 riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
@@ -205,4 +213,21 @@ ggplot(data = fst[fst$pop1 < 100 & !(fst$pop1 %in% c(20,22,33)) & fst$pop2 < 100
        aes(x=f1, y=f2, fill=Fst_Hudson)) + 
   geom_tile() +
   ggtitle("within symp. teosinte Fst")
+
+
+# ADDING IN ALLOPATRIC MAIZE - 16 individuals from 4 lowland populations
+m2 <- as.matrix(read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.partial.cov",
+                          stringsAsFactors = F, header = F))
+e2 <- eigen(m2)
+colors2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="sympatric", "orange", "yellow"), 
+                ifelse(pass1_allo4Low$symp_allo=="sympatric", "blue", "darkblue"))
+#png(paste("../plots/pcangsd_bygroup", name, ".png"), # saves plot as pin in ../plots/
+#    height = 5, width = 8, units = "in", res = 150)
+plot(e2$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
+       main=paste("PCA", name),
+       col = alpha(colors2, 0.8),
+       pch = 16)
+legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
+       legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
+       pch = 16, cex = .7)
 
