@@ -8,22 +8,34 @@ library(reshape2)
 
 # ID and population labels:
 hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
-pass1 <- hilo[!is.na(hilo$num_read_pass),] # only include individuals with some pass1 data
-# metadata for 16 individuals from 4 lowland populations
-allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-30,-30),
-                     zea = rep("maize", 16),
-                     symp_allo = rep("allopatric", 16),
-                     ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
-                     est_coverage = rep(2, 16), # underestimate of coverage (but ok for now)
-                     stringsAsFactors = F)
-pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo", "est_coverage")) %>%
-  bind_rows(., allo4Low)
+# add in metadata
 # germplasm data from JRI for all projects ("riplasm"). 
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
 riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
   mutate(., prefix = substr(RI_ACCESSION, 1, 5)) %>%
   mutate(., ind = as.integer(substr(RI_ACCESSION, 6, 100))) %>%
   dplyr::filter(., prefix %in% c("RIMMA", "RIMME"))
+hilo_meta <- cbind(hilo, do.call(rbind,
+                                 apply(hilo, 1, function(row) riplasm[riplasm$RI_ACCESSION ==  paste0(
+                                   ifelse(row["zea"] == "mexicana", "RIMME", "RIMMA"), 
+                                   sprintf("%04d", as.integer(row["popN"]))), 
+                                   c("RI_ACCESSION", "GEOCTY", "LOCALITY")])))
+
+# metadata for 16 individuals from 4 lowland populations
+allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-30,-30),
+                     zea = rep("maize", 16),
+                     symp_allo = rep("allopatric", 16),
+                     ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
+                     est_coverage = rep(2, 16), # underestimate of coverage (but ok for now)
+                     RI_ACCESSION = NA,
+                     GEOCTY = "Mexico",
+                     LOCALITY = "Lowland_4pops",
+                     stringsAsFactors = F)
+pass1 <- hilo_meta[!is.na(hilo_meta$num_read_pass),] # only include individuals with some pass1 data
+pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo", "est_coverage", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  bind_rows(., allo4Low)
+
+metrics <- read.table("../data/filtered_bam/pass1.all.metrics.calcs", stringsAsFactors = F, header = T)
 
 # PCA
 plot_PCA = function(file, name, jitter = F, ...){
@@ -225,7 +237,7 @@ e2 <- eigen(m2)
 colors2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="sympatric", "orange", "yellow"), 
                 ifelse(pass1_allo4Low$symp_allo=="sympatric", "blue", "darkblue"))
 png(paste("../plots/pcangsd_bygroup", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
-    height = 5, width = 8, units = "in", res = 150)
+    height = 5, width = 8, units = "in", res = 300)
 plot(e2$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2$values[2], "%"), xlab=paste("PC 1 -", e2$values[1], "%"),
        main=paste("PCA adding lowland maize"),
        col = alpha(colors2, 0.8),
@@ -237,11 +249,12 @@ dev.off()
 
 # point size by sequencing amount
 png(paste("../plots/pcangsd_bygroup_seqDepth", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
-    height = 5, width = 8, units = "in", res = 150)
+    height = 5, width = 8, units = "in", res = 300)
 plot(e2$vectors[,1:2], lwd=2, ylab=paste("PC 2 -",e2$values[2], "%"), xlab=paste("PC 1 -", e2$values[1], "%"),
      main=paste("PCA adding lowland maize; size = depth"),
      col = alpha(colors2, 0.8),
      pch = 16,
+     #cex = c(mean_depthF, rep(2, 16))*2)
      cex = pass1_allo4Low$est_coverage*2)
 legend("topright", col = c("yellow", "orange", "blue", "darkblue"), 
        legend = c("maize allo.", "maize symp.", "mex. symp. ", "mex. allo."), 
@@ -251,7 +264,7 @@ dev.off()
 
 # plot with allopatric maize by group
 png(paste("../plots/pcangsd_bypop", "with_16_lowland_maize", ".png"), # saves plot as pin in ../plots/
-    height = 5, width = 8, units = "in", res = 150)
+    height = 5, width = 8, units = "in", res = 300)
 largerainbow2 = rainbow(length(unique(pass1_allo4Low$popN)))
 colorsrainbow2 = largerainbow2[factor(pass1_allo4Low$popN)]
 points2 = ifelse(pass1_allo4Low$zea=="maize", ifelse(pass1_allo4Low$symp_allo=="sympatric", 3, 9), 
@@ -281,7 +294,61 @@ legend("topright", col = c("yellow", "orange", "blue", "darkblue"),
        cex = 0.7)
 dev.off()
 
+# write new file with metadata and PC's 1 and 2 for hilo individuals and 16 lowland allopatric maize too
+pc2 = e2$vectors[,1:2]
+colnames(pc2) = c("PC1", "PC2")
+pass1_allo4Low_wPC <- cbind(pass1_allo4Low, pc2)
+write.table(pass1_allo4Low_wPC, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs.txt", sep = "\t",
+            col.names = T, row.names = F, quote = F)
 
+pass1_allo4Low_wPC_wMetrics = left_join(pass1_allo4Low_wPC, metrics, 
+             by = c("ID", "popN", "zea", "symp_allo", "est_coverage"))
+
+pass1_allo4Low_wPC_wMetrics %>%
+  ggplot(., aes(PC1, prop_unmapped)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = depthRegions)) +
+                 #size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage", y = "proportion reads not mapped")
+ggsave("../plots/PC1_by_unmapped.png", device = png(), 
+       width = 8, height = 6, units = "in",
+       dpi = 200)
+
+pass1_allo4Low_wPC_wMetrics %>%
+  ggplot(., aes(PC1, prop_filtTot)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"), 
+                 size = depthRegions)) +
+  #size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage", y = "proportion reads filtered total")
+ggsave("../plots/PC1_by_filtered_total.png", device = png(), 
+       width = 8, height = 6, units = "in",
+       dpi = 200)
+
+pass1_allo4Low_wPC_wMetrics %>%
+  ggplot(., aes(PC1, prop_filtOutQ30)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"), 
+                 size = depthRegions)) +
+  #size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage", y = "proportion reads mapped but mapQ<30")
+ggsave("../plots/PC1_by_mapQ30.png", device = png(), 
+       width = 8, height = 6, units = "in",
+       dpi = 200)
+
+# plot by location
+p <- ggplot(pass1_allo4Low_wPC_wMetrics, aes(PC1, PC2)) + 
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"), 
+                 size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage")
+
+# Use vars() to supply faceting variables:
+p + facet_wrap(~LOCALITY)
+ggsave("../plots/PCA_facet_by_population.png", plot = p + facet_wrap(~LOCALITY), device = png(), 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
 
 
 

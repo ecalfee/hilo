@@ -98,28 +98,31 @@ depthF20 <- read.csv("../data/depthCov/pass1/N1000.L100.regions.Q20.depthSample"
                      header = F, sep = "\t")
 
 # function to tidy the data
-tidy_depth = function(dep){
+meanDepth = function(dep){
   dep$V102 <- NULL
   colnames(dep)<- paste0("n", 0:100)
   dep <- cbind(pass1, dep) # add hilo id's & basic metadata
-  dep$meanDepth <- apply(dep[ , paste0("n", 0:100)], 1, 
+  meanDepth <- apply(dep[ , paste0("n", 0:100)], 1, 
                          function(r) r %*% 0:100/sum(r))
-  dep2 = gather(dep, "depth", "n_sites", paste0("n", 0:100))
-  dep3 = separate(dep2, depth, c("n", "site_depth"), sep = 1) %>%
-    select(., -n) %>%
-    mutate(., site_depth = as.integer(site_depth))
+  return(meanDepth)
 }
-group_by(dep3, c(zea, symp_allo)) %>% summarise(., total_by_grp = sum(n_sites))
-ggplot(data = dep3, aes(site_depth, n_sites)) + geom_point(aes(color = zea))
+# calculate and write to file mean depth across the Fst regions from depthF
+mean_depthF = meanDepth(depthF)
+plot(pass1$est_coverage, mean_depthF, main = "Depth est. regions vs. # reads") # perfectly correlated
+write.table(mean_depthF, "../data/depthCov/pass1/N1000.L100.regions_meanDepth.txt", 
+             col.names = T, row.names = T, quote = F)
+# write a new metrics file with depthF and all other filtering measures too
+raw_metrics$depthRegions = mean_depthF
+write.table(raw_metrics, "../data/filtered_bam/pass1.all.metrics.calcs", 
+           col.names = T, row.names = F, quote = F)
+
 
 # function to plot mean depth
 plot_depth_mean = function(dep, label){ # takes in depth dataframe and a label for plots
   dep$V102 <- NULL
   colnames(dep)<- paste0("n", 0:100)
   dep <- cbind(pass1, dep) # add hilo id's & basic metadata
-  dep$meanDepth <- apply(dep[ , paste0("n", 0:100)], 1, 
-                         function(r) r %*% 0:100/sum(r))
-  
+  dep$meanDepth <- meanDepth(dep)
   plot(x = 0:100, y = seq(0, 100000, length.out = 101), 
        col = NULL, xlab = "depth at site",
        ylab = "number of sites",
@@ -137,7 +140,7 @@ plot_depth_mean = function(dep, label){ # takes in depth dataframe and a label f
     labs(x="mean depth", 
          y="Density",
          title=label,
-         subtitle="Depth mapQ<30 by group") +
+         subtitle="Depth mapQ>30 by group") +
     theme(legend.title=element_blank())
   print(plot2) # ggplots must be called explicitly to print
 ggsave(paste0("../plots/hist of individuals -- mean", label, ".png"), plot = plot2, device = png())
