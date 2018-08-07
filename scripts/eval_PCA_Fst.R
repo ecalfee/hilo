@@ -23,6 +23,7 @@ hilo_meta <- cbind(hilo, do.call(rbind,
 
 # metadata for 16 individuals from 4 lowland populations
 allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-30,-30),
+                       family = NA,
                      zea = rep("maize", 16),
                      symp_allo = rep("allopatric", 16),
                      ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
@@ -32,9 +33,10 @@ allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-3
                      LOCALITY = "Lowland_4pops",
                      stringsAsFactors = F)
 pass1 <- hilo_meta[!is.na(hilo_meta$num_read_pass),] # only include individuals with some pass1 data
-pass1_allo4Low <- select(pass1, c("ID", "popN","zea", "symp_allo", "est_coverage", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+pass1_allo4Low <- select(pass1, c("ID", "popN","family", "zea", "symp_allo", "est_coverage", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
   bind_rows(., allo4Low)
 
+# add metrics from plot_mapping_metrics.R
 metrics <- read.table("../data/filtered_bam/pass1.all.metrics.calcs", stringsAsFactors = F, header = T)
 
 # PCA
@@ -297,9 +299,65 @@ dev.off()
 # write new file with metadata and PC's 1 and 2 for hilo individuals and 16 lowland allopatric maize too
 pc2 = e2$vectors[,1:2]
 colnames(pc2) = c("PC1", "PC2")
-pass1_allo4Low_wPC <- cbind(pass1_allo4Low, pc2)
+pass1_allo4Low_wPC <- cbind(pass1_allo4Low, pc2) 
+# write data frame to file to share
 write.table(pass1_allo4Low_wPC, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs.txt", sep = "\t",
             col.names = T, row.names = F, quote = F)
+
+# get list of populations & familys (unique ID's individuals)
+# grown in second greenhouse batch together
+grow2 = read.csv("../data/NewAccessionsForSequencing_fromDan.csv", 
+                 header = T, 
+                 stringsAsFactors = F)[, c("Population", "Family")]%>%
+  mutate(., grow = "greenhouse2") %>%
+  rename(., popN = Population) %>%
+  rename(., family = Family)
+
+pass1_allo4Low_wPC_grow2 <- left_join(pass1_allo4Low_wPC, grow2,
+                                      by = c("popN", "family")) %>%
+  mutate(grow = ifelse(is.na(grow), "other", grow)) %>%
+  mutate(., cluster = ifelse(PC1 < .025 & PC1 > -.01, "unclear",
+                             ifelse((zea == "mexicana" & PC1 < 0) | 
+                                      (zea == "maize" & PC1 > 0),
+                                    "withOther", "withSame")))
+# write data frame to file to share which individuals cluster differently
+write.table(pass1_allo4Low_wPC_grow2, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs_clusterGroup.txt", sep = "\t",
+            col.names = T, row.names = F, quote = F)
+
+
+# plot highlighting individuals that are identified as clustering with 'same' or 'other' group
+# or are intermediate 'unclear'
+pass1_allo4Low_wPC_grow2 %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = est_coverage, shape = cluster)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage")
+
+# plot with highlighting individuals from greenhouse2
+pass1_allo4Low_wPC_grow2 %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage") +
+  facet_wrap(~as.factor(grow))
+ggsave("../plots/PCA_by_greenhouse_group.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
+# plotting again, this time so it's easier to see the one outlier
+pass1_allo4Low_wPC_grow2 %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = grow,
+                 size = est_coverage,
+                 alpha = .6)) +
+  labs(color = "Grow Group", size = "Est. coverage") +
+  facet_wrap(~zea)
+ggsave("../plots/PCA_by_greenhouse_group2.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
+
+
 
 pass1_allo4Low_wPC_wMetrics = left_join(pass1_allo4Low_wPC, metrics, 
              by = c("ID", "popN", "zea", "symp_allo", "est_coverage"))
