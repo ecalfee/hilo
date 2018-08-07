@@ -3,9 +3,9 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J NGSadmix
 #SBATCH -o /home/ecalfee/hilo/slurm-log/NGSadmix_%j_%A_%a.out
-#SBATCH -t 12:00:00
-#SBATCH --mem=16G
-#SBATCH -n 2
+#SBATCH -t 6:00:00
+#SBATCH --mem=8G
+#SBATCH -n 1
 #SBATCH --export=GL_FILE=geno_lik/pass1/pruned_all.beagle.gz,OUT_DIR=NGSadmix/pass1/
 
 # slurm array task id sets number of genetic clusters, e.g.
@@ -22,7 +22,7 @@ mkdir -p $OUT_DIR
 
 echo "running NGSadmix"
 NGSadmix -likes $GL_FILE \
--K $SLURM_ARRAY_TASK_ID -P 2 \
+-K $SLURM_ARRAY_TASK_ID -P 1 \
 -o "$OUT_DIR"K"$SLURM_ARRAY_TASK_ID"_pruned_all
 
 # settings:
