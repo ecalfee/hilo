@@ -865,3 +865,10 @@ scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
 Submitted batch job 24403505 - RAN & COMPLETED WITHIN SECONDS
 
 
+# GOT NEW LABELS / POPULATION IDs for HILO INDIVIDUALS:
+
+# running NGSadmix with addition of 16 lowland 4 pop allopatric maize individuals and SNPs pruned to 1/1000:
+scripts$ sbatch -p bigmemh --export=GL_FILE=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.beagle.gz,OUT_DIR=NGSadmix/merged_pass1_all_alloMaize4Low_16/ runNGSadmix.sh
+
+
+
