@@ -4,97 +4,64 @@ library(dplyr)
 library(tidyr)
 K = 2 # K = 4 number of genetic clusters/groups
 # starting with pass1 analysis from 1st round of sequencing
-admix<-read.table(paste0("../data/NGSadmix/pass1/K", K, "_pruned_all.qopt"))
+admix<-read.table(paste0("../data/NGSadmix/merged_pass1_all_alloMaize4Low_16/K", K, "_pruned_all.qopt"))
 colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
+
+# get metadata for individuals included in NGSadmix analysis
+pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
+                             header = T, sep = "\t")
+
 # bams from pass1 matching NGSadmix output
-bams <- read.table("../data/pass1_bam.all.list", stringsAsFactors = F)$V1
-# get just HILO # from bam names
-ids <- data.frame(n = as.numeric(gsub(".sort.dedup.baq.bam", "", 
-                       gsub("filtered_bam/hilo_", "", bams))))
-
-# overall sequencing/quality filtering 
-qualUnsorted <- read.table("../data/filtered_bam/pass1.all.Nreads.sorted.csv", 
-                   header = T, stringsAsFactors = F)
-qualUnsorted$n <- as.numeric(gsub("hilo", "", qualUnsorted$ID))
-qual <- arrange(qualUnsorted, n)
-# histogram of coverage
-png('../plots/pass1_hist_coverage_passQC.png', width = 800, height = 600)
-hist(qual$est_coverage, breaks = 20, 
-     main = "pass1 est. coverage post filtering", 
-     xlab = "(# reads pass QC * 150bp) / 2.3Gb")
-abline(v = median(qual$est_coverage), col = "blue")
-abline(v = mean(qual$est_coverage), col = "red")
-dev.off()
-
-# number of individuals with higher coverage
-sum(qual$est_coverage>.1)
-sum(qual$est_coverage>.5)
-
-# add in pass1 ind numbers (matches GL file, skips ind's with no seq data, not in 'qual'):
-qual$pass1_ID <- paste0("Ind", 0:195)
-
-meta <- read.table("../data/HILO_DAN_IDs_modEC.csv", stringsAsFactors = F)
-colnames(meta) <- c("n", "ID", "fam")
-meta <- separate(data = meta, col = fam, sep = "_", c("popN", "family"), extra = "merge")
-meta$popN <- as.numeric(meta$popN)
-# label maize/mexicana and sympatric/allopatric using population number
-meta$zea <- ifelse(meta$popN >= 100, "maize", "mexicana")
-meta$symp_allo <- ifelse(meta$popN %in% c(20, 22, 33), "allopatric", "sympatric")
-
-# meta 2 is a second check from Anne of the hiloID-to-popN link
-meta2 <- read.csv("../data/HILO_samples.csv", stringsAsFactors = F, sep = ",") %>%
-  separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
-  mutate(., popN = as.numeric(popN)) %>%
-  mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
-  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
-sum(meta$popN != meta2$popN[1:200] & meta$ID == meta2$Library.name[1:200]) # they are the same -- checks out
-
-# print quality with IDs for all individuals in HILO_DAN_IDs_modEC.csv
-info = left_join(meta,
-                 qual[, c("num_read_pass", "est_coverage", "n", "pass1_ID")],
-                 by = "n")
-write.table(info, "../data/HILO_IDs_cov_pass1.csv", 
-            quote = F, col.names = T, row.names = F)
-
-# join meta data to list of included IDs
-d <- left_join(ids, qual, by = "n") %>%
-  left_join(., meta, by = "n") %>%
-  bind_cols(admix, .) %>%
-  arrange(., popN)
+#bams <- read.table("../data/pass1_allo4Low.all.list", stringsAsFactors = F) %>%
+#  rename(bam = V1) %>%
+#  mutate(n = as.numeric(gsub(".sort.dedup.baq.bam", "", 
+#                             gsub("filtered_bam/hilo_", "", bam)))) %>%
+#  left_join(., pass1, by = "n")
+  
 # define a threshold for high enough coverage to be included
-dPass <- d[d$est_coverage>=.2,]
-barplot(t(dPass[ , colnames(admix)]),col=rainbow(K),
+#bamsPass <- bams[bams$est_coverage>=.2, ]
+# join bams and admix by position (CAUTION - bam list order and admix results MUST MATCH!)
+d <- bind_cols(pass1_allo4Low, admix)  %>%
+  arrange(., popN) %>%
+  arrange(., zea) %>%
+  arrange(., symp_allo) %>%
+  filter(., est_coverage > .25)
+
+barplot(t(d[ , colnames(admix)]),col=rainbow(K),
         space=0,border=NA,
         xlab="Individuals",
-        ylab="admixture")
-# now other subsets of data & SNP options
+        ylab="admixture")                
 
-d1 <- bind_cols(read.table(paste0("../data/NGSadmix/pass1/sympatricVar/allInd/K", 
-                                K, "_pruned_all.qopt")), 
-                info[!is.na(info$est_coverage), ]) %>%
-                arrange(., popN) %>%
-                arrange(., zea) %>%
-                arrange(., symp_allo)
-admix_plot_prefix = "../plots/pass1_ngsadmix_SympVar_"
+# now other subsets of data & SNP options
+d1 <- read.table("../data/pass1_bam.all.list", stringsAsFactors = F) %>%
+  rename(bam = V1) %>%
+  mutate(n = as.numeric(gsub(".sort.dedup.baq.bam", "", 
+                             gsub("filtered_bam/hilo_", "", bam)))) %>%
+  bind_cols(., admix)  %>%
+  arrange(., popN) %>%
+  arrange(., zea) %>%
+  arrange(., symp_allo)
+
+admix_plot_prefix1 = "../plots/pass1_ngsadmix_SympVar_"
 barplot(t(d1[ , c("V1", "V2")]),col=rainbow(K),
         space=0,border=NA,
         xlab="Individuals",
         ylab="admixture")
-png(paste0(admix_plot_prefix, "alloMex.png"), width = 800, height = 600)
+png(paste0(admix_plot_prefix1, "alloMex.png"), width = 800, height = 600)
 barplot(t(d1[ d1$symp_allo == "allopatric" & d1$zea == "mexicana", c("V1", "V2")]),
         col=rainbow(K),
         space=0,border=NA,
         xlab="Individuals",
         ylab="admixture")
 dev.off()
-png(paste0(admix_plot_prefix, "sympMaize.png"), width = 800, height = 600)
+png(paste0(admix_plot_prefix1, "sympMaize.png"), width = 800, height = 600)
 barplot(t(d1[ d1$symp_allo == "sympatric" & d1$zea == "maize", c("V1", "V2")]),
         col=rainbow(K),
         space=0,border=NA,
         xlab="Individuals",
         ylab="admixture")
 dev.off()
-png(paste0(admix_plot_prefix, "sympMex.png"), width = 800, height = 600)
+png(paste0(admix_plot_prefix1, "sympMex.png"), width = 800, height = 600)
 barplot(t(d1[ d1$symp_allo == "sympatric" & d1$zea == "mexicana", c("V1", "V2")]),
         col=rainbow(K),
         space=0,border=NA,

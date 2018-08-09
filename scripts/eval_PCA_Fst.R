@@ -6,38 +6,15 @@ library(tidyr)
 library(ggplot2)
 library(reshape2)
 
-# ID and population labels:
-hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
-# add in metadata
-# germplasm data from JRI for all projects ("riplasm"). 
-# RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
-riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
-  mutate(., prefix = substr(RI_ACCESSION, 1, 5)) %>%
-  mutate(., ind = as.integer(substr(RI_ACCESSION, 6, 100))) %>%
-  dplyr::filter(., prefix %in% c("RIMMA", "RIMME"))
-hilo_meta <- cbind(hilo, do.call(rbind,
-                                 apply(hilo, 1, function(row) riplasm[riplasm$RI_ACCESSION ==  paste0(
-                                   ifelse(row["zea"] == "mexicana", "RIMME", "RIMMA"), 
-                                   sprintf("%04d", as.integer(row["popN"]))), 
-                                   c("RI_ACCESSION", "GEOCTY", "LOCALITY")])))
+# ID and population labels from addMetadata2HiloIDs.R:
+pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, header = T, sep = "\t")
 
-# metadata for 16 individuals from 4 lowland populations
-allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-30,-30),
-                       family = NA,
-                     zea = rep("maize", 16),
-                     symp_allo = rep("allopatric", 16),
-                     ID = paste0("4Low", c(1:4,11:14,21:24,31:34)),
-                     est_coverage = rep(2, 16), # underestimate of coverage (but ok for now)
-                     RI_ACCESSION = NA,
-                     GEOCTY = "Mexico",
-                     LOCALITY = "Lowland_4pops",
-                     stringsAsFactors = F)
-pass1 <- hilo_meta[!is.na(hilo_meta$num_read_pass),] # only include individuals with some pass1 data
-pass1_allo4Low <- select(pass1, c("ID", "popN","family", "zea", "symp_allo", "est_coverage", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
-  bind_rows(., allo4Low)
+# with allopatric maize too
+pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, header = T, sep = "\t")
 
 # add metrics from plot_mapping_metrics.R
-metrics <- read.table("../data/filtered_bam/pass1.all.metrics.calcs", stringsAsFactors = F, header = T)
+metrics <- read.table("../data/filtered_bam/pass1.all.metrics.calcs", stringsAsFactors = F, header = T,
+                      sep = "\t")
 
 # PCA
 plot_PCA = function(file, name, jitter = F, ...){
@@ -100,9 +77,10 @@ plot_PCA_byPop(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = 
 
 # more PCA's
 # just first 40 individuals, then first 98 (plates 1 & 2) look more as expected but don't have allopatric teosinte ind's:
-start_n = 1
-end_n = 98
+start_n = 161
 #end_n = 196
+#end_n = 160
+end_n = 196
 m <- as.matrix(read.table(file =  "../data/geno_lik/pass1/allVar/pruned_by1000.cov", 
                           stringsAsFactors = F, header = F))[start_n:end_n, start_n:end_n]
 e <- eigen(m)
@@ -112,18 +90,18 @@ plot(e$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = pass1$est_coverage[start_n:end_n])
+     cex = 2*pass1$est_coverage[start_n:end_n])
 # additional PC's
 plot(e$vectors[,3:4], lwd=2, ylab="PC 4", xlab="PC 3",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = pass1$est_coverage[start_n:end_n])
+     cex = 5*pass1$est_coverage[start_n:end_n])
 plot(e$vectors[,6:7], lwd=2, ylab="PC 7", xlab="PC 6",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = pass1$est_coverage[start_n:end_n])
+     cex = 5*pass1$est_coverage[start_n:end_n])
   legend("bottomleft", col = c("orange", "blue", "darkblue"), 
          legend = c("maize symp.", "mex. symp. ", "mex. allo."), 
          pch = 16, cex = .7)
@@ -295,13 +273,13 @@ legend("topright", col = c("yellow", "orange", "blue", "darkblue"),
        pch = 16, 
        cex = 0.7)
 dev.off()
-
+                                                                      
 # write new file with metadata and PC's 1 and 2 for hilo individuals and 16 lowland allopatric maize too
 pc2 = e2$vectors[,1:2]
 colnames(pc2) = c("PC1", "PC2")
 pass1_allo4Low_wPC <- cbind(pass1_allo4Low, pc2) 
 # write data frame to file to share
-write.table(pass1_allo4Low_wPC, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs.txt", sep = "\t",
+write.table(pass1_allo4Low_wPC, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs_corrected8.8.18.txt", sep = "\t",
             col.names = T, row.names = F, quote = F)
 
 # get list of populations & familys (unique ID's individuals)
@@ -321,7 +299,7 @@ pass1_allo4Low_wPC_grow2 <- left_join(pass1_allo4Low_wPC, grow2,
                                       (zea == "maize" & PC1 > 0),
                                     "withOther", "withSame")))
 # write data frame to file to share which individuals cluster differently
-write.table(pass1_allo4Low_wPC_grow2, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs_clusterGroup.txt", sep = "\t",
+write.table(pass1_allo4Low_wPC_grow2, "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/metadata_and_whole_genome_pruned_every_1000_2PCs_clusterGroup_corrected8.8.18.txt", sep = "\t",
             col.names = T, row.names = F, quote = F)
 
 
@@ -357,6 +335,46 @@ ggsave("../plots/PCA_by_greenhouse_group2.png", device = png(),
        width = 12, height = 6, units = "in",
        dpi = 200)
 
+# after getting new data from anne, re-plotting PCA
+pass1_allo4Low_wPC_grow2 %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage")
+ggsave("../plots/PCA_newIDs_all.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
+
+# separating out individuals 143-160 with new ID's from Anne
+pass1_allo4Low_wPC_grow2 %>%
+  mutate(id_batch = ifelse(grow == "greenhouse2" & n <= 160, "hilo143-160", "hilo <142 or >160")) %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage") +
+  facet_wrap(~as.factor(id_batch))
+ggsave("../plots/PCA_newIDs_sep143-160.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
+# same plot but with individuals given different shapes for different populations
+for (i in c("first142", "hilo <143 or >160", "hilo > 160")){
+  pass1_allo4Low_wPC_grow2 %>%
+    mutate(id_batch = ifelse(n < 143, "first142", ifelse(grow == "greenhouse2" & n <= 160, 
+                                                         "hilo143-160", "hilo <143 or >160"))) %>%
+    filter(., id_batch == i) %>%
+    ggplot(., aes(PC1, PC2)) +
+    geom_point(aes(shape = as.factor(id_batch),
+                   size = est_coverage,
+                   color = as.factor(popN))) +
+    labs(color = "Population N", size = "Est. coverage", shape = "ID set") +
+    facet_wrap(~as.factor(paste(symp_allo, zea, sep = "_")))
+}
+
+ggsave("../plots/PCA_newIDs_sep143-160_by population.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
 
 
 pass1_allo4Low_wPC_wMetrics = left_join(pass1_allo4Low_wPC, metrics, 
@@ -396,7 +414,9 @@ ggsave("../plots/PC1_by_mapQ30.png", device = png(),
        dpi = 200)
 
 # plot by location
-p <- ggplot(pass1_allo4Low_wPC_wMetrics, aes(PC1, PC2)) + 
+p <- pass1_allo4Low_wPC_grow2 %>%
+  filter(n <143 | n > 160) %>%
+  ggplot(., aes(PC1, PC2)) + 
   geom_point(aes(color = paste(symp_allo, zea, sep = "_"), 
                  size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +

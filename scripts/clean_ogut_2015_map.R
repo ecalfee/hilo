@@ -7,9 +7,110 @@
 #S_3490185    M1117    9    2    3492426
 #S_3519161    M1118    9.2    2    3521396
 # notably, this affects a few larger contiguos regions on chr 7
+library(dplyr)
+
+
 rmap = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4.txt", 
                 stringsAsFactors = F, header = F)
 colnames(rmap) = c("SNP", "marker", "pos_cM", "chr", "pos_bp")
+rmap = rmap[!is.na(rmap$SNP),]
+
+# find positions that have a chromosome that matches neither the chrom in front nor behind them
+i_missChr = which(lead(rmap$chr) != rmap$chr & lag(rmap$chr) != rmap$chr)
+# remove these SNPs
+rmap_1 = rmap[-i_missChr,]
+# confirmed no more
+length(which(lead(rmap_1$chr) != rmap_1$chr & lag(rmap_1$chr) != rmap_1$chr)) == 0
+table(lead(rmap_1$chr) - rmap_1$chr)
+i_missChr2 = which(!(lead(rmap_1$chr) - rmap_1$chr) %in% 0:1)
+# clearly a small segment of chr7 stuck within chr2 -- I'll remove by hand
+lapply(i_missChr2, function(i) rmap_1[(i-3):(i+3), ])
+rmap_1 = filter(rmap_1, !(marker %in% c("M1786", "M1787", "M1788")))
+table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
+
+
+# difference between current bp position and next position
+rmap_1$diff = lead(rmap_1$pos_bp) - rmap_1$pos_bp
+# different chromosome, don't measure difference across chromosomes
+#rmap_1$diff[rmap_1$chr != lag(rmap_1$chr)] <- NA
+
+
+# find SNPs that are greater than 3 behind and 3 ahead of themselves
+tooBig = function(map) {
+  (map$pos_bp > lag(map$pos_bp) | map$chr != lag(map$chr)) & 
+                   (map$pos_bp > lag(lag(map$pos_bp)) | map$chr != lag(lag(map$chr))) & 
+                   (map$pos_bp > lag(lag(lag(map$pos_bp))) | map$chr != lag(lag(lag(map$chr)))) &
+                   map$pos_bp > lead(map$pos_bp) & 
+                   map$pos_bp > lead(lead(map$pos_bp)) & 
+                   map$pos_bp > lead(lead(lead(map$pos_bp)))
+}
+
+
+# find SNPs that are less than 3 behind and 3 ahead of themselves
+# WHY DOES THIS KEEP EATING AWAY AT MY STUFF??
+tooSmall = function(map) {
+  map$pos_bp < lag(map$pos_bp) & 
+                   map$pos_bp < lag(lag(map$pos_bp)) & 
+                   map$pos_bp < lag(lag(lag(map$pos_bp))) &
+                   (map$pos_bp < lead(map$pos_bp) & map$chr == lead(map$chr)) & 
+                   (map$pos_bp < lead(lead(map$pos_bp)) | map$chr == lead(lead(map$chr))) & 
+                   (map$pos_bp < lead(lead(lead(map$pos_bp))) | map$chr == lead(lead(lead(map$chr))))
+}
+
+tooBig = function(map) {
+  map$pos_bp > lag(map$pos_bp) & 
+    map$pos_bp > lag(lag(map$pos_bp)) & 
+    map$pos_bp > lag(lag(lag(map$pos_bp))) &
+    map$pos_bp > lead(map$pos_bp) & 
+    map$pos_bp > lead(lead(map$pos_bp)) & 
+    map$pos_bp > lead(lead(lead(map$pos_bp)))
+}
+
+
+# find SNPs that are less than 3 behind and 3 ahead of themselves
+tooSmall = function(map) {
+  map$pos_bp < lag(map$pos_bp) & 
+    map$pos_bp < lag(lag(map$pos_bp)) & 
+    map$pos_bp < lag(lag(lag(map$pos_bp))) &
+    map$pos_bp < lead(map$pos_bp) & 
+    map$pos_bp < lead(lead(map$pos_bp)) & 
+    map$pos_bp < lead(lead(lead(map$pos_bp)))
+}
+
+
+rmap_2 = rmap_1 %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., !tooSmall(.)) %>%
+  filter(., !tooBig(.)) %>%
+  filter(., tooSmall(.))
+
+
+rmap_2a = rmap_1[!i_tooBig(rmap_1),]
+rmap_2b = rmap_2a[!i_tooSmall(rmap_2a),]
+
+
 rmap$chr_prev = c(0, rmap$chr[1:(nrow(rmap) - 1)]) # previous chromosome
 # exclude markers on chromosomes out of order
 excl_candidate = which(rmap$chr < rmap$chr_prev)
