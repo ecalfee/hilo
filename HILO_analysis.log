@@ -865,15 +865,18 @@ scripts$ sbatch -p bigmeml calc1DSFSAngsd.sh
 Submitted batch job 24403505 - RAN & COMPLETED WITHIN SECONDS
 
 
-# GOT NEW LABELS / POPULATION IDs for HILO INDIVIDUALS HILO161-HILO200:
+# GOT NEW LABELS / POPULATION IDs for HILO INDIVIDUALS HILO161-HILO200 + FIXED LABEL SWAP ERROR BETWEEN HILO61 and HILO66 (swap hand-written in lab notes):
 
 # running NGSadmix with addition of 16 lowland 4 pop allopatric maize individuals and SNPs pruned to 1/1000:
 ~/hilo/scripts$ sbatch -p bigmemh --array=2-4 --export=GL_FILE=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.beagle.gz,OUT_DIR=NGSadmix/merged_pass1_all_alloMaize4Low_16/ runNGSadmix.sh
 Submitted batch job 24980206 - COMPLETED
 
 # made new script that links metadata to hilo ID using updated ID-population link from Anne 8.8.18:
-addMetadata2HiloIDs.R creates new files hilo_ids.txt and pass1_ids.txt
-# This resolved the label switch error (yay!). The only thing left is to switch HILO61 and HILO66 that have a documented mix up in field notes
+addMetadata2HiloIDs.R creates new files hilo_ids.txt and pass1_ids.txt and pass1_allo4Low_ids.txt
+# To avoid confusion I put all txt and csv files with the old labels (pre fixing the label swap)
+# in a separate directory e.g. "../data/pre_label_fix/HILO_samples.csv"
+# This resolved the label switch error (yay!). The only thing left is to switch HILO61 and HILO66 that have a documented mix up in field notes - DONE 8.15.18
+# And to remake files listing bams by population
 # Some but not all plots have been re-made with the new labels
 # Also still working on how to drop out-of-order SNPs from recombination map
 

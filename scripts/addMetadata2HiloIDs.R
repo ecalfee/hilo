@@ -4,32 +4,31 @@ library(tidyr)
 # I STILL NEED TO SWAP HILO66 AND HILO61 DUE TO AN ERROR THAT'S DOCUMENTED IN FIELD NOTES
 
 # ID and population labels:
-meta <- read.table("../data/HILO_DAN_IDs_modEC.csv", stringsAsFactors = F)
-colnames(meta) <- c("n", "ID", "fam")
-meta <- separate(data = meta, col = fam, sep = "_", c("popN", "family"), extra = "merge")
-meta$popN <- as.numeric(meta$popN)
-# label maize/mexicana and sympatric/allopatric using population number
-meta$zea <- ifelse(meta$popN >= 100, "maize", "mexicana")
-meta$symp_allo <- ifelse(meta$popN %in% c(20, 22, 33), "allopatric", "sympatric")
 
-# meta 1 gives accurate metadata for the first ** samples and came from Anne 
+# meta 1 gives accurate metadata for the first 142 samples and came from Anne 
 # over slack with the hiloID-to-popN link
-meta1 <- read.csv("../data/HILO_samples.csv", stringsAsFactors = F, sep = ",") %>%
+meta1 <- read.csv("../data/pre_label_fix/HILO_samples.csv", stringsAsFactors = F, sep = ",") %>%
   select(., c("Library.name", "sample_name")) %>%
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   rename(., ID = Library.name) %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-  filter(., n <= 142) # accurate pop data for ID's above 160 come from a second file
-meta2 <- read.csv("../data/new_hiloID_link_from_Anne_8.8.18.txt", stringsAsFactors = F, sep = "\t",
+  filter(., n <= 142) # accurate pop data for ID's above 142 come from a second and third file
+# fix population-level swap documented by Dan between HILO66 and HILO61
+meta1_fixed = meta1
+# separate population identifiers from incorrect ID
+meta1_fixed[meta1_fixed$ID == "HILO66", c("popN", "family")] <- meta1[meta1$ID == "HILO61", c("popN", "family")]
+meta1_fixed[meta1_fixed$ID == "HILO61", c("popN", "family")] <- meta1[meta1$ID == "HILO66", c("popN", "family")]
+
+meta2 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.8.18.txt", stringsAsFactors = F, sep = "\t",
                   header = F) %>%
   rename(., ID = V1) %>%
   rename(., sample_name = V2)
-meta3 <- read.csv("../data/new_hiloID_link_from_Anne_8.7.18.txt", stringsAsFactors = F, sep = "\t") %>%
+meta3 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.7.18.txt", stringsAsFactors = F, sep = "\t") %>%
   rename(., ID = Library.name) %>%
   bind_rows(meta2, .) %>% # add in samples 143-160 to these samples >160
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-  bind_rows(meta1, .) %>%
+  bind_rows(meta1_fixed, .) %>%
   mutate(., popN = as.numeric(popN)) %>%
   mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
   mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
@@ -68,6 +67,7 @@ write.table(hilo, "../data/hilo_ids.txt", row.names = F, quote = F, col.names = 
 
 # write file with only pass1 individuals -- at least some reads aligned
 pass1 <- hilo[!is.na(hilo$num_read_pass), ]
+pass1$pass1_ANGSD_ID <- paste0("Ind", 0:(dim(pass1)[1] - 1))
 write.table(pass1, "../data/pass1_ids.txt", row.names = F, quote = F, col.names = T, sep = "\t")
 
 
@@ -79,8 +79,9 @@ allo4Low <- data.frame(popN=c(0,0,0,0,-10,-10,-10,-10,-20,-20,-20,-20,-30,-30,-3
                        est_coverage = rep(2, 16), # underestimate of coverage (but ok for now)
                        GEOCTY = "Mexico",
                        LOCALITY = "Lowland_4pops",
-                       stringsAsFactors = F)
+                       stringsAsFactors = F,
+                       pass1_ANGSD_ID = paste0("Ind", dim(pass1)[1]:(dim(pass1)[1] + 15)))
 pass1_allo4Low <- bind_rows(pass1, allo4Low)
-# write file with pass1 and allo4Low individuals
+# write files with pass1 and allo4Low individuals
 write.table(pass1_allo4Low, "../data/pass1_allo4Low_ids.txt", row.names = F, quote = F, col.names = T, sep = "\t")
 
