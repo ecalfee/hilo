@@ -914,8 +914,14 @@ hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.sy
 hilo/scripts$ sbatch -p bigmemh doAbbaBaba4pop_maize.sh 
 Submitted batch job 25463604
 # 3 argument      100 is unknown will exit -- I'll try not specifying a block size
+Submitted batch job 25463679 - typo
+Submitted batch job 25463718 - still won't recognize arguments (?) may need to download latest ANGSD version from git
+
 
 # NEXT: use Aanc as outgroup (Arbitrary A)
+Need to make helper files:
+doAbbaBaba3pop_Aanc.sh
+AbbaBaba/doAbbaBaba3pop_maize_bam.list
 # use tripsacum or sorghum as outgroup
 # and make pop order: allopatric maize, sympatric maize, allopatric teosinte, out
 # then try: allopatric maize, sympatric teosinte, allopatric teosinte, out
