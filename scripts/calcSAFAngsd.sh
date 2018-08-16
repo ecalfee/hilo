@@ -4,7 +4,7 @@
 #SBATCH -J SAFAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/SAFAngsd_%j_%A_%a.out
 #SBATCH -t 3:00:00
-#SBATCH -n 4
+#SBATCH -n 1
 #SBATCH --mem=2G
 #SBATCH --export=REGION_FILE=N1000.L100.regions
 #SBATCH --array=18-31,33-35,360-363,365-374,1000,2000,3000
@@ -32,5 +32,5 @@ angsd -out SAF/pass1/$REGION_FILE/pop$SLURM_ARRAY_TASK_ID \
 -bam pass1_bam_pops/pop$SLURM_ARRAY_TASK_ID.list \
 -remove_bads 1 -minMapQ 30 \
 -GL 1 -dosaf 1 \
--P 4
+-P 1
 echo "done with SAF pop"$SLURM_ARRAY_TASK_ID" regions "$REGION_FILE
