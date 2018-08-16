@@ -144,8 +144,9 @@ plot(e$vectors[,6:7], lwd=2, ylab="PC 7", xlab="PC 6",
   
 
 # plot pairwise Fst results here
-fstG <- read.table("../data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats",
-                  stringsAsFactors = F, header = T)
+fstG <- read.table("../data/SAF/pass1/N1000.L100.regions/pairwise.group.fst.stats",
+                  stringsAsFactors = F, header = F)
+colnames(fstG) <- c("pop1", "pop2", "Fst_other", "Fst_Hudson")
 groupN <- c(1000, 2000, 3000, 5000)
 groupName <- c("Maize_symp", "Mex_symp", "Mex_allo", "Maize_allo_lowland")
 #ggplot(data = fstG, 
