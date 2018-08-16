@@ -22,7 +22,8 @@ set –o nounset
 
 echo "now calculating ABBA-BABA"
 
-angsd -doAbbababa2 -blockSize 100 \
+angsd -doAbbababa2 \
+#-blockSize 100 \
 -useLast 1 -rf $REGIONS -bam $BAM_FILE \
 -sizeFile $SIZE_FILE -out $OUT_FILE
 

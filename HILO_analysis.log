@@ -911,7 +911,9 @@ hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.sy
 # size of populations file
 hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/doAbbaBaba4pop_maize.sizeFile; done
 # try to run:
-scripts$ doAbbaBaba4pop_maize.sh
+hilo/scripts$ sbatch -p bigmemh doAbbaBaba4pop_maize.sh 
+Submitted batch job 25463604
+# 3 argument      100 is unknown will exit -- I'll try not specifying a block size
 
 # NEXT: use Aanc as outgroup (Arbitrary A)
 # use tripsacum or sorghum as outgroup
