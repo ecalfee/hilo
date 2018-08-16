@@ -16,6 +16,7 @@ abline(v = mean(pass1$est_coverage), col = "red")
 dev.off()
 
 # number of pass1 individuals with higher coverage
+sum(pass1$est_coverage>.05)
 sum(pass1$est_coverage>.1)
 sum(pass1$est_coverage>.25)
 sum(pass1$est_coverage>.5)
@@ -42,19 +43,6 @@ raw_metrics <- raw_metrics0 %>%
   mutate(prop_filtOutQ30 = n_filtOutQ30/n_dedup) %>%
   mutate(prop_filtTot = (n_reads - num_read_pass)/n_reads) %>%
   mutate(n_dropped = n_reads-n_dedup+n_filtOutQ30)
-
-# average total depth by group
-raw_metrics %>%
-  group_by(paste(zea, symp_allo, sep = "_")) %>%
-  summarise(., total = sum(est_coverage))
-raw_metrics %>%
-  group_by(paste(zea, symp_allo, sep = "_")) %>%
-  summarise(., total = sum(depthRegions))
-# total coverage from allopatric mexicana is <6x
-# only 12 of the 28 individuals have individual coverage >.2
-raw_metrics %>%
-  group_by(paste(zea, symp_allo, sep = "_")) %>%
-  count(., est_coverage > .2)
 
 # Below I'm analysing coverage data pulled from ANGSD
 # from output files of calcDepthCovSites.sh ()
@@ -89,14 +77,34 @@ meanDepth = function(dep){
 # calculate and write to file mean depth across the Fst regions from depthF
 mean_depthF = meanDepth(depthF)
 plot(pass1$est_coverage, mean_depthF, main = "Depth est. regions vs. # reads") # perfectly correlated
+
+# average total depth by group
+raw_metrics %>%
+  group_by(paste(zea, symp_allo, sep = "_")) %>%
+  summarise(., total = sum(est_coverage))
+raw_metrics %>%
+  mutate(mean_depthF = mean_depthF) %>%
+  group_by(paste(zea, symp_allo, sep = "_")) %>%
+  summarise(., total = sum(mean_depthF))
+# total coverage from allopatric mexicana is <6x
+# only 12 of the 28 individuals have individual coverage >.2
+raw_metrics %>%
+  group_by(paste(zea, symp_allo, sep = "_")) %>%
+  count(., est_coverage > .2)
+raw_metrics %>%
+  mutate(mean_depthF = mean_depthF) %>%
+  group_by(paste(zea, symp_allo, sep = "_")) %>%
+  count(., mean_depthF > .2)
+
+
 write.table(mean_depthF, "../data/depthCov/pass1/N1000.L100.regions_meanDepth.txt", 
-            col.names = T, row.names = T, quote = F)
+            col.names = T, row.names = T, sep = "\t", quote = F)
 
 
 # write a new metrics file with depthF and all other filtering measures too
 raw_metrics$depthRegions = mean_depthF
 write.table(raw_metrics, "../data/filtered_bam/pass1.all.metrics.calcs", 
-            col.names = T, row.names = F, quote = F)
+            col.names = T, row.names = F, sep = "\t", quote = F)
 
 
 

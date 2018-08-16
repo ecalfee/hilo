@@ -29,6 +29,7 @@ meta3 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.7.18.txt", 
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
   bind_rows(meta1_fixed, .) %>%
+  select(., c("n", "ID", "popN", "family")) %>% # put in desired order
   mutate(., popN = as.numeric(popN)) %>%
   mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
   mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))

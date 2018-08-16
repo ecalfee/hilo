@@ -416,15 +416,19 @@ Submitted batch job 23029537 - RAN, TOOK VERY LITTLE TIME (<10min and <1G)
 # I will also estimate pairwise Fst between each group (allopatric/sympatric/maize/mex) and between populations within each larger group.
 # to do Fst, I first need to calculate allele freq. spectrum for each population -- so I separate them into population bam files
 # each meta population (no filtering for coverage except skipping files with no alignment in pass1)
-~/hilo/data$ awk '$5 == "maize" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/maize.symp.list
-~/hilo/data$ awk '$5 == "mexicana" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.symp.list
-~/hilo/data$ awk '$5 == "mexicana" && $6 == "allopatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.allo.list
-# give these numerical copies for ease:
+~/hilo/data$ awk '$5 == "maize" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/maize.symp.list ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
+hilo/data$ awk '$5 == "maize" && $6 == "sympatric" && $11 >= 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/maize.symp.list
+~/hilo/data$ awk '$5 == "mexicana" && $6 == "sympatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.symp.list ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
+hilo/data$ awk '$5 == "mexicana" && $6 == "sympatric" && $11 >= 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.symp.list
+~/hilo/data$ awk '$5 == "mexicana" && $6 == "allopatric" && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/mexicana.allo.list ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
+hilo/data$ awk '$5 == "mexicana" && $6 == "allopatric" && $11 >= 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.allo.list
+# give these numerical copies for ease: ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
 ~/hilo/data/pass1_bam_pops$ cp maize.symp.list pop1000.list
 ~/hilo/data/pass1_bam_pops$ cp mexicana.symp.list pop2000.list
 ~/hilo/data/pass1_bam_pops$ cp mexicana.allo.list pop3000.list
 # each individual population
-~/hilo/data$ for i in $(awk '$1 != "n" && $7 != "NA" {print $3}' HILO_IDs_cov_pass1.csv | sort | uniq); do awk -v i=$i '$3 == i && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/pop$i.list; done
+~/hilo/data$ for i in $(awk '$1 != "n" && $7 != "NA" {print $3}' HILO_IDs_cov_pass1.csv | sort | uniq); do awk -v i=$i '$3 == i && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/pop$i.list; done ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
+hilo/data$ for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/pop$i.list; done
 
 # all steps to SFS are listed here: http://www.popgen.dk/angsd/index.php/Fst
 # should use many cores for step 2 and need to download realSFS software (actually it's part of ANGSD version already on farm)
@@ -793,7 +797,7 @@ Submitted batch job 24414553
 ecalfee@farm:~/hilo/data$ cp bam.maize4popLowland.list pass1_bam_pops/pop4000.list
 # then I calculate SAF to get Fst between this allopatric maize landraces and the sympatric maize/mex and allopatric mex
 # calcualte SAF for regions:
-scripts$ sbatch --array=4000 calcSAFAngsd.sh -t 10:00:00 --mem=4G
+scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G calcSAFAngsd.sh 
 Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit) - did not finish because of lack of index files (fixed see above)
 Submitted batch job 23563858 - NODE FAIL (will rerun excluding bigmem5:)
 scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G -x bigmem5 calcSAFAngsd.sh
@@ -879,6 +883,13 @@ addMetadata2HiloIDs.R creates new files hilo_ids.txt and pass1_ids.txt and pass1
 # And to remake files listing bams by population
 # Some but not all plots have been re-made with the new labels
 # Also still working on how to drop out-of-order SNPs from recombination map
+
+# RE-DOING FST WITH NEW LABELS AND EXCLUDING INDIVIDUALS WITH LESS THAN 0.05x COVERAGE
+# calcualte SAF for regions:
+scripts$ sbatch --array=1000,2000,3000,5000 -t 10:00:00 --mem=4G calcSAFAngsd.sh
+
+
+
 
 
 

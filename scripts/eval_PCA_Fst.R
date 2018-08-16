@@ -77,10 +77,12 @@ plot_PCA_byPop(file = "../data/geno_lik/pass1/allVar/pruned_by1000.cov", name = 
 
 # more PCA's
 # just first 40 individuals, then first 98 (plates 1 & 2) look more as expected but don't have allopatric teosinte ind's:
-start_n = 161
+#start_n = 161
+start_n = 1
+end_n = 196
 #end_n = 196
 #end_n = 160
-end_n = 196
+#end_n = 196
 m <- as.matrix(read.table(file =  "../data/geno_lik/pass1/allVar/pruned_by1000.cov", 
                           stringsAsFactors = F, header = F))[start_n:end_n, start_n:end_n]
 e <- eigen(m)
@@ -90,18 +92,18 @@ plot(e$vectors[,1:2], lwd=2, ylab="PC 2", xlab="PC 1",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = 2*pass1$est_coverage[start_n:end_n])
+     cex = 3*pass1$est_coverage[start_n:end_n])
 # additional PC's
 plot(e$vectors[,3:4], lwd=2, ylab="PC 4", xlab="PC 3",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = 5*pass1$est_coverage[start_n:end_n])
+     cex = 3*pass1$est_coverage[start_n:end_n])
 plot(e$vectors[,6:7], lwd=2, ylab="PC 7", xlab="PC 6",
      main=paste("PCA", "of HILO id's", start_n, "to", end_n),
      col = alpha(colors, 0.8),
      pch = 16,
-     cex = 5*pass1$est_coverage[start_n:end_n])
+     cex = 3*pass1$est_coverage[start_n:end_n])
   legend("bottomleft", col = c("orange", "blue", "darkblue"), 
          legend = c("maize symp.", "mex. symp. ", "mex. allo."), 
          pch = 16, cex = .7)
@@ -120,22 +122,22 @@ plot(e$vectors[,6:7], lwd=2, ylab="PC 7", xlab="PC 6",
        main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
        col = alpha(colors1, 0.8),
        pch = 16,
-       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+       cex = 3*pass1$est_coverage[pass1$est_coverage >= min_cov])
   plot(e1$vectors[,3:4], lwd=2, ylab="PC 4", xlab="PC 3",
        main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
        col = alpha(colors1, 0.8),
        pch = 16,
-       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+       cex = 3*pass1$est_coverage[pass1$est_coverage >= min_cov])
   plot(e1$vectors[,5:6], lwd=2, ylab="PC 6", xlab="PC 5",
        main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
        col = alpha(colors1, 0.8),
        pch = 16,
-       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+       cex = 3*pass1$est_coverage[pass1$est_coverage >= min_cov])
   plot(e1$vectors[,11:12], lwd=2, ylab="PC 12", xlab="PC 11",
        main=paste("PCA", "of HILO id's w/ min. cov.=", min_cov),
        col = alpha(colors1, 0.8),
        pch = 16,
-       cex = 5*pass1$est_coverage[pass1$est_coverage >= min_cov])
+       cex = 3*pass1$est_coverage[pass1$est_coverage >= min_cov])
   legend("bottomleft", col = c("orange", "blue", "darkblue"), 
          legend = c("maize symp.", "mex. symp. ", "mex. allo."), 
          pch = 16, cex = .7)  
@@ -284,7 +286,7 @@ write.table(pass1_allo4Low_wPC, "../data/geno_lik/merged_pass1_all_alloMaize4Low
 
 # get list of populations & familys (unique ID's individuals)
 # grown in second greenhouse batch together
-grow2 = read.csv("../data/NewAccessionsForSequencing_fromDan.csv", 
+grow2 = read.csv("../data/pre_label_fix/NewAccessionsForSequencing_fromDan.csv", 
                  header = T, 
                  stringsAsFactors = F)[, c("Population", "Family")]%>%
   mutate(., grow = "greenhouse2") %>%
@@ -345,6 +347,18 @@ pass1_allo4Low_wPC_grow2 %>%
 ggsave("../plots/PCA_newIDs_all.png", device = png(), 
        width = 12, height = 6, units = "in",
        dpi = 200)
+# exclude individuals with very low coverage < 0.5x estimated from # reads passing sequencing fiilters
+pass1_allo4Low_wPC_grow2 %>%
+  filter(est_coverage > .05) %>%
+  ggplot(., aes(PC1, PC2)) +
+  geom_point(aes(color = paste(symp_allo, zea, sep = "_"),
+                 size = est_coverage)) +
+  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  labs(color = "Group", size = "Est. coverage")
+ggsave("../plots/PCA_newIDs_all_over_0.05x_coverage.png", device = png(), 
+       width = 12, height = 6, units = "in",
+       dpi = 200)
+
 
 # separating out individuals 143-160 with new ID's from Anne
 pass1_allo4Low_wPC_grow2 %>%
@@ -419,7 +433,7 @@ p <- pass1_allo4Low_wPC_grow2 %>%
   ggplot(., aes(PC1, PC2)) + 
   geom_point(aes(color = paste(symp_allo, zea, sep = "_"), 
                  size = est_coverage)) +
-  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  scale_colour_manual(values = c("darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage")
 
 # Use vars() to supply faceting variables:
