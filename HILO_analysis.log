@@ -886,10 +886,36 @@ addMetadata2HiloIDs.R creates new files hilo_ids.txt and pass1_ids.txt and pass1
 
 # RE-DOING FST WITH NEW LABELS AND EXCLUDING INDIVIDUALS WITH LESS THAN 0.05x COVERAGE
 # calcualte SAF for regions:
-scripts$ sbatch --array=1000,2000,3000,5000 -t 10:00:00 --mem=4G calcSAFAngsd.sh
+# edited SAF script to only use 1 core for computing (should be light computing with just using regions)
+hilo/scripts$ sbatch --array=1000,2000,3000,5000 -p bigmemh -t 10:00:00 --mem=4G calcSAFAngsd.sh
+Submitted batch job 25459455
+# then on med calc 2D SFS
+scripts$ for i in 1000 2000 3000 5000; do for j in 1000 2000 3000 5000; do if [ $j -gt $i ]; then sbatch --dependency=afterok:25459455 --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calc2DSFSAngsd.sh; fi; done; done
+Submitted batch job 25459940-5
+# then calculate pairwise Fst between all groups
+scripts$ for i in 1000 2000 3000 5000; do for j in 1000 2000 3000 5000; do if [ $j -gt $i ]; then sbatch --dependency=afterok:25459940,25459941,25459942,25459943,25459944,25459945 --export=POP1=$i,POP2=$j,DIR=SAF/pass1/N1000.L100.regions calcFSTAngsd.sh; fi; done; done
+Submitted batch job 25459976-81 -- FIXED TYPO w/ always 2nd pop = 5000 & reran:
+Submitted batch job 25461663-8 - COMPLETED
+# add results to summary file
+~/hilo/data/SAF/pass1/N1000.L100.regions$ for i in 1000 2000 3000 5000; do for j in 1000 2000 3000 5000; do if [ $j -gt $i ]; then awk -v i=$i -v j=$j '{print i "\t" j "\t" $1 "\t" $2}' pop$i.pop$j.fst.stats >> pairwise.group.fst.stats; fi; done; done
+RE-CALCULATING PI WITHIN GROUPS
+hilo/scripts$ sbatch -p bigmeml --array=1000,2000,3000,5000 -t 30:00 calc1DSFSAngsd.sh
+Submitted batch job 25462433 - COMPLETED (THEN CALCULATE PI USING R SCRIPT calcPifromSFS.R)
 
+DOING ABBA-BABA TEST
+First allo_mex symp_mex symp_maize allo_maize (underpowered to detect sympatric gene flow) doAbbaBaba4pop_maize.sh
+here, allopatric maize is the stand in 'outgroup'
+# helper files:
+# bam list in population order
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do cat $i >> AbbaBaba/doAbbaBaba4pop_maize_bam.list; done
+# size of populations file
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/doAbbaBaba4pop_maize.sizeFile; done
+# try to run:
+scripts$ doAbbaBaba4pop_maize.sh
 
-
-
-
+# NEXT: use Aanc as outgroup (Arbitrary A)
+# use tripsacum or sorghum as outgroup
+# and make pop order: allopatric maize, sympatric maize, allopatric teosinte, out
+# then try: allopatric maize, sympatric teosinte, allopatric teosinte, out
+# and possibly for good measure: allopatric maize, sympatric maize, all teosinte, out
 
