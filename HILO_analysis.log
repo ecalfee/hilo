@@ -981,7 +981,13 @@ https://hpc.nih.gov/docs/job_dependencies.html
 ~/hilo/data/pass1_bam_pops$ cat mexicana.allo.list pop35.list >> mexicana.allo.withXochi35.list
 # I get a list of sites first with major/minor alleles using mafsToSitesFile.sh script:
 scripts$ sbatch mafsToSitesFile.sh
+Submitted batch job 25543209 - FIXED TYPO
+Submitted batch job 25543731 - ANOTHER TYPO
+Submitted batch job 25544229 - FINISHED, BUT NEW FILE NAMING & ADDED INDEXING:
+Submitted batch job 255534
 
 # the script alleleFreqPipeline.sh basically just stores all the population names so it can run
 # calcAlleleFreqPop.sh on each one to calculate allele frequencies for every variable site for each pop
-scripts$ sbatch --dependency=afterok:***** alleleFreqPipeline.sh
+scripts$ sbatch alleleFreqPipeline.sh
+Submitted batch job 25544710 - ALL errors; fixed typos, indexed sites file etc.
+Submitted batch job 25554149 - RUNNING
