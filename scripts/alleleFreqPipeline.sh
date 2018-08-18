@@ -17,6 +17,7 @@ POPS=(mexicana.allo.withXochi35 maize.allo.4Low16 pop18 pop19 pop20 pop21 pop22 
 # to run
 # sbatch calcAlleleFreqPop.sh pop22
 # sbatch calcAlleleFreqPop.sh maize.symp
-sbatch calcAlleleFreqPop.sh ${POPS[$SLURM_ARRAY_TASK_ID]}
+echo "now running for "${POPS[$SLURM_ARRAY_TASK_ID]}
+sbatch --export=POP=${POPS[$SLURM_ARRAY_TASK_ID]},DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
 
 echo "all done!"

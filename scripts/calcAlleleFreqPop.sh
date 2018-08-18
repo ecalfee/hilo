@@ -7,7 +7,7 @@
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
-#SBATCH DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar
+#SBATCH --export=POP=specify_pop_here,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar
 
 # to run
 # sbatch calcAlleleFreqPop.sh pop22
@@ -22,7 +22,7 @@ set –o errexit
 set –o nounset
 
 REGION_I=$SLURM_ARRAY_TASK_ID
-POP=$1
+DIR_OUT=$DIR_SITES
 
 # load angsd -- don't load -- updated version 9.20 is local
 #module load angsd
@@ -30,13 +30,12 @@ POP=$1
 # make directory to store output (if doesn't yet exist)
 mkdir -p ${DIR_OUT}/${POP}
 
-echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP_I
+echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP
 
-angsd -out ${DIR_OUT}/pop${POP}/region_${REGION_I} \
-#-r $(cat $DIR_REGIONS/region_$REGION_I.txt) \
+angsd -out ${DIR_OUT}/${POP}/region_${REGION_I} \
 -rf ${DIR_REGIONS}/region_${REGION_I}.txt \
 -ref refMaize/AGPv4.fa \
--bam ${DIR_POPS}/pop${POP}.list \
+-bam ${DIR_POPS}/${POP}.list \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
