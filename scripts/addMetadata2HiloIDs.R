@@ -86,3 +86,10 @@ pass1_allo4Low <- bind_rows(pass1, allo4Low)
 # write files with pass1 and allo4Low individuals
 write.table(pass1_allo4Low, "../data/pass1_allo4Low_ids.txt", row.names = F, quote = F, col.names = T, sep = "\t")
 
+# aiming for more like 2x coverage for allopatric mexicana reference panel -- 
+# sending new file to Anne for possible re-sequencing
+filter(hilo, zea == "mexicana" & symp_allo == "allopatric") %>% 
+  mutate(., est_coverage = round(est_coverage, 3)) %>% 
+  .[order(.$est_coverage), ] %>%
+  write.table(., "../data/resequence_allopatric_mex_for_Anne.txt",
+              row.names = F, col.names = T, quote = F)

@@ -797,7 +797,7 @@ Submitted batch job 24414553
 ecalfee@farm:~/hilo/data$ cp bam.maize4popLowland.list pass1_bam_pops/pop4000.list
 # then I calculate SAF to get Fst between this allopatric maize landraces and the sympatric maize/mex and allopatric mex
 # calcualte SAF for regions:
-scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G calcSAFAngsd.sh 
+scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G calcSAFAngsd.sh
 Submitted batch job 23526611 - on hold: (AssocGrpJobsLimit) - did not finish because of lack of index files (fixed see above)
 Submitted batch job 23563858 - NODE FAIL (will rerun excluding bigmem5:)
 scripts$ sbatch --array=4000 -t 10:00:00 --mem=4G -x bigmem5 calcSAFAngsd.sh
@@ -907,23 +907,81 @@ First allo_mex symp_mex symp_maize allo_maize (underpowered to detect sympatric 
 here, allopatric maize is the stand in 'outgroup'
 # helper files:
 # bam list in population order
-hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do cat $i >> AbbaBaba/doAbbaBaba4pop_maize_bam.list; done
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do cat $i >> 4pop_maize_bam.list; done
 # size of populations file
-hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/doAbbaBaba4pop_maize.sizeFile; done
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list pass1_bam_pops/maize.symp.list alloMaize4Low_16_bam.list; do wc -l $i | awk '{print $1}' >> 4pop_maize_bam.sizeFile; done
 # try to run:
-hilo/scripts$ sbatch -p bigmemh doAbbaBaba4pop_maize.sh 
+hilo/scripts$ sbatch -p bigmemh doAbbaBaba4pop_maize.sh
 Submitted batch job 25463604
 # 3 argument      100 is unknown will exit -- I'll try not specifying a block size
 Submitted batch job 25463679 - typo
 Submitted batch job 25463718 - still won't recognize arguments (?) may need to download latest ANGSD version from git
-
+# Fixed problem with script and rerunning:
+hilo/scripts$ sbatch -p bigmemh --mem=8G doAbbaBaba4pop_maize.sh
+Submitted batch job 25496804 - CANCELLED, RENAMED FILES & RESTARTED:
+Submitted batch job 25497360
+# Summarise D-statistic results: first make a population names
+hilo/data$ for i in mexicana.allo mexicana.symp maize.symp maize.allo; do echo $i >> AbbaBaba/4pop_maize_bam.popNames; done
+# run Rscript with ANGSD
+~/hilo/data/AbbaBaba$ Rscript ~/software/angsd/R/estAvgError.R angsdFile="4pop_maize_bam.regions.abbababa" out="4pop_maize_bam.summary" sizeFile=4pop_maize_bam.sizeFile nameFile=4pop_maize_bam.popNames > 4pop_maize_bam.summary.readable
+# also created 2 other summary files (important one is 4pop_maize_bam.summary.Observed.txt)
+# basically it's not significant but there are low #'s of independent blocks and total Abba/Baba observations
+# and I know I'm underpowered setting it up this way, so yeah.
 
 # NEXT: use Aanc as outgroup (Arbitrary A)
 Need to make helper files:
-doAbbaBaba3pop_Aanc.sh
-AbbaBaba/doAbbaBaba3pop_maize_bam.list
-# use tripsacum or sorghum as outgroup
-# and make pop order: allopatric maize, sympatric maize, allopatric teosinte, out
-# then try: allopatric maize, sympatric teosinte, allopatric teosinte, out
-# and possibly for good measure: allopatric maize, sympatric maize, all teosinte, out
+# first test (admixture into symp. maize):
+# make pop order: allopatric maize, sympatric maize, allopatric teosinte, out
+hilo/data$ for i in alloMaize4Low_16_bam.list pass1_bam_pops/maize.symp.list pass1_bam_pops/mexicana.allo.list; do cat $i >> AbbaBaba/3pop_alloMaize_sympMaize_alloMex_bam.list; done
+hilo/data$ for i in alloMaize4Low_16_bam.list pass1_bam_pops/maize.symp.list pass1_bam_pops/mexicana.allo.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/3pop_alloMaize_sympMaize_alloMex_bam.sizeFile; done
+scripts$ sbatch --export=PREFIX=3pop_alloMaize_sympMaize_alloMex_bam -p bigmemh doAbbaBaba3pop_Aanc.sh
+Submitted batch job 25497465
+# second test (admixture into symp. teosinte):
+# and make pop order: allopatric teosinte, sympatric teosinte, allopatric maize, out
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list alloMaize4Low_16_bam.list; do cat $i >> AbbaBaba/3pop_alloMex_sympMex_alloMaize_bam.list; done
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list alloMaize4Low_16_bam.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/3pop_alloMex_sympMex_alloMaize_bam.sizeFile; done
+scripts$ sbatch --export=PREFIX=3pop_alloMex_sympMex_alloMaize_bam -p bigmemh doAbbaBaba3pop_Aanc.sh
+Submitted batch job 25497534
+# third test (admixture into symp. maize using all teosinte's as admixing population):
+# lower admixture expected due to admixture into sympatric teosintes but also higher power to
+# detect admixture because of a much larger panel of individuals/more coverage
+# pop order: allopatric maize, sympatric maize, all teosinte, out
+# first make a list of all mexicana individuals, combining sympatric and allopatric bams
+hilo/data$ for i in pass1_bam_pops/mexicana.allo.list pass1_bam_pops/mexicana.symp.list; do cat $i >> pass1_bam_pops/mexicana.all.list; done
+hilo/data$ for i in alloMaize4Low_16_bam.list pass1_bam_pops/maize.symp.list pass1_bam_pops/mexicana.all.list; do cat $i >> AbbaBaba/3pop_alloMaize_sympMaize_allMex_bam.list; done
+hilo/data$ for i in alloMaize4Low_16_bam.list pass1_bam_pops/maize.symp.list pass1_bam_pops/mexicana.all.list; do wc -l $i | awk '{print $1}' >> AbbaBaba/3pop_alloMaize_sympMaize_allMex_bam.sizeFile; done
+scripts$ sbatch --export=PREFIX=3pop_alloMaize_sympMaize_allMex_bam -p bigmemh doAbbaBaba3pop_Aanc.sh
+Submitted batch job 25497879
+### NOTE: only the 4population and not the 3population script appear to output anything
 
+# next use tripsacum or sorghum as outgroup and possibly extend to a much larger portion of the genome
+# can I actually do an f3 or 3 population test?
+
+# New landraces : 4 lowland mexico, 6 lowland South America & 5 Andes
+# ind's listed in ~/hilo/data/landraces_fromLi/alloMaizeInclude.list
+# (will check andean ind's to confirm no admixture later)
+# Getting new landraces aligned properly:
+# downloading bams from li
+ssh -p 2022 ecalfee@farm.cse.ucdavis.edu # connect to port 2022 for file downloads on farm
+cd hilo/data/landraces_fromLi/original
+# use icommands to get files (sign in for iplant use, -K checks checksums)
+module load icommands
+iinit # login w/ password
+# run my script to download data from iplant with nohup in background, hopefully this works (?)
+ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
+[1] 18482
+# using script to re-align to my version of v4 maize genome (no extra contigs)
+
+
+##### how to make better slurm dependencies scripts/pipelines:
+https://hpc.nih.gov/docs/job_dependencies.html
+
+# added Xochimilco to a new list of allopatric mexicana
+# (because appears unadmixed and we need more until allopatric mex get sequenced more):
+~/hilo/data/pass1_bam_pops$ cat mexicana.allo.list pop35.list >> mexicana.allo.withXochi35.list
+# I get a list of sites first with major/minor alleles using mafsToSitesFile.sh script:
+scripts$ sbatch mafsToSitesFile.sh
+
+# the script alleleFreqPipeline.sh basically just stores all the population names so it can run
+# calcAlleleFreqPop.sh on each one to calculate allele frequencies for every variable site for each pop
+scripts$ sbatch --dependency=afterok:***** alleleFreqPipeline.sh
