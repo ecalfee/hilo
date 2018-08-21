@@ -970,6 +970,10 @@ iinit # login w/ password
 # run my script to download data from iplant with nohup in background, hopefully this works (?)
 ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
 [1] 18482
+# did not work :/ . So first I am using irsync to get files from Li's iplant directory
+# onto mine (to free up her space). Then I'll delete files I don't need and use irsync
+# again to get the files onto farm
+ecalfee@farm -P 2022$ irsync -r i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
 # using script to re-align to my version of v4 maize genome (no extra contigs)
 
 
