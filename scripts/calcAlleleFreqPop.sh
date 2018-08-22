@@ -10,8 +10,8 @@
 #SBATCH --export=POP=specify_pop_here,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar
 
 # to run
-# sbatch calcAlleleFreqPop.sh pop22
-# sbatch calcAlleleFreqPop.sh maize.symp
+# sbatch --export=POP=pop363,DIR_POPS=etc... calcAlleleFreqPop.sh
+# sbatch --export=POP=maize.allo.4Low16,DIR_POPS=etc... calcAlleleFreq.sh
 
 # %k ensures only k jobs max run at one time, e.g. --array=0-425%8 runs 8 at a time
 

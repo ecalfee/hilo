@@ -27,7 +27,6 @@ echo "calling variants using ANGSD on BAMS for hilo region "$SLURM_ARRAY_TASK_ID
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosome individually, find variant sites
 angsd -out $OUT_DIR/region_$SLURM_ARRAY_TASK_ID \
--r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
 -doMajorMinor 2 \
 -bam $BAM_LIST \

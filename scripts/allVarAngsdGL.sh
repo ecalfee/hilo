@@ -27,7 +27,6 @@ echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLU
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
 angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
--r $(cat refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt) \
 -rf refMaize/divide_50Mb/region_$SLURM_ARRAY_TASK_ID.txt \
 -ref refMaize/AGPv4.fa \
 -bam $BAM_IN \
@@ -43,7 +42,7 @@ angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 # settings:
 # -checkBamHeader 1 means it checks all chrom/etc. match up between bam files included; 0 won't do the check. 
 # I will set to zero for some cases, e.g. b/c hilo bams have mt chromosome but allopatric maize don't; I manually checked other chroms are compatible
-# -r specifies which region to work on; -rf is the regions file
+# -rf specifies in a file which region to work on
 # -remove_bads removes reads with flags like duplicates
 # -doMajorMinor 2: infer major and minor from allele counts
 # -bam list of bams to include (all newly sequenced allopatric mex. and sympatric mexicana & maize pops)
