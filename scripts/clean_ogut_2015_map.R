@@ -21,6 +21,7 @@ i_missChr = which(lead(rmap$chr) != rmap$chr & lag(rmap$chr) != rmap$chr)
 rmap_1 = rmap[-i_missChr,]
 # confirmed no more
 length(which(lead(rmap_1$chr) != rmap_1$chr & lag(rmap_1$chr) != rmap_1$chr)) == 0
+# difference in chromosome number between current and next mapped position
 table(lead(rmap_1$chr) - rmap_1$chr)
 i_missChr2 = which(!(lead(rmap_1$chr) - rmap_1$chr) %in% 0:1)
 # clearly a small segment of chr7 stuck within chr2 -- I'll remove by hand
@@ -28,37 +29,19 @@ lapply(i_missChr2, function(i) rmap_1[(i-3):(i+3), ])
 rmap_1 = filter(rmap_1, !(marker %in% c("M1786", "M1787", "M1788")))
 table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
 
+# now I look for SNPs embedded within chromosomes that appear to be out-of-order
+# afterwards I deal with the case of SNPs near the chromosome transition boundary
 
-# difference between current bp position and next position
-rmap_1$diff = lead(rmap_1$pos_bp) - rmap_1$pos_bp
-# different chromosome, don't measure difference across chromosomes
-#rmap_1$diff[rmap_1$chr != lag(rmap_1$chr)] <- NA
-
-
-# find SNPs that are greater than 3 behind and 3 ahead of themselves
-tooBig = function(map) {
-  (map$pos_bp > lag(map$pos_bp) | map$chr != lag(map$chr)) & 
-                   (map$pos_bp > lag(lag(map$pos_bp)) | map$chr != lag(lag(map$chr))) & 
-                   (map$pos_bp > lag(lag(lag(map$pos_bp))) | map$chr != lag(lag(lag(map$chr)))) &
-                   map$pos_bp > lead(map$pos_bp) & 
-                   map$pos_bp > lead(lead(map$pos_bp)) & 
-                   map$pos_bp > lead(lead(lead(map$pos_bp)))
-}
-
-
-# find SNPs that are less than 3 behind and 3 ahead of themselves
-# WHY DOES THIS KEEP EATING AWAY AT MY STUFF??
-tooSmall = function(map) {
-  map$pos_bp < lag(map$pos_bp) & 
-                   map$pos_bp < lag(lag(map$pos_bp)) & 
-                   map$pos_bp < lag(lag(lag(map$pos_bp))) &
-                   (map$pos_bp < lead(map$pos_bp) & map$chr == lead(map$chr)) & 
-                   (map$pos_bp < lead(lead(map$pos_bp)) | map$chr == lead(lead(map$chr))) & 
-                   (map$pos_bp < lead(lead(lead(map$pos_bp))) | map$chr == lead(lead(lead(map$chr))))
-}
-
-tooBig = function(map) {
-  map$pos_bp > lag(map$pos_bp) & 
+# find SNPs that are on the same chromosome and greater than all the SNPs up to 
+#3 behind and 3 ahead of themselves on the map
+tooBig3 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lag(lag(map$chr)) &
+    map$chr == lag(lag(lag(map$chr))) &
+    map$chr == lead(map$chr) &
+    map$chr == lead(lead(map$chr)) &
+    map$chr == lead(lead(lead(map$chr))) &
+    map$pos_bp > lag(map$pos_bp) & 
     map$pos_bp > lag(lag(map$pos_bp)) & 
     map$pos_bp > lag(lag(lag(map$pos_bp))) &
     map$pos_bp > lead(map$pos_bp) & 
@@ -66,9 +49,15 @@ tooBig = function(map) {
     map$pos_bp > lead(lead(lead(map$pos_bp)))
 }
 
-
-# find SNPs that are less than 3 behind and 3 ahead of themselves
-tooSmall = function(map) {
+# find SNPs that are on the same chromosome and are less than all the SNPs up to 
+# 3 behind and 3 ahead of themselves on the map
+tooSmall3 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lag(lag(map$chr)) &
+    map$chr == lag(lag(lag(map$chr))) &
+    map$chr == lead(map$chr) &
+    map$chr == lead(lead(map$chr)) &
+    map$chr == lead(lead(lead(map$chr))) &
   map$pos_bp < lag(map$pos_bp) & 
     map$pos_bp < lag(lag(map$pos_bp)) & 
     map$pos_bp < lag(lag(lag(map$pos_bp))) &
@@ -77,86 +66,139 @@ tooSmall = function(map) {
     map$pos_bp < lead(lead(lead(map$pos_bp)))
 }
 
+# find SNPs that are on the same chromosome and greater than all the SNPs up to 
+#2 behind and 2 ahead of themselves on the map
+tooBig2 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lag(lag(map$chr)) &
+    map$chr == lead(map$chr) &
+    map$chr == lead(lead(map$chr)) &
+    map$pos_bp > lag(map$pos_bp) & 
+    map$pos_bp > lag(lag(map$pos_bp)) & 
+    map$pos_bp > lead(map$pos_bp) & 
+    map$pos_bp > lead(lead(map$pos_bp))
+}
 
-rmap_2 = rmap_1 %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., !tooSmall(.)) %>%
-  filter(., !tooBig(.)) %>%
-  filter(., tooSmall(.))
+# find SNPs that are on the same chromosome and are less than all the SNPs up to 
+# 2 behind and 2 ahead of themselves on the map
+tooSmall2 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lag(lag(map$chr)) &
+    map$chr == lead(map$chr) &
+    map$chr == lead(lead(map$chr)) &
+    map$pos_bp < lag(map$pos_bp) & 
+    map$pos_bp < lag(lag(map$pos_bp)) & 
+    map$pos_bp < lead(map$pos_bp) & 
+    map$pos_bp < lead(lead(map$pos_bp))
+}
 
+# find SNPs that are on the same chromosome and greater than all the SNPs up to 
+#1 behind and 1 ahead of themselves on the map
+tooBig1 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lead(map$chr) &
+    map$pos_bp > lag(map$pos_bp) & 
+    map$pos_bp > lead(map$pos_bp)
+}
 
-rmap_2a = rmap_1[!i_tooBig(rmap_1),]
-rmap_2b = rmap_2a[!i_tooSmall(rmap_2a),]
-
-
-rmap$chr_prev = c(0, rmap$chr[1:(nrow(rmap) - 1)]) # previous chromosome
-# exclude markers on chromosomes out of order
-excl_candidate = which(rmap$chr < rmap$chr_prev)
-# visualize each one in context to identify correctly
-rmap[sort(c(excl_candidate -4, excl_candidate -3, excl_candidate - 2, excl_candidate - 1, excl_candidate, 
-       excl_candidate + 1, excl_candidate + 2, excl_candidate + 3)), ]
-excl_i1 = c(1624, 1640, 1641, 1642, 2631, 4114, 4169, 4508, 4589, 6085, 6245)
-exclude1 = rmap[excl_i1, c("SNP", "marker", "pos_cM", "chr", "pos_bp")] # exclude
-rmap1 = rmap[-excl_i1, c("SNP", "marker", "pos_cM", "chr", "pos_bp")] # keep
-rmap1$chr_prev = c(0, rmap1$chr[1:(nrow(rmap1) - 1)]) # reset previous chromosome
-rmap1[rmap1$chr < rmap1$chr_prev,] # none - good
+# find SNPs that are on the same chromosome and are less than all the SNPs up to 
+# 1 behind and 1 ahead of themselves on the map
+tooSmall1 = function(map) {
+  map$chr == lag(map$chr) &
+    map$chr == lead(map$chr) &
+    map$pos_bp < lag(map$pos_bp) & 
+    map$pos_bp < lead(map$pos_bp)
+}
 
 
+# apply tooBig and tooSmall filter recursively
+# until no more SNPs are filtered out
+recursive_filter3 = function(map){
+  nSNP = nrow(map)
+  # do one step of filtering
+  map2 = map %>%
+  filter(., !tooBig3(.) | is.na(tooBig3(.))) %>%
+    filter(., !tooSmall3(.)| is.na(tooSmall3(.)))
+  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
+    return(recursive_filter3(map2))
+  } else{ # otherwise done filtering, return current map
+    return(map2)
+  }
+}
+recursive_filter2 = function(map){
+  nSNP = nrow(map)
+  # do one step of filtering
+  map2 = map %>%
+    filter(., !tooBig2(.) | is.na(tooBig2(.))) %>%
+    filter(., !tooSmall2(.)| is.na(tooSmall2(.)))
+  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
+    return(recursive_filter2(map2))
+  } else{ # otherwise done filtering, return current map
+    return(map2)
+  }
+}
+recursive_filter1 = function(map){
+  nSNP = nrow(map)
+  # do one step of filtering
+  map2 = map %>%
+    filter(., !tooBig1(.) | is.na(tooBig1(.))) %>%
+    filter(., !tooSmall1(.)| is.na(tooSmall1(.)))
+  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
+    return(recursive_filter1(map2))
+  } else{ # otherwise done filtering, return current map
+    return(map2)
+  }
+}
 
-#### THE NEXT STEP IS INCOMPLETE - SOME DIFF. CASES OF MULTIPLE BAD SNPs IN A ROW ETC##
-# now look for markers out of order within chromosome
-diff_bp = diff(rmap1$pos_bp)
-rmap1$diff = c(0, diff_bp) # look 1 position back
-diff_bp2 = diff(rmap1$pos_bp, lag = 2) # look 2 back
-rmap1$diff2 = c(0, 0, diff_bp2)
-# first eliminate positions less than the 1 previous and 2 previous bp
-rmap1$filter_out = rmap1$diff < 0 & rmap1$diff2 < 0 & rmap1$chr == rmap1$chr_prev
-# visualize
-#rmap1[sort(c(which(rmap1$filter_out==T)-2, 
-#             which(rmap1$filter_out==T)-1, 
-#             which(rmap1$filter_out==T),
-#             which(rmap1$filter_out==T) + 1)), ]
-exclude2 = rmap1[rmap1$filter_out, c("SNP", "marker", "pos_cM", "chr", "pos_bp")]
-rmap2 = rmap1[!rmap1$filter_out, c("SNP", "marker", "pos_cM", "chr", "pos_bp")]
-# then eliminate positions less than the 1 previous bp
-rmap2$chr_prev = c(0, rmap2$chr[1:(nrow(rmap2) - 1)]) # reset previous chromosome
-diff_bp = diff(rmap2$pos_bp)
-rmap2$diff = c(0, diff_bp)
-exclude3 = rmap2[rmap2$diff < 0 & rmap2$chr_prev == rmap2$chr, c("SNP", "marker", "pos_cM", "chr", "pos_bp")]
-rmap3 = rmap2[!(rmap2$diff < 0 & rmap2$chr_prev == rmap2$chr), c("SNP", "marker", "pos_cM", "chr", "pos_bp")]
-diff_bp3 = diff(rmap3$pos_bp)
-rmap3$diff = c(0, diff_bp3)
-rmap3[rmap3$diff <0 & rmap3$chr_prev == rmap3$chr,]
+recursive_filter_edge = function(map){
+  nSNP = nrow(map)
+  # do one step of filtering to find any remaining SNPs that are smaller than the next SNP
+  # but still on the same chromosome
+  bad_edge = which(lead(map$pos_bp) <= map$pos_bp & lead(map$chr) == map$chr)
+  map2 = map[-bad_edge, ]
+  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
+    print(paste("some edge problems:", map[bad_edge,]))
+    return(recursive_filter_edge(map2))
+  } else{ # otherwise done filtering, return current map
+    return(map2)
+  }
+}
+
+
+recursive_filter_all = function(map){
+  # first filter out SNPs bigger/smaller than their 3 neighbors before/after
+  # then 2 neighbors
+  # then 1 neighbor
+  #map2 = recursive_filter1(recursive_filter2(recursive_filter3(map)))
+  map2 = recursive_filter_edge(recursive_filter1(recursive_filter2(recursive_filter3(map))))
+  # finally filter out any remaining SNPs that are on chromosome boundaries and out of order
+} # I am not sure why the last filter for edge problems isn't working -- will need to check
+  
+rmap_2 = recursive_filter_all(rmap_1)
+dim(rmap_2)
+
+# this filtering doesn't change the general recombination map/pattern
+par(mfrow=c(2,1))
+plot(as.numeric(row.names(rmap_1)), rmap_1$pos_bp, main = paste0("pre-filtering n=", nrow(rmap_1)))
+plot(as.numeric(row.names(rmap_2)), rmap_2$pos_bp, main = paste0("post-filtering n=", nrow(rmap_2)))
+par(mfrow=c(1,1))
+
+# check chromosome boundaries
+# for every position that is the same chromosome as the one in front, it should not be the case that
+# it is larger than the SNP in front
+which(lead(rmap_2$pos_bp) <= rmap_2$pos_bp & lead(rmap_2$chr) == rmap_2$chr)
+chr_trans = which(rmap_2$chr!=lag(rmap_2$chr))
+lapply(chr_trans, function(x) rmap_2[(x-5):(x+5), ])
+
 # make an output file for included markers
-write.table(rmap1[!rmap1$filter_out, 
+write.table(rmap_2[!rmap1$filter_out, 
                  c("SNP", "marker", "pos_cM", "chr", "pos_bp")],
                  "../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt",
             sep = "\t", col.names = F, row.names = F, quote = F)
-# and make a separate output file for excluded markers
-write.table(rbind(exclude1, rmap1[rmap1$filter_out, 
-                 c("SNP", "marker", "pos_cM", "chr", "pos_bp")]),
-            "../data/linkage_map/ogut_fifthcM_map_agpv4_EXCLUDE.txt",
-            sep = "\t", col.names = F, row.names = F, quote = F)
+
+# and make a separate output file for excluded markers -- no longer applies
+#write.table(rbind(exclude1, rmap1[rmap1$filter_out, 
+#                 c("SNP", "marker", "pos_cM", "chr", "pos_bp")]),
+#            "../data/linkage_map/ogut_fifthcM_map_agpv4_EXCLUDE.txt",
+#            sep = "\t", col.names = F, row.names = F, quote = F)
 

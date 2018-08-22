@@ -971,9 +971,18 @@ iinit # login w/ password
 ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
 [1] 18482
 # did not work :/ . So first I am using irsync to get files from Li's iplant directory
-# onto mine (to free up her space). Then I'll delete files I don't need and use irsync
+# onto mine (to free up her space). Then I'll delete files I don't need (DONE) and use irsync
 # again to get the files onto farm
-ecalfee@farm -P 2022$ irsync -r i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
+my_computer$ irsync -r -V i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
+# now attempting to sync directly to farm
+my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+$ module load icommands
+$ iinit
+$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fromLi/original
+
+# but at the same time as a backup approach syncing to my computer
+my_computer$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi /media/erin/3TB/Documen
+ts/gitErin/hilo/data/landraces_fromLi/original
 # using script to re-align to my version of v4 maize genome (no extra contigs)
 
 
@@ -994,4 +1003,22 @@ Submitted batch job 255534
 # calcAlleleFreqPop.sh on each one to calculate allele frequencies for every variable site for each pop
 scripts$ sbatch alleleFreqPipeline.sh
 Submitted batch job 25544710 - ALL errors; fixed typos, indexed sites file etc.
-Submitted batch job 25554149 - RUNNING
+Submitted batch job 25554149 - RUNNING - COMPLETED
+# 8.21.18 now to check which subprocesses didn't finish:
+hilo$ for i in $(grep 'Submitted' slurm-log/*25554149*.out | awk '{print $4}'); do grep 'CANCELLED' slurm-log/*$i*.out; done
+# these are: (identified by hilo$ grep 25554201 -B 2 slurm-log/*25554149*.out)
+maize.allo.4Low16 (#1) - 0, 39, 252, 256
+~/hilo/scripts$ sbatch --array=1,39,252,256 --mem=16G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 25772687 -- COMPLETED, OOPS redid region 1 instead of zero:
+scripts$ sbatch --array=0 --mem=16G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 25773575
+pop29 (#13) - 85
+~/hilo/scripts$ sbatch --array=85 --mem=16G -t 24:00:00 --export=POP=pop29,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 25772727 - COMPLETED
+# now that I have allele frequencies, I can do an F4 test. The only issue is that 
+# I need to match alleles by position because ANGSD will omit a frequency if no individuals have
+# any data. I *may* also want to make more stringent criteria for # ind's with data, e.g. in maize & allo mex, to include a site, but don't need to for a first pass analysis. I think this should only increase variance in f4, but not bias it to include all sites while a strict site filter for depth may actually increase bias due to mapping bias.
+
+
+
+
