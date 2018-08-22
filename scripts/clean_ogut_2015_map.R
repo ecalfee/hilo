@@ -155,12 +155,12 @@ recursive_filter_edge = function(map){
   # do one step of filtering to find any remaining SNPs that are smaller than the next SNP
   # but still on the same chromosome
   bad_edge = which(lead(map$pos_bp) <= map$pos_bp & lead(map$chr) == map$chr)
-  map2 = map[-bad_edge, ]
-  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
+  if (length(bad_edge) > 0){ # SNPs still being filtered out
     print(paste("some edge problems:", map[bad_edge,]))
-    return(recursive_filter_edge(map2))
+    return(recursive_filter_edge(map[-bad_edge, ])) 
+    # drop SNP positions that are greater than the next's SNPs pos
   } else{ # otherwise done filtering, return current map
-    return(map2)
+    return(map)
   }
 }
 
@@ -169,8 +169,8 @@ recursive_filter_all = function(map){
   # first filter out SNPs bigger/smaller than their 3 neighbors before/after
   # then 2 neighbors
   # then 1 neighbor
-  #map2 = recursive_filter1(recursive_filter2(recursive_filter3(map)))
-  map2 = recursive_filter_edge(recursive_filter1(recursive_filter2(recursive_filter3(map))))
+  map2 = recursive_filter1(recursive_filter2(recursive_filter3(map)))
+  #map2 = recursive_filter_edge(recursive_filter1(recursive_filter2(recursive_filter3(map))))
   # finally filter out any remaining SNPs that are on chromosome boundaries and out of order
 } # I am not sure why the last filter for edge problems isn't working -- will need to check
   
@@ -183,22 +183,9 @@ plot(as.numeric(row.names(rmap_1)), rmap_1$pos_bp, main = paste0("pre-filtering 
 plot(as.numeric(row.names(rmap_2)), rmap_2$pos_bp, main = paste0("post-filtering n=", nrow(rmap_2)))
 par(mfrow=c(1,1))
 
-# check chromosome boundaries
-# for every position that is the same chromosome as the one in front, it should not be the case that
-# it is larger than the SNP in front
-which(lead(rmap_2$pos_bp) <= rmap_2$pos_bp & lead(rmap_2$chr) == rmap_2$chr)
-chr_trans = which(rmap_2$chr!=lag(rmap_2$chr))
-lapply(chr_trans, function(x) rmap_2[(x-5):(x+5), ])
-
 # make an output file for included markers
-write.table(rmap_2[!rmap1$filter_out, 
-                 c("SNP", "marker", "pos_cM", "chr", "pos_bp")],
-                 "../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt",
+write.table(rmap_2,
+            "../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt",
             sep = "\t", col.names = F, row.names = F, quote = F)
 
-# and make a separate output file for excluded markers -- no longer applies
-#write.table(rbind(exclude1, rmap1[rmap1$filter_out, 
-#                 c("SNP", "marker", "pos_cM", "chr", "pos_bp")]),
-#            "../data/linkage_map/ogut_fifthcM_map_agpv4_EXCLUDE.txt",
-#            sep = "\t", col.names = F, row.names = F, quote = F)
 
