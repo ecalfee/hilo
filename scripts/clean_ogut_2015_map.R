@@ -8,6 +8,7 @@
 #S_3519161    M1118    9.2    2    3521396
 # notably, this affects a few larger contiguos regions on chr 7
 library(dplyr)
+library(ggplot2)
 
 
 rmap = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4.txt", 
@@ -182,6 +183,20 @@ par(mfrow=c(2,1))
 plot(as.numeric(row.names(rmap_1)), rmap_1$pos_bp, main = paste0("pre-filtering n=", nrow(rmap_1)))
 plot(as.numeric(row.names(rmap_2)), rmap_2$pos_bp, main = paste0("post-filtering n=", nrow(rmap_2)))
 par(mfrow=c(1,1))
+
+# zoom in on a pos_cM to pos_bp map. from the general shape of these maps it makes more sense
+# to extend the tail recombination rate to markers beyond the map boundaries (on end of chroms)
+# than it does to use a chromosome-average for these markers because rates are faster on the ends
+# than near the centromere, so this should be a better proxy
+rmap_2 %>%
+  ggplot(., aes(pos_bp, pos_cM)) +
+  geom_point() +
+  facet_wrap(.~chr)
+rmap_1 %>%
+  #filter(., chr == 1) %>%
+  ggplot(., aes(pos_bp, pos_cM)) +
+  geom_point(color = "blue") +
+  facet_wrap(.~chr)  
 
 # make an output file for included markers
 write.table(rmap_2,
