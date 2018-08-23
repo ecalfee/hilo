@@ -22,7 +22,7 @@ set –o nounset
 module load samtools
 module load bwa
 
-LIST_OF_INDS=($(awk '{print $1} landraces_fromLi/alloMaizeInclude.list')) # make array of individuals
+LIST_OF_INDS=($(awk '{print $1}' landraces_fromLi/alloMaizeInclude.list)) # make array of individuals
 IND=${LIST_OF_INDS[$SLURM_ARRAY_TASK_ID]} # get individual i based on SLURM_ARRAY_TASK_ID
 TMPDIR="landraces_fromLi/tmp" #redefine your temporary directory here, you could make a new one in your work directory
 INPUT_DIR="landraces_fromLi/original/" #redefine your input and output directory

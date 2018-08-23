@@ -27,7 +27,7 @@ echo "calculating BAQ for hilo $SLURM_ARRAY_TASK_ID"
 # (0) Start with sorted and deduplicated bam file: hilo_X.sort.dedup.bam
 
 # (1) SAMTOOLS calculate BAQ > name.sort.dedup.baq.bam
-samtools calmd -bArE --reference /group/jrigrp/Share/assemblies/Zea_mays.AGPv4.dna.chr.fa \
+samtools calmd -bArE --reference refMaize/AGPv4.fa \
 hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam > hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
 # -b bam output, # -Ar compute BAQ and cap base quality with BAQ 
 # -E use extended BAQ calculation; this was a change to improve sensitivity and will be the new samtools default

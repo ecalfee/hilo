@@ -979,11 +979,10 @@ my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
 $ module load icommands
 $ iinit
 $ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fromLi/original
-
-# but at the same time as a backup approach syncing to my computer
-my_computer$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi /media/erin/3TB/Documen
-ts/gitErin/hilo/data/landraces_fromLi/original
+# first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
 # using script to re-align to my version of v4 maize genome (no extra contigs)
+scripts$ sbatch remapAlloMaizeV4.sh
+Submitted batch job 25847933
 
 
 ##### how to make better slurm dependencies scripts/pipelines:
