@@ -1014,15 +1014,18 @@ Submitted batch job 25773575
 pop29 (#13) - 85
 ~/hilo/scripts$ sbatch --array=85 --mem=16G -t 24:00:00 --export=POP=pop29,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
 Submitted batch job 25772727 - COMPLETED
-# now that I have allele frequencies, I can do an F4 test. The only issue is that 
+# now that I have allele frequencies, I can do an F4 test. The only issue is that
 # I need to match alleles by position because ANGSD will omit a frequency if no individuals have
 # any data. I *may* also want to make more stringent criteria for # ind's with data, e.g. in maize & allo mex, to include a site, but don't need to for a first pass analysis. I think this should only increase variance in f4, but not bias it to include all sites while a strict site filter for depth may actually increase bias due to mapping bias.
 
 # After making allele freq files I found that my position/sites files had every SNP duplicated because I had specified -rf and -f in calling variant sites and calculating MAF scripts
 # this affects all files eg. region_9.mafs.gz region_9.var.sites for regions covering the whole chromosome, including within population frequencies.
-# BUT the NGSadmix & PCA results should be largely unchanged because there are no duplicated sites in my 
+# BUT the NGSadmix & PCA results should be largely unchanged because there are no duplicated sites in my
 # genome-wide variant sites filtering by every 1000th SNP (they just aren't 100% 10kb apart due to the duplicates). I will need to re-call all variant sites and will want to use new thinned
 # SNPs anyways, filtered by cM position rather than bp's. Temporarily I will remove duplicates in a post-processing R-script (which won't be necessary once upstream is corrected & files are re-run).
 # this doesn't affect FST and SFS stats that used a small set of regions (not duplicated with -r -rf). After re-running I should confirm that the issue is the -r -rf and the duplication problem goes away.
+# I can temporarily fix the doubled sites problem by using split
+split -l 73165 region_287.var.sites (then be sure to re-index the new sites file _A and the # lines = half of wc -l region_287.var.sites)
+# implemented in removeDuplSites.sh making new sites files in var_sites/merged_pass1_all_alloMaize4Low_16/allVar/region_*.var.sites
 
-
+##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
