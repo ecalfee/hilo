@@ -1052,11 +1052,12 @@ module load java
 module load GATK
 # before running ASEReadCounter I need to add ReadGroups so GATK will process my bams (takes a few mins) and re-index:
 scripts$ sbatch addReadGroup2Bam.sh
+Submitted batch job 26007563 -- many did not run (retry all:)
+Submitted batch job 26007874
+
 
 # -h to see help
 java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar -T ASEReadCounter -h
-
-
 
 
 java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar \
