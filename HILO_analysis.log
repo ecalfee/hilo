@@ -1031,7 +1031,7 @@ scripts$ sbatch removeDuplSites.sh
 Submitted batch job 25968083 -- I cancelled & reran after removing # jobs at a time limit:
 Submitted batch job 25968187 -- mostly finished except some TIMEOUT run on node 7 and 1 (will rerun & exclude these nodes)
 scripts$ sbatch -x bigmem1,bigmem7 --array=32-53,84-95,136-199 -t 8:00:00 removeDuplSites.sh
-Submitted batch job 25971992
+Submitted batch job 25971992 - COMPLETED
 
 ##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
 # doGeno worked but doHaploCall did not
@@ -1054,7 +1054,6 @@ module load GATK
 scripts$ sbatch addReadGroup2Bam.sh
 Submitted batch job 26007563 -- many did not run (retry all:)
 Submitted batch job 26007874
-
 
 # -h to see help
 java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar -T ASEReadCounter -h
