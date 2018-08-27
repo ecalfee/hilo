@@ -1034,3 +1034,58 @@ scripts$ sbatch -x bigmem1,bigmem7 --array=32-53,84-95,136-199 -t 8:00:00 remove
 Submitted batch job 25971992
 
 ##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
+# doGeno worked but doHaploCall did not
+# new plan than doHaploAngsd is to get read counts for Maj/Min allele for all individuals
+# and then I randomly sample 1 allele from each individual with data. Maybe I filter sites first...
+# in the end I need sites filtered by XcM
+# with counts for each admixed individual
+
+# update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
+angsd -out TEST/angsdVCF_region_0 -r 1:300-500 -sites TEST/head_region_0.var.sites -bam pass1_bam_pops/maize.allo.4Low16.list -remove_bads 1 -minMapQ 30 -minQ 20 -doMajorMinor 3 -doMaf 1 -GL 1 -doGeno -4 -doPost 1 -postCutoff 0.95 -doVCF 1 -P 1
+# output file = TEST/alloMaize_head_region_0.vcf.gz
+# (maybe should be more lenient at .9 posterior prob. for calling genotypes or later sample 1 read for lower coverage individuals ..not sure_
+# (and before doing this I think I want to filter for lower LD and high differentiation maize-mex in R)
+# load GATK and dependencies
+module load R
+module load maven
+module load java
+module load GATK
+# before running ASEReadCounter I need to add ReadGroups so GATK will process my bams (takes a few mins) and re-index:
+scripts$ sbatch addReadGroup2Bam.sh
+
+# -h to see help
+java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar -T ASEReadCounter -h
+
+
+
+
+java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar \
+-T ASEReadCounter \
+-R refMaize/AGPv4.fa \
+# -T ASEReadCounter \
+--sitesVCFFile TEST/test_vcf_from_plink.vcf \
+--out TEST/asereadcount_test_head_region_0_hilo_45_region.csv \
+--minBaseQuality 20 \
+--minMappingQuality 30 #\
+-I TEST/hilo_45.sort.dedup.baq.rg.bam \
+-L 1:300-500
+#--outputFormat CSV
+
+# can specify region with -L. A potential problem is that it outputs nothing for SNPs where the individual has no data (zero depth)..
+# so I'd have to merge in R by chromosome & position & impute zeros for missing SNPs. [...so in the end is this easier than getting allele counts for all individuals
+# in ANGSD but then having to choose which columns are the major/minor allele?]
+
+## problem with ANGSD vcf being used by GATK:
+##### ERROR MESSAGE: Unable to parse header with error: Your input file has a malformed header: VCFv4.2(angsd version) is not a supported version, for input source: /home/ecalfee/hilo/data/TEST/alloMaize_head_region_0.vcf.gz
+
+# plink is able to parse the vcf and get allele counts
+plink --vcf TEST/alloMaize_head_region_0.vcf.gz --freq counts --keep-allele-order --out TEST/test_load_vcf_to_plink
+# can plink output a new vcf with better format? Yes. Simply encodes genotypes, but I really just need positions and ref/alt allele for GATK.
+plink --vcf TEST/angsdVCF_region_0.vcf.gz --recode vcf-iid --keep-allele-order --out TEST/test_vcf_from_plink
+## output file = TEST/test_vcf_from_plink.vcf
+# does it work with GATK? Yes, but now I still need to index the bam file
+samtools index TEST/hilo_45.sort.dedup.baq.rg.bam ## (fast)
+
+# then I can use the VCF file to get read counts at major/minor allele for all other individuals using picard tools
+
+# then I can randomly sample 1 read for each allopatric mexicana individual
