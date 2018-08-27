@@ -1027,5 +1027,10 @@ Submitted batch job 25772727 - COMPLETED
 # I can temporarily fix the doubled sites problem by using split
 split -l 73165 region_287.var.sites (then be sure to re-index the new sites file _A and the # lines = half of wc -l region_287.var.sites)
 # implemented in removeDuplSites.sh making new sites files in var_sites/merged_pass1_all_alloMaize4Low_16/allVar/region_*.var.sites
+scripts$ sbatch removeDuplSites.sh
+Submitted batch job 25968083 -- I cancelled & reran after removing # jobs at a time limit:
+Submitted batch job 25968187 -- mostly finished except some TIMEOUT run on node 7 and 1 (will rerun & exclude these nodes)
+scripts$ sbatch -x bigmem1,bigmem7 --array=32-53,84-95,136-199 -t 8:00:00 removeDuplSites.sh
+Submitted batch job 25971992
 
 ##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
