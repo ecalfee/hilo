@@ -982,8 +982,11 @@ $ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fro
 # first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
 # using script to re-align to my version of v4 maize genome (no extra contigs)
 scripts$ sbatch remapAlloMaizeV4.sh
-Submitted batch job 25847933
-
+Submitted batch job 25847933 - # needed to index reference, but did get all files to .fq output
+scripts$ sbatch indexRefBWA.sh
+Submitted batch job 26008240
+scripts$ sbatch --dependency=afterok:26008240 remapAlloMaizeV4.sh
+Submitted batch job 26008241
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1053,7 +1056,7 @@ module load GATK
 # before running ASEReadCounter I need to add ReadGroups so GATK will process my bams (takes a few mins) and re-index:
 scripts$ sbatch addReadGroup2Bam.sh
 Submitted batch job 26007563 -- many did not run (retry all:)
-Submitted batch job 26007874
+Submitted batch job 26007874 -- COMPLETED
 
 # -h to see help
 java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar -T ASEReadCounter -h
