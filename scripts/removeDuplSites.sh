@@ -33,4 +33,5 @@ split -a 1 -l $(($( wc -l "$SITES_FILE" | awk '{print $1}' ) / 2)) \
 mv "${DIR_OUT}/region_${SLURM_ARRAY_TASK_ID}_a" "${DIR_OUT}/region_${SLURM_ARRAY_TASK_ID}.var.sites"
 
 # index new positions
+sleep 2s # wait 2 seconds before indexing so that index doesn't have same timestamp as sites file
 angsd sites index "${DIR_OUT}/region_${SLURM_ARRAY_TASK_ID}.var.sites"

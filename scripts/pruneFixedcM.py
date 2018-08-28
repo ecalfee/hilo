@@ -1,7 +1,7 @@
 # this script prunes a set of SNPs, read from a tab deliminated variant sites file,
 # so that no two are closer than L cM (RECOMBINATION DISTANCE -- to reduce LD)
 
-# to run: hilo/scripts/$ python3 pruneFixedcM.py 0.0001 55 0.1 out_file in_file1 in_file2
+# to run: hilo/scripts/$ python3 pruneFixedcM.py 0.0001 out_file in_file1 in_file2
 import sys
 import csv
 import pandas
@@ -10,10 +10,8 @@ import calcMapPos # helper function to calculate map position in cM from bp pos
 
 # get input
 minL = float(sys.argv[1]) # minimum length (in cM) between 2 SNPs that are kept
-minInd = int(sys.argv[2]) # minimum number of individuals with data
-minMAF = float(sys.argv[3]) # column number specifying
-fileOut = sys.argv[4] # file/path to write results to as a new sites file .var.sites and .distM distance in Morgans file
-listIn = sys.argv[5:] # list of files/paths to read in (sites files, not gzipped)
+fileOut = sys.argv[2] # file/path to write results to as a new sites file .var.sites and .distM distance in Morgans file
+listIn = sys.argv[3:] # list of files/paths to read in (sites files, not gzipped)
 
 print("Pruning R: minL= " + str(minL) + "cM, " + " fileOut= " + fileOut + " listIn= " + str(listIn))
 
