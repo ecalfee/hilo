@@ -30,6 +30,8 @@ mkdir -p $dir_out
 
 # filter for informative sites by minimum allele freq difference and min. # individuals with data:
 # Rscript args (in order): region, minInd, D, allo_maize, allo_mex, dir_gl, dir_sites, dir_out
-Rscript filter_var_sites_min_allo.R $region $minInd $D $allo_maize $allo_mex $dir_gl $dir_sites $dir_out
+Rscript ../scripts/filter_var_sites_min_allo.R $region $minInd $D $allo_maize $allo_mex \
+$dir_gl $dir_sites $dir_out
 
 echo "done filtering for informative SNPs in R for region "$region
+

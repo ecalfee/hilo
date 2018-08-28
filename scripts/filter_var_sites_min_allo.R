@@ -2,7 +2,7 @@
 
 #R script 2 filter variant sites for minimum allopatric # individuals, 
 #MAF difference, and an LD threshold
-
+print(getwd()) # print current directory
 args = commandArgs(trailingOnly=TRUE)
 # args (in order): region, minInd, D, allo_maize, allo_mex, dir_gl, dir_sites, dir_out
 # to run:
@@ -88,6 +88,6 @@ d = getSNPs(region = region, dir_gl = dir_gl,
             dir_sites = dir_sites, allo_maize = allo_maize, 
             allo_mex = allo_mex, D = D, minInd = minInd)
 # write filtered SNPs to a new sites file
-write.table(paste0(dir_out, "/region_", region, ".var.sites"), 
-            d[ , c("chromo", "position", "major", "minor")],
+write.table(file = paste0(dir_out, "/region_", region, ".var.sites"), 
+            x = d[ , c("chromo", "position", "major", "minor")],
             quote = F, row.names = F, col.names = F, sep = "\t")
