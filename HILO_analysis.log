@@ -986,7 +986,7 @@ Submitted batch job 25847933 - # needed to index reference, but did get all file
 scripts$ sbatch indexRefBWA.sh
 Submitted batch job 26008240
 scripts$ sbatch --dependency=afterok:26008240 remapAlloMaizeV4.sh
-Submitted batch job 26008241
+Submitted batch job 26008241 -- DONE, but all slurm-log files have something like ""[mem_sam_pe] paired reads have different names: "FCC1WDLACXX:4:2116:2328:81442#", "FCC1WDLACXX:4:2108:10115:86292#""
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1017,6 +1017,27 @@ Submitted batch job 25773575
 pop29 (#13) - 85
 ~/hilo/scripts$ sbatch --array=85 --mem=16G -t 24:00:00 --export=POP=pop29,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
 Submitted batch job 25772727 - COMPLETED
+# the following freq files also don't exist and need to be re-done:
+sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,\
+DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26026327 - cancelled reading old sites file
+Submitted batch job 26026424 - didn't quite fix. Now fixed to have correct sites directory (NOTE -- THESE NEW FILES DON'T HAVE DUPLICATED SITES):
+scripts$ sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 26026522 - CANCELLED - still a problem with sites file looking the same age or older than the index.
+# added sleep 2s to script that removes duplicates (can mimic in other scripts) and removing and remaking sites files for problem files
+data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar$ for i in {111..114} 159 257 {289..291} {326..327} {363..365} 395; do echo $i; rm region_$i.var.sites.*; angsd sites index region_$i.var.sites; echo "done indexing "$i; done
+data/var_sites/merged_pass1_all_alloMaize4Low_16$ same thing as above -- COMPLETED
+# running the above script for calcAlleleFreqPop again:
+Submitted batch job 26027501
+# and running the same allele freq script above but with POP=mexicana.allo.withXochi35
+scripts$ sbatch --dependency=afterok:26027501 --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=mexicana.allo.withXochi35,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 26027624
+
 # now that I have allele frequencies, I can do an F4 test. The only issue is that
 # I need to match alleles by position because ANGSD will omit a frequency if no individuals have
 # any data. I *may* also want to make more stringent criteria for # ind's with data, e.g. in maize & allo mex, to include a site, but don't need to for a first pass analysis. I think this should only increase variance in f4, but not bias it to include all sites while a strict site filter for depth may actually increase bias due to mapping bias.
@@ -1052,13 +1073,17 @@ scripts$ sbatch --array=9 filterAlloMAFnInd.sh
 Submitted batch job 26024275 - fixed typo and reran
 Submitted batch job 26024388
 scripts$ sbatch -p bigmemh --array=0-425%7 filterAlloMAFnInd.sh
-Submitted batch job 26024492
+Submitted batch job 26024492 -- all worked except those with missing freq files for allopatric maize. Fixing that (above see job 26026522) & re-running
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26026522 filterAlloMAFnInd.sh
+Submitted batch job 26026785 - CANCELLED, fixed indexing issue and re-trying
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26027624 filterAlloMAFnInd.sh
+Submitted batch job 26027652
 
 # then I use a second script to thin SNPs to minimize within-population LD
 # I choose a fixed cM width of .0001 (~.1Kb) rather than trying to calculate LD within low coverage pops
 # a reasonable alternative to consider later is to calculate LD within my maize reference sample only
 # and use that to filter (or at least to choose a cM cutoff..but I'm not sure that's necessary)
-scripts$ sbatch -p low --array=9 -t 30:00 pruneFixedcM.sh # testing
+scripts$ sbatch -p low --array=2 -t 30:00 pruneFixedcM.sh # testing
 scripts$ sbatch -p med --test-only pruneFixedcM.sh
 
 # update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
