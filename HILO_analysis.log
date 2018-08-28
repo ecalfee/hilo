@@ -1043,6 +1043,24 @@ Submitted batch job 25971992 - COMPLETED
 # in the end I need sites filtered by XcM
 # with counts for each admixed individual
 
+# first I filter sites for MAF difference maize-mex and min # individuals with reads/coverage in both allopatric pass1_bam_pops
+# for now I am including pop35 as allopatric mex to have more individuals (Xochimilco)
+scripts$ sbatch filterAlloMAFnInd.sh
+Submitted batch job 26022854 - TYPO DIDN'T run
+Submitted batch job 26023401 - ERRORS maybe in working directory. trying again with just 1 tester region_
+scripts$ sbatch --array=9 filterAlloMAFnInd.sh
+Submitted batch job 26024275 - fixed typo and reran
+Submitted batch job 26024388
+scripts$ sbatch -p bigmemh --array=0-425%7 filterAlloMAFnInd.sh
+Submitted batch job 26024492
+
+# then I use a second script to thin SNPs to minimize within-population LD
+# I choose a fixed cM width of .0001 (~.1Kb) rather than trying to calculate LD within low coverage pops
+# a reasonable alternative to consider later is to calculate LD within my maize reference sample only
+# and use that to filter (or at least to choose a cM cutoff..but I'm not sure that's necessary)
+scripts$ sbatch -p low --array=9 -t 30:00 pruneFixedcM.sh # testing
+scripts$ sbatch -p med --test-only pruneFixedcM.sh
+
 # update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
 angsd -out TEST/angsdVCF_region_0 -r 1:300-500 -sites TEST/head_region_0.var.sites -bam pass1_bam_pops/maize.allo.4Low16.list -remove_bads 1 -minMapQ 30 -minQ 20 -doMajorMinor 3 -doMaf 1 -GL 1 -doGeno -4 -doPost 1 -postCutoff 0.95 -doVCF 1 -P 1
 # output file = TEST/alloMaize_head_region_0.vcf.gz
