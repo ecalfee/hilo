@@ -982,8 +982,12 @@ $ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fro
 # first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
 # using script to re-align to my version of v4 maize genome (no extra contigs)
 scripts$ sbatch remapAlloMaizeV4.sh
-Submitted batch job 25847933
-
+Submitted batch job 25847933 - # needed to index reference, but did get all files to .fq output
+scripts$ sbatch indexRefBWA.sh
+Submitted batch job 26008240
+scripts$ sbatch --dependency=afterok:26008240 remapAlloMaizeV4.sh
+Submitted batch job 26008241 -- DONE, BUT BAM/SAM FILES EMPTY (no sites). .fq look ok.
+# all slurm-log files have something like ""[mem_sam_pe] paired reads have different names: "FCC1WDLACXX:4:2116:2328:81442#", "FCC1WDLACXX:4:2108:10115:86292#""
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1014,15 +1018,128 @@ Submitted batch job 25773575
 pop29 (#13) - 85
 ~/hilo/scripts$ sbatch --array=85 --mem=16G -t 24:00:00 --export=POP=pop29,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
 Submitted batch job 25772727 - COMPLETED
-# now that I have allele frequencies, I can do an F4 test. The only issue is that 
+# the following freq files also don't exist and need to be re-done:
+sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,\
+DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26026327 - cancelled reading old sites file
+Submitted batch job 26026424 - didn't quite fix. Now fixed to have correct sites directory (NOTE -- THESE NEW FILES DON'T HAVE DUPLICATED SITES):
+scripts$ sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 26026522 - CANCELLED - still a problem with sites file looking the same age or older than the index.
+# added sleep 2s to script that removes duplicates (can mimic in other scripts) and removing and remaking sites files for problem files
+data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar$ for i in {111..114} 159 257 {289..291} {326..327} {363..365} 395; do echo $i; rm region_$i.var.sites.*; angsd sites index region_$i.var.sites; echo "done indexing "$i; done
+data/var_sites/merged_pass1_all_alloMaize4Low_16$ same thing as above -- COMPLETED
+# running the above script for calcAlleleFreqPop again:
+Submitted batch job 26027501
+# and running the same allele freq script above but with POP=mexicana.allo.withXochi35
+scripts$ sbatch --dependency=afterok:26027501 --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=mexicana.allo.withXochi35,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 26027624
+# re-doing from old variant sites (with doubles, just to avoid inconsistency) -- output in geno_lik dir
+scripts$ sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=mexicana.allo.withXochi35,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26029518 - ERROR TYPO in sites dir
+Submitted batch job 26029702
+scripts$ sbatch --dependency=afterok:26029702 --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26029559 - ALSO HAD TYPO in sites dir
+Submitted batch job 26029746 - COMPLETE, but looks like region_0 file is truncated; fix below
+scripts$ sbatch --array=0 -p bigmemh --mem=8G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26030193 - EXCEEDED Memory, trying again with many cores on partition med
+scripts$ sbatch --array=0 -p med --mem=24G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26031000 -COMPLETED
+
+# now that I have allele frequencies, I can do an F4 test. The only issue is that
 # I need to match alleles by position because ANGSD will omit a frequency if no individuals have
 # any data. I *may* also want to make more stringent criteria for # ind's with data, e.g. in maize & allo mex, to include a site, but don't need to for a first pass analysis. I think this should only increase variance in f4, but not bias it to include all sites while a strict site filter for depth may actually increase bias due to mapping bias.
 
 # After making allele freq files I found that my position/sites files had every SNP duplicated because I had specified -rf and -f in calling variant sites and calculating MAF scripts
 # this affects all files eg. region_9.mafs.gz region_9.var.sites for regions covering the whole chromosome, including within population frequencies.
-# BUT the NGSadmix & PCA results should be largely unchanged because there are no duplicated sites in my 
+# BUT the NGSadmix & PCA results should be largely unchanged because there are no duplicated sites in my
 # genome-wide variant sites filtering by every 1000th SNP (they just aren't 100% 10kb apart due to the duplicates). I will need to re-call all variant sites and will want to use new thinned
 # SNPs anyways, filtered by cM position rather than bp's. Temporarily I will remove duplicates in a post-processing R-script (which won't be necessary once upstream is corrected & files are re-run).
 # this doesn't affect FST and SFS stats that used a small set of regions (not duplicated with -r -rf). After re-running I should confirm that the issue is the -r -rf and the duplication problem goes away.
+# I can temporarily fix the doubled sites problem by using split
+split -l 73165 region_287.var.sites (then be sure to re-index the new sites file _A and the # lines = half of wc -l region_287.var.sites)
+# implemented in removeDuplSites.sh making new sites files in var_sites/merged_pass1_all_alloMaize4Low_16/allVar/region_*.var.sites
+scripts$ sbatch removeDuplSites.sh
+Submitted batch job 25968083 -- I cancelled & reran after removing # jobs at a time limit:
+Submitted batch job 25968187 -- mostly finished except some TIMEOUT run on node 7 and 1 (will rerun & exclude these nodes)
+scripts$ sbatch -x bigmem1,bigmem7 --array=32-53,84-95,136-199 -t 8:00:00 removeDuplSites.sh
+Submitted batch job 25971992 - COMPLETED -- but turns out a few others didn't say CANCELLED but were cancelled for timeout, rerunning below
+scripts$ sbatch -p med --array=54-60,62-83 -t 8:00:00 removeDuplSites.sh
+Submitted batch job 26030055 -COMPLETED
 
+##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
+# doGeno worked but doHaploCall did not
+# new plan than doHaploAngsd is to get read counts for Maj/Min allele for all individuals
+# and then I randomly sample 1 allele from each individual with data. Maybe I filter sites first...
+# in the end I need sites filtered by XcM
+# with counts for each admixed individual
 
+# first I filter sites for MAF difference maize-mex and min # individuals with reads/coverage in both allopatric pass1_bam_pops
+# for now I am including pop35 as allopatric mex to have more individuals (Xochimilco)
+scripts$ sbatch filterAlloMAFnInd.sh
+Submitted batch job 26022854 - TYPO DIDN'T run
+Submitted batch job 26023401 - ERRORS maybe in working directory. trying again with just 1 tester region_
+scripts$ sbatch --array=9 filterAlloMAFnInd.sh
+Submitted batch job 26024275 - fixed typo and reran
+Submitted batch job 26024388
+scripts$ sbatch -p bigmemh --array=0-425%7 filterAlloMAFnInd.sh
+Submitted batch job 26024492 -- all worked except those with missing freq files for allopatric maize. Fixing that (above see job 26026522) & re-running
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26026522 filterAlloMAFnInd.sh
+Submitted batch job 26026785 - CANCELLED, fixed indexing issue and re-trying
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26027624 filterAlloMAFnInd.sh
+Submitted batch job 26027652 - STILL FILES MISSING. - reran those files then re-running this script below:
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26029746 filterAlloMAFnInd.sh
+Submitted batch job 26029827
+scripts$ sbatch -p low --array=0,54-60,62-83 --dependency=afterok:26030055,26030193 filterAlloMAFnInd.sh
+Submitted batch job 26030212 - COMPLETED except 0 (why did this run when 26030193 was cancelled for memory?)
+scripts$ sbatch -p low --array=0 --dependency=afterok:26031000 filterAlloMAFnInd.sh
+Submitted batch job 26031038 - COMPLETED, but DIDN't WAIT -- not suer why, will rerun
+scripts$ sbatch -p low --array=0 filterAlloMAFnInd.sh
+Submitted batch job 26031985 - COMPLETED
+
+# then I use a second script to thin SNPs to minimize within-population LD
+# I choose a fixed cM width of .0001 (~.1Kb) rather than trying to calculate LD within low coverage pops
+# a reasonable alternative to consider later is to calculate LD within my maize reference sample only
+# and use that to filter (or at least to choose a cM cutoff..but I'm not sure that's necessary)
+scripts$ sbatch -p low --array=2 -t 30:00 pruneFixedcM.sh # testing - working
+scripts$ sbatch -p bigmemh --dependency=afterok:26027652 --array=1-10%7 pruneFixedcM.sh
+Submitted batch job 26028060 - FIRST SCRIPT FOR FILTERING WASN'T ACTUALLY DONE, so re-running
+scripts$ sbatch -p bigmemh --dependency=afterok:26030212 --array=1-10%7 pruneFixedcM.sh
+Submitted batch job 26030285
+scripts$ sbatch -p bigmemh --dependency=afterok:26031038 --array=1 pruneFixedcM.sh
+Submitted batch job 26031064 - DIDN'T WORK
+Submitted batch job 26032015 (ran again now without dependency because I reran that to completion)
+
+# before running ASEReadCounter I need to add ReadGroups so GATK will process my bams (takes a few mins) and re-index:
+scripts$ sbatch addReadGroup2Bam.sh
+Submitted batch job 26007563 -- many did not run (retry all:)
+Submitted batch job 26007874 -- COMPLETED
+
+# update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
+scripts$ sbatch -p bigmemh --dependency=afterok:26032015 --array=1-10%4 getVCFforAllo.sh
+Submitted batch job 26035120 # by 4 because it's 16G (or 2 cpu's per task) - exited out due to lack of angsd index, rerunning
+scripts$ sbatch -p bigmemh --array=1-10%4 getVCFforAllo.sh
+Submitted batch job 26118782 - typo fixed & rerunning:
+Submitted batch job 26119622
+
+## problem with ANGSD vcf being used by GATK but plink is able to parse the vcf and get allele counts
+scripts$ sbatch -p bigmemh --dependency=afterok:26035120 --array=1-10%8 alloVCF2AlleleCounts.sh
+Submitted batch job 26035124 - resubmitting
+scripts$ sbatch -p bigmemh --dependency=afterok:26119622 --array=1-10%8 alloVCF2AlleleCounts.sh
+Submitted batch job 26119734
+
+# I can get allele counts for major and minor allele using GATK ASEReadCounter
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26035124_$i countReadsRefAlt.sh; done
+Submitted batch job 26035127-36 - resubmitting
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26119734_$i countReadsRefAlt.sh; done
+Submitted batch job 26119815-25 # skips 21
+
+# then in R I can randomly sample 1 read from each allopatric mexicana individual to make an 'allopatric allele counts' file
+# and put individuals and chromosome positions into population input files for reading by ancestry_hmm

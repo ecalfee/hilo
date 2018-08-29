@@ -33,8 +33,15 @@ mkdir -p $TMPDIR
 mkdir -p $OUTPUT_DIR
 
 echo "BAM -> fastq for landrace "$IND
-# use samtools to convert bam to fastq file
-samtools fastq -0 /dev/null -F 0x900 ${INPUT_DIR}/${IND}.bam > $IND.fq
+# use samtools to convert bam to fastq file only if fastq does not already exist
+if [ ! -e "${IND}.fq" ]
+then
+    echo "fastq does not exist; making .fq file"
+    samtools fastq -0 /dev/null -F 0x900 ${INPUT_DIR}/${IND}.bam > $IND.fq
+else
+    echo "fastq already exists: ${IND}.fq"
+fi
+
 
 echo "running bwa mem for landrace "$IND
 # realign fastq using bwa to maize reference AGPv4 with autosomes 1-10 and pt/mt, but no extra contigs
@@ -46,9 +53,9 @@ bwa mem -t 16 -p refMaize/AGPv4.fa ${IND}.fq  > ${TMPDIR}/${IND}.sam
 echo "SAM -> BAM for landrace "$IND
 samtools view -bS -o ${OUTPUT_DIR}/${IND}.bam ${TMPDIR}/${IND}.sam
 
-echo "deleting intermediate SAM & fastq files for landrace "$IND
+#echo "deleting intermediate SAM & fastq files for landrace "$IND
 #you might want to clear the sam files and fastq files, those take a lot of space.
-rm ${TMPDIR}/${IND}.sam
-rm ${TMPDIR}/${IND}.fq
+#rm ${TMPDIR}/${IND}.sam
+#rm ${IND}.fq # will delete after I see the script has run properly
 
 echo "all done for landrace "$IND

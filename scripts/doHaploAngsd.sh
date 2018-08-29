@@ -1,17 +1,16 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
-#SBATCH -J calcP
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcAlleleFreqPops_%j_%A_%a.out
+#SBATCH -J doHaplo
+#SBATCH -o /home/ecalfee/hilo/slurm-log/doHaploAngsd_%j_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
-#SBATCH --export=POP=specify_pop_here,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
+#SBATCH --export=POP=mexicana.allo.withXochi35.list,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16,DIR_OUT=geno/merged_pass1_all_alloMaize4Low_16
 
 # to run
-# sbatch --export=POP=pop363,DIR_POPS=etc... calcAlleleFreqPop.sh
-# sbatch --export=POP=maize.allo.4Low16,DIR_POPS=etc... calcAlleleFreq.sh
+# sbatch --export=BAMS=***,DIR_POPS=etc... doHaploAngsd.sh
 
 # %k ensures only k jobs max run at one time, e.g. --array=0-425%8 runs 8 at a time
 
@@ -22,7 +21,6 @@ set –o errexit
 set –o nounset
 
 REGION_I=$SLURM_ARRAY_TASK_ID
-DIR_OUT=$DIR_SITES
 
 # load angsd -- don't load -- updated version 9.20 is local
 #module load angsd
@@ -30,7 +28,7 @@ DIR_OUT=$DIR_SITES
 # make directory to store output (if doesn't yet exist)
 mkdir -p ${DIR_OUT}/${POP}
 
-echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP
+echo "sampling one read to infer pseudo-haplo-genotype at variant sites region " $REGION_I "for pop "$POP
 
 angsd -out ${DIR_OUT}/${POP}/region_${REGION_I} \
 -rf ${DIR_REGIONS}/region_${REGION_I}.txt \
@@ -40,8 +38,9 @@ angsd -out ${DIR_OUT}/${POP}/region_${REGION_I} \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
 -sites ${DIR_SITES}/region_${REGION_I}.var.sites \
--doMaf 1 \
--GL 1 \
+-doHaploCall 1 \
+-doCounts 1 \
+-doPlink 2 \
 -P 1
 
 echo "all done!"
@@ -52,9 +51,10 @@ echo "all done!"
 # -doMajorMinor 3: takes major & minor allele from sites file
 # -sites var.sites file has 4 tab separated columns: chrom pos major minor
 # -bam list of bams to include
-# -GL 1: use samtools genotype likelihood method
-# -doMaf 1 use fixed minor and major alleles. assumes HWE. alternative would be to use straight counts and no HWE assumption; -doMaf 8 with -doCounts 1
 # -minMapQ 30 -minQ 20: filter out sites with low mapping quality or base/BAQ quality
+# -doHaploCall 1: sample 1 random base from reads that are major or minor as the 'pseudohaplotype'
+# -doCounts 1: count reads of each allele before randomly sampling
+# -doPlink 2 outputs genotypes in a plink formatted .tfam .tped files
 # (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality,
 # so this is equivalend to -baq 2 option here)
 # -P n means use n threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
