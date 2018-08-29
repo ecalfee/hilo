@@ -28,7 +28,7 @@ then
     echo "indexing sites file"
     angsd sites index ${sites_dir}/chr${i}.var.sites
 else
-    echo "index already exists""
+    echo "index already exists"
 fi
 
 
@@ -71,6 +71,5 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 # (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality,
 # so this is equivalend to -baq 2 option here)
 # -P n means use n threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
-
 
 echo "all done!"
