@@ -986,7 +986,8 @@ Submitted batch job 25847933 - # needed to index reference, but did get all file
 scripts$ sbatch indexRefBWA.sh
 Submitted batch job 26008240
 scripts$ sbatch --dependency=afterok:26008240 remapAlloMaizeV4.sh
-Submitted batch job 26008241 -- DONE, but all slurm-log files have something like ""[mem_sam_pe] paired reads have different names: "FCC1WDLACXX:4:2116:2328:81442#", "FCC1WDLACXX:4:2108:10115:86292#""
+Submitted batch job 26008241 -- DONE, BUT BAM/SAM FILES EMPTY (no sites). .fq look ok.
+# all slurm-log files have something like ""[mem_sam_pe] paired reads have different names: "FCC1WDLACXX:4:2116:2328:81442#", "FCC1WDLACXX:4:2108:10115:86292#""
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1037,6 +1038,20 @@ scripts$ sbatch --dependency=afterok:26027501 --array=111-114,159,257,289-291,32
 --export=POP=mexicana.allo.withXochi35,DIR_POPS=pass1_bam_pops,\
 DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
 Submitted batch job 26027624
+# re-doing from old variant sites (with doubles, just to avoid inconsistency) -- output in geno_lik dir
+scripts$ sbatch --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=mexicana.allo.withXochi35,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26029518 - ERROR TYPO in sites dir
+Submitted batch job 26029702
+scripts$ sbatch --dependency=afterok:26029702 --array=111-114,159,257,289-291,326-327,363-365,395%7 -p bigmemh --mem=8G -t 24:00:00 \
+--export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26029559 - ALSO HAD TYPO in sites dir
+Submitted batch job 26029746 - COMPLETE, but looks like region_0 file is truncated; fix below
+scripts$ sbatch --array=0 -p bigmemh --mem=8G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,\
+DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26030193 - EXCEEDED Memory, trying again with many cores on partition med
+scripts$ sbatch --array=0 -p med --mem=24G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar calcAlleleFreqPop.sh
+Submitted batch job 26031000 -COMPLETED
 
 # now that I have allele frequencies, I can do an F4 test. The only issue is that
 # I need to match alleles by position because ANGSD will omit a frequency if no individuals have
@@ -1055,7 +1070,9 @@ scripts$ sbatch removeDuplSites.sh
 Submitted batch job 25968083 -- I cancelled & reran after removing # jobs at a time limit:
 Submitted batch job 25968187 -- mostly finished except some TIMEOUT run on node 7 and 1 (will rerun & exclude these nodes)
 scripts$ sbatch -x bigmem1,bigmem7 --array=32-53,84-95,136-199 -t 8:00:00 removeDuplSites.sh
-Submitted batch job 25971992 - COMPLETED
+Submitted batch job 25971992 - COMPLETED -- but turns out a few others didn't say CANCELLED but were cancelled for timeout, rerunning below
+scripts$ sbatch -p med --array=54-60,62-83 -t 8:00:00 removeDuplSites.sh
+Submitted batch job 26030055 -COMPLETED
 
 ##### currently working on doGenoAngsd2Plink.sh (may be done once I have new sites files) and doHaploAngsd.sh
 # doGeno worked but doHaploCall did not
@@ -1077,61 +1094,42 @@ Submitted batch job 26024492 -- all worked except those with missing freq files 
 scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26026522 filterAlloMAFnInd.sh
 Submitted batch job 26026785 - CANCELLED, fixed indexing issue and re-trying
 scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26027624 filterAlloMAFnInd.sh
-Submitted batch job 26027652
+Submitted batch job 26027652 - STILL FILES MISSING. - reran those files then re-running this script below:
+scripts$ sbatch -p low --array=111-114,159,257,289-291,326-327,363-365,395 --dependency=afterok:26029746 filterAlloMAFnInd.sh
+Submitted batch job 26029827
+scripts$ sbatch -p low --array=0,54-60,62-83 --dependency=afterok:26030055,26030193 filterAlloMAFnInd.sh
+Submitted batch job 26030212 - COMPLETED except 0 (why did this run when 26030193 was cancelled for memory?)
+scripts$ sbatch -p low --array=0 --dependency=afterok:26031000 filterAlloMAFnInd.sh
+Submitted batch job 26031038 - COMPLETED, but DIDN't WAIT -- not suer why, will rerun
+scripts$ sbatch -p low --array=0 filterAlloMAFnInd.sh
+Submitted batch job 26031985 - COMPLETED
 
 # then I use a second script to thin SNPs to minimize within-population LD
 # I choose a fixed cM width of .0001 (~.1Kb) rather than trying to calculate LD within low coverage pops
 # a reasonable alternative to consider later is to calculate LD within my maize reference sample only
 # and use that to filter (or at least to choose a cM cutoff..but I'm not sure that's necessary)
-scripts$ sbatch -p low --array=2 -t 30:00 pruneFixedcM.sh # testing
-scripts$ sbatch -p med --test-only pruneFixedcM.sh
+scripts$ sbatch -p low --array=2 -t 30:00 pruneFixedcM.sh # testing - working
+scripts$ sbatch -p bigmemh --dependency=afterok:26027652 --array=1-10%7 pruneFixedcM.sh
+Submitted batch job 26028060 - FIRST SCRIPT FOR FILTERING WASN'T ACTUALLY DONE, so re-running
+scripts$ sbatch -p bigmemh --dependency=afterok:26030212 --array=1-10%7 pruneFixedcM.sh
+Submitted batch job 26030285
+scripts$ sbatch -p bigmemh --dependency=afterok:26031038 --array=1 pruneFixedcM.sh
+Submitted batch job 26031064 - DIDN'T WORK
+Submitted batch job 26032015 (ran again now without dependency because I reran that to completion)
 
-# update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
-angsd -out TEST/angsdVCF_region_0 -r 1:300-500 -sites TEST/head_region_0.var.sites -bam pass1_bam_pops/maize.allo.4Low16.list -remove_bads 1 -minMapQ 30 -minQ 20 -doMajorMinor 3 -doMaf 1 -GL 1 -doGeno -4 -doPost 1 -postCutoff 0.95 -doVCF 1 -P 1
-# output file = TEST/alloMaize_head_region_0.vcf.gz
-# (maybe should be more lenient at .9 posterior prob. for calling genotypes or later sample 1 read for lower coverage individuals ..not sure_
-# (and before doing this I think I want to filter for lower LD and high differentiation maize-mex in R)
-# load GATK and dependencies
-module load R
-module load maven
-module load java
-module load GATK
 # before running ASEReadCounter I need to add ReadGroups so GATK will process my bams (takes a few mins) and re-index:
 scripts$ sbatch addReadGroup2Bam.sh
 Submitted batch job 26007563 -- many did not run (retry all:)
 Submitted batch job 26007874 -- COMPLETED
 
-# -h to see help
-java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar -T ASEReadCounter -h
+# update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
+scripts$ sbatch -p bigmemh --dependency=afterok:26032015 --array=1-10%7 getVCFforAllo.sh
 
+## problem with ANGSD vcf being used by GATK but plink is able to parse the vcf and get allele counts
+scripts$ sbatch -p bigmemh --dependency=afterok:** --array=1-10%7 alloVCF2AlleleCounts.sh
 
-java -Xmx6g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar \
--T ASEReadCounter \
--R refMaize/AGPv4.fa \
-# -T ASEReadCounter \
---sitesVCFFile TEST/test_vcf_from_plink.vcf \
---out TEST/asereadcount_test_head_region_0_hilo_45_region.csv \
---minBaseQuality 20 \
---minMappingQuality 30 #\
--I TEST/hilo_45.sort.dedup.baq.rg.bam \
--L 1:300-500
-#--outputFormat CSV
-
-# can specify region with -L. A potential problem is that it outputs nothing for SNPs where the individual has no data (zero depth)..
-# so I'd have to merge in R by chromosome & position & impute zeros for missing SNPs. [...so in the end is this easier than getting allele counts for all individuals
-# in ANGSD but then having to choose which columns are the major/minor allele?]
-
-## problem with ANGSD vcf being used by GATK:
-##### ERROR MESSAGE: Unable to parse header with error: Your input file has a malformed header: VCFv4.2(angsd version) is not a supported version, for input source: /home/ecalfee/hilo/data/TEST/alloMaize_head_region_0.vcf.gz
-
-# plink is able to parse the vcf and get allele counts
-plink --vcf TEST/alloMaize_head_region_0.vcf.gz --freq counts --keep-allele-order --out TEST/test_load_vcf_to_plink
-# can plink output a new vcf with better format? Yes. Simply encodes genotypes, but I really just need positions and ref/alt allele for GATK.
-plink --vcf TEST/angsdVCF_region_0.vcf.gz --recode vcf-iid --keep-allele-order --out TEST/test_vcf_from_plink
-## output file = TEST/test_vcf_from_plink.vcf
-# does it work with GATK? Yes, but now I still need to index the bam file
-samtools index TEST/hilo_45.sort.dedup.baq.rg.bam ## (fast)
-
-# then I can use the VCF file to get read counts at major/minor allele for all other individuals using picard tools
+# I can get allele counts for major and minor allele using GATK ASEReadCounter
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:**_$i countReadsRefAlt.sh; done
 
 # then I can randomly sample 1 read for each allopatric mexicana individual
+# and put individuals into population files for reading by ancestry_hmm
