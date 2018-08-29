@@ -1124,15 +1124,22 @@ Submitted batch job 26007874 -- COMPLETED
 
 # update: I can get a VCF output from angsd for allopatric maize for any positions I desire:
 scripts$ sbatch -p bigmemh --dependency=afterok:26032015 --array=1-10%4 getVCFforAllo.sh
-Submitted batch job 26035120 # by 4 because it's 16G (or 2 cpu's per task)
+Submitted batch job 26035120 # by 4 because it's 16G (or 2 cpu's per task) - exited out due to lack of angsd index, rerunning
+scripts$ sbatch -p bigmemh --array=1-10%4 getVCFforAllo.sh
+Submitted batch job 26118782 - typo fixed & rerunning:
+Submitted batch job 26119622
 
 ## problem with ANGSD vcf being used by GATK but plink is able to parse the vcf and get allele counts
 scripts$ sbatch -p bigmemh --dependency=afterok:26035120 --array=1-10%8 alloVCF2AlleleCounts.sh
-Submitted batch job 26035124
+Submitted batch job 26035124 - resubmitting
+scripts$ sbatch -p bigmemh --dependency=afterok:26119622 --array=1-10%8 alloVCF2AlleleCounts.sh
+Submitted batch job 26119734
 
 # I can get allele counts for major and minor allele using GATK ASEReadCounter
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26035124_$i countReadsRefAlt.sh; done
-Submitted batch job 26035127-36
+Submitted batch job 26035127-36 - resubmitting
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26119734_$i countReadsRefAlt.sh; done
+Submitted batch job 26119815-25 # skips 21
 
 # then in R I can randomly sample 1 read from each allopatric mexicana individual to make an 'allopatric allele counts' file
 # and put individuals and chromosome positions into population input files for reading by ancestry_hmm
