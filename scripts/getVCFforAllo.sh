@@ -22,6 +22,16 @@ set –o errexit
 set –o nounset
 
 # don't load angsd, local copy is latest (v9.20)
+echo "checking if sites index file exists and making a new one if it does not"
+if [ ! -e ${sites_dir}/chr${i}.var.sites.bin ]
+then
+    echo "indexing sites file"
+    angsd sites index ${sites_dir}/chr${i}.var.sites
+else
+    echo "index already exists""
+fi
+
+
 echo "calling genotypes and outputting a vcf chr"${i}" pop "${POP}
 # (1) make VCF in ANGSD
 angsd -out ${sites_dir}/${POP}_chr${i} \

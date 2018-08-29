@@ -20,13 +20,18 @@ set –o nounset
 # load modules
 # using python3 for pandas
 module load python3
+# do not load ANGSD (local version is most up-to-date v9.20)
 
 # make output directory
-mkdir -p $dir_out
+mkdir -p ${dir_out}
 
 echo "pruning SNPs"
-python3 ../scripts/pruneFixedcM.py $MIN_cM $dir_out"/chr"$i \
-$(for i in $(awk -v chr=$i '$1 == chr {print $4}' $regions_list); \
-do echo $dir_in/region_$i.var.sites; done)
+python3 ../scripts/pruneFixedcM.py ${MIN_cM} ${dir_out}"/chr"${i} \
+$(for i in $(awk -v chr=${i} '$1 == chr {print $4}' ${regions_list}); \
+do echo ${dir_in}/region_${i}.var.sites; done)
 # second line finds all regions associated with a specific chromosome (from file ALL_regions.list) and lists those mafs.gz files as input files to pruneFixedcM.py
 echo "done pruning SNPs chr"$i
+
+echo "making ANGSD sites index"
+angsd sites index ${dir_out}/chr${i}.var.sites
+echo "all done!"
