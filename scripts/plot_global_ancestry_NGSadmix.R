@@ -2,6 +2,15 @@
 # in HILO adaptation project
 library(dplyr)
 library(tidyr)
+library(ggplot2)
+library(RColorBrewer)# for color palette
+# standard colors and labels for plots
+blues = brewer.pal(n = 9, name = "Blues")[c(6,8)]
+yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
+colors_maize2mex = c(yellows, blues)
+labels_maize2mex = c("allopatric_maize", "sympatric_maize", "sympatric_mexicana", "allopatric_mexicana")
+colorsK = c(colors_maize2mex[c(4,1)], brewer.pal(n = 9, name = "YlOrRd")[6], brewer.pal(n=9, name = "YlGn")[6])
+
 K = 2 # K = 4 number of genetic clusters/groups
 # starting with pass1 analysis from 1st round of sequencing
 file_prefix = paste0("../data/NGSadmix/merged_pass1_all_alloMaize4Low_16/K", K, "_pruned_all")
@@ -42,7 +51,7 @@ d %>%
   select(., colnames(admix)) %>%
   t(.) %>%
   barplot(height = .,
-          col=rainbow(K),
+          col = colorsK[1:K],
           space=0,
           border=NA,
           main = "all HILO populations",
@@ -59,7 +68,7 @@ d %>%
   select(., colnames(admix)) %>%
   t(.) %>%
   barplot(height = .,
-          col=rainbow(K),
+          col = colorsK[1:K],
           space=0,
           border=NA,
           main = "all HILO populations",
@@ -77,7 +86,7 @@ for (g in unique(d$group)){
     select(., colnames(admix)) %>%
     t(.) %>%
     barplot(height = .,
-            col=rainbow(K),
+            col = colorsK[1:K],
             space=0,
             border=NA,
             main = g,
@@ -90,11 +99,13 @@ for (g in unique(d$group)){
 # by location
 p = d %>%
   filter(., est_coverage >= .05) %>%
-  mutate(group = as.factor(paste(symp_allo, zea, sep = "_"))) %>%
+  mutate(group = factor(paste(symp_allo, zea, sep = "_"), ordered = T,
+                        levels = labels_maize2mex)) %>%
   ggplot(., aes(x = group, y = anc1, color = group)) +
   geom_violin() + 
   geom_point(size=1, position = position_jitter(w=0.05)) +
-  scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
+  scale_colour_manual(values = colors_maize2mex) +
+  #scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   theme_minimal() + 
   labs(y = "proportion 'mexicana-like' ancestry")
 p + facet_wrap(~LOCALITY) # show plot
@@ -102,3 +113,40 @@ p + facet_wrap(~LOCALITY) # show plot
 ggsave("../plots/NGSadmix_pass1_proportion_mexicana-like_by_location.png", plot = p + facet_wrap(~LOCALITY), device = png(), 
        width = 12, height = 8, units = "in",
        dpi = 200)
+
+# make NGSadmix plot for poster:
+# get elevation data
+meta = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+                 stringsAsFactors = F, header = T, sep = "\t")
+d_meta = left_join(d, meta, by = c("popN", "zea", "symp_allo", 
+                                   "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
+  .[with(., order(group, ELEVATION)), ]
+
+
+  # now plot again with individuals with very low coverage <0.05x filtered out      
+png("../plots/NGSadmix_pass1_over_0.05x_coverage_wElevation_for_poster.png",
+    height = 5, width = 8, units = "in", res = 300)
+par(mar=c(4.1,4.1,4.1,4.1))
+bar = d_meta %>%
+  select(., colnames(admix)) %>%
+  t(.) %>%
+  barplot(height = .,
+          col = colorsK[1:K],
+          space=0,
+          border=NA, xaxt = "n")
+title(main = "Admixture in highland maize and mexicana",
+      ylab="Ancestry proportion K=2 (NGSAdmix)")
+title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric Mexicana", 
+      line = 1)
+#title(xlab=paste("Allopatric Ref.", "Sympatric Maize", "Sympatric Mexicana",
+#      sep = "               |               "),
+#      line = 1)
+par(new = TRUE)
+plot(x = bar, y = d_meta$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
+     xlab = "", ylab = "")
+axis(side = 4, at = c(1000, 2000, 3000), 
+     tick = T, labels = T, col = "black")
+mtext("Elevation (m)", side=4, line=2.5)
+par(mar=c(5.1,4.1,4.1,2.1)) # set back default
+dev.off()
