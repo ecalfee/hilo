@@ -1158,7 +1158,15 @@ Submitted batch job 26119815-25 # skips 21 - I cancelled due to upstream error
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26185895_$i countReadsRefAlt.sh; done
 Submitted batch job 26186102-11 - didn't run correctly; chr<blank>.vcf not found; fixed typo (doi!)
 Submitted batch job 26222924-33 - oops, fixed typo
-Submitted batch job 26225969-78
+Submitted batch job 26225969-78 - COMPLETED
 
 # then in R I can randomly sample 1 read from each allopatric mexicana individual to make an 'allopatric allele counts' file
+make_allo_counts_ancestry_hmm.R 
 # and put individuals and chromosome positions into population input files for reading by ancestry_hmm
+make_input_ancestry_hmm.R
+# bash scripts to run these R scripts:
+scripts$ sbatch makeAncHMMInput.sh
+scripts$ sbatch --dependency=afterok:** makeAlloCountsAncHMMInput.sh
+# note: currently rounds to map position to 10 digits (but scientific notation coulde be E-6) -- had to remove a few SNPs with no called genotypes in allopatric maize despite filtering above for 4+ individuals wiht data (may need to rethink that filtering to get rid of sites with very low maize coverage, possibly poor quality SNPs (?) and sites with very high coverage (see read counts near the beginning of chromosome 1 -- I'm not sure what's going on!)
+
+
