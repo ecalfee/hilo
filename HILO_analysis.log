@@ -1128,7 +1128,7 @@ Submitted batch job 26035120 # by 4 because it's 16G (or 2 cpu's per task) - exi
 scripts$ sbatch -p bigmemh --array=1-10%4 getVCFforAllo.sh
 Submitted batch job 26118782 - typo fixed & rerunning:
 Submitted batch job 26119622 -- BIG PROBLEM WITH PYTHON OUTPUTTING WEIRD END OF LINE CHARACTERS..
-e.g. thinnedHMM/old_CRLF_line_terminators$ file chr4.var.sites 
+e.g. thinnedHMM/old_CRLF_line_terminators$ file chr4.var.sites
 chr4.var.sites: ASCII text, with CRLF line terminators # a good file would only return : ASCII text
 PROBLEM: MY PYTHON SCRIPT MUST BE ADDING AN \r NEWLINE CHARACTER AT THE END OF LINES IN VAR.SITES FILES
 WHICH THEN CAN'T BE READ BY ANGSD. I DO NOT (YET) KNOW HOW TO FIX THE PYTHON SCRIPT, BUT I DID A WORK-AROUND
@@ -1136,11 +1136,11 @@ WHERE I PUT ALL AFFECTED .VAR.SITES AND .DISTM FILES IN A SUBFOLDER CALLED 'OLD'
 for i in $(ls *); do tr -d '\r' < $i > ../$i; done # which fixed them
 scripts$ sbatch -p bigmemh --array=2-9%4 getVCFforAllo.sh
 Submitted batch job 26184652 - I cancelled right away
-Submitted batch job 26185000 - left 26185000_2 up (running) but cancelled others to run on med instead:
+Submitted batch job 26185000 - COMPLETED 26185000_2 but cancelled others to run on med instead:
 scripts$ sbatch -p med -t 5:00:00 --array=3-9 getVCFforAllo.sh
-Submitted batch job 26185607
+Submitted batch job 26185607 - COMPLETED
 scripts$ sbatch -t 8:00:00 --array=1,10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 26185365
+Submitted batch job 26185365 - COMPLETED
 
 ## problem with ANGSD vcf being used by GATK but plink is able to parse the vcf and get allele counts
 scripts$ sbatch -p bigmemh --dependency=afterok:26035120 --array=1-10%8 alloVCF2AlleleCounts.sh
@@ -1148,7 +1148,7 @@ Submitted batch job 26035124 - resubmitting
 scripts$ sbatch -p bigmemh --dependency=afterok:26119622 --array=1-10%8 alloVCF2AlleleCounts.sh
 Submitted batch job 26119734 - cancelled due to upstream error
 scripts$ sbatch --dependency=afterok:26185365,26185607,26185000_2 alloVCF2AlleleCounts.sh
-Submitted batch job 26185895 - RUNNING
+Submitted batch job 26185895 - COMPLETED
 
 # I can get allele counts for major and minor allele using GATK ASEReadCounter
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26035124_$i countReadsRefAlt.sh; done
@@ -1156,8 +1156,9 @@ Submitted batch job 26035127-36 - resubmitting
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26119734_$i countReadsRefAlt.sh; done
 Submitted batch job 26119815-25 # skips 21 - I cancelled due to upstream error
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26185895_$i countReadsRefAlt.sh; done
-Submitted batch job 26186102-11
-
+Submitted batch job 26186102-11 - didn't run correctly; chr<blank>.vcf not found; fixed typo (doi!)
+Submitted batch job 26222924-33 - oops, fixed typo
+Submitted batch job 26225969-78
 
 # then in R I can randomly sample 1 read from each allopatric mexicana individual to make an 'allopatric allele counts' file
 # and put individuals and chromosome positions into population input files for reading by ancestry_hmm
