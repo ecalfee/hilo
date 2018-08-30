@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J alloHMM
-#SBATCH -o /home/ecalfee/hilo/slurm-log/makeAlloCountsAncHMMInput_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/makeAlloCountsAncHMMInput_%A_%a.out
 #SBATCH -t 30:00
 #SBATCH --mem=4G
 #SBATCH --array=1-10
@@ -25,6 +25,6 @@ module load R
 
 # run R script
 echo "making ancestry hmm input allopatric counts for chr"$CHR
-Rscript make_allo_counts_ancestry_hmm.R $CHR $dir
+Rscript ../scripts/make_allo_counts_ancestry_hmm.R $CHR $dir
 
 echo 'all done!'
