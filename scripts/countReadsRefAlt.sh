@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J countReads
 #SBATCH -o /home/ecalfee/hilo/slurm-log/countReadsRefAlt_%j_%A_%a.out
-#SBATCH -t 10:00:00
+#SBATCH -t 8:00:00
 #SBATCH --mem=8G
 #SBATCH --array=1-200
 #SBATCH --export=CHR=1
@@ -34,10 +34,10 @@ echo "counting ref and alt reads per individual in bams for chr"${CHR}" hilo id 
 java -Xmx7g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar \
 -T ASEReadCounter \
 -R refMaize/AGPv4.fa \
---sitesVCFFile ${dir}/${VCF_POP}_chr${i}.vcf \
+--sitesVCFFile ${dir}/${VCF_POP}_chr${CHR}.vcf \
 --out ${dir}/hilo_${id}_chr${CHR}.csv \
 --minBaseQuality 20 \
---minMappingQuality 30 #\
+--minMappingQuality 30 \
 -I filtered_bam/hilo_${id}.sort.dedup.baq.rg.bam \
 -L $CHR
 
