@@ -1,7 +1,7 @@
 # made new script that links metadata to hilo ID using updated ID-population link from Anne 8.8.18
 library(dplyr)
 library(tidyr)
-# I STILL NEED TO SWAP HILO66 AND HILO61 DUE TO AN ERROR THAT'S DOCUMENTED IN FIELD NOTES
+library(rgbif) # for elevation data
 
 # ID and population labels:
 
@@ -63,6 +63,12 @@ hilo <- cbind(meta3, do.call(rbind,
                                c("RI_ACCESSION", "GEOCTY", "LOCALITY")]))) %>%
   left_join(., nreads, by = "n")
 
+#unique(hilo$LOCALITY) - some inconsistency in naming leads to false repeats
+hilo$LOCALITY[hilo$LOCALITY == "Puerta Encantada (Amatlan)"] <- "Puerta Encantada"
+hilo$LOCALITY[hilo$LOCALITY == "Jicaltepec (San Pablo Autopan)"] <- "Jicaltepec"
+hilo$LOCALITY[hilo$LOCALITY == "Amatlan, Morelos"] <- "Amatlan"
+hilo$LOCALITY[hilo$LOCALITY == "Puruandiro(Victor)"] <- "Puruandiro"
+
 # write file with all hilo individuals
 write.table(hilo, "../data/hilo_ids.txt", row.names = F, quote = F, col.names = T, sep = "\t")
 
@@ -93,3 +99,47 @@ filter(hilo, zea == "mexicana" & symp_allo == "allopatric") %>%
   .[order(.$est_coverage), ] %>%
   write.table(., "../data/resequence_allopatric_mex_for_Anne.txt",
               row.names = F, col.names = T, quote = F)
+
+# get location information and elevation
+# add elevation data for populations/locations also used in Hufford 2013
+elevHufford2013Supp = data.frame(LOCALITY = c("Jicaltepec", "Puruandiro", "Nabogame", 
+                                              "Penjamillo", "Tlapala", "Cocotilan", "San Pedro", 
+                                              "Opopeo", "Amatlan", "Xochimilco", "Tenango del Aire", 
+                                              "Puerta Encantada", "Santa Clara", "Amecameca", 
+                                              "Malinalco", "Ixtlan", "El Porvenir"),
+                                 ELEVATION = c(NA, 1915, 2020,
+                                               NA, NA, NA, 2459, 
+                                               2213, 1658, 2237, 2609,
+                                               1658, 2173, NA,
+                                               NA, 1547, 2094), stringsAsFactors = F) %>%
+  filter(., !is.na(ELEVATION))
+# accessed google api through web on Aug 29 2018 to retrieve missing elevation
+elevGoogleAPI2018 = data.frame(LOCALITY = c("Amecameca", "Jicaltepec", 
+                                            "Penjamillo", "Cocotilan",
+                                            "Malinalco", "Tlapala"),
+                               ELEVATION = c(2467, 2587,
+                                             1705, 2269,
+                                             1887, 2272), stringsAsFactors = F)
+gps <- unique(hilo[ , c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY")]) %>%
+  left_join(., riplasm[ , c("RI_ACCESSION", "LAT", "LON")], by = "RI_ACCESSION") %>%
+  left_join(., rbind(elevHufford2013Supp, elevGoogleAPI2018), 
+            by = "LOCALITY") %>%
+  mutate(., LON = -1*LON) # original data has degree decimal's west as positive not negative numbers
+
+apikey <- "AIzaSyBLqWTiXQEG4m9Vu1oVmdvHke5sMw9gp6Y"
+# very limited number of API request per day -- first look for missing values
+elev1 = unique(gps[is.na(gps$ELEVATION), c("LOCALITY", "LAT", "LON")]) %>%
+  mutate(., decimalLatitude = LAT) %>%
+  mutate(., decimalLongitude = LON) %>%
+  elevation(input = .,
+            key = apiKey)
+# then confirm existing values
+elev2 = unique(gps[!is.na(gps$ELEVATION), c("LOCALITY", "LAT", "LON")]) %>%
+  mutate(., decimalLatitude = LAT) %>%
+  mutate(., decimalLongitude = LON) %>%
+  elevation(input = .,
+                 key = apiKey)
+
+write.table(gps, "../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+            row.names = F, col.names = T, quote = F, sep = "\t")
+
