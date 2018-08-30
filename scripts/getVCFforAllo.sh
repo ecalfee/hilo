@@ -6,6 +6,9 @@
 #SBATCH -t 12:00:00
 #SBATCH --mem=16G
 #SBATCH --array=1-10
+#SBATCH --export=n_threads=2
+
+# note: number of threads should not exceed memory requested divided by 8G/thread
 
 # array is the chromosome #
 POP="maize.allo.4Low16"
@@ -48,7 +51,7 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 -doPost 1 \
 -postCutoff 0.95 \
 -doVCF 1 \
--P 1
+-P ${n_threads}
 # output file = TEST/alloMaize_head_region_0.vcf.gz
 # (maybe should be more lenient (.9) posterior prob. for calling genotypes or later sample 1 read for lower coverage individuals ..not sure_
 # (and before doing this I think I want to filter for lower LD and high differentiation maize-mex in R)
