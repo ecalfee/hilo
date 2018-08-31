@@ -45,9 +45,9 @@ sample1_read = function(GATK_counts_file){
       select(., chr, position, ref, alt, refCount, altCount)
   tot = counts$refCount + counts$altCount
   # if any reads are observed (tot > 0), sample 1 read. Otherwise count zero reads.
-  new_altCount = ifelse(tot == 0, 0, rbinom(n = length(tot), # sample once per SNP
+  new_altCount = sapply(1:length(tot), function(x) ifelse(tot[x] == 0, 0, rbinom(n = 1,
                                             size = 1, # always sample 1 read
-                                            prob = counts$altCount/tot))
+                                            prob = counts$altCount[x]/tot[x])))
   new_refCount = ifelse(tot == 0, 0, 1 - new_altCount)
   new_counts = counts %>%
     mutate(., refCount = new_refCount) %>%
@@ -105,7 +105,9 @@ d1 = SNPs %>%
   bind_cols(., mex_counts[ , c("refCount", "altCount")], map_pos) %>%
   mutate(., posM = cumsum(distM)) %>%
   filter(., !is.na(refCount)) %>%
-  mutate(., distM_new = c(1, diff(posM))) %>%
+  filter(., !(refCount == 0 & altCount == 0)) %>% # no genotypes called in maize 
+  filter(., !(refCount1 == 0 & altCount1 == 0)) %>% # no informative sites from mexicana -- need to check upstream why these aren't being pre-filtered out
+  mutate(., distM_new = c(1, diff(posM))) %>% # after filtering out uninformative sites, get new genetic distances between remaining sites
   select(., c("chr", "position", "ref", "alt", "refCount", "altCount", "refCount1", "altCount1", "distM_new")) %>%
   rename(., refCount_maize = refCount) %>%
   rename(., altCount_maize = altCount) %>%
@@ -120,6 +122,4 @@ d1 = SNPs %>%
 # write output to be used by make_input_ancestry_hmm.R
 write.table(format(d1, digits = 10), paste0(path, "/allo_counts_chr", i, ".txt"),
             row.names = F, col.names = T, quote = F)
-
-
-
+warnings()
