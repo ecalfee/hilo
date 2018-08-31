@@ -42,16 +42,21 @@ sample1_read = function(GATK_counts_file){
       rename(., chr = contig) %>%
       rename(., ref = refAllele) %>%
       rename(., alt = altAllele) %>%
-      select(., chr, position, ref, alt, refCount, altCount) %>%
-    mutate(., 
-           altCount = rbinom(n = rep(1, nrow(.)), # always sample once per SNP
-                             size = 1, # sample 1 read
-                             prob = altCount/(refCount + altCount))) %>%
-    mutate(., refCount = 1 - altCount)
-  # note: if refCount + altCount = 0 (no reads), NAs are returned:
-  # prob = 0/0 in binom -> alt = NA -> ref = 1 - alt = NA
-  counts[is.na(counts)] <- 0 # turn any NA counts into zeros (zero alt & zero ref)
-  return(counts)
+      select(., chr, position, ref, alt, refCount, altCount)
+  tot = counts$refCount + counts$altCount
+  # if any reads are observed (tot > 0), sample 1 read. Otherwise count zero reads.
+  new_altCount = ifelse(tot == 0, 0, rbinom(n = length(tot), # sample once per SNP
+                                            size = 1, # always sample 1 read
+                                            prob = counts$altCount/tot))
+  new_refCount = ifelse(tot == 0, 0, 1 - new_altCount)
+  new_counts = counts %>%
+    mutate(., refCount = new_refCount) %>%
+    mutate(., altCount = new_altCount)
+  if (sum(is.na(new_counts)) > 0){ # there should not be any NA values at this point
+    print(new_counts[!complete.cases(new_counts), ])
+    stop("there are some NAs in counts")
+  }
+  return(new_counts)
 }
 
 # input data
@@ -89,6 +94,7 @@ for (id in mex_ids){
   newCounts = left_join(SNPs, sample1_read(
       GATK_counts_file = paste0(path, "/hilo_", id, "_chr", i, ".csv")),
     by = c("chr", "position", "ref", "alt"))
+  newCounts[is.na(newCounts)] <- 0 # NA values become 0 ref and 0 alt counts (NA b/c SNP is missing for individual -- no coverage)
   altCountsAll = altCountsAll + newCounts$altCount
   refCountsAll =  refCountsAll + newCounts$refCount 
 }  
