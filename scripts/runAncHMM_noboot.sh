@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ancHMM
-#SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMMj_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
 #SBATCH -t 192:00:00
 #SBATCH --mem=24G
 #SBATCH --array=366
@@ -17,7 +17,7 @@ set –o nounset
 
 # directory with input files
 DIR_IN="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input"
-DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output/bootstrapTo10K_B"
+DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output"
 
 #LIST_OF_POPS=($(awk '{print $1}' landraces_fromLi/alloMaizeInclude.list)) # make array of individuals
 #LIST_OF_ALPHA_MAIZE=
@@ -32,13 +32,11 @@ mkdir -p ${DIR_OUT}
 cd ${DIR_OUT}
 
 #run ancestry_hmm
-echo "running local ancestry inference pop"${POP}
+echo "running local ancestry inference "${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
--p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
+-p 0 100000 ${ALPHA_MAIZE} -p 1 -1000 ${ALPHA_MEX} \
 --ne 10000 --tmin 0 --tmax 10000 \
--b 10 1000 \
 -i ${DIR_IN}/${POP}.anc_hmm.input \
 -s ${DIR_IN}/${POP}.anc_hmm.ids.ploidy
 
-# -b s for bootstrapping 10 times each with 1000 SNPs for confidence on timing of introgression
 echo "all done!"
