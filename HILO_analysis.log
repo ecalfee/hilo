@@ -1202,5 +1202,9 @@ Submitted batch job 26289377 - COMPLETED (need to fix to have proper sample file
 scripts$ sbatch --array=366 runAncHMM.sh
 Submitted batch job 26291049 # fixed typo
 ~/hilo/scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh
-Submitted batch job 26291088 - added longer time & bootstrapping
-Submitted batch job 26291281
+Submitted batch job 26291088 - COMPLETED, results in input/ folder. added longer time & bootstrapping
+Submitted batch job 26291281 - RUNNING (but typo in --timin so I added a new one with --tmin)
+~/hilo/scripts$ sbatch -p med runAncHMM.sh
+Submitted batch job 26291536 (--tmin typo fixed)
+~/hilo/scripts$ sbatch -p bigmemh runAncHMM_noboot.sh
+Submitted batch job 26291537 # and re-running up to 10K generations without bootstrapping

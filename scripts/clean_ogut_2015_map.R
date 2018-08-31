@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+# Author: Erin Calfee 2018
 # this script drops 'bad' SNPs from the 0.2 cM Ogut 2015 maize 
 # recombination map where a few such SNPs appear to be out
 # of order, due to map or assembly error, e.g. @ 8.8 on chr2 below:
@@ -10,7 +11,6 @@
 # notably, this affects a few larger contiguos regions on chr 7
 library(dplyr)
 library(ggplot2)
-
 
 rmap = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4.txt", 
                 stringsAsFactors = F, header = F)
@@ -29,7 +29,7 @@ i_missChr2 = which(!(lead(rmap_1$chr) - rmap_1$chr) %in% 0:1)
 # clearly a small segment of chr7 stuck within chr2 -- I'll remove by hand
 #lapply(i_missChr2, function(i) rmap_1[(i-3):(i+3), ])
 rmap_1 = filter(rmap_1, !(marker %in% c("M1786", "M1787", "M1788")))
-table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
+#table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
 
 # now I look for SNPs embedded within chromosomes that appear to be out-of-order
 # afterwards I deal with the case of SNPs near the chromosome transition boundary
@@ -152,56 +152,45 @@ recursive_filter1 = function(map){
   }
 }
 
-recursive_filter_edge = function(map){
-  nSNP = nrow(map)
-  # do one step of filtering to find any remaining SNPs that are smaller than the next SNP
-  # but still on the same chromosome
-  bad_edge = which(lead(map$pos_bp) <= map$pos_bp & lead(map$chr) == map$chr)
-  if (length(bad_edge) > 0){ # SNPs still being filtered out
-    print(paste("some edge problems:", map[bad_edge,]))
-    return(recursive_filter_edge(map[-bad_edge, ])) 
-    # drop SNP positions that are greater than the next's SNPs pos
-  } else{ # otherwise done filtering, return current map
-    return(map)
-  }
-}
-
-
 recursive_filter_all = function(map){
   # first filter out SNPs bigger/smaller than their 3 neighbors before/after
   # then 2 neighbors
   # then 1 neighbor
   map2 = recursive_filter1(recursive_filter2(recursive_filter3(map)))
-  #map2 = recursive_filter_edge(recursive_filter1(recursive_filter2(recursive_filter3(map))))
-  # finally filter out any remaining SNPs that are on chromosome boundaries and out of order
-} # I am not sure why the last filter for edge problems isn't working -- will need to check
+}
   
 rmap_2 = recursive_filter_all(rmap_1)
 #dim(rmap_2)
 
-# this filtering doesn't change the general recombination map/pattern
-make_plots = function(rmap_1, rmap_2){
-
-  par(mfrow=c(2,1))
-  plot(as.numeric(row.names(rmap_1)), rmap_1$pos_bp, col = "blue", main = paste0("pre-filtering n=", nrow(rmap_1)))
-  plot(as.numeric(row.names(rmap_2)), rmap_2$pos_bp, main = paste0("post-filtering n=", nrow(rmap_2)))
-  par(mfrow=c(1,1))
-
-  # zoom in on a pos_cM to pos_bp map. from the general shape of these maps it makes more sense
-  # to extend the tail recombination rate to markers beyond the map boundaries (on end of chroms)
-  # than it does to use a chromosome-average for these markers because rates are faster on the ends
-  # than near the centromere, so this should be a better proxy
-  rmap_2 %>%
-    ggplot(., aes(pos_bp, pos_cM)) +
-    geom_point() +
-    facet_wrap(.~chr)
-  rmap_1 %>%
-    #filter(., chr == 1) %>%
-    ggplot(., aes(pos_bp, pos_cM)) +
-    geom_point(color = "blue") +
-    facet_wrap(.~chr)  
-}
 # make an output file for included markers
 write.table(rmap_2,
             "../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt",
             sep = "\t", col.names = F, row.names = F, quote = F)
+
+# run this function interactively to visualize recombination maps
+# this filtering doesn't change the general recombination map/pattern
+make_plots = function(rmap_1, rmap_2){
+  # zoom in on a pos_cM to pos_bp map. from the general shape of these maps it makes more sense
+  # to extend the tail recombination rate to markers beyond the map boundaries (on end of chroms)
+  # than it does to use a chromosome-average for these markers because rates are faster on the ends
+  # than near the centromere, so this should be a better proxy
+  plot_rmap2 = rmap_2 %>%
+    ggplot(., aes(pos_bp, pos_cM)) +
+    geom_point() +
+    facet_wrap(.~chr) +
+    ggtitle(paste0("rmap post-filtering n=", nrow(rmap_2)))
+  plot_rmap2
+  ggsave(filename = paste0("../plots/rmap_ogut_post-filtering.png"),
+         plot = plot_rmap2, 
+         device = "png", height = 12, width = 20, units = "in")
+  plot_rmap1 = rmap_1 %>%
+    ggplot(., aes(pos_bp, pos_cM)) +
+    geom_point(color = "blue") +
+    facet_wrap(.~chr) +
+    ggtitle(paste0("rmap pre-filtering n=", nrow(rmap_1)))
+  plot_rmap1
+  ggsave(filename = paste0("../plots/rmap_ogut_pre-filtering.png"),
+         plot = plot_rmap1, 
+         device = "png", height = 12, width = 20, units = "in")
+}
+
