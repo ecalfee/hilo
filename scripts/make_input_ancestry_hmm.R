@@ -29,8 +29,7 @@ min_coverage = 0.05 # minimum coverage for an individual to be included
 pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
                     header = T, sep = "\t")
 # find individuals from the current population AND that pass minimum coverage
-pop_ids <- filter(pass1, popN == N & est_coverage >= min_coverage) %>%
-  select(n)
+pop_ids <- filter(pass1, popN == N & est_coverage >= min_coverage)$n
 
 for (i in 1:10){ # for each chromosome, get counts
   # from allopatric reference panels
@@ -52,10 +51,11 @@ for (i in 1:10){ # for each chromosome, get counts
   write.table(., paste0(dir_output, "/pop", N, ".anc_hmm.input"),
               na = "0", # write NAs as zero (no ref or alt allele counts for that individual)
               append = (i != 1), # chr 1 creates a new file, later chrms append
-              row.name = F, col.names = F, quote = F) 
+              row.names = F, col.names = F, quote = F) 
 }
 # write id's of included individuals in same order they appear in ancestry_hmm input file
-write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"))
+write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"), 
+            row.names = F, col.names = F, quote = F)
 
 
 
