@@ -37,6 +37,7 @@ for (i in 1:10){ # for each chromosome, get counts
   allo_counts = read.table(paste0(dir_input, "/allo_counts_chr", i, ".txt"),
                            header = T, stringsAsFactors = F)
   # and each admixed individual
+  d = allo_counts
   for (id in pop_ids){
     GATK_counts_file = paste0(dir_input, "/hilo_", id, "_chr", i, ".csv")
     d = read.table(GATK_counts_file, header = T, stringsAsFactors = F, sep = "\t") %>%
@@ -44,7 +45,7 @@ for (i in 1:10){ # for each chromosome, get counts
       rename(., ref = refAllele) %>%
       rename(., alt = altAllele) %>%
       select(., chr, position, ref, alt, refCount, altCount) %>%
-      left_join(allo_counts, ., by = c("chr", "position", "ref", "alt"))
+      left_join(d, ., by = c("chr", "position", "ref", "alt"))
   }  
   # write lines for current chromosome to file
   select(d, -ref, -alt) %>%
