@@ -1200,3 +1200,6 @@ Submitted batch job 26289377 - COMPLETED (need to fix to have proper sample file
 # and use those directly from runAncHMM.sh later
 # running test population runAncHMM.sh
 scripts$ sbatch --array=366 runAncHMM.sh
+Submitted batch job 26291049 # fixed typo
+~/hilo/scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh
+Submitted batch job 26291088
