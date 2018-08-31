@@ -1165,8 +1165,14 @@ make_allo_counts_ancestry_hmm.R
 # and put individuals and chromosome positions into population input files for reading by ancestry_hmm
 make_input_ancestry_hmm.R
 # bash scripts to run these R scripts:
-scripts$ sbatch makeAncHMMInput.sh
-scripts$ sbatch --dependency=afterok:** makeAlloCountsAncHMMInput.sh
+scripts$ sbatch makeAlloCountsAncHMMInput.sh
+Submitted batch job 26288487 - fixed typo & rerunning
+Submitted batch job 26288501 - COMPLETED - 34 R warnings & All NAs for allopatric maize
+
+scripts$ sbatch --dependency=afterok:26288501 makeAncHMMInput.sh
+Submitted batch job 26288457 --oops needed dependency!
+Submitted batch job 26288513
+
 # note: currently rounds to map position to 10 digits (but scientific notation coulde be E-6) -- had to remove a few SNPs with no called genotypes in allopatric maize despite filtering above for 4+ individuals wiht data (may need to rethink that filtering to get rid of sites with very low maize coverage, possibly poor quality SNPs (?) and sites with very high coverage (see read counts near the beginning of chromosome 1 -- I'm not sure what's going on!)
 
 
