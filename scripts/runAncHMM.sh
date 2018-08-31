@@ -34,7 +34,7 @@ echo "running local ancestry inference pop"${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
 --ne 10000 --timin 0 --tmax 1000 \
--i ${POP}.anc_hmm.input \ # read counts file
--s ${POP}.anc_hmm.ids.ploidy \ # sample ploidy files
+-i ${POP}.anc_hmm.input \
+-s ${POP}.anc_hmm.ids.ploidy
 
 echo "all done!"
