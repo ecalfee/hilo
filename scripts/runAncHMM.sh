@@ -16,7 +16,8 @@ set –o errexit
 set –o nounset
 
 # directory with input files
-DIR="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input"
+DIR_IN="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input"
+DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output/bootstrapTo10K"
 
 #LIST_OF_POPS=($(awk '{print $1}' landraces_fromLi/alloMaizeInclude.list)) # make array of individuals
 #LIST_OF_ALPHA_MAIZE=
@@ -26,15 +27,18 @@ POP=pop${SLURM_ARRAY_TASK_ID} # e.g. pop366
 ALPHA_MAIZE=0.86
 ALPHA_MEX=0.14
 
-# go to directory with input files
-cd ${DIR}
+# make and go to directory where ancestry_hmm should output files
+mkdir -p ${DIR_OUT}
+cd ${DIR_OUT}
 
 #run ancestry_hmm
 echo "running local ancestry inference pop"${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
---ne 10000 --timin 0 --tmax 1000 \
--i ${POP}.anc_hmm.input \
--s ${POP}.anc_hmm.ids.ploidy
+--ne 10000 --timin 0 --tmax 10000 \
+-b 10 1000 \
+-i ${DIR_IN}/${POP}.anc_hmm.input \
+-s ${DIR_IN}/${POP}.anc_hmm.ids.ploidy
 
+# -b s for bootstrapping 10 times each with 1000 SNPs for confidence on timing of introgression
 echo "all done!"
