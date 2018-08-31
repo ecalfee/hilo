@@ -1187,6 +1187,16 @@ cat pass1_bam_pops/mexicana.allo.withXochi35.list # to view -- but this if anyth
 # but I need to check upstream what is causing the problem
 
 scripts$ sbatch makeAlloCountsAncHMMInput.sh
-Submitted batch job 26289298
+Submitted batch job 26289298 - COMPLETED
 scripts$ sbatch --dependency=afterok:26289298 makeAncHMMInput.sh
 Submitted batch job 26289309 - ERRORS
+Submitted batch job 26289377 - COMPLETED (need to fix to have proper sample file w/ ploidy)
+# making manually sample file w/ ploidy now:
+~/hilo/data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ for i in $(ls pop*.anc_hmm.ids); do awk '{print "HILO"$1"\t"2}' $i > $i.ploidy; done
+# right now I'll choose one example pop 366 with 9 individuals and about .14 mexicana ancestry
+# to run
+# but I will summarise avg. population admixture proportions in a file output from plot_global_ancestry_NGSadmix.R
+# "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt"
+# and use those directly from runAncHMM.sh later
+# running test population runAncHMM.sh
+scripts$ sbatch --array=366 runAncHMM.sh
