@@ -1100,7 +1100,7 @@ Submitted batch job 26029827
 scripts$ sbatch -p low --array=0,54-60,62-83 --dependency=afterok:26030055,26030193 filterAlloMAFnInd.sh
 Submitted batch job 26030212 - COMPLETED except 0 (why did this run when 26030193 was cancelled for memory?)
 scripts$ sbatch -p low --array=0 --dependency=afterok:26031000 filterAlloMAFnInd.sh
-Submitted batch job 26031038 - COMPLETED, but DIDN't WAIT -- not suer why, will rerun
+Submitted batch job 26031038 - COMPLETED, but DIDN't WAIT -- not sure why, will rerun
 scripts$ sbatch -p low --array=0 filterAlloMAFnInd.sh
 Submitted batch job 26031985 - COMPLETED
 
@@ -1180,10 +1180,29 @@ Submitted batch job 26288513 - gargabe because of upstream errors
 # I'm not sure what's going on since 5 individuals from angsd output with all the same mapping and baseQ filters
 # shows 5 individuals with data
 zgrep '133388' geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/mexicana.allo.withXochi35/region_159.mafs.gz
-4	3133388	C	G	G	0.000004	5
-# Puerta Encantada individuals are missing from the bam list for allopatric mexicana
+4	133388	C	T	T	0.122774	5
+# I can see the genotypes for these 5 individuals (each one read mapped) using mpileup:
+# 1 C J means 1 read, allele = C, and J = ASCII code for 74 and I subtract 33 to get mapping score of 41  
+# (if I filter -Q 42 the sites go away). and the genotypes all appear to be Cc or Gg (fwd/rev strand)
+# for allopatric mexicana and if I run the same on pass1_bam_pops/maize.allo.4Low16.list
+# mpileup with my quality filters implemented ( I see all 5 individuals with data ):
+data$ samtools mpileup -r 4:133388-133388 -q 20 -Q 30 --ff UNMAP --ff SECONDARY --ff QCFAIL --ff DUP -b pass1_bam_pops/mexicana.allo.withXochi35.list
+somehow at this site ref allele = alt allele = T (so no C's at all) in the output from ASEReadCounter
+~/hilo/data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM$ awk '$2==133388 && $1==4 {print $0}' hilo_*_chr4.csv | head 
+4	133388	.	T	T	0	0	0	0	0	3	3	0
+4	133388	.	T	T	0	0	0	0	0	1	1	0
+...
+
+# I need to check if the error is from the VCF from ANGSD, VCF from PLINK or produced by ASEReadCounter
+# maybe, e.g. ASEReadCounter doesn't need a reference genome or is overwriting the 'ref' allele identity
+# probably the problem is in ASEReadCounter -- I'll remove the reference genome from there
+# because C is the ref allele and T is the alt allele in .vcf.gz from angsd and .vcf from plink (going into GATK)
+thinnedHMM$ zcat maize.allo.*chr4.vcf.gz | awk '$2==133388 && $1==4 {print $0}'
+thinnedHMM$ awk '$2==133388 && $1==4 {print $0}' maize.allo.*chr4.vcf
+
+# SEPARATE ISSUE:: Puerta Encantada individuals are missing from the bam list for allopatric mexicana
 cat pass1_bam_pops/mexicana.allo.withXochi35.list # to view -- but this if anything would cause the opp. problem where allele freq files based on this bam had fewer read counts than there should be
-# for right now I will just filter out these sites with no counts in either allo maize# or allo mex,
+# for right now I will just filter out these sites with no counts in either allo maize or allo mex,
 # but I need to check upstream what is causing the problem
 
 scripts$ sbatch makeAlloCountsAncHMMInput.sh
@@ -1208,3 +1227,36 @@ Submitted batch job 26291281 - RUNNING (but typo in --timin so I added a new one
 Submitted batch job 26291536 (--tmin typo fixed)
 ~/hilo/scripts$ sbatch -p bigmemh runAncHMM_noboot.sh
 Submitted batch job 26291537 # and re-running up to 10K generations without bootstrapping
+
+
+# updates to pipeline:
+# increased SNP spacing to .001 cM (~1kb avg) in pruneFixedcM.sh
+# deleted reference genome from ASEReadCounter to hopefully avoid problem of zero alleles because it's ref ref
+# remake list of allopatric mexicana
+~/hilo/data$ awk '$5=="mexicana" && $6=="allopatric" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.allo.list
+~/hilo/data$ awk '$5=="mexicana" && ($6=="allopatric" || $9=="Xochimilco") {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.allo.withXochi35.list
+# redo allele freq. calcs for allopatric mexicana + Xochi and filtering for informative sites with min n=6
+scripts$ sbatch --array=0-425 -p med --mem=16G -t 24:00:00 --export=POP=mexicana.allo.withXochi35,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 26294842 - I cancelled
+Submitted batch job 26295398 - failed. try again
+Submitted batch job 26296462
+# filter and thin sites
+scripts$ sbatch --dependency=afterok:26296462 filterAlloMAFnInd.sh
+Submitted batch job 26296656
+scripts$ sbatch --dependency=afterok:26296656 pruneFixedcM.sh
+Submitted batch job 26296662
+# get allele and read counts
+scripts$ sbatch -t 8:00:00 --dependency=afterok:26296662 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
+Submitted batch job 26296682
+scripts$ sbatch --dependency=afterok:26296682 alloVCF2AlleleCounts.sh
+Submitted batch job 26296705
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26296705_$i countReadsRefAlt.sh; done
+Submitted batch job 26296733-42
+# make input files
+scripts$ sbatch --dependency=afterok:26296733,26296734,26296735,26296736,26296737,26296738,26296739,26296740,26296741,26296742 makeAlloCountsAncHMMInput.sh
+Submitted batch job 26296784
+scripts$ sbatch --dependency=afterok:26296784 makeAncHMMInput.sh
+Submitted batch job 26296785
+### NEED TO MODIFY THIS SCRIPT:
+scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh # try to run for all populations @ all SNPs
+
