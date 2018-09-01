@@ -2,16 +2,20 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J calcP
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcAlleleFreqPops_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcAlleleFreqPops_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
-#SBATCH --export=POP=specify_pop_here,DIR_POPS=pass1_bam_pops,DIR_REGIONS=refMaize/divide_5Mb,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
+#SBATCH --export=POP=specify_pop_here,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
+
+DIR_POPS="pass1_bam_pops"
+DIR_REGIONS="refMaize/divide_5Mb"
+#DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
 
 # to run
-# sbatch --export=POP=pop363,DIR_POPS=etc... calcAlleleFreqPop.sh
-# sbatch --export=POP=maize.allo.4Low16,DIR_POPS=etc... calcAlleleFreq.sh
+# sbatch --export=POP=pop363 calcAlleleFreqPop.sh
+# sbatch --export=POP=maize.allo.4Low16 calcAlleleFreq.sh
 
 # %k ensures only k jobs max run at one time, e.g. --array=0-425%8 runs 8 at a time
 

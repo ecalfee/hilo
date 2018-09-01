@@ -33,7 +33,6 @@ module load GATK
 echo "counting ref and alt reads per individual in bams for chr"${CHR}" hilo id = "${id}
 java -Xmx7g -jar /share/apps/GATK-3.6/GenomeAnalysisTK.jar \
 -T ASEReadCounter \
--R refMaize/AGPv4.fa \
 --sitesVCFFile ${dir}/${VCF_POP}_chr${CHR}.vcf \
 --out ${dir}/hilo_${id}_chr${CHR}.csv \
 --minBaseQuality 20 \

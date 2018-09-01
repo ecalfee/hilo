@@ -49,7 +49,7 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 -GL 1 \
 -doGeno -4 \
 -doPost 1 \
--postCutoff 0.95 \
+-postCutoff 0.9 \
 -doVCF 1 \
 -P ${n_threads}
 # output file = TEST/alloMaize_head_region_0.vcf.gz

@@ -6,7 +6,7 @@
 #SBATCH -t 1:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-425
-#SBATCH --export=minInd=4,D=0.3
+#SBATCH --export=minInd=6,D=0.3
 
 # other variables
 allo_maize="maize.allo.4Low16"
