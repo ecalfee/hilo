@@ -1245,13 +1245,18 @@ Submitted batch job 26296462 -- ALL GOOD EXCEPT 2,3,61,160 have .idx index files
 hilo/data$ for i in 2 3 160 61; do rm var_sites/merged_pass1_all_alloMaize4Low_16/region_$i.var.sites.idx; angsd sites index var_sites/merged_pass1_all_alloMaize4Low_16/region_$i.var.sites; done
 scripts$ sbatch --array=2,3,61,160 -p med --mem=16G -t 24:00:00 --export=POP=mexicana.allo.withXochi35,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
 Submitted batch job 27288178 - COMPLETED
+# also re-calculating MAF for allopatric maize (creating maf files in var_sites subfolder)
+scripts$ sbatch --array=0-425 -p med --mem=16G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 27314347
 # filter and thin sites
 scripts$ sbatch --dependency=afterok:26296462 filterAlloMAFnInd.sh
-Submitted batch job 26296656 - NO ISSUES (EVEN FROM ONES FAULTED FOR .idx FILE ABOVE)
+Submitted batch job 26296656 - NO (reported) ISSUES (EVEN FROM ONES FAULTED FOR .idx FILE ABOVE)
 scripts$ sbatch --array=2,3,61,160 -p med filterAlloMAFnInd.sh - FILTERING REMAINING ONES FIXED ABOVE
-Submitted batch job 27288191 - COMPLETED
+Submitted batch job 27288191 - COMPLETED, BUT ISSUE IS THAT IT USED OLD FOLDER geno_lik for MAF - re-doing all:
+scripts$ sbatch --array=0-425 --dependency=afterok:27314347 -p med filterAlloMAFnInd.sh
+
 scripts$ sbatch --dependency=afterok:26296656 pruneFixedcM.sh
-Submitted batch job 26296662
+Submitted batch job 26296662 - RAN BUT NEED TO RERUN DUE TO ERRORS ABOVE (DELETED OUTPUT FILES)
 scripts$ sbatch --array=1,4 pruneFixedcM.sh # re-doing affected chromosomes from 4 files above
 Submitted batch job 27288200 - CANCELLED, fixed typo with code to remove extra end of line characters
 scripts$ sbatch --array=1-10 pruneFixedcM.sh # re-doing all because of error above
