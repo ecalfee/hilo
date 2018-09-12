@@ -28,14 +28,17 @@ d <- bind_cols(pass1_allo4Low, admix)  %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
 
 # make anc_hmm input file with population #, avg. maize proportion, avg. mex proportion ancestry
+# first make directory
+dir.create(file.path("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm", "input"), recursive = T)
+# then create data
 alphasByPop = d %>%
   filter(., symp_allo == "sympatric" & est_coverage >= 0.05) %>%
   group_by(., popN) %>%
   summarise(., alpha_maize = round(mean(anc2),2)) %>%
   mutate(., alpha_mex = 1 - alpha_maize)
-table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN)
+table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN) # numbers of individuals per pop
 #View(cbind(alphasByPop,table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN) ))
-write.table(alphasByPop,  # write table so I can pull population global ancestry values for ancestry_hmm
+write.table(format(as.data.frame(alphasByPop), digits=2, scientific = F),  # write table so I can pull population global ancestry values for ancestry_hmm
             "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt",
             col.names = F, row.names = F, quote = F, sep = "\t")
 

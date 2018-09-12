@@ -1256,14 +1256,14 @@ Submitted batch job 26296656 - NO (reported) ISSUES (EVEN FROM ONES FAULTED FOR 
 scripts$ sbatch --array=2,3,61,160 -p med filterAlloMAFnInd.sh - FILTERING REMAINING ONES FIXED ABOVE
 Submitted batch job 27288191 - COMPLETED, BUT ISSUE IS THAT IT USED OLD FOLDER geno_lik for MAF - re-doing all:
 scripts$ sbatch --array=0-425 --dependency=afterok:27317118 -p med filterAlloMAFnInd.sh
-
+Submitted batch job 27318790 - COMPLETED (super fast)
 scripts$ sbatch --dependency=afterok:26296656 pruneFixedcM.sh
 Submitted batch job 26296662 - RAN BUT NEED TO RERUN DUE TO ERRORS ABOVE (DELETED OUTPUT FILES)
 scripts$ sbatch --array=1,4 pruneFixedcM.sh # re-doing affected chromosomes from 4 files above
 Submitted batch job 27288200 - CANCELLED, fixed typo with code to remove extra end of line characters
 # re-doing all because of error above
-hilo/scripts$ sbatch --array=1-10 -p med --dependency=afterok:***** pruneFixedcM.sh
-
+hilo/scripts$ sbatch --array=1-10 -p med --dependency=afterok:27318790 pruneFixedcM.sh
+Submitted batch job 27319249 - RUNNING
 
 # get allele and read counts
 scripts$ sbatch -t 8:00:00 --dependency=afterok:26296662 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
@@ -1273,28 +1273,38 @@ scripts$ sbatch -t 8:00:00 --dependency=afterok:27288200 --array=1,4 --mem=32G -
 Submitted batch job 27298295 - DELETED OUTPUT (no var)
 scripts$ sbatch -t 8:00:00 --array=2,3,5-8,10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
 Submitted batch job 27298285 - DELETED OUTPUT (no var) & running anew:
-scripts$ sbatch -t 8:00:00 --dependency=afterok:**** --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-
+scripts$ sbatch -t 8:00:00 --dependency=afterok:27319249 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
+Submitted batch job 27319266 - WAITING 4 DEPENDENCY
 
 scripts$ sbatch --dependency=afterok:26296682 alloVCF2AlleleCounts.sh
 Submitted batch job 26296705 (DELETED OUTPUT no var). running anew:
-scripts$ sbatch --dependency=afterok:****** alloVCF2AlleleCounts.sh
-
+scripts$ sbatch --dependency=afterok:27319266 alloVCF2AlleleCounts.sh
+Submitted batch job 27319352 - WAITING 4 DEPENDENCY
 
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26296705_$i countReadsRefAlt.sh; done
 Submitted batch job 26296733-42 - DELETED OUTPUT (no var). running anew:
-scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:*****_$i countReadsRefAlt.sh; done
-
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:27319352_$i countReadsRefAlt.sh; done
+Submitted batch job 27321466-27321475 - WAITING 4 DEPENDENCY
 
 # make input files
 scripts$ sbatch --dependency=afterok:26296733,26296734,26296735,26296736,26296737,26296738,26296739,26296740,26296741,26296742 makeAlloCountsAncHMMInput.sh
 Submitted batch job 26296784 - NO OUTPUT (no var)
-scripts$ sbatch --dependency=afterok:**** makeAlloCountsAncHMMInput.sh
-
+scripts$ sbatch --dependency=afterok:$(echo {27321466..27321475} | tr ' ' ',') makeAlloCountsAncHMMInput.sh
+Submitted batch job 27321508
 
 scripts$ sbatch --dependency=afterok:26296784 makeAncHMMInput.sh
 Submitted batch job 26296785 - NO OUTPUT (no var)
-scripts$ sbatch --dependency=afterok:***** makeAncHMMInput.sh
+scripts$ sbatch --dependency=afterok:27321508 makeAncHMMInput.sh
+Submitted batch job 27321523
 
-### NEED TO MODIFY THIS SCRIPT:
-scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh # try to run for all populations @ all SNPs
+# Modify script runAncHMM.sh to run on all populations, bootstrap and nonboostrap versions
+# uses global ancestry per population pulled from ancestry_hmm/input/globalAdmixtureByPopN.txt
+# which is created in interactive R script plot_global_ancestry_NGSadmix.R
+# the script goes through all sympatric populations (array indeces 0-27) but skips pops with no admixture
+scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM_noboot.sh
+
+# test bootstrapping too - note: these each use 3 cores (24G) and my max of bigmemh is 8 cores at a time
+scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM.sh
+
+# run for all sympatric populations
+scripts$
