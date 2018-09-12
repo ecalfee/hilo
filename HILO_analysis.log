@@ -1247,36 +1247,54 @@ scripts$ sbatch --array=2,3,61,160 -p med --mem=16G -t 24:00:00 --export=POP=mex
 Submitted batch job 27288178 - COMPLETED
 # also re-calculating MAF for allopatric maize (creating maf files in var_sites subfolder)
 scripts$ sbatch --array=0-425 -p med --mem=16G -t 24:00:00 --export=POP=maize.allo.4Low16,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
-Submitted batch job 27314347
+Submitted batch job 27314347 - COMPLETED ALL BUT 0 (out of memory) - RERUNNING AT HIGH MEM:
+hilo/scripts$ sbatch --array=0 -p bigmemh --mem=32G -t 4:00:00 --export=POP=maize.allo.4Low16,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 27317118 - COMPLETED
 # filter and thin sites
 scripts$ sbatch --dependency=afterok:26296462 filterAlloMAFnInd.sh
 Submitted batch job 26296656 - NO (reported) ISSUES (EVEN FROM ONES FAULTED FOR .idx FILE ABOVE)
 scripts$ sbatch --array=2,3,61,160 -p med filterAlloMAFnInd.sh - FILTERING REMAINING ONES FIXED ABOVE
 Submitted batch job 27288191 - COMPLETED, BUT ISSUE IS THAT IT USED OLD FOLDER geno_lik for MAF - re-doing all:
-scripts$ sbatch --array=0-425 --dependency=afterok:27314347 -p med filterAlloMAFnInd.sh
+scripts$ sbatch --array=0-425 --dependency=afterok:27317118 -p med filterAlloMAFnInd.sh
 
 scripts$ sbatch --dependency=afterok:26296656 pruneFixedcM.sh
 Submitted batch job 26296662 - RAN BUT NEED TO RERUN DUE TO ERRORS ABOVE (DELETED OUTPUT FILES)
 scripts$ sbatch --array=1,4 pruneFixedcM.sh # re-doing affected chromosomes from 4 files above
 Submitted batch job 27288200 - CANCELLED, fixed typo with code to remove extra end of line characters
-scripts$ sbatch --array=1-10 pruneFixedcM.sh # re-doing all because of error above
+# re-doing all because of error above
+hilo/scripts$ sbatch --array=1-10 -p med --dependency=afterok:***** pruneFixedcM.sh
+
 
 # get allele and read counts
 scripts$ sbatch -t 8:00:00 --dependency=afterok:26296662 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 26296682 - ONLY chr9 RAN DUE TO .idx files being too similar in timestamp to sites files
+Submitted batch job 26296682 - ONLY chr9 RAN DUE TO .idx files being too similar in timestamp to sites files - ACTUALLY ALL ARE MESSED UP (no var)
 # fixing issue: hilo/data$ for i in {1..8} 10; do rm var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr$i.var.sites.bin; rm var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr$i.var.sites.idx; done
 scripts$ sbatch -t 8:00:00 --dependency=afterok:27288200 --array=1,4 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 27298295
+Submitted batch job 27298295 - DELETED OUTPUT (no var)
 scripts$ sbatch -t 8:00:00 --array=2,3,5-8,10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 27298285
+Submitted batch job 27298285 - DELETED OUTPUT (no var) & running anew:
+scripts$ sbatch -t 8:00:00 --dependency=afterok:**** --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
+
+
 scripts$ sbatch --dependency=afterok:26296682 alloVCF2AlleleCounts.sh
-Submitted batch job 26296705
+Submitted batch job 26296705 (DELETED OUTPUT no var). running anew:
+scripts$ sbatch --dependency=afterok:****** alloVCF2AlleleCounts.sh
+
+
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26296705_$i countReadsRefAlt.sh; done
-Submitted batch job 26296733-42
+Submitted batch job 26296733-42 - DELETED OUTPUT (no var). running anew:
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:*****_$i countReadsRefAlt.sh; done
+
+
 # make input files
 scripts$ sbatch --dependency=afterok:26296733,26296734,26296735,26296736,26296737,26296738,26296739,26296740,26296741,26296742 makeAlloCountsAncHMMInput.sh
-Submitted batch job 26296784
+Submitted batch job 26296784 - NO OUTPUT (no var)
+scripts$ sbatch --dependency=afterok:**** makeAlloCountsAncHMMInput.sh
+
+
 scripts$ sbatch --dependency=afterok:26296784 makeAncHMMInput.sh
-Submitted batch job 26296785
+Submitted batch job 26296785 - NO OUTPUT (no var)
+scripts$ sbatch --dependency=afterok:***** makeAncHMMInput.sh
+
 ### NEED TO MODIFY THIS SCRIPT:
 scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh # try to run for all populations @ all SNPs

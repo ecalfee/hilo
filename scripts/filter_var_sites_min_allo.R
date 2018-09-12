@@ -4,7 +4,7 @@
 #MAF difference, and an LD threshold
 print(getwd()) # print current directory
 args = commandArgs(trailingOnly=TRUE)
-# args (in order): region, minInd, D, allo_maize, allo_mex, dir_gl, dir_sites, dir_out
+# args (in order): region, minInd, D, allo_maize, allo_mex, dir_maf, dir_sites, dir_out
 # to run:
 # Rscript filter_var_sites_min_allo.R 9 4 0.3 maize.allo.4Low16 mexicana.allo.withXochi35 (args cont. next lines..)
 # ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/
@@ -39,7 +39,7 @@ dir_sites = args[7]
 dir_out = args[8]
 
 # function to get variant sites and allopatric maize and mexicana frequencies in one dataframe
-getSNPs = function(region, dir_gl, dir_sites, allo_maize, allo_mex, D, minInd){
+getSNPs = function(region, dir_maf, dir_sites, allo_maize, allo_mex, D, minInd){
   # get allopatric MAF data for some region
   maize = read.table(gzfile(paste0(dir_maf, allo_maize, "/",
                                    "region_", region, ".mafs.gz")), header=T, stringsAsFactors = F) %>%
