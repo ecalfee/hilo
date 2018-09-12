@@ -1182,13 +1182,13 @@ Submitted batch job 26288513 - gargabe because of upstream errors
 zgrep '133388' geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/mexicana.allo.withXochi35/region_159.mafs.gz
 4	133388	C	T	T	0.122774	5
 # I can see the genotypes for these 5 individuals (each one read mapped) using mpileup:
-# 1 C J means 1 read, allele = C, and J = ASCII code for 74 and I subtract 33 to get mapping score of 41  
+# 1 C J means 1 read, allele = C, and J = ASCII code for 74 and I subtract 33 to get mapping score of 41
 # (if I filter -Q 42 the sites go away). and the genotypes all appear to be Cc or Gg (fwd/rev strand)
 # for allopatric mexicana and if I run the same on pass1_bam_pops/maize.allo.4Low16.list
 # mpileup with my quality filters implemented ( I see all 5 individuals with data ):
 data$ samtools mpileup -r 4:133388-133388 -q 20 -Q 30 --ff UNMAP --ff SECONDARY --ff QCFAIL --ff DUP -b pass1_bam_pops/mexicana.allo.withXochi35.list
 somehow at this site ref allele = alt allele = T (so no C's at all) in the output from ASEReadCounter
-~/hilo/data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM$ awk '$2==133388 && $1==4 {print $0}' hilo_*_chr4.csv | head 
+~/hilo/data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM$ awk '$2==133388 && $1==4 {print $0}' hilo_*_chr4.csv | head
 4	133388	.	T	T	0	0	0	0	0	3	3	0
 4	133388	.	T	T	0	0	0	0	0	1	1	0
 ...
@@ -1233,21 +1233,37 @@ Submitted batch job 26291537 # and re-running up to 10K generations without boot
 # increased SNP spacing to .001 cM (~1kb avg) in pruneFixedcM.sh
 # deleted reference genome from ASEReadCounter to hopefully avoid problem of zero alleles because it's ref ref
 # remake list of allopatric mexicana
+# note temporarily saved old files in 'backup folders': thinnedHMM/ancestry_hmm/input[or output]_backup_highLD and thinnedHMM/backup_temp/
 ~/hilo/data$ awk '$5=="mexicana" && $6=="allopatric" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.allo.list
 ~/hilo/data$ awk '$5=="mexicana" && ($6=="allopatric" || $9=="Xochimilco") {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/mexicana.allo.withXochi35.list
 # redo allele freq. calcs for allopatric mexicana + Xochi and filtering for informative sites with min n=6
 scripts$ sbatch --array=0-425 -p med --mem=16G -t 24:00:00 --export=POP=mexicana.allo.withXochi35,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
 Submitted batch job 26294842 - I cancelled
 Submitted batch job 26295398 - failed. try again
-Submitted batch job 26296462
+Submitted batch job 26296462 -- ALL GOOD EXCEPT 2,3,61,160 have .idx index files that look newer than sites files -- will fix
+# fixing newer index problem:
+hilo/data$ for i in 2 3 160 61; do rm var_sites/merged_pass1_all_alloMaize4Low_16/region_$i.var.sites.idx; angsd sites index var_sites/merged_pass1_all_alloMaize4Low_16/region_$i.var.sites; done
+scripts$ sbatch --array=2,3,61,160 -p med --mem=16G -t 24:00:00 --export=POP=mexicana.allo.withXochi35,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16 calcAlleleFreqPop.sh
+Submitted batch job 27288178 - COMPLETED
 # filter and thin sites
 scripts$ sbatch --dependency=afterok:26296462 filterAlloMAFnInd.sh
-Submitted batch job 26296656
+Submitted batch job 26296656 - NO ISSUES (EVEN FROM ONES FAULTED FOR .idx FILE ABOVE)
+scripts$ sbatch --array=2,3,61,160 -p med filterAlloMAFnInd.sh - FILTERING REMAINING ONES FIXED ABOVE
+Submitted batch job 27288191 - COMPLETED
 scripts$ sbatch --dependency=afterok:26296656 pruneFixedcM.sh
 Submitted batch job 26296662
+scripts$ sbatch --array=1,4 pruneFixedcM.sh # re-doing affected chromosomes from 4 files above
+Submitted batch job 27288200 - CANCELLED, fixed typo with code to remove extra end of line characters
+scripts$ sbatch --array=1-10 pruneFixedcM.sh # re-doing all because of error above
+
 # get allele and read counts
 scripts$ sbatch -t 8:00:00 --dependency=afterok:26296662 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 26296682
+Submitted batch job 26296682 - ONLY chr9 RAN DUE TO .idx files being too similar in timestamp to sites files
+# fixing issue: hilo/data$ for i in {1..8} 10; do rm var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr$i.var.sites.bin; rm var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr$i.var.sites.idx; done
+scripts$ sbatch -t 8:00:00 --dependency=afterok:27288200 --array=1,4 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
+Submitted batch job 27298295
+scripts$ sbatch -t 8:00:00 --array=2,3,5-8,10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
+Submitted batch job 27298285
 scripts$ sbatch --dependency=afterok:26296682 alloVCF2AlleleCounts.sh
 Submitted batch job 26296705
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26296705_$i countReadsRefAlt.sh; done
@@ -1259,4 +1275,3 @@ scripts$ sbatch --dependency=afterok:26296784 makeAncHMMInput.sh
 Submitted batch job 26296785
 ### NEED TO MODIFY THIS SCRIPT:
 scripts$ sbatch --array=366 -p bigmemh runAncHMM.sh # try to run for all populations @ all SNPs
-

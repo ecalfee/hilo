@@ -35,8 +35,9 @@ echo "done pruning SNPs chr"$i
 echo "fixing end of line character"
 # copy to temporary file name then delete extra newline character when copied back to original file name
 cp ${dir_out}/chr${i}.var.sites ${dir_out}/temp_chr${i}.var.sites
-cat ${dir_out}/temp_chr${i}.var.sites tr -d '\r' > ${dir_out}/chr${i}.var.sites
+cat ${dir_out}/temp_chr${i}.var.sites | tr -d '\r' > ${dir_out}/chr${i}.var.sites
 
 echo "making ANGSD sites index"
+sleep 2s # wait 2 seconds before indexing so that index doesn't have same timestamp as sites file
 angsd sites index ${dir_out}/chr${i}.var.sites
 echo "all done!"
