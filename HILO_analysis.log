@@ -1263,7 +1263,7 @@ scripts$ sbatch --array=1,4 pruneFixedcM.sh # re-doing affected chromosomes from
 Submitted batch job 27288200 - CANCELLED, fixed typo with code to remove extra end of line characters
 # re-doing all because of error above
 hilo/scripts$ sbatch --array=1-10 -p med --dependency=afterok:27318790 pruneFixedcM.sh
-Submitted batch job 27319249 - RUNNING
+Submitted batch job 27319249 - COMPLETED
 
 # get allele and read counts
 scripts$ sbatch -t 8:00:00 --dependency=afterok:26296662 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
@@ -1274,39 +1274,43 @@ Submitted batch job 27298295 - DELETED OUTPUT (no var)
 scripts$ sbatch -t 8:00:00 --array=2,3,5-8,10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
 Submitted batch job 27298285 - DELETED OUTPUT (no var) & running anew:
 scripts$ sbatch -t 8:00:00 --dependency=afterok:27319249 --array=1-10 --mem=32G --export=n_threads=4 -p med getVCFforAllo.sh
-Submitted batch job 27319266 - WAITING 4 DEPENDENCY
+Submitted batch job 27319266 - COMPLETED
 
 scripts$ sbatch --dependency=afterok:26296682 alloVCF2AlleleCounts.sh
 Submitted batch job 26296705 (DELETED OUTPUT no var). running anew:
 scripts$ sbatch --dependency=afterok:27319266 alloVCF2AlleleCounts.sh
-Submitted batch job 27319352 - WAITING 4 DEPENDENCY
+Submitted batch job 27319352 - DONE (very fast!)
 
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:26296705_$i countReadsRefAlt.sh; done
 Submitted batch job 26296733-42 - DELETED OUTPUT (no var). running anew:
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i --dependency=afterok:27319352_$i countReadsRefAlt.sh; done
-Submitted batch job 27321466-27321475 - WAITING 4 DEPENDENCY
+Submitted batch job 27321466-27321475 - ERROR needs reference to generate counts
+# I need to check if it will count major/minor alleles instead of ref/alt of I'll have to use a different program to count reads
+# e.g. using samtools mpileup I can get all reads matching quality thresholds for sites in the sites file
+# then use the major/minor allele from the var.sites file to get counts, e.g. in python
+# be careful to check what mpileup does with loci where there are no reads (zero depth) for an individual
 
 # make input files
 scripts$ sbatch --dependency=afterok:26296733,26296734,26296735,26296736,26296737,26296738,26296739,26296740,26296741,26296742 makeAlloCountsAncHMMInput.sh
 Submitted batch job 26296784 - NO OUTPUT (no var)
 scripts$ sbatch --dependency=afterok:$(echo {27321466..27321475} | tr ' ' ',') makeAlloCountsAncHMMInput.sh
-Submitted batch job 27321508
+Submitted batch job 27321508 - ERROR NO OUTPUT due to no input files
 
 scripts$ sbatch --dependency=afterok:26296784 makeAncHMMInput.sh
 Submitted batch job 26296785 - NO OUTPUT (no var)
 scripts$ sbatch --dependency=afterok:27321508 makeAncHMMInput.sh
-Submitted batch job 27321523
+Submitted batch job 27321523 - ERROR on input files
 
 # Modify script runAncHMM.sh to run on all populations, bootstrap and nonboostrap versions
 # uses global ancestry per population pulled from ancestry_hmm/input/globalAdmixtureByPopN.txt
 # which is created in interactive R script plot_global_ancestry_NGSadmix.R
 # the script goes through all sympatric populations (array indeces 0-27) but skips pops with no admixture
 scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM_noboot.sh
-Submitted batch job 27325720
+Submitted batch job 27325720 - ERROR on input files
 
 # test bootstrapping too - note: these each use 3 cores (24G) and my max of bigmemh is 8 cores at a time
 scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM.sh
-Submitted batch job 27325727
+Submitted batch job 27325727 - ERROR on input files
 
 # run for all sympatric populations. First check pop366 and files for SNPs look ok! (no ref ref alleles..)
 scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
