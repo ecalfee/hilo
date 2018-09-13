@@ -1302,9 +1302,11 @@ Submitted batch job 27321523
 # which is created in interactive R script plot_global_ancestry_NGSadmix.R
 # the script goes through all sympatric populations (array indeces 0-27) but skips pops with no admixture
 scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM_noboot.sh
+Submitted batch job 27325720
 
 # test bootstrapping too - note: these each use 3 cores (24G) and my max of bigmemh is 8 cores at a time
 scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM.sh
+Submitted batch job 27325727
 
-# run for all sympatric populations
-scripts$
+# run for all sympatric populations. First check pop366 and files for SNPs look ok! (no ref ref alleles..)
+scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
