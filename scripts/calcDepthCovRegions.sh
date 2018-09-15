@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J calcDepthRegions
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%A_%a.out
 #SBATCH -t 36:00:00
 #SBATCH --mem=10G
 #SBATCH --export=REGIONS_FILE=N1000.L100.regions

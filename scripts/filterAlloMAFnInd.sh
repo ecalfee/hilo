@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/
 #SBATCH -J filterAllo
-#SBATCH -o /home/ecalfee/hilo/slurm-log/filterAlloMAFnInd_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/filterAlloMAFnInd_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-425

@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J addBAQBamAllo
-#SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBamAlloMaize_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBamAlloMaize_%A_%a.out
 #SBATCH -t 12:00:00
 #SBATCH --mem=16G
 #SBATCH --array=0-14

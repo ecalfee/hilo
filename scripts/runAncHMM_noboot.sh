@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ancNoBoot
-#SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMMj_noBoot_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
 #SBATCH -t 36:00:00
 #SBATCH --mem=24G
 #SBATCH --array=0-27

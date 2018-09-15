@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/filtered_bam
 #SBATCH -J addBAQBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBam_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBam_%A_%a.out
 #SBATCH -t 12:00:00
 
 # this script caps base quality scores with samtools adjusted scores (BAQ)

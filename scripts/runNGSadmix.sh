@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J NGSadmix
-#SBATCH -o /home/ecalfee/hilo/slurm-log/NGSadmix_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/NGSadmix_%A_%a.out
 #SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1

@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/geno_lik/pass1/allVar
 #SBATCH -J catGL
-#SBATCH -o /home/ecalfee/hilo/slurm-log/catGL_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/catGL_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 

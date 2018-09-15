@@ -1320,7 +1320,7 @@ scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh --NEVER RAN
 # then I'm using an R script to pull out major and minor allele counts from all ACGT read counts
 # countReadsMajorMinor.sh calls count_reads_major_minor.R
 # I need to modify downstream scripts to use this new input: makeAlloCountsAncHMMInput.sh
-
-
+scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i countReadsACGT.sh; done
+Submitted batch job 27723541-50
 
 

@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J FST
-#SBATCH -o /home/ecalfee/hilo/slurm-log/FST_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/FST_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=1G
 

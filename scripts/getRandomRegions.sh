@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J getRand
-#SBATCH -o /home/ecalfee/hilo/slurm-log/getRandomRegions_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/getRandomRegions_%A_%a.out
 #SBATCH -t 5:00:00
 #SBATCH --mem=2G
 #SBATCH --export=N=1000,L=100,SEED=712

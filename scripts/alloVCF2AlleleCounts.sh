@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J vcf2counts
-#SBATCH -o /home/ecalfee/hilo/slurm-log/alloVCF2AlleleCounts_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/alloVCF2AlleleCounts_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=2G
 #SBATCH --array=1-10

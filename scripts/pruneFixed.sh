@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/
 #SBATCH -J pruneFixed
-#SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixed_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixed_%A_%a.out
 #SBATCH -t 00:30:00
 #SBATCH --mem=2G
 

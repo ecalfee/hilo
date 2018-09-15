@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J reorderBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/reorderBam_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/reorderBam_%A_%a.out
 #SBATCH -t 36:00:00
 #SBATCH --mem=12G
 #SBATCH --array=1-4,11-14,21-24,31-34

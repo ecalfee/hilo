@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J countReads
-#SBATCH -o /home/ecalfee/hilo/slurm-log/countReadsRefAlt_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/countReadsRefAlt_%A_%a.out
 #SBATCH -t 8:00:00
 #SBATCH --mem=8G
 #SBATCH --array=1-200

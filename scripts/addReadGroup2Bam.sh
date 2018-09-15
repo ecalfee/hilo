@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J addRG2Bam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/addRG2Bam_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/addRG2Bam_%A_%a.out
 #SBATCH -t 2:00:00
 #SBATCH -x bigmem1,bigmem7
 #SBATCH --mem=16G

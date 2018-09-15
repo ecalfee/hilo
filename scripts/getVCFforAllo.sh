@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J getVCF4Allo
-#SBATCH -o /home/ecalfee/hilo/slurm-log/getVCF4Allo_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/getVCF4Allo_%A_%a.out
 #SBATCH -t 12:00:00
 #SBATCH --mem=16G
 #SBATCH --array=1-10

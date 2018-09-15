@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ABBA_BABA
-#SBATCH -o /home/ecalfee/hilo/slurm-log/ABBA_BABA_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/ABBA_BABA_%A_%a.out
 #SBATCH -t 12:00:00
 #SBATCH --mem=8G
 

@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J countACGT
 #SBATCH -o /home/ecalfee/hilo/slurm-log/countACGT_%A_%a.out
-#SBATCH -t 8:00:00
+#SBATCH -t 1:00:00
 #SBATCH --mem=8G
 #SBATCH --array=1-200
 #SBATCH --export=CHR=1

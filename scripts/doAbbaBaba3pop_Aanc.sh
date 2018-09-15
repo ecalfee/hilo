@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ABBA_Aanc
-#SBATCH -o /home/ecalfee/hilo/slurm-log/ABBA_BABA_Aanc_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/ABBA_BABA_Aanc_%A_%a.out
 #SBATCH -t 12:00:00
 #SBATCH --mem=8G
 #SBATCH --export=PREFIX=3pop_alloMaize_sympMaize_alloMex_bam

@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J varAngsdReg
-#SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsdRegions_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/varAngsdRegions_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=12G
 #SBATCH -n 4

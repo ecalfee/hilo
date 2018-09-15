@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J SAFByChr
-#SBATCH -o /home/ecalfee/hilo/slurm-log/SAFByChr_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/SAFByChr_%A_%a.out
 #SBATCH -t 64:00:00
 #SBATCH --mem=4G
 #SBATCH -n 6

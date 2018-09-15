@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J calcDepthRegions
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%A_%a.out
 #SBATCH -t 48:00:00
 #SBATCH --mem=20G
 #SBATCH --export=GL_FILE=pruned_by1000.beagle.gz

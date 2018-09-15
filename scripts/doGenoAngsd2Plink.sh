@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J doGeno2Plink
-#SBATCH -o /home/ecalfee/hilo/slurm-log/doGeno2Plink_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/doGeno2Plink_%A_%a.out
 #SBATCH -t 12:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1

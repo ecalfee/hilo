@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J GL282sites
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcGL4maize282sites_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcGL4maize282sites_%A_%a.out
 #SBATCH -t 6:00:00
 #SBATCH --mem=16G
 #SBATCH -n 2

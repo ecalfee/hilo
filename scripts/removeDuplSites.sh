@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J rmDuplSites
-#SBATCH -o /home/ecalfee/hilo/slurm-log/removeDuplSites_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/removeDuplSites_%A_%a.out
 #SBATCH -t 2:00:00
 #SBATCH --mem=2G
 #SBATCH -n 1

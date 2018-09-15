@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/
 #SBATCH -J indexBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/indexAllo4PopMaize_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/indexAllo4PopMaize_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=5G
 #SBATCH --array=1-7,9-40

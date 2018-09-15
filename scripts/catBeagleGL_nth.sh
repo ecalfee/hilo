@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J catGLNth
-#SBATCH -o /home/ecalfee/hilo/slurm-log/catGLNth_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/catGLNth_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 #SBATCH --export=startR=0,endR=46,DIR_GL=geno_lik/pass1/allVar,N=1000

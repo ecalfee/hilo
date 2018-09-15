@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J filterBam
-#SBATCH -o /home/ecalfee/hilo/slurm-log/filterBam_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/filterBam_%A_%a.out
 #SBATCH -t 8:00:00
 #SBATCH -x bigmem1
 

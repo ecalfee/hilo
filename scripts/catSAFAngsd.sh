@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J catSAF
-#SBATCH -o /home/ecalfee/hilo/slurm-log/catSAF_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/catSAF_%A_%a.out
 #SBATCH -t 4:00:00
 #SBATCH --mem=2G
 #SBATCH --array=18-31,33-35,360-363,365-374,1000,2000,3000

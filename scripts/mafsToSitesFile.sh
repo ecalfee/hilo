@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J MAF2SitesFile
-#SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%A_%a.out
 #SBATCH -t 30:00
 #SBATCH --mem=200M
 #SBATCH --array=0-425

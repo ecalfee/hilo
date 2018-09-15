@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J remapV4
-#SBATCH -o /home/ecalfee/hilo/slurm-log/remapV4_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/remapV4_%A_%a.out
 #SBATCH -t 192:00:00
 #SBATCH --mem=24G
 #SBATCH -n 16

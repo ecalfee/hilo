@@ -2,7 +2,7 @@
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J doHaplo
-#SBATCH -o /home/ecalfee/hilo/slurm-log/doHaploAngsd_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/doHaploAngsd_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1

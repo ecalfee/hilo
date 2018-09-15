@@ -2,7 +2,7 @@
 #SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J pipe
-#SBATCH -o /home/ecalfee/hilo/slurm-log/alleleFreqPipeline_%j_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/alleleFreqPipeline_%A_%a.out
 #SBATCH -t 15:00
 #SBATCH --mem=200M
 #SBATCH --array=0-31
