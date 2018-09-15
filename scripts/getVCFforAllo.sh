@@ -16,7 +16,7 @@ i=$SLURM_ARRAY_TASK_ID
 sites_dir="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
 
 # this script takes in a sites file and calls genotypes for allopatric individuals
-# from maize and mexicana, outputing a VCF
+# from high coverage maize, outputing a VCF
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -52,9 +52,8 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 -postCutoff 0.9 \
 -doVCF 1 \
 -P ${n_threads}
-# output file = TEST/alloMaize_head_region_0.vcf.gz
-# (maybe should be more lenient (.9) posterior prob. for calling genotypes or later sample 1 read for lower coverage individuals ..not sure_
-# (and before doing this I think I want to filter for lower LD and high differentiation maize-mex in R)
+
+# (maybe should be more lenient (.9) posterior prob. for calling genotypes or later additionally sample 1 read for low coverage positions in these allopatric maize individuals .. I'm not sure_
 
 # settings:
 # -r specifies which region to work on

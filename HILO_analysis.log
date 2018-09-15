@@ -1313,4 +1313,14 @@ scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM.sh
 Submitted batch job 27325727 - ERROR on input files
 
 # run for all sympatric populations. First check pop366 and files for SNPs look ok! (no ref ref alleles..)
-scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
+scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh --NEVER RAN
+
+# instead of GATK or samtools mpileup I'm using angsd to get counts of all ACGT reads that pass filtering
+# for the thinned sites -- countReadsACGT.sh
+# then I'm using an R script to pull out major and minor allele counts from all ACGT read counts
+# countReadsMajorMinor.sh calls count_reads_major_minor.R
+# I need to modify downstream scripts to use this new input: makeAlloCountsAncHMMInput.sh
+
+
+
+
