@@ -24,6 +24,6 @@ module load R
 # run R script for each chromosome
 for CHR in {1..10}
     do echo "converting ACGT read counts to major/minor read counts for hilo"$ID" chr"$CHR
-    Rscript ../scripts/counts_reads_major_minor.R $CHR $ID $dir
+    Rscript ../scripts/count_reads_major_minor.R $CHR $ID $dir
   done
 echo 'all done!'
