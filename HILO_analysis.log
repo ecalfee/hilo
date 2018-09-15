@@ -1321,6 +1321,18 @@ scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh --NEVER RAN
 # countReadsMajorMinor.sh calls count_reads_major_minor.R
 # I need to modify downstream scripts to use this new input: makeAlloCountsAncHMMInput.sh
 scripts$ for i in {1..10}; do sbatch -p med --export=CHR=$i countReadsACGT.sh; done
-Submitted batch job 27723541-50
+Submitted batch job 27723541-50 # re-doing just ones cancelled due to time limit:
+scripts$ sbatch -p med --export=CHR=1 --array=8,16-29,50-54,65-69,89-105,107,133,188 -t 4:00:00 countReadsACGT.sh
+Submitted batch job 27929508 - COMPLETED
+scripts$ sbatch -p med --export=CHR=2 --array=40,41,44-47,168-171,189 -t 4:00:00 countReadsACGT.sh
+Submitted batch job 27929560 - COMPLETED
+scripts$ sbatch -p med --export=CHR=3 --array=85-86,117,122-126,142-146,162 -t 4:00:00 countReadsACGT.sh
+Submitted batch job 27929586 - COMPLETED
+# note: hilo 41-43 have zero length files; hilo 80 has no data
+I had already redone bam filtering for hilo 41-43:
+slurm-log/filterBam_*_25848426_41.out (or _42, _43)
+# but I got errors due to a directory typo when I tried to do the baq calculation
+see slurm-log/addBAQBam_*_25848608_41.out # re-doing below:
+scripts$ sbatch --array=42-43 -p bigmemh addBAQBam.sh
 
-
+scripts$ for i in {1..10}; do sbatch -p med --dependency=afterok:** --export=CHR=$i --array=41-43 countReadsACGT.sh

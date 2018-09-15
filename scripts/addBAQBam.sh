@@ -1,7 +1,8 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data/filtered_bam
+#SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J addBAQBam
+#SBATCH --mem=8G
 #SBATCH -o /home/ecalfee/hilo/slurm-log/addBAQBam_%A_%a.out
 #SBATCH -t 12:00:00
 
@@ -28,8 +29,8 @@ echo "calculating BAQ for hilo $SLURM_ARRAY_TASK_ID"
 
 # (1) SAMTOOLS calculate BAQ > name.sort.dedup.baq.bam
 samtools calmd -bArE --reference refMaize/AGPv4.fa \
-hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam > hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
-# -b bam output, # -Ar compute BAQ and cap base quality with BAQ 
+filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam > filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
+# -b bam output, # -Ar compute BAQ and cap base quality with BAQ
 # -E use extended BAQ calculation; this was a change to improve sensitivity and will be the new samtools default
 
 echo "done calculating BAQ"
