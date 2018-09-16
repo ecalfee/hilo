@@ -38,8 +38,7 @@ path = args[2]
 # takes in individual counts file and samples 1 read per individual
 # with either 0 0, 1 0 or 0 1 as values for n_major and n_minor at each SNP
 sample1_read = function(ind_counts_file){
-  counts = read.table(ind_counts_file, header = F, stringsAsFactors = F, sep = "\t")
-  colnames(counts) = c(n_major, n_minor)
+  counts = read.table(ind_counts_file, header = T, stringsAsFactors = F)
   tot = counts$n_major + counts$n_minor
   # if any reads are observed (tot > 0), sample 1 read. Otherwise count zero reads.
   new_n_minor = sapply(1:length(tot), function(x) ifelse(tot[x] == 0, 0, rbinom(n = 1,
@@ -53,7 +52,7 @@ sample1_read = function(ind_counts_file){
 # input data
 SNPs = read.table(paste0(path, "/chr", i, ".var.sites"),
                   header = F, stringsAsFactors = F, sep = "\t")
-colnames(SNPs) = c("chr", "position", "ref", "alt")
+colnames(SNPs) = c("chr", "position", "major", "minor")
 map_pos = read.table(paste0(path, "/chr", i, ".distM"),
                      header = F, stringsAsFactors = F)
 colnames(map_pos) = c("distM")
@@ -83,13 +82,14 @@ mex_counts = data.frame(n_major_mex = rep(0, nrow(SNPs)), n_minor_mex = rep(0, n
 for (id in mex_ids){
   newCounts = sample1_read(
       ind_counts_file = paste0(path, "/countsMajMin/chr", i, "/hilo_", id, ".counts.txt"))
+  colnames(newCounts) = c("n_major", "n_minor")
   # update count totals
   mex_counts$n_minor_mex = mex_counts$n_minor_mex + newCounts$n_minor
   mex_counts$n_major_mex = mex_counts$n_major_mex + newCounts$n_major
 }
 
 d = SNPs %>%
-   left_join(., maize_counts, by = c("chr", "position", "major", "minor") %>%
+   left_join(., maize_counts, by = c("chr", "position", "major", "minor")) %>%
    bind_cols(., mex_counts, map_pos) %>%
    #mutate(., posM = cumsum(distM)) %>% # code to exclude sites with no genotypes called in maize
    #filter(., !is.na(n_major_maize)) %>% # no genotypes called in maize
@@ -98,9 +98,11 @@ d = SNPs %>%
    select(., c("chr", "position", "major", "minor", "n_major_maize", "n_minor_maize",
    "n_major_mex", "n_minor_mex", "distM"))
 
-print(paste0("maize has no genotype called for ",
-sum(is.na(d$n_major_maize), "SNPs")) # print SNPs that have no genotypes..despite min # ind's with data
-print(head(d[is.na(d$n_major_maize, ])) # these SNPs are not excluded
+print("maize has no genotype called for # sites:") 
+print(sum(is.na(d$n_major_maize))) 
+# print SNPs that have no genotypes..despite min # ind's with data
+print(d[is.na(d$n_major_maize), ]) # these SNPs are not excluded
+
 # write output to be used by make_input_ancestry_hmm.R (with no headers)
 write.table(format(d, digits = 10), paste0(path, "/allo_counts_chr", i, ".txt"),
     row.names = F, col.names = T, quote = F) # prints column names even though end output won't

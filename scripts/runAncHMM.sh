@@ -23,9 +23,9 @@ DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/out
 GLOBAL_ADMIXTURE_FILE=$DIR_IN"/globalAdmixtureByPopN.txt"
 
 # pull columns from file into arrays
-LIST_OF_POPS=$(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE)
-LIST_OF_ALPHA_MAIZE=$(cut -d$'\t' -f 2  < $GLOBAL_ADMIXTURE_FILE)
-LIST_OF_ALPHA_MEX=$(cut -d$'\t' -f 3  < $GLOBAL_ADMIXTURE_FILE)
+LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))
+LIST_OF_ALPHA_MAIZE=($(cut -d$'\t' -f 2  < $GLOBAL_ADMIXTURE_FILE))
+LIST_OF_ALPHA_MEX=($(cut -d$'\t' -f 3  < $GLOBAL_ADMIXTURE_FILE))
 
 # use slurm array task id as the array index to pull particular values out
 i=${SLURM_ARRAY_TASK_ID}

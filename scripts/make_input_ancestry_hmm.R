@@ -39,8 +39,9 @@ for (i in 1:10){ # for each chromosome, get counts
   d = allo_counts
   for (id in pop_ids){
     ind_counts_file = paste0(dir_input, "/countsMajMin/chr", i, "/hilo_", id, ".counts.txt")
-    d = cbind(d, # column bind (all files have same sites)
-    read.table(ind_counts_file, header = F, stringsAsFactors = F, sep = "\t"))
+    ind_counts_new = read.table(ind_counts_file, header = T, stringsAsFactors = F, sep = "\t")
+    colnames(ind_counts_new) = paste0(id, "_", colnames(ind_counts_new))
+    d = cbind(d, ind_counts_new) # column bind b/c all files have the same sites
   }
   # write lines for current chromosome to file
   select(d, -major, -minor) %>%
