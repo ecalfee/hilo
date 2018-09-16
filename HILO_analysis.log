@@ -1334,13 +1334,22 @@ slurm-log/filterBam_*_25848426_41.out (or _42, _43)
 # but I got errors due to a directory typo when I tried to do the baq calculation
 see slurm-log/addBAQBam_*_25848608_41.out # re-doing below:
 scripts$ sbatch --array=41-43 -p bigmemh addBAQBam.sh
-Submitted batch job 27931987 - RUNNING
+Submitted batch job 27931987 - COMPLETED (manually ran samtools index afterwards due to typo)
 scripts$ for i in {1..10}; do sbatch -p med --dependency=afterok:27931987 --export=CHR=$i --array=41-43 countReadsACGT.sh; done
-Submitted batch job 27932007-27932016 - WAITING 4 DEPENDENCY
+Submitted batch job 27932007-27932016 - index too old, so re-running:
+Submitted batch job 27936230-39 - COMPLETED
 # getting major/minor read counts for all hilo individuals except 41-43 and 80:
 scripts$ sbatch --array=1-40,44-79,81-200 countReadsMajorMinor.sh
 Submitted batch job 27932610 - fixing typo:
-Submitted batch job
+Submitted batch job 27932923 - COMPLETED
 # and I will do the same for 41-43 when they're finished
 scripts$ sbatch --array=41-43 --dependency=afterok:$(echo {27932007..27932016} | tr " " ",") countReadsMajorMinor.sh
-Submitted batch job **
+Submitted batch job 27932914. rerunning with new files (After fixing index):
+Submitted batch job 27936307 - COMPLETED
+# need to add hilo 41-43 into metadata
+data/filtered_bam$ for i in {1..200}; do samtools flagstat hilo_$i.sort.dedup.baq.bam | awk -v i="$i" '{print "hilo"i" "$0}' | grep 'total' >> pass1.all.metrics.Nreads; done
+# maybe line above won't finish running in this session :/
+# making new input files for ancestry hmm (without 41-43 for now):
+scripts$ sbatch makeAlloCountsAncHMMInput.sh
+
+scripts$ sbatch --dependency=afterok:*** makeAncHMMInput.sh

@@ -35,5 +35,5 @@ filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.bam > filtered_bam/hilo_$SLURM
 
 echo "done calculating BAQ"
 # (2) SAMTOOLS index
-samtools index hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
+samtools index filtered_bam/hilo_$SLURM_ARRAY_TASK_ID.sort.dedup.baq.bam
 echo "done indexing"

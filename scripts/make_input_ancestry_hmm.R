@@ -26,7 +26,7 @@ min_coverage = 0.05 # minimum coverage for an individual to be included
 # in local ancestry assessment
 
 # find allopatric individuals to include
-pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
+pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F,
                     header = T, sep = "\t")
 # find individuals from the current population AND that pass minimum coverage
 pop_ids <- filter(pass1, popN == N & est_coverage >= min_coverage)$n
@@ -38,26 +38,17 @@ for (i in 1:10){ # for each chromosome, get counts
   # and each admixed individual
   d = allo_counts
   for (id in pop_ids){
-    GATK_counts_file = paste0(dir_input, "/hilo_", id, "_chr", i, ".csv")
-    d = read.table(GATK_counts_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-      rename(., chr = contig) %>%
-      rename(., ref = refAllele) %>%
-      rename(., alt = altAllele) %>%
-      select(., chr, position, ref, alt, refCount, altCount) %>%
-      left_join(d, ., by = c("chr", "position", "ref", "alt"))
-  }  
+    ind_counts_file = paste0(dir_input, "/countsMajMin/chr", i, "/hilo_", id, ".txt")
+    d = cbind(d, # column bind (all files have same sites)
+    read.table(ind_counts_file, header = F, stringsAsFactors = F, sep = "\t"))
+  }
   # write lines for current chromosome to file
-  select(d, -ref, -alt) %>%
+  select(d, -major, -minor) %>%
   write.table(., paste0(dir_output, "/pop", N, ".anc_hmm.input"),
               na = "0", # write NAs as zero (no ref or alt allele counts for that individual)
-              append = (i != 1), # chr 1 creates a new file, later chrms append
-              row.names = F, col.names = F, quote = F) 
+              append = (i != 1), # chr 1 creates a new file, later chromosomes append
+              row.names = F, col.names = F, quote = F)
 }
 # write id's of included individuals in same order they appear in ancestry_hmm input file
-write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"), 
+write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"),
             row.names = F, col.names = F, quote = F)
-
-
-
-
-
