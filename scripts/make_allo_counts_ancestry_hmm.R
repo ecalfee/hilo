@@ -82,7 +82,7 @@ mex_ids <- filter(pass1, zea == "mexicana" &
 mex_counts = data.frame(n_major_mex = rep(0, nrow(SNPs)), n_minor_mex = rep(0, nrow(SNPs)))
 for (id in mex_ids){
   newCounts = sample1_read(
-      ind_counts_file = paste0(path, "/countsMajMin/chr", i, "/hilo_", id, ".txt")
+      ind_counts_file = paste0(path, "/countsMajMin/chr", i, "/hilo_", id, ".txt"))
   # update count totals
   mex_counts$n_minor_mex = mex_counts$n_minor_mex + newCounts$n_minor
   mex_counts$n_major_mex = mex_counts$n_major_mex + newCounts$n_major
