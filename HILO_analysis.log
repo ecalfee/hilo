@@ -1354,5 +1354,6 @@ scripts$ sbatch makeAlloCountsAncHMMInput.sh
 Submitted batch job 27936615 -ERROR: rerunning
 Submitted batch job 27936660 - fixed typo:
 Submitted batch job 27936707 - fixed new typo:
+Submitted batch job 27936758 - another typo:
 
 scripts$ sbatch --dependency=afterok:*** makeAncHMMInput.sh

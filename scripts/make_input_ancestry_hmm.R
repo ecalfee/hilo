@@ -38,7 +38,7 @@ for (i in 1:10){ # for each chromosome, get counts
   # and each admixed individual
   d = allo_counts
   for (id in pop_ids){
-    ind_counts_file = paste0(dir_input, "/countsMajMin/chr", i, "/hilo_", id, "counts.txt")
+    ind_counts_file = paste0(dir_input, "/countsMajMin/chr", i, "/hilo_", id, ".counts.txt")
     d = cbind(d, # column bind (all files have same sites)
     read.table(ind_counts_file, header = F, stringsAsFactors = F, sep = "\t"))
   }
