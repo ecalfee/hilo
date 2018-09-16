@@ -79,7 +79,7 @@ pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F,
 # allopatric mexicana includes Xochimilco (pop # 35) for now
 mex_ids <- filter(pass1, zea == "mexicana" &
                     (symp_allo == "allopatric" | LOCALITY == "Xochimilco"))$n
-mex_counts = data.frame(n_major_mex = rep(0, nrow(SNPs), n_minor_mex = rep(0, nrow(SNPs))
+mex_counts = data.frame(n_major_mex = rep(0, nrow(SNPs)), n_minor_mex = rep(0, nrow(SNPs)))
 for (id in mex_ids){
   newCounts = sample1_read(
       ind_counts_file = paste0(path, "/countsMajMin/chr", i, "/hilo_", id, ".txt")

@@ -1351,5 +1351,6 @@ data/filtered_bam$ for i in {1..200}; do samtools flagstat hilo_$i.sort.dedup.ba
 # maybe line above won't finish running in this session :/
 # making new input files for ancestry hmm (without 41-43 for now):
 scripts$ sbatch makeAlloCountsAncHMMInput.sh
+Submitted batch job 27936615 -ERROR: rerunning
 
 scripts$ sbatch --dependency=afterok:*** makeAncHMMInput.sh
