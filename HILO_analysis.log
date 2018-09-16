@@ -1313,7 +1313,7 @@ scripts$ sbatch --array=19 -p bigmemh --dependency=afterok:27321523 runAncHMM.sh
 Submitted batch job 27325727 - ERROR on input files
 
 # run for all sympatric populations. First check pop366 and files for SNPs look ok! (no ref ref alleles..)
-scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh --NEVER RAN
+scripts$ sbatch --array=19 -p bigmemm runAncHMM_noboot.sh --NEVER RAN
 
 # instead of GATK or samtools mpileup I'm using angsd to get counts of all ACGT reads that pass filtering
 # for the thinned sites -- countReadsACGT.sh
@@ -1348,12 +1348,21 @@ Submitted batch job 27932914. rerunning with new files (After fixing index):
 Submitted batch job 27936307 - COMPLETED
 # need to add hilo 41-43 into metadata
 data/filtered_bam$ for i in {1..200}; do samtools flagstat hilo_$i.sort.dedup.baq.bam | awk -v i="$i" '{print "hilo"i" "$0}' | grep 'total' >> pass1.all.metrics.Nreads; done
-# maybe line above won't finish running in this session :/
+# (!) this needs to be re-run .. data can come from the dedup file maybe and it takes a long time to run and appends to end (oops!)
 # making new input files for ancestry hmm (without 41-43 for now):
 scripts$ sbatch makeAlloCountsAncHMMInput.sh
-Submitted batch job 27936615 -ERROR: rerunning
-Submitted batch job 27936660 - fixed typo:
-Submitted batch job 27936707 - fixed new typo:
-Submitted batch job 27936758 - another typo:
-
-scripts$ sbatch --dependency=afterok:*** makeAncHMMInput.sh
+Submitted batch job 27936615 -ERROR: rerunning many times with typos, then fixed:
+Submitted batch job 27937464 - COMPLETED
+scripts$ sbatch makeAncHMMInput.sh
+Submitted batch job 27937571 - many errors fixed, final run:
+Submitted batch job 27937757 - COMPLETED. we'll see if hmm runs with some sites having no maize ref. alleles (very few sites):
+scripts$ sbatch --array=19 -p bigmemh runAncHMM_noboot.sh
+Submitted batch job 27937887 - errors ancestry proportions not summing to one (!) - fixed:
+Submitted batch job 27938233 - RUNNING
+scripts$ sbatch --array=19 -p bigmemh runAncHMM.sh  # also running version with bootstrap
+Submitted batch job 27938248 - RUNNING
+# and running other populations too:
+scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
+Submitted batch job 27938289 - RUNNING
+### remaining issues: filtered sites still contain low-information maize sites (no called genotypes)
+### and I haven't included hilo 41-43 yet. And I need to switch to the new lowland SA maize for allopatric maize
