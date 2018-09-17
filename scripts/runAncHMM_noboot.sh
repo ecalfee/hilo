@@ -17,10 +17,11 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# directory with input files
-DIR_IN="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input"
-DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output/noBoot"
-GLOBAL_ADMIXTURE_FILE=$DIR_IN"/globalAdmixtureByPopN.txt"
+# directory with input/output subdirectories
+DIR="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
+cd ${DIR} # move to main directory
+SUBDIR_OUT="output_noBoot"
+GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt"
 
 # pull columns from file into arrays
 LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))
@@ -33,26 +34,24 @@ POP=pop${LIST_OF_POPS[${i}]} # e.g. pop366
 ALPHA_MAIZE=${LIST_OF_ALPHA_MAIZE[${i}]}
 ALPHA_MEX=${LIST_OF_ALPHA_MEX[${i}]}
 
-# make and go to directory where ancestry_hmm should output files
-mkdir -p ${DIR_OUT}
-cd ${DIR_OUT}
-
 # check for no admixture
 echo "running "${POP}" maize: " ${ALPHA_MAIZE}" mex: "${ALPHA_MEX}
-if [ ${ALPHA_MAIZE} = 0 ] || [ ${ALPHA_MAIZE} = 1 ]
+if [ ${ALPHA_MAIZE} = 0.00 ] || [ ${ALPHA_MAIZE} = 1.00 ]
 then
     echo ${POP}" is 100% one ancestry -> skipping local ancestry inference"
     exit 0 # exit without failure (no inference needed)
 fi
 
+# make and go to directory where ancestry_hmm should output files
+mkdir -p ${SUBDIR_OUT}
+cd ${SUBDIR_OUT} # change directory to output directory
 
 #run ancestry_hmm
 echo "running local ancestry inference "${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
 --ne 10000 --tmin 0 --tmax 10000 \
--i ${DIR_IN}/${POP}.anc_hmm.input \
--s ${DIR_IN}/${POP}.anc_hmm.ids.ploidy
+-i ../input/${POP}.anc_hmm.input \
+-s ../input/${POP}.anc_hmm.ids.ploidy
 
-# -b s for bootstrapping 10 times each with 1000 SNPs for confidence on timing of introgression
 echo "all done!"

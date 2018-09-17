@@ -1325,9 +1325,13 @@ Submitted batch job 27723541-50 # re-doing just ones cancelled due to time limit
 scripts$ sbatch -p med --export=CHR=1 --array=8,16-29,50-54,65-69,89-105,107,133,188 -t 4:00:00 countReadsACGT.sh
 Submitted batch job 27929508 - COMPLETED
 scripts$ sbatch -p med --export=CHR=2 --array=40,41,44-47,168-171,189 -t 4:00:00 countReadsACGT.sh
-Submitted batch job 27929560 - COMPLETED
+Submitted batch job 27929560 - COMPLETED (but found additional NODE_FAIL case below later)
+scripts$ sbatch -p med --export=CHR=2 --array=28 -t 4:00:00 countReadsACGT.sh
+Submitted batch job 27946888 - COMPLETED
 scripts$ sbatch -p med --export=CHR=3 --array=85-86,117,122-126,142-146,162 -t 4:00:00 countReadsACGT.sh
-Submitted batch job 27929586 - COMPLETED
+Submitted batch job 27929586 - COMPLETED (BUT ISSUE STILL WITH 148 so rerunning:)
+scripts$ sbatch -p med --export=CHR=3 --array=148 -t 4:00:00 countReadsACGT.sh
+Submitted batch job 27946896 - COMPLETED
 # note: hilo 41-43 have zero length files; hilo 80 has no data
 I had already redone bam filtering for hilo 41-43:
 slurm-log/filterBam_*_25848426_41.out (or _42, _43)
@@ -1341,7 +1345,9 @@ Submitted batch job 27936230-39 - COMPLETED
 # getting major/minor read counts for all hilo individuals except 41-43 and 80:
 scripts$ sbatch --array=1-40,44-79,81-200 countReadsMajorMinor.sh
 Submitted batch job 27932610 - fixing typo:
-Submitted batch job 27932923 - COMPLETED
+Submitted batch job 27932923 - COMPLETED (but had 2 I need to fix:)
+scripts$ sbatch --array=28,148 countReadsMajorMinor.sh
+Submitted batch job 27946940 - COMPLETED
 # and I will do the same for 41-43 when they're finished
 scripts$ sbatch --array=41-43 --dependency=afterok:$(echo {27932007..27932016} | tr " " ",") countReadsMajorMinor.sh
 Submitted batch job 27932914. rerunning with new files (After fixing index):
@@ -1355,14 +1361,21 @@ Submitted batch job 27936615 -ERROR: rerunning many times with typos, then fixed
 Submitted batch job 27937464 - COMPLETED
 scripts$ sbatch makeAncHMMInput.sh
 Submitted batch job 27937571 - many errors fixed, final run:
-Submitted batch job 27937757 - COMPLETED. we'll see if hmm runs with some sites having no maize ref. alleles (very few sites):
+Submitted batch job 27937757 - COMPLETED BUT NEED TO FIX 2 BELOW MISSING INPUT FILES:
+# populations 21 and 27 had truncated anc_hmm input files:
+scripts$ sbatch --array=21,27 makeAncHMMInput.sh
+Submitted batch job 27946967 - COMPLETED
+#(also we'll see if anc_hmm runs with some sites having no maize ref. alleles (very few sites))
 scripts$ sbatch --array=19 -p bigmemh runAncHMM_noboot.sh
 Submitted batch job 27937887 - errors ancestry proportions not summing to one (!) - fixed:
-Submitted batch job 27938233 - RUNNING
+Submitted batch job 27938233 - CANCELLED (TIMEOUT). fixed typo in directories & re-running:
+
 scripts$ sbatch --array=19 -p bigmemh runAncHMM.sh  # also running version with bootstrap
-Submitted batch job 27938248 - RUNNING
+Submitted batch job 27938248 - I CANCELLED (not reaching calculations..). fixed typo & rerunning:
+
 # and running other populations too:
 scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
-Submitted batch job 27938289 - RUNNING
+Submitted batch job 27938289 - CANCELLED (TIMED-OUT). fixed typo & truncated input files & rerunning:
+
 ### remaining issues: filtered sites still contain low-information maize sites (no called genotypes)
 ### and I haven't included hilo 41-43 yet. And I need to switch to the new lowland SA maize for allopatric maize
