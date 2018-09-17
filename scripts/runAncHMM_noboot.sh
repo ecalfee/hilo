@@ -3,9 +3,10 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ancNoBoot
 #SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
-#SBATCH -t 36:00:00
-#SBATCH --mem=24G
+#SBATCH -t 24:00:00
+#SBATCH --mem=8G
 #SBATCH --array=0-27
+#SBATCH --export=Ne=10000,SUBDIR_OUT="output_noBoot"
 
 # NBOTE: pop 366 is a good one to start with and has index 19
 
@@ -20,7 +21,6 @@ set –o nounset
 # directory with input/output subdirectories
 DIR="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
 cd ${DIR} # move to main directory
-SUBDIR_OUT="output_noBoot"
 GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt"
 
 # pull columns from file into arrays
@@ -50,7 +50,7 @@ cd ${SUBDIR_OUT} # change directory to output directory
 echo "running local ancestry inference "${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
---ne 10000 --tmin 0 --tmax 10000 \
+--ne ${Ne} --tmin 0 --tmax 10000 \
 -i ../input/${POP}.anc_hmm.input \
 -s ../input/${POP}.anc_hmm.ids.ploidy
 
