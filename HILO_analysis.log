@@ -1364,18 +1364,19 @@ Submitted batch job 27937571 - many errors fixed, final run:
 Submitted batch job 27937757 - COMPLETED BUT NEED TO FIX 2 BELOW MISSING INPUT FILES:
 # populations 21 and 27 had truncated anc_hmm input files:
 scripts$ sbatch --array=21,27 makeAncHMMInput.sh
-Submitted batch job 27946967 - COMPLETED
+Submitted batch job 27946967 - COMPLETED -- NEEDED TO ADD PLOIDY FILE TO SCRIPT:
+scripts$ sbatch makeAncHMMInput.sh
 #(also we'll see if anc_hmm runs with some sites having no maize ref. alleles (very few sites))
 scripts$ sbatch --array=19 -p bigmemh runAncHMM_noboot.sh
 Submitted batch job 27937887 - errors ancestry proportions not summing to one (!) - fixed:
 Submitted batch job 27938233 - CANCELLED (TIMEOUT). fixed typo in directories & re-running:
-
+Submitted batch job 27947541 - CANCELLED (forgot to make ploidy file)
 scripts$ sbatch --array=19 -p bigmemh runAncHMM.sh  # also running version with bootstrap
 Submitted batch job 27938248 - I CANCELLED (not reaching calculations..). fixed typo & rerunning:
-
+Submitted batch job 27947544 - CANCELLED (forgot to make ploidy file)
 # and running other populations too:
 scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
 Submitted batch job 27938289 - CANCELLED (TIMED-OUT). fixed typo & truncated input files & rerunning:
-
+scripts$ sbatch --dependency=afterok:27947541 --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
 ### remaining issues: filtered sites still contain low-information maize sites (no called genotypes)
 ### and I haven't included hilo 41-43 yet. And I need to switch to the new lowland SA maize for allopatric maize

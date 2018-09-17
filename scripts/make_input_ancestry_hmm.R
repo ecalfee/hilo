@@ -53,3 +53,9 @@ for (i in 1:10){ # for each chromosome, get counts
 # write id's of included individuals in same order they appear in ancestry_hmm input file
 write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"),
             row.names = F, col.names = F, quote = F)
+# write ploidy file for included individuals in the same order they appear in ancestry_hmm input file
+ploidy = data.frame(id = paste0("HILO", pop_ids), ploidy = 2)
+write.table(ploidy, paste0(dir_output, "/pop", N, ".anc_hmm.ids.ploidy"),
+            row.names = F, col.names = F, quote = F, sep = "\t")
+
+
