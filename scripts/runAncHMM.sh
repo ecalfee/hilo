@@ -62,8 +62,8 @@ log=/home/ecalfee/hilo/slurm-log/runAncHMM_%A_%a.out
 echo 'extracting bootstrap values from '${log}
 grep 'running pop' ${log} | \
 awk '{print $2"\t"$3 $4"\t"$5 $6}' > \
-${DIR}/${SUBDIR_OUT}/bootstrap_${POP}.txt
+bootstrap_${POP}.txt
 awk -v alpha_mex=${ALPHA_MEX} '$3 == alpha_mex {print $0}' ${log} | \
-awk 'NR % 2 == 0' >> ${DIR}/${SUBDIR_OUT}/bootstrap_${POP}.txt
+awk 'NR % 2 == 0' >> bootstrap_${POP}.txt
 
 echo "all done!"
