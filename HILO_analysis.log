@@ -1366,17 +1366,41 @@ Submitted batch job 27937757 - COMPLETED BUT NEED TO FIX 2 BELOW MISSING INPUT F
 scripts$ sbatch --array=21,27 makeAncHMMInput.sh
 Submitted batch job 27946967 - COMPLETED -- NEEDED TO ADD PLOIDY FILE TO SCRIPT:
 scripts$ sbatch makeAncHMMInput.sh
+Submitted batch job 27947901 - COMPLETED all but # 19 (timeout)
+scripts$ sbatch -t 1:00:00 --array=19 -p bigmemh makeAncHMMInput.sh
+Submitted batch job 27949487
 #(also we'll see if anc_hmm runs with some sites having no maize ref. alleles (very few sites))
 scripts$ sbatch --array=19 -p bigmemh runAncHMM_noboot.sh
 Submitted batch job 27937887 - errors ancestry proportions not summing to one (!) - fixed:
 Submitted batch job 27938233 - CANCELLED (TIMEOUT). fixed typo in directories & re-running:
-Submitted batch job 27947541 - CANCELLED (forgot to make ploidy file)
+Submitted batch job 27947541 - CANCELLED (forgot to make ploidy file, rerunning:)
+scripts$ sbatch --array=19 -p bigmemh runAncHMM_noboot.sh
+Submitted batch job 27949496 - COMPLETED
 scripts$ sbatch --array=19 -p bigmemh runAncHMM.sh  # also running version with bootstrap
 Submitted batch job 27938248 - I CANCELLED (not reaching calculations..). fixed typo & rerunning:
-Submitted batch job 27947544 - CANCELLED (forgot to make ploidy file)
+Submitted batch job 27947544 - CANCELLED (forgot to make ploidy file, rerunning:)
+scripts$ sbatch --array=19 -p bigmemh runAncHMM.sh
+Submitted batch job 27949532 - RUNNING
 # and running other populations too:
 scripts$ sbatch --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
 Submitted batch job 27938289 - CANCELLED (TIMED-OUT). fixed typo & truncated input files & rerunning:
-scripts$ sbatch --dependency=afterok:27947541 --array=0-18,20-27 -p bigmemm runAncHMM_noboot.sh
-### remaining issues: filtered sites still contain low-information maize sites (no called genotypes)
+scripts$ sbatch --dependency=afterok:27949496 --array=0-18,20-27%1 -p bigmemh runAncHMM_noboot.sh
+Submitted batch job 27949611 - COMPLETED - 200-1200ish generations since admixture estimated (could be diff Ne per pop too)
+# running all bootstraps too:
+scripts$ sbatch --array=0-18,20-27%6 -p bigmemh --mem=8G -t 6:00:00 runAncHMM.sh
+Submitted batch job 27950729
+## to get in a usable form the bootstrap time of admixture results (from slurm tasks 27950729 & 27949532),
+## I run the following code:
+hilo$ for i in $(ls slurm-log/*27950729*; ls slurm-log/*27949532*); do popN=$(grep 'running pop' ${i} | awk '{print $2}'); alpha_mex=$(grep 'running pop' ${i} | awk '{print $6}'); echo ${popN}; echo alpha_mex:${alpha_mex}; grep 'running pop' ${i} | awk '{print $2"\t"$3 $4"\t"$5 $6}'> data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_bootT/bootstrap_${popN}.txt; awk -v alpha_mex=$alpha_mex '$3 == alpha_mex {print $0}' ${i} | awk 'NR % 2 == 0' >> data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_bootT/bootstrap_${popN}.txt; done
+## experiment with make Ne larger or smaller.
+scripts$ sbatch --export=Ne=50000,SUBDIR_OUT="output_bootT_Ne50k" runAncHMM.sh
+Submitted batch job 27953854 - COMPLETED
+scripts$ sbatch --array=0-27%4 -p bigmemh --export=Ne=5000,SUBDIR_OUT="output_bootT_Ne5k" runAncHMM.sh
+Submitted batch job 27953869 - COMPLETED
+# made bootstrap file manually (see above) but fixed in .sh script to make automatically next time
+# Ne 5k, 10k, or 50k appears to make little difference to infered timing -- I can check effect on tracts later
+# Next I'll make a plot of time estimates & proportion maize/mex for the different populations (w/ size of point = # ind. or total avg coverage)
+# to test source of bias upwards of teosinte ancestry compared to original alpha, I could re-do NGSadmix with my chosen SNP set (or a spaced subset) & see what it says
+# it could be I'm choosing sites that are more teosinte (e.g. over/under-sampling by recombination rate)
+# or that I've picked snp's where it's easier to identify teosinte than avg. genomewide
 ### and I haven't included hilo 41-43 yet. And I need to switch to the new lowland SA maize for allopatric maize

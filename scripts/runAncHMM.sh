@@ -58,7 +58,7 @@ ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 #-b 10 1000 does 10 bootstraps with 1000 snps each for time estimate
 
 # make bootstrap information more accessible by extracting it to a new file:
-log=/home/ecalfee/hilo/slurm-log/runAncHMM_%A_%a.out
+log=/home/ecalfee/hilo/slurm-log/runAncHMM_${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.out
 echo 'extracting bootstrap values from '${log}
 grep 'running pop' ${log} | \
 awk '{print $2"\t"$3 $4"\t"$5 $6}' > \
