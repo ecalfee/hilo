@@ -1404,3 +1404,13 @@ Submitted batch job 27953869 - COMPLETED
 # it could be I'm choosing sites that are more teosinte (e.g. over/under-sampling by recombination rate)
 # or that I've picked snp's where it's easier to identify teosinte than avg. genomewide
 ### and I haven't included hilo 41-43 yet. And I need to switch to the new lowland SA maize for allopatric maize
+
+# analysing first batch of data: made script to take posterior
+# calls for all sites and all 3 genotypes
+# and summarise it by population mexicana ancestry frequencies
+# calc_genomewide_pop_anc_freq.R takes in HILOXX.posterior files from ancestry_hmm
+# and returns and anc/ folder with individual alphas, ancestry frequencies,
+# and pop ancestry frequencies
+# Zanc_statistic.R is still early draft to run calculations from these files
+# also made R script to plot time of admixture for different bootstrap values of Ne
+# -- Ne choice makes little difference plot_time_of_admixture_estimate.R

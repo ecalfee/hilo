@@ -6,7 +6,7 @@ library(ggplot2)
 pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
                                      header = T, sep = "\t")
 dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/"
-popN = 366
+popN = 23
 ids_list = read.table(paste0("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop",
                   popN, ".anc_hmm.ids"), stringsAsFactors = F)$V1
 #ids_list = c(1, 3, 14, 74, 78, 95, 100, 109, 130) # pop366
