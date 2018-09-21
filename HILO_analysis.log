@@ -1414,3 +1414,11 @@ Submitted batch job 27953869 - COMPLETED
 # Zanc_statistic.R is still early draft to run calculations from these files
 # also made R script to plot time of admixture for different bootstrap values of Ne
 # -- Ne choice makes little difference plot_time_of_admixture_estimate.R
+
+# Barbara scripts$ nohup parallel --noswap --joblog ../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/calc_pop_freqs.log --jobs 6 'Rscript calc_genomewide_pop_anc_freq.R {1} ../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot' ::: 18 19 21 23 24 26 {28..30} 34 360 362 363 {365..368} 370 {372..374} &> ../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/calc_pop_freqs.out &
+[1] 2645 - fixed typo & re-ran
+[2] 2928
+
+
+
+

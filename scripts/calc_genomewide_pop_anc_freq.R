@@ -72,6 +72,6 @@ write.table(pop_anc_freq,
 
 # a popN.alpha.ind file with two columns, n (ind HILO ID)
 write.table(alpha, 
-            paste0(dir_output, "/pop", N, ".anc.freq"), 
+            paste0(dir_output, "/pop", N, ".alpha.ind"), 
             col.names = T, row.names = F, quote = F, sep = "\t")
 
