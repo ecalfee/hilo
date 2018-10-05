@@ -94,3 +94,31 @@ ggsave("../plots/t_est_by_location_varying_Ne.png", plot = p5,
        width = 7, height = 5, units = "in",
        dpi = 200)
 
+# what is the range of t estimates?
+summary_t_est <- summary(boots10$t_est)
+min_t <- min(boots10$t_est)
+max_t <- max(boots10$t_est)
+# how big should an average block be?
+# I need to know mean recombination rate in maize...
+# assuming recombination is .001cM ~ 1kb
+# 1 M ~ 10,000kb
+# mean block length (in kb)
+mean_block_length_kb <- 10000/summary_t_est 
+mean_block_length_kb
+# how many SNPs per avg. sized block?
+# thinned to max 1 SNP per .001cM (on avg. 1 kb)
+# but in reality SNP density is less 
+# (b/c SNPs aren't evenly distributed to begin with)
+# There are 450822 SNPs total (thinned to .001cM)
+# and ~2.3 GB in the maize genome -> 
+tot_thinned_snps <- 450822
+maize_genome_size_kb <- 2.3*10^6
+thinned_snps_per_kb_avg <- tot_thinned_snps/maize_genome_size_kb
+thinned_snps_per_kb_avg
+exp_snps_per_mean_block <- thinned_snps_per_kb_avg * mean_block_length_kb
+exp_snps_per_mean_block
+
+snp_block_detection <- rbind(t_est = summary_t_est, 
+           mean_block_length_kb = mean_block_length_kb, 
+           exp_snps_per_mean_block = exp_snps_per_mean_block)
+snp_block_detection
