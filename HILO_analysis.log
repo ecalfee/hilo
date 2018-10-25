@@ -988,6 +988,9 @@ Submitted batch job 26008240
 scripts$ sbatch --dependency=afterok:26008240 remapAlloMaizeV4.sh
 Submitted batch job 26008241 -- DONE, BUT BAM/SAM FILES EMPTY (no sites). .fq look ok.
 # all slurm-log files have something like ""[mem_sam_pe] paired reads have different names: "FCC1WDLACXX:4:2116:2328:81442#", "FCC1WDLACXX:4:2108:10115:86292#""
+# The issue is that I need to sort by name so read pairs are together, not by mapping coordinate,
+# before creating the .fq file. Fixed script to do that remapAlloMaizeV4.sh and rerunning 10.25.18:
+scripts$ sbatch remapAlloMaizeV4.sh
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
