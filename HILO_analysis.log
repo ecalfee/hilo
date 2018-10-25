@@ -1435,5 +1435,10 @@ Submitted batch job 27953869 - COMPLETED
 # Because this is low coverage data, I will not set a minimum individual coverage (one read is sufficient to include a site)
 # I use coverage calculated over a set of random regions for the whole sample to estimate expected range of coverage
 # and choose cutoffs based on coverage calculated over a number of small regions and all hilo + alloMaize4Low ind's:
-scripts$ calcDepthCovRegions.sh
+scripts$ sbatch --partition=bigmemh calcDepthCovRegions.sh
+Submitted batch job 6115224 -- modified to account for much higher possible counts (up to 5000 reads)
+scripts$ sbatch --partition=bigmemh -t 10:00:00 calcDepthCovRegions.sh
+Submitted batch job 6120920
+# 3 standard deviations for regular coverage per site or some other reasonable cutoff is my goal
+# The mean coverage across sites I will calculate directly from the filtered BAM read counts
 
