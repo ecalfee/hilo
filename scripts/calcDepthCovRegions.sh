@@ -10,6 +10,8 @@
 REGIONS_LIST=N1000.L100.regions
 OUT_DIR=depthCov/merged_pass1_all_alloMaize4Low_16
 BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list
+MAX_DEPTH=5000
+# MAX_DEPTH is the maximum number of reads counted per site -- any more is put in a bin >=MAX_DEPTH
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -29,7 +31,8 @@ angsd -out ${OUT_DIR}/${REGIONS_LIST}.Q20 \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doCounts 1 \
--doDepth 1 
+-doDepth 1 \
+-maxDepth ${MAX_DEPTH}
 echo "done calculating depth base quality > 20 & now calculating across all reads that map"
 # calculate depth for bases meeting any base quality
 angsd -out ${OUT_DIR}/${REGIONS_LIST} \
@@ -38,5 +41,6 @@ angsd -out ${OUT_DIR}/${REGIONS_LIST} \
 -remove_bads 1 \
 -minMapQ 30 \
 -doCounts 1 \
--doDepth 1 
+-doDepth 1 \
+-maxDepth ${MAX_DEPTH}
 echo "done calculating depth using ANGSD on BAMS for hilo "$REGIONS
