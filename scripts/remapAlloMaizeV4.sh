@@ -22,17 +22,17 @@ set –o nounset
 module load samtools
 module load bwa
 
-LIST_OF_INDS=($(awk '{print $1}' landraces_fromLi/alloMaizeInclude.list)) # make array of individuals
+LIST_OF_INDS=($(awk '{print $1}' alloMaizeInclude.list)) # make array of individuals
 IND=${LIST_OF_INDS[$SLURM_ARRAY_TASK_ID]} # get individual i based on SLURM_ARRAY_TASK_ID
 TMPDIR="tmp" #redefine your temporary directory here, you could make a new one in your work directory
-INPUT_DIR="original/" #redefine your input and output directory
-OUTPUT_DIR="remapped/"
+INPUT_DIR="original" #redefine your input and output directory
+OUTPUT_DIR="remapped"
 
 # make temporary and output directories
 mkdir -p $TMPDIR
 mkdir -p $OUTPUT_DIR
 
-echo "BAM -> fastq for landrace "$IND
+echo "BAM -> fastq for landrace ${IND}"
 # use samtools to convert bam to fastq file only if fastq does not already exist
 if [ ! -e "${TMPDIR}/${IND}.fq" ]
 then
@@ -56,7 +56,7 @@ bwa mem -t 16 -p refMaize/AGPv4.fa ${TMPDIR}/${IND}.fq  > ${TMPDIR}/${IND}.sam
 # -p specifies that the paired end reads in .fq are interwoven:
 # read1_pair1, read1_pair2, read2_pair1, read2_pair2 etc.
 
-echo "SAM -> BAM for landrace "${IND}
+echo "SAM -> BAM for landrace ${IND}"
 samtools view -bS -o ${OUTPUT_DIR}/${IND}.bam ${TMPDIR}/${IND}.sam
 
 #echo "deleting intermediate SAM & fastq files for landrace "${IND}
@@ -65,4 +65,4 @@ samtools view -bS -o ${OUTPUT_DIR}/${IND}.bam ${TMPDIR}/${IND}.sam
 #rm ${TMPDIR}/${IND}.sam
 #rm ${TMPDIR}/${IND}.fq # will delete after I see the script has run properly
 
-echo "all done for landrace "${IND}
+echo "all done for landrace ${IND}"
