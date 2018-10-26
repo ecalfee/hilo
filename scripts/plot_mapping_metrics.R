@@ -172,3 +172,42 @@ depths_list = list(depthF, depthF20, depthS_nochr1, depthS20_nochr1)
 depths_labels = c("depth Fst regions", "depth Fst regions Q>20",
                   "depth var sites", "depth var sites Q>20")
 for (i in 1:4) plot_depth_mean(dep = depths_list[[i]], ids = pass1, label = depths_labels[i])
+
+# get total depth of coverage distribution for hilo ind's
+# combined wiht maize 4 low (16 higher cov. ind's) from Anne
+depthT <- t(read.csv("../data/depthCov/merged_pass1_all_alloMaize4Low_16/N1000.L100.regions.Q20.depthGlobal",
+                   header = F, sep = "\t"))[1:5001]
+depthBin <- 0:5000
+depthT[1:5] # no spots with zero coverage but 867 with 1x coverage?
+depthTvals <- unlist(mapply(rep, times = depthT, x = depthBin))
+hist(depthTvals)
+summary(depthTvals)
+sd(depthTvals)
+mean(depthTvals)
+maxDepth = mean(depthTvals) + 3*sd(depthTvals)
+# 1020
+# depth per sample (just hilo, not allopatric maize)
+depthS <- read.csv("../data/depthCov/merged_pass1_all_alloMaize4Low_16/N1000.L100.regions.Q20.depthSample",
+                     header = F, sep = "\t")[, 1:5001]
+depthShilo <- depthS[1:196,]
+apply(depthShilo, 2, sum)[1:50] # hilo totals
+depthSvalshilo <- lapply(1:nrow(depthShilo), function(r) unlist(mapply(rep, times = depthShilo[r,], x = depthBin)))
+depthSvalsAllhilo <- unlist(depthSvalshilo)
+hist(depthSvalsAllhilo)
+summary(depthSvalsAllhilo)
+mean(depthSvalsAllhilo) + 3*sd(depthSvalsAllhilo)
+sapply(depthSvalshilo, mean) + 6*sapply(depthSvalshilo, sd)
+mean(depthSvalsAllhilo) + 10*sd(depthSvalsAllhilo)
+# 12
+
+# only allopatric maize
+depthSmaize <- depthS[197:212,]
+apply(depthSmaize, 2, sum)[1:50] # maize totals
+depthSvalsmaize <- lapply(1:nrow(depthSmaize), function(r) unlist(mapply(rep, times = depthSmaize[r,], x = depthBin)))
+depthSvalsAllmaize <- unlist(depthSvalsmaize)
+hist(depthSvalsAllmaize)
+summary(depthSvalsAllmaize)
+mean(depthSvalsAllmaize) + 3*sd(depthSvalsAllmaize)
+sapply(depthSvalsmaize, mean) + 3*sapply(depthSvalsmaize, sd)
+mean(depthSvalsAllmaize) + 10*sd(depthSvalsAllmaize)
+# 158

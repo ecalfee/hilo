@@ -1427,8 +1427,8 @@ Submitted batch job 27953869 - COMPLETED
 
 
 ## FILTERING BASED ON DEPTH - For quality control, I want to filter out sites that have too low or too high of
-# coverage across the full sample of individuals. I am doing this by setting a minimum and maximum total depth # when I call variant sites for further analysis for each region across the genome using callVarAngsd_Regions.sh 
-# Later, I also need to make sure I use these same filtering steps for any non-variant based analyses, including 
+# coverage across the full sample of individuals. I am doing this by setting a minimum and maximum total depth # when I call variant sites for further analysis for each region across the genome using callVarAngsd_Regions.sh
+# Later, I also need to make sure I use these same filtering steps for any non-variant based analyses, including
 # NGSadmix, PCA in angsd and Fst (with SAF, SFS steps)
 # Additionally, I want to filter out individuals with extremely high coverage from the counts provided to ancestry_hmm
 # Very high coverage can indicate poor mapping quality (multiple sites mapping to one region) or TEs in an individual (where e.g. other TE instances all map to the one TE location present in the reference). Very low depth could be places where allopatric mex or maize or the admixed individuals do not map well to the reference genome, leading to dropped reads.
@@ -1441,4 +1441,23 @@ scripts$ sbatch --partition=bigmemh -t 10:00:00 calcDepthCovRegions.sh
 Submitted batch job 6120920
 # 3 standard deviations for regular coverage per site or some other reasonable cutoff is my goal
 # The mean coverage across sites I will calculate directly from the filtered BAM read counts
+# To calculate mean total coverage I first calculate number of reads from the hilo BAMS
+data/filtered_bam$ for i in $(ls hilo_*.sort.dedup.baq.bam); do samtools idxstats ${i}; done | cut -f3 | awk 'BEGIN {total=0} {total += $1} END {print total}'
+1458097096
+# and from Anne's 4 lowland maize populations
+data/alloMaize4Low$ for i in $(ls reordered_*.bam); do samtools idxstats ${i}; done | cut -f3 | awk 'BEGIN {total=0} {total += $1} END {print total}'
+6270955555
+# So on average we have about 504x coverage across all individuals based on
+# taking # reads X 150 bp/read divided by 2.3x10^9bp for the maize genome size
+# I used my R script plot_mapping_metrics.R to process the results of calcDepthCovRegions.sh
+# and find that across these sampled regions (100 regions of 1000 bp each)
+# from these regions I calculate a mean depth of only 278. I'm not sure why that's so much lower than
+# my predicted 504x mean. depth in angsd is skipping sites that have no reference base...so for regions 100*1000bp = 100,000
+# there are only 94756 counted sites with depth recorded, or ~95% of sites.
+# for the total sample, the mean + 3 sd's is 1020 coverage
+# combining across individual maize, the mean + 10 sd's is ~158
+# and for individual hilo low-coverage sequences, the mean + 10 sd's is ~12
 
+# I apply this new filter for <1020x total coverage to my variant sites scripts
+# creating new output in depthFilt/var_sites/pass1_alloMaize4Low/region_**.txt
+scripts$ callVarAngsd_Regions.sh

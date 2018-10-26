@@ -6,8 +6,12 @@
 #SBATCH -t 10:00:00
 #SBATCH --mem=12G
 #SBATCH -n 4
-#SBATCH --export=OUT_DIR=var_sites/pass1_alloMaize4Low,BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list
 #SBATCH --array=0-46
+
+# set some VARIABLES
+MAX_DEPTH=1020 # maximum depth for total sample before discarding a site
+OUT_DIR=depthFilt/var_sites/pass1_alloMaize4Low
+BAM_LIST=merged_bam.pass1_all.alloMaize4Low_16.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -34,7 +38,8 @@ angsd -out $OUT_DIR/region_$SLURM_ARRAY_TASK_ID \
 -minMapQ 30 -minQ 20 \
 -doCounts 1 -minMaf 0.05 -doMaf 8 \
 -minInd 50 \
--P 4
+-P 4 \
+-setMaxDepth ${MAX_DEPTH}
 
 
 # settings:
@@ -54,3 +59,4 @@ angsd -out $OUT_DIR/region_$SLURM_ARRAY_TASK_ID \
 # -minMaf x: and then do a cutoff to only include variant sites with >x diff. from reference allele
 # -minInd N: only keep sites with information (at least one read) from N individuals
 # -P 4 means use 4 threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
+# -setMaxDepth filters out sites where total depth exceeds some threshold
