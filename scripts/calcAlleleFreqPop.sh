@@ -7,11 +7,11 @@
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
-#SBATCH --export=POP=specify_pop_here,DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
+#SBATCH --export=POP=specify_pop_here
 
 DIR_POPS="pass1_bam_pops"
 DIR_REGIONS="refMaize/divide_5Mb"
-#DIR_SITES=var_sites/merged_pass1_all_alloMaize4Low_16
+DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
 
 # to run
 # sbatch --export=POP=pop363 calcAlleleFreqPop.sh

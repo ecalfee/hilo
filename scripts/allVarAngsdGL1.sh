@@ -4,12 +4,18 @@
 #SBATCH -J allGL1Angsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/allGL1Angsd_%A_%a.out
 #SBATCH -t 10:00:00
-#SBATCH --mem=5G
+#SBATCH --mem=8G
 #SBATCH -n 1
-#SBATCH --array=0-425%8
-#SBATCH --export=DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar,BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list,DIR_REGIONS=refMaize/divide_5Mb
+#SBATCH --array=0-425
 
+# if you run on bigmemh, need to limit array, e.g. --array=0-425%8
 # %k ensures only k jobs max run at one time
+
+# some VARIABLES
+MAX_DEPTH=1020 # maximum depth for total sample before discarding a site
+DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
+BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list
+DIR_REGIONS=refMaize/divide_5Mb
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -38,7 +44,8 @@ angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 -doCounts 1 -minMaf 0.05 -doMaf 8 \
 -GL 1 -doGlf 2 \
 -minInd 40 \
--P 1
+-P 1 \
+-setMaxDepth ${MAX_DEPTH}
 
 
 # settings:
@@ -57,3 +64,4 @@ angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 # -minMaf x: and then do a cutoff to only include variant sites with >x minor allele freq.
 # -minInd N: only keep sites with information (at least one read) from N individuals
 # -P n means use n threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
+# -setMaxDepth filters out sites where total depth exceeds some threshold

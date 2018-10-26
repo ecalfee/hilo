@@ -3,10 +3,10 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J MAF2SitesFile
 #SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%A_%a.out
-#SBATCH -t 30:00
-#SBATCH --mem=200M
+#SBATCH -t 1:00:00
+#SBATCH --mem=250M
 #SBATCH --array=0-425
-#SBATCH --export=DIR=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar
+#SBATCH --export=DIR=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables

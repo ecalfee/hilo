@@ -996,9 +996,10 @@ Submitted batch job 6106605 -- made fq files but couldn't find reference & index
 # re-indexing reference for bwa-mem (was just a folder issue finding index but I worry that the original index
 # could have not completed properly since the algorithm to index shoudl only be for data <2G
 scripts$ sbatch indexRefBWA.sh
-***
+Submitted batch job 6132410 - RUNNING
 # Then running remap again (will skip over making fq files if already done)
-scripts$ sbatch --dependency=afterok:6106605,***
+scripts$ sbatch --dependency=afterok:6106605,6132410 remapAlloMaizeV4.sh
+Submitted batch job 6132440 - WAITING 4 DEPENDENCY
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1466,4 +1467,15 @@ data/alloMaize4Low$ for i in $(ls reordered_*.bam); do samtools idxstats ${i}; d
 # I apply this new filter for <1020x total coverage to my variant sites scripts
 # creating new output in depthFilt/var_sites/pass1_alloMaize4Low/region_**.txt
 scripts$ sbatch callVarAngsd_Regions.sh
-Submitted batch job 6131903
+Submitted batch job 6131903 -- CANCELLED (wrong script -- want sites w/ GL1)
+Running script below instead, with output to DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
+scripts$ sbatch allVarAngsdGL1.sh
+Submitted batch job ****
+# when this finishes I need to turn these into sites
+scripts$ sbatch --dependency=afterok:*** mafsToSitesFile.sh
+# Now I need to calculate MAF while filtering individuals at sites where they have excessive read coverage
+# And for maize, filtering sites with too low of read depth
+# --> actually because MAF is based on samtools' GL algorithm and not counts I can't filter individuals out like that for outlier coverage in angsd
+sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:**** calcAlleleFreqPop.sh
+sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:**** calcAlleleFreq.sh
+# Then I can filter based on MAF diff between allopatric pops and nInd included at a site
