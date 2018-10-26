@@ -992,8 +992,13 @@ Submitted batch job 26008241 -- DONE, BUT BAM/SAM FILES EMPTY (no sites). .fq lo
 # before creating the .fq file. Fixed script to do that remapAlloMaizeV4.sh and rerunning 10.25.18:
 scripts$ sbatch remapAlloMaizeV4.sh
 Submitted batch job 6105434 --> fixed some naming issues
-Submitted batch job 6106605
-
+Submitted batch job 6106605 -- made fq files but couldn't find reference & index
+# re-indexing reference for bwa-mem (was just a folder issue finding index but I worry that the original index
+# could have not completed properly since the algorithm to index shoudl only be for data <2G
+scripts$ sbatch indexRefBWA.sh
+***
+# Then running remap again (will skip over making fq files if already done)
+scripts$ sbatch --dependency=afterok:6106605,***
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1460,4 +1465,5 @@ data/alloMaize4Low$ for i in $(ls reordered_*.bam); do samtools idxstats ${i}; d
 
 # I apply this new filter for <1020x total coverage to my variant sites scripts
 # creating new output in depthFilt/var_sites/pass1_alloMaize4Low/region_**.txt
-scripts$ callVarAngsd_Regions.sh
+scripts$ sbatch callVarAngsd_Regions.sh
+Submitted batch job 6131903

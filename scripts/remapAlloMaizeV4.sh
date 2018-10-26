@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data/landraces_fromLi/
+#SBATCH -D /home/ecalfee/hilo/data/
 #SBATCH -J remapV4
 #SBATCH -o /home/ecalfee/hilo/slurm-log/remapV4_%A_%a.out
 #SBATCH -t 192:00:00
@@ -22,11 +22,11 @@ set –o nounset
 module load samtools
 module load bwa
 
-LIST_OF_INDS=($(awk '{print $1}' alloMaizeInclude.list)) # make array of individuals
+LIST_OF_INDS=($(awk '{print $1}' landraces_fromLi/alloMaizeInclude.list)) # make array of individuals
 IND=${LIST_OF_INDS[$SLURM_ARRAY_TASK_ID]} # get individual i based on SLURM_ARRAY_TASK_ID
-TMPDIR="tmp" #redefine your temporary directory here, you could make a new one in your work directory
-INPUT_DIR="original" #redefine your input and output directory
-OUTPUT_DIR="remapped"
+TMPDIR="landraces_fromLi/tmp" #redefine your temporary directory here, you could make a new one in your work directory
+INPUT_DIR="landraces_fromLi/original" #redefine your input and output directory
+OUTPUT_DIR="landraces_fromLi/remapped"
 
 # make temporary and output directories
 mkdir -p $TMPDIR
