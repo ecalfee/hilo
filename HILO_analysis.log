@@ -1003,7 +1003,8 @@ Submitted batch job 6132440 - WAITING 4 DEPENDENCY
 ## Nov 1 2018: One bam file appears to be corrupted. I think it would be easier to just download the raw sequence data and map from that.
 # So I made got the study SRA accession numbers data/landraces_fromLi/SraRunTable.txt and I made a new script to download from NCBI
 # scripts/download_ncbi_allo_landraces.sh
- 
+scripts$ sbatch --array=1 -t 24:00 --mem=24G download_ncbi_allo_landraces.sh 
+Submitted batch job 6689982 # running -- just testing 1 file first to see how long it takes, that it works & memory used 
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
