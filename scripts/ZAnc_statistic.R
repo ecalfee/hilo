@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
 library(scales)
@@ -24,7 +25,7 @@ colnames(alphas) <- c("popN", "alpha_maize", "alpha_mex")
 # metadata for each individual, including pop association
 meta <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
                    header = T, sep = "\t") %>%
-  filter(est_coverage >= 0.05) %>%
+  filter(., est_coverage >= 0.05) %>%
   left_join(., alphas, by = c("popN"))
 # individual by individual K matrix
 included_inds = meta %>%
@@ -390,6 +391,8 @@ d1 %>%
   geom_line(size = .5, alpha = .5, col = "navy") + 
   facet_wrap(~chr)
 ggsave("../plots/ZAnc_mex_ind_whole_genome.png", height = 15, width = 15, units = "in", device = "png")
+
+
 
 
 # plot individual and population ZAnc together for comparison

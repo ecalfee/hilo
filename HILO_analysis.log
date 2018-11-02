@@ -996,10 +996,14 @@ Submitted batch job 6106605 -- made fq files but couldn't find reference & index
 # re-indexing reference for bwa-mem (was just a folder issue finding index but I worry that the original index
 # could have not completed properly since the algorithm to index shoudl only be for data <2G
 scripts$ sbatch indexRefBWA.sh
-Submitted batch job 6132410 - RUNNING
+Submitted batch job 6132410 - COMPLETED
 # Then running remap again (will skip over making fq files if already done)
 scripts$ sbatch --dependency=afterok:6106605,6132410 remapAlloMaizeV4.sh
 Submitted batch job 6132440 - WAITING 4 DEPENDENCY
+## Nov 1 2018: One bam file appears to be corrupted. I think it would be easier to just download the raw sequence data and map from that.
+# So I made got the study SRA accession numbers data/landraces_fromLi/SraRunTable.txt and I made a new script to download from NCBI
+# scripts/download_ncbi_allo_landraces.sh
+ 
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1470,12 +1474,15 @@ scripts$ sbatch callVarAngsd_Regions.sh
 Submitted batch job 6131903 -- CANCELLED (wrong script -- want sites w/ GL1)
 Running script below instead, with output to DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
 scripts$ sbatch allVarAngsdGL1.sh
-Submitted batch job ****
+Submitted batch job 6133390 - RUNNING
 # when this finishes I need to turn these into sites
-scripts$ sbatch --dependency=afterok:*** mafsToSitesFile.sh
+scripts$ sbatch --dependency=afterok:6133390 mafsToSitesFile.sh
+Submitted batch job 6133614 - PENDING
 # Now I need to calculate MAF while filtering individuals at sites where they have excessive read coverage
 # And for maize, filtering sites with too low of read depth
 # --> actually because MAF is based on samtools' GL algorithm and not counts I can't filter individuals out like that for outlier coverage in angsd
-sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:**** calcAlleleFreqPop.sh
-sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:**** calcAlleleFreq.sh
+scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6133614 calcAlleleFreqPop.sh
+Submitted batch job 6133628
+scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
+Submitted batch job 6133644
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
