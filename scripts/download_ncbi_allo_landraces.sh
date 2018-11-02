@@ -4,7 +4,7 @@
 #SBATCH -J downLANDRACE
 #SBATCH -o /home/ecalfee/hilo/slurm-log/downLANDRACE_%A_%a.out
 #SBATCH -t 12:00:00
-#SBATCH --mem=8G
+#SBATCH --mem=16G
 #SBATCH -n 4
 #SBATCH --array=1-42
 
@@ -30,10 +30,12 @@ SRA_ID=${LIST_OF_SRAs[$SLURM_ARRAY_TASK_ID]}
 OUTPUT_DIR="landraces_fromLi/ncbi/"${SAMPLE_ID} # directory to store .fq files downloaded
 
 # output directories
-mkdir -p ${OUTPUT_DIR}
+mkdir -p ${OUTPUT_DIR}/tmp
 
 echo "Downloading data for "${SAMPLE_ID}
 echo "SRA accession "${SRA_ID}
-parallel-fastq-dump --sra-id ${SRA_ID} --threads 4 --outdir ${OUTPUT_DIR} -V
+parallel-fastq-dump --sra-id ${SRA_ID} \
+--threads 4 --outdir ${OUTPUT_DIR} \
+--tmpdir ${OUTPUT_DIR}/tmp
 
 echo "all done for landrace "${SAMPLE_ID}"; SRA accession "${SRA_ID}
