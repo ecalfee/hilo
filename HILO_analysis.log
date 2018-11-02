@@ -1008,8 +1008,8 @@ Submitted batch job 6689982 # running -- just testing 1 file first to see how lo
 # I may want to run 'prefetch' first instead if it's very slow and/or use
 # --split-files, --skip-technical, --clip and/or --gzip within the fastq-dump command
 # -- see https://github.com/rvalieris/parallel-fastq-dump
-scripts$ sbatch --array=1 -t 24:00 --mem=24G download_ncbi_allo_landraces.sh
-Submitted batch job # running with new options (clip, split, omit technical etc.)
+scripts$ sbatch --array=2 -t 24:00 --mem=24G download_ncbi_allo_landraces.sh
+Submitted batch job 6690926 # running with new options (clip, split, omit technical etc.)
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
