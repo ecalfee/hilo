@@ -36,6 +36,7 @@ echo "Downloading data for "${SAMPLE_ID}
 echo "SRA accession "${SRA_ID}
 parallel-fastq-dump --sra-id ${SRA_ID} \
 --threads 4 --outdir ${OUTPUT_DIR} \
+--gzip --clip --split-files --skip-technical \
 --tmpdir ${OUTPUT_DIR}/tmp
 
 echo "all done for landrace "${SAMPLE_ID}"; SRA accession "${SRA_ID}
