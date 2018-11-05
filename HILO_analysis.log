@@ -1009,7 +1009,17 @@ Submitted batch job 6689982 # running -- just testing 1 file first to see how lo
 # --split-files, --skip-technical, --clip and/or --gzip within the fastq-dump command
 # -- see https://github.com/rvalieris/parallel-fastq-dump
 scripts$ sbatch --array=2 -t 24:00 --mem=24G download_ncbi_allo_landraces.sh
-Submitted batch job 6690926 # running with new options (clip, split, omit technical etc.)
+Submitted batch job 6690926 # running with new options (clip, split, omit technical etc.) -- TIMEDOUT
+scripts$ sbatch --array=2 -t 24:00:00 --mem=24G download_ncbi_allo_landraces.sh
+Submitted batch job 6811429 - RUNNING now with 24 hrs not 24 min time limit
+# If this gets bogged down, I can alternatively use priority 4 cores, each 16G (so 8cpu on bigmemh for 1 individual)
+# scripts$ sbatch --array=2 -t 96:00:00 -p bigmemh download_ncbi_allo_landraces.sh -- NOT run
+### Li's scripts may be useful for starting from raw reads: (trimming, aligning, and marking duplicates .. I'm not sure I should do indel re-alignment)
+# https://github.com/HuffordLab/Wang_et_al._Demography/tree/master/trim_mapping_MD
+scripts$ sbatch --array=3 -t 120:00:00 -p bigmemm download_ncbi_allo_landraces.sh - Trying another example with extra time.
+Submitted batch job 6811947 -- CANCELLED
+scripts$ sbatch --mem=32G --array=3 -t 120:00:00 -p bigmemm download_ncbi_allo_landraces.sh -- added memory
+Submitted batch job 6811949
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1480,15 +1490,43 @@ scripts$ sbatch callVarAngsd_Regions.sh
 Submitted batch job 6131903 -- CANCELLED (wrong script -- want sites w/ GL1)
 Running script below instead, with output to DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
 scripts$ sbatch allVarAngsdGL1.sh
-Submitted batch job 6133390 - RUNNING
+Submitted batch job 6133390 - COMPLETED MOST (n=192). very helpful to ID jobs that completed sorting numerically: sort --version-sort
+hilo$ grep 'State               : COMPLETED' slurm-log/*6133390*.out | wc -l # looks like I accidentally repeated 402 when it worked the first time -- oh well!
+# some jobs ran out of memory, some out of time, and some failed for unknown reasons on bigmem6
+scripts$ sbatch --array=0,2,4-5,8,14-15,18,20-21,23,27,37,39,42-60,62-157,160,163-166,169-170,173-176,186,197-200,204-205,210,214,216-217,219-222,228-232,235-236,238,240,243-275,287-288,290,296,298,301,303,308,314-315,319-321,325,329,336,341,348,362,364,371,380-382,385,390,392,395,400-402,413,415,417,419-420,424,425 -x bigmem6 -t 24:00:00 --mem=16G allVarAngsdGL1.sh
+# re-doing one that ran out of MEMORY. n=228 state 'COMPLETED' or 'RUNNING'; 5 stuck on bigmem2 @ 22 hrs (array=0,2,4,5,8)
+scripts$ sbatch --array=39 -x bigmem6,bigmem2 -t 24:00:00 --mem=32G allVarAngsdGL1.sh
+Submitted batch job 6811951 -- COMPLETED
+data$ scancel 6811334_0,6811334_2,6811334_4,6811334_5,6811334_8 # cancelled at 22 hrs to resubmit on different node
+scripts$ sbatch --array=0,2,4,5,8 -x bigmem6,bigmem2 -t 24:00:00 --mem=32G allVarAngsdGL1.sh
+Submitted batch job 6811958 -- COMPLETED (now all regions done)
+
 # when this finishes I need to turn these into sites
 scripts$ sbatch --dependency=afterok:6133390 mafsToSitesFile.sh
-Submitted batch job 6133614 - PENDING
+Submitted batch job 6133614 - DEPENDENCY never satisfied
+scripts$ sbatch mafsToSitesFile.sh
+Submitted batch job 6812146 -- CREATED EMPTY FILES FOR var.sites; problem with zlib verison. Added line 'module load bio' to script.
+Submitted batch job ****
+
 # Now I need to calculate MAF while filtering individuals at sites where they have excessive read coverage
 # And for maize, filtering sites with too low of read depth
 # --> actually because MAF is based on samtools' GL algorithm and not counts I can't filter individuals out like that for outlier coverage in angsd
 scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6133614 calcAlleleFreqPop.sh
-Submitted batch job 6133628
+Submitted batch job 6133628 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
+scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6812146 calcAlleleFreqPop.sh
+Submitted batch job 6812513 -- DEPENDENCY NEVER MET
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
-Submitted batch job 6133644
+Submitted batch job 6133644 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
+scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6812146 calcAlleleFreqPop.sh
+Submitted batch job 6812998 -- DEPENDENCY NEVER MET
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
+
+# Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
+# (or I could calculate gene density each included site? not sure)
+# for example, I could block genome into nonoverlapping 10kb windows, average any variant sites for which I call ancestry within those windows,
+# and then get their mean gene density too (Li Wang/JRI approach) or I could calculate for each variant site where I've called local ancestry
+# the attached load to that site ... # exonic bp within 1cM of a focal site (for each CD within 1cM window of site, take length of CDS, and set its position as the center of the CD,
+# and its potential 'strength of sel' as the # bp in the CDS x some constant probability of a bp being selected.. then sum over all nearby CDS (Ivan Juric/Graham approach; also tried 10cM distance)
+# possibly the best approach is to split genome into 1cM bins and calculate # exonic sites per bin (Ivan/Graham do this for one plot) -- but how do you choose 1cM? Could also do 10cM
+# I definitely prefer calculating gene density for a fixed cM distance, not fixed bp distance, b/c that's the natural unit for linked selection
+# I need to download gff file from ensemble and identify the CoDing Sequence (CDS) - which is the whole exon minus the 3' and 5' UTRs

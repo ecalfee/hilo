@@ -14,14 +14,16 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
+# load modules
+module load bio
 
 echo "making sites file out of a mafs.gz file for region "$SLURM_ARRAY_TASK_ID
 zcat ${DIR}/region_$SLURM_ARRAY_TASK_ID.mafs.gz | \
 awk '$1 != "chromo" {print $1 "\t" $2 "\t" $3 "\t" $4}' \
 > ${DIR}/region_$SLURM_ARRAY_TASK_ID.var.sites
 
-# index the file too so that ANGSD can use it as a sits file
-echo "indexing"${DIR}"/region_"$SLURM_ARRAY_TASK_ID".var.sites"
+# index the file too so that ANGSD can use it as a sites file
+echo "indexing: "${DIR}"/region_"$SLURM_ARRAY_TASK_ID".var.sites"
 sleep 2s # wait 2 seconds before indexing so that index doesn't have same timestamp as sites file
 angsd sites index ${DIR}/region_$SLURM_ARRAY_TASK_ID.var.sites
 echo "all done region "$SLURM_ARRAY_TASK_ID
