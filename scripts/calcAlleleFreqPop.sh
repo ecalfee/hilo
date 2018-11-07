@@ -7,15 +7,15 @@
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
-#SBATCH --export=POP=specify_pop_here
+#SBATCH --export="POP=specify_pop_here,ALL"
 
 DIR_POPS="pass1_bam_pops"
 DIR_REGIONS="refMaize/divide_5Mb"
 DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
 
 # to run
-# sbatch --export=POP=pop363 calcAlleleFreqPop.sh
-# sbatch --export=POP=maize.allo.4Low16 calcAlleleFreq.sh
+# sbatch --export="POP=pop363,ALL" calcAlleleFreqPop.sh
+# sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreq.sh
 
 # %k ensures only k jobs max run at one time, e.g. --array=0-425%8 runs 8 at a time
 
@@ -28,8 +28,8 @@ set –o nounset
 REGION_I=$SLURM_ARRAY_TASK_ID
 DIR_OUT=$DIR_SITES
 
-# load angsd -- don't load -- updated version 9.20 is local
-#module load angsd
+# load angsd v9.21 from bio
+module load bio
 
 # make directory to store output (if doesn't yet exist)
 mkdir -p ${DIR_OUT}/${POP}

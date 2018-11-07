@@ -1506,7 +1506,14 @@ scripts$ sbatch --dependency=afterok:6133390 mafsToSitesFile.sh
 Submitted batch job 6133614 - DEPENDENCY never satisfied
 scripts$ sbatch mafsToSitesFile.sh
 Submitted batch job 6812146 -- CREATED EMPTY FILES FOR var.sites; problem with zlib verison. Added line 'module load bio' to script.
-Submitted batch job ****
+Submitted batch job 6813426 -- STILL DID NOT WORK. Can't figure out zcat or sleep commands. Now using angsd 9.21 w/ module bio instead of 9.20 locally installed
+scripts$ sbatch -p bigmemm mafsToSitesFile.sh
+Submitted batch job 6813852 -- DID NOT WORK. added ALL to export list; could be couldn't find $PATH for zcat and sleep commands
+scripts$ sbatch mafsToSitesFile.sh
+Submitted batch job 6893592 -- ALL COMPLETED EXCEPT A FEW SUSPENDED on one node -- I cancelled and reran these:
+scripts$ scancel 6893592_189 6893592_190 6893592_191 6893592_192 6893592_194
+scripts$ sbatch --array=189-192,194 -p med -x c8-67 mafsToSitesFile.sh
+Submitted batch job 6894551 - COMPLETED
 
 # Now I need to calculate MAF while filtering individuals at sites where they have excessive read coverage
 # And for maize, filtering sites with too low of read depth
@@ -1514,11 +1521,17 @@ Submitted batch job ****
 scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6133614 calcAlleleFreqPop.sh
 Submitted batch job 6133628 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
 scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6812146 calcAlleleFreqPop.sh
-Submitted batch job 6812513 -- DEPENDENCY NEVER MET
+Submitted batch job 6812513 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
+scripts$ sbatch --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
+
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
 Submitted batch job 6133644 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6812146 calcAlleleFreqPop.sh
-Submitted batch job 6812998 -- DEPENDENCY NEVER MET
+Submitted batch job 6812998 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
+scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
+
+
+
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
