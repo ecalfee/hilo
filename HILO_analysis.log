@@ -1523,16 +1523,17 @@ Submitted batch job 6133628 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDEN
 scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6812146 calcAlleleFreqPop.sh
 Submitted batch job 6812513 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
 scripts$ sbatch --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
-
+Submitted batch job 6894780 -- RUNNING
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
 Submitted batch job 6133644 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6812146 calcAlleleFreqPop.sh
 Submitted batch job 6812998 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
 scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
-
-
+Submitted batch job 6894990 -- RUNNING
 
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
+
+
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
 # (or I could calculate gene density each included site? not sure)
@@ -1543,3 +1544,18 @@ scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
 # possibly the best approach is to split genome into 1cM bins and calculate # exonic sites per bin (Ivan/Graham do this for one plot) -- but how do you choose 1cM? Could also do 10cM
 # I definitely prefer calculating gene density for a fixed cM distance, not fixed bp distance, b/c that's the natural unit for linked selection
 # I need to download gff file from ensemble and identify the CoDing Sequence (CDS) - which is the whole exon minus the 3' and 5' UTRs
+# I downloaded the gff3 file from ensemble 11.6.18 ftp://ftp.ensemblgenomes.org/pub/plants/release-41/gff3/zea_mays
+# then I extracted the locations of all the CDS on the chromosomes, mtDNA, ptDNA (n=918923)
+# realized there was lots of overlap between different CDS.
+# So I first made an R script to pre-process the gff3 file into the largest contiguous CDS (ignoring strand identity) from any overlapping or adjacent CDS
+reduceCDSFromGFF3.R # ran interactively to produce output: CDS_1.txt, CDS_2.txt ... CDS_Mt.txt (1 per chromosome)
+
+# Now using a short python script to output the map position (in cM) for the start, end, and midpoint of each CDS. And its total length too.
+scripts$ module load python3
+scripts$ python3 getMapPosCDS.py -- NOPTE: running interactively = too long. Will make script after fixing issues below
+scripts$ sbatch getMapPosCDS.sh
+
+# note: I was having difficulty using pandas and python3 on my laptop, but it works on farm. I stopped the script writing to output once it gets to positions on the mt and pt chromosomes (because not integers)
+
+# I can write a separate script to divide the whole genome into 1cM chunks and then calculate what % of bp's are CDS within each of those chunks (save start/end and # CDS bp and percent). Also potentially save mean recomb. rate over region.
+# note if I can get a list of start and end bp for the 1cM chunks, I can use IRanges() in R to count overlapping bases with my set of CDS in CDS.txt
