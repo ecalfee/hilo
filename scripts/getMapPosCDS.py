@@ -16,7 +16,7 @@ nameOut = sys.argv[3] # e.g. "../data/refMaize/geneAnnotations/CDS_1_mapPos.txt"
 # get linkage map
 rmapALL = pandas.read_csv("../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt", sep = "\t", header = None, names = ["name", "marker", "pos_cM", "chrom", "pos_bp"])
 
-rmapCHR = rmap[rmap["chrom"] == chromo]
+rmapCHR = rmapALL[rmapALL["chrom"] == chromo]
 
 print("starting to calculate positions of CDS on chromo " + str(chromo))
 
@@ -27,12 +27,12 @@ with open(nameOut, mode = "wt") as fileOut:
     with open(nameIn, mode = "rt") as fileRead:
         reader = csv.reader(fileRead, delimiter = "\t")
         for row in reader:
-            try:
-                chromo = int(row[0])
-            except ValueError: # if chromo isn't an integer, skip and end loop -- in mt, pt chromosomes (will ignore, not in map)
-                print("skipping to end of file: " + str(row))
-                break
-            # read start end and width of CDS ranges from input file
+            if (row[0] == "start"):
+                print("skipping line: " + str(row))
+                continue # skip header line
+            else:
+                pass
+
             start_bp = int(row[0])
             end_bp = int(row[1])
             width_bp = int(row[2])
