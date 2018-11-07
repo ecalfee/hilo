@@ -1523,13 +1523,18 @@ Submitted batch job 6133628 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDEN
 scripts$ sbatch --export=POP=mexicana.allo.withXochi35 --dependency=afterok:6812146 calcAlleleFreqPop.sh
 Submitted batch job 6812513 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
 scripts$ sbatch --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
-Submitted batch job 6894780 -- RUNNING
+Submitted batch job 6894780 -- RAN: cancelled a wide set 60-121,180-295 due to 'slurm 'Munge decode error' expired credential'..not sure what this means. I'm rerunning.
+scripts$ sbatch --array=60-121,180-295 -x bigmem4 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
+Submitted batch job 6960524
+
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
 Submitted batch job 6133644 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6812146 calcAlleleFreqPop.sh
 Submitted batch job 6812998 -- DEPENDENCY NEVER MET. Fixed sites script, load angsd 9.21 & added ALL to export:
 scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
-Submitted batch job 6894990 -- RUNNING
+Submitted batch job 6894990 -- RAN -- all but 0, 252 and 256 completed (these out of memory; I'll double time and memory:)
+scripts$ sbatch -t 20:00:00 --mem=16G --array=0,252,256 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
+Submitted batch job 6960263
 
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
 
@@ -1553,6 +1558,9 @@ reduceCDSFromGFF3.R # ran interactively to produce output: CDS_1.txt, CDS_2.txt 
 # Now using a short python script to output the map position (in cM) for the start, end, and midpoint of each CDS. And its total length too.
 scripts$ module load python3
 scripts$ python3 getMapPosCDS.py -- NOPTE: running interactively = too long. Will make script after fixing issues below
+scripts$ sbatch getMapPosCDS.sh
+Submitted batch job 6958913 - RUNNING -- CANCELLED, fixed typos & made more efficient by passing just chr map to calcMapPos.py: rerunning:
+scripts$ sbatch --array=0 getMapPosCDS.sh # chr 0 is a very short test file
 scripts$ sbatch getMapPosCDS.sh
 
 # note: I was having difficulty using pandas and python3 on my laptop, but it works on farm. I stopped the script writing to output once it gets to positions on the mt and pt chromosomes (because not integers)

@@ -8,17 +8,15 @@ import pandas
 import calcMapPos # helper function to calculate map position in cM from bp pos
 
 
-minL = float(sys.argv[1]) # minimum length (in cM) between 2 SNPs that are kept
-fileOut = sys.argv[2] # file/path to write results to as a new sites file .var.sites and .distM distance in Morgans file
-listIn = sys.argv[3:] # list of files/paths to read in (sites files, not gzipped)
-
 # get input file of CDS and their bp positions
-chromo = float(sys.argv[1]) # e.g. 1, which chromosome
+chromo = int(sys.argv[1]) # e.g. 1, which chromosome
 nameIn = sys.argv[2] # e.g. "../data/refMaize/geneAnnotations/CDS_1.txt"
 nameOut = sys.argv[3] # e.g. "../data/refMaize/geneAnnotations/CDS_1_mapPos.txt" # name output file
 
 # get linkage map
 rmapALL = pandas.read_csv("../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt", sep = "\t", header = None, names = ["name", "marker", "pos_cM", "chrom", "pos_bp"])
+
+rmapCHR = rmap[rmap["chrom"] == chromo]
 
 print("starting to calculate positions of CDS on chromo " + str(chromo))
 
@@ -44,11 +42,11 @@ with open(nameOut, mode = "wt") as fileOut:
             mid_bp = (float(start_bp) + float(end_bp))/2.0 # may not be whole bp
             #print("mid_bp is " + str(mid_bp) + " and length_bp is " + str(length_bp))
             # get recombination positions
-            start_cM = calcMapPos.calcMapPos(chrom = chromo, pos = start_bp, rmap = rmapALL)
+            start_cM = calcMapPos.calcMapPos(chrom = chromo, pos = start_bp, rmap = rmapCHR)
             #print("start_cM is " + str(start_cM))
-            end_cM = calcMapPos.calcMapPos(chrom = chromo, pos = end_bp, rmap = rmapALL)
+            end_cM = calcMapPos.calcMapPos(chrom = chromo, pos = end_bp, rmap = rmapCHR)
             #print("end_cM is " + str(end_cM))
-            mid_cM = calcMapPos.calcMapPos(chrom = chromo, pos = mid_bp, rmap = rmapALL)
+            mid_cM = calcMapPos.calcMapPos(chrom = chromo, pos = mid_bp, rmap = rmapCHR)
             #print("at CDS " + str(chromo)+ ":" + str(mid_bp) + " at "+ str(mid_cM) + "cM")
 
             # print to file
