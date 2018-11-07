@@ -20,24 +20,34 @@ with open(nameOut, mode = "wt") as fileOut:
     writer = csv.writer(fileOut, delimiter = "\t")
     writer.writerow(["chrom", "mid_bp", "mid_cM", "length_bp", "CDS", "start_bp", "start_cM", "end_bp", "end_cM"])
     # for each input file, find SNPs to include
-    with open(fileIn, mode = "rt") as fileRead:
+    with open(nameIn, mode = "rt") as fileRead:
         reader = csv.reader(fileRead, delimiter = "\t")
         for row in reader:
-            chrom = row[0]
+
+            try:
+                chromo = int(row[0])
+            except ValueError: # if chromo isn't an integer, skip and end loop -- in mt, pt chromosomes (will ignore, not in map)
+                print("skipping to end of file: " + str(row))
+                break
+
             CDS = row[1]
             start_bp = int(row[2])
             end_bp = int(row[3])
+            #print("chrom is " + str(chromo) + " start_bp is " + str(start_bp))
+
             # get midpoint of CDS and length
             mid_bp = (float(start_bp) + float(end_bp))/2.0 # may not be whole bp
             length_bp = int(end_bp) - int(start_bp)
-
+            #print("mid_bp is " + str(mid_bp) + " and length_bp is " + str(length_bp))
             # get recombination positions
-            start_cM = calcMapPos.calcMapPos(chrom = chrom, pos = start_bp, rmap = rmapALL)
-            end_cM = calcMapPos.calcMapPos(chrom = chrom, pos = end_bp, rmap = rmapALL)
-            mid_cM = calcMapPos.calcMapPos(chrom = chrom, pos = mid_bp, rmap = rmapALL)
-            #print("at CDS " + str(chrom)+ ":" + str(mid_bp) + " at "+ str(mid_cM) + "cM")
+            start_cM = calcMapPos.calcMapPos(chrom = chromo, pos = start_bp, rmap = rmapALL)
+            #print("start_cM is " + str(start_cM))
+            end_cM = calcMapPos.calcMapPos(chrom = chromo, pos = end_bp, rmap = rmapALL)
+            #print("end_cM is " + str(end_cM))
+            mid_cM = calcMapPos.calcMapPos(chrom = chromo, pos = mid_bp, rmap = rmapALL)
+            #print("at CDS " + str(chromo)+ ":" + str(mid_bp) + " at "+ str(mid_cM) + "cM")
 
             # print to file
-            writer.writerow([chrom, str(mid_bp), str(mid_cM), str(length_bp), CDS, str(start_bp), str(start_cM), str(end_bp), str(end_cM)])
+            writer.writerow([str(chromo), str(mid_bp), str(mid_cM), str(length_bp), CDS, str(start_bp), str(start_cM), str(end_bp), str(end_cM)])
 
 print("Done")
