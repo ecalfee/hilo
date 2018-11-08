@@ -1,9 +1,9 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
-#SBATCH -J calcP
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcAlleleFreqPops_%A_%a.out
-#SBATCH -t 10:00:00
+#SBATCH -J calcPT
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcAlleleFreqPopsTransfer_%A_%a.out
+#SBATCH -t 2:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-425
@@ -24,19 +24,20 @@ DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
 set –o pipefail
 set –o errexit
 set –o nounset
-
 REGION_I=$SLURM_ARRAY_TASK_ID
-DIR_OUT=$DIR_SITES
+DIR_SCRATCH=/scratch/ecalfee/${POP}/region_${REGION_I}
+DIR_OUT=${DIR_SITES}/${POP}
 
 # load angsd v9.21 from bio
 module load bio
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p ${DIR_OUT}/${POP}
+mkdir -p ${DIR_OUT}
+mkdir -p ${DIR_SCRATCH}
 
 echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP
 
-angsd -out ${DIR_OUT}/${POP}/region_${REGION_I} \
+angsd -out ${DIR_SCRATCH}/region_${REGION_I} \
 -rf ${DIR_REGIONS}/region_${REGION_I}.txt \
 -ref refMaize/AGPv4.fa \
 -bam ${DIR_POPS}/${POP}.list \
@@ -48,7 +49,12 @@ angsd -out ${DIR_OUT}/${POP}/region_${REGION_I} \
 -GL 1 \
 -P 1
 
-echo "all done!"
+echo "all done calculating pop allele frequencies! Now transfering files from local to home directory"
+rsync -avh ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory
+echo "results copied to home output directory: "${DIR_OUT}
+
+
+
 
 # settings:
 # -r specifies which region to work on; -rf is the regions file
