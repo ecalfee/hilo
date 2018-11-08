@@ -50,7 +50,7 @@ angsd -out ${DIR_SCRATCH}/region_${REGION_I} \
 -P 1
 
 echo "all done calculating pop allele frequencies! Now transfering files from local to home directory"
-rsync -avh ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory
+rsync -avh --remove-source-files ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory & cleans up scratch dir.
 echo "results copied to home output directory: "${DIR_OUT}
 
 
