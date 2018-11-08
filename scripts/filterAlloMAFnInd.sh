@@ -1,19 +1,21 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data/
-#SBATCH -J filterAllo
-#SBATCH -o /home/ecalfee/hilo/slurm-log/filterAlloMAFnInd_%A_%a.out
+#SBATCH -J ancInform
+#SBATCH -o /home/ecalfee/hilo/slurm-log/filterAncestryInformativeAlloMAFnInd_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-425
-#SBATCH --export=minInd=6,D=0.3
 
 # other variables
+D=0.3
+minInd_maize=11
+minInd_mex=5
 allo_maize="maize.allo.4Low16"
 allo_mex="mexicana.allo.withXochi35"
-dir_maf="var_sites/merged_pass1_all_alloMaize4Low_16/"
-dir_sites="var_sites/merged_pass1_all_alloMaize4Low_16/"
-dir_out="var_sites/merged_pass1_all_alloMaize4Low_16/filteredAlloMAFnInd"
+dir_maf="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
+dir_sites=${dir_maf}
+dir_out=${dir_maf}"/ancestryInformativeFilt"
 
 region=$SLURM_ARRAY_TASK_ID
 
@@ -29,8 +31,8 @@ module load R
 mkdir -p $dir_out
 
 # filter for informative sites by minimum allele freq difference and min. # individuals with data:
-# Rscript args (in order): region, minInd, D, allo_maize, allo_mex, dir_gl, dir_sites, dir_out
-Rscript ../scripts/filter_var_sites_min_allo.R $region $minInd $D $allo_maize $allo_mex \
+# Rscript args (in order): region, minInd_maize, minInd_mex, D, allo_maize, allo_mex, dir_gl, dir_sites, dir_out
+Rscript ../scripts/filter_var_sites_min_allo.R $region $minInd_maize $minInd_mex $D $allo_maize $allo_mex \
 $dir_maf $dir_sites $dir_out
 
 echo "done filtering for informative SNPs in R for region "$region
