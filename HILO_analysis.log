@@ -1557,13 +1557,21 @@ reduceCDSFromGFF3.R # ran interactively to produce output: CDS_1.txt, CDS_2.txt 
 
 # Now using a short python script to output the map position (in cM) for the start, end, and midpoint of each CDS. And its total length too.
 scripts$ module load python3
-scripts$ python3 getMapPosCDS.py -- NOPTE: running interactively = too long. Will make script after fixing issues below
+scripts$ python3 getMapPosCDS.py -- NOPE: running interactively = too long. Will make script after fixing issues below
 scripts$ sbatch getMapPosCDS.sh
-Submitted batch job 6958913 - RUNNING -- CANCELLED, fixed typos & made more efficient by passing just chr map to calcMapPos.py: rerunning:
+Submitted batch job 6958913 - CANCELLED, fixed typos & made more efficient by passing just chr map to calcMapPos.py: rerunning:
 scripts$ sbatch --array=0 getMapPosCDS.sh # chr 0 is a very short test file
+Submitted batch job 6961885 # made temporary tweak to .sh script to run this test file using chr1 map & fixed all bugs
 scripts$ sbatch getMapPosCDS.sh
-
+Submitted batch job 6962448 -- RUNNING
 # note: I was having difficulty using pandas and python3 on my laptop, but it works on farm. I stopped the script writing to output once it gets to positions on the mt and pt chromosomes (because not integers)
 
 # I can write a separate script to divide the whole genome into 1cM chunks and then calculate what % of bp's are CDS within each of those chunks (save start/end and # CDS bp and percent). Also potentially save mean recomb. rate over region.
 # note if I can get a list of start and end bp for the 1cM chunks, I can use IRanges() in R to count overlapping bases with my set of CDS in CDS.txt
+
+# Or maybe it's better to get start and end bp for 1cM around each included variant site. This is an approximation also of local recombination rate, though somewhat smoothed from the point estimate at a locus.
+
+# INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
+# I found several identified inversion from prior mapping, LD, and experimental studies:
+# Literature citations and descriptions are saved refMaize/inversions/README_knownInv.txt
+# I've put the genomic coordinates in a new file refMaize/inversions/knownInv.txt
