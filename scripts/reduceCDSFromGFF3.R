@@ -38,6 +38,7 @@ lapply(1:12,
                    paste0("../data/refMaize/geneAnnotations/CDS_", chromosomes[i] , ".txt"),
                    quote = F,
                    col.names = T,
-                   row.names = F)
+                   row.names = F,
+                   sep = "\t")
        )
 
