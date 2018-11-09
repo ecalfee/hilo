@@ -186,6 +186,8 @@ sd(depthTvals)
 mean(depthTvals)
 maxDepth = mean(depthTvals) + 3*sd(depthTvals)
 # 1020
+# how many sites does this cutoff? ~ 1.2%
+sum(depthTvals>maxDepth)/length(depthTvals)
 # depth per sample (just hilo, not allopatric maize)
 depthS <- read.csv("../data/depthCov/merged_pass1_all_alloMaize4Low_16/N1000.L100.regions.Q20.depthSample",
                      header = F, sep = "\t")[, 1:5001]
@@ -196,9 +198,14 @@ depthSvalsAllhilo <- unlist(depthSvalshilo)
 hist(depthSvalsAllhilo)
 summary(depthSvalsAllhilo)
 mean(depthSvalsAllhilo) + 3*sd(depthSvalsAllhilo)
-sapply(depthSvalshilo, mean) + 6*sapply(depthSvalshilo, sd)
+summary(sapply(depthSvalshilo, mean) + 3*sapply(depthSvalshilo, sd))
+# 8 is an upper cutoff for 3*sd for an individual
+summary(sapply(depthSvalshilo, function(x) sum(x>8)/length(x)))
+# for the highest coverage individual this is ~1.4% of sites
+summary(sapply(depthSvalshilo, mean) + 6*sapply(depthSvalshilo, sd))
 mean(depthSvalsAllhilo) + 10*sd(depthSvalsAllhilo)
-# 12
+# 12 is a very conservative cutoff
+mean(depthSvalsAllhilo) + 7*sd(depthSvalsAllhilo)
 
 # only allopatric maize
 depthSmaize <- depthS[197:212,]
@@ -208,6 +215,24 @@ depthSvalsAllmaize <- unlist(depthSvalsmaize)
 hist(depthSvalsAllmaize)
 summary(depthSvalsAllmaize)
 mean(depthSvalsAllmaize) + 3*sd(depthSvalsAllmaize)
-sapply(depthSvalsmaize, mean) + 3*sapply(depthSvalsmaize, sd)
+summary(sapply(depthSvalsmaize, mean) + 3*sapply(depthSvalsmaize, sd))
+# 63 is an upper cutoff for 3*sd for an individual
+summary(sapply(depthSvalsmaize, function(x) sum(x>63)/length(x)))
+# for the highest coverage individual, this is ~1% of sites
+mean(depthSvalsAllmaize) + 4*sd(depthSvalsAllmaize)
+mean(depthSvalsAllmaize) + 7*sd(depthSvalsAllmaize)
 mean(depthSvalsAllmaize) + 10*sd(depthSvalsAllmaize)
-# 158
+# 158 is a very conservative cutoff allowing most sites to pass filtering
+
+# what percent of sites do we expect to have zero coverage for an individual?
+pdataHilo = 1 - sum(depthSvalsAllhilo == 0)/length(depthSvalsAllhilo)
+pdataMaize = 1 - sum(depthSvalsAllmaize == 0)/length(depthSvalsAllmaize)
+# what's the probability of at least 6 ind's (>4) with data 
+# out of 34 hilo ind's in mex reference panel?
+pbinom(q = 5, size = 34, prob = pdataHilo, lower.tail = F)
+# 12 individuals in maize is fairly similar probability
+pbinom(q = 11, size = 16, prob = pdataMaize, lower.tail = F)
+# less strict cutoffs that about 86% sites should pass
+# in either pop are minInd_mex = 5 and minInd_maize=11
+pbinom(q = 4, size = 34, prob = pdataHilo, lower.tail = F)
+pbinom(q = 10, size = 16, prob = pdataMaize, lower.tail = F)

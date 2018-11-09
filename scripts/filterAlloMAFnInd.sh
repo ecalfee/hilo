@@ -9,13 +9,14 @@
 
 # other variables
 D=0.3
-minInd_maize=11
-minInd_mex=5
+minInd_maize=10
+minInd_mex=4
 allo_maize="maize.allo.4Low16"
 allo_mex="mexicana.allo.withXochi35"
-dir_maf="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
+dir_main="geno_lik/merged_pass1_all_alloMaize4Low_16"
+dir_maf=${dir_main}/"allVar_depthFilt"
 dir_sites=${dir_maf}
-dir_out=${dir_maf}"/ancestryInformativeFilt"
+dir_out=${dir_main}"/ancestryInformativeFilt"
 
 region=$SLURM_ARRAY_TASK_ID
 

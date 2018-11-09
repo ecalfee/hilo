@@ -1514,6 +1514,10 @@ Submitted batch job 6893592 -- ALL COMPLETED EXCEPT A FEW SUSPENDED on one node 
 scripts$ scancel 6893592_189 6893592_190 6893592_191 6893592_192 6893592_194
 scripts$ sbatch --array=189-192,194 -p med -x c8-67 mafsToSitesFile.sh
 Submitted batch job 6894551 - COMPLETED
+scripts$ sbatch -p bigmemm --array=267-269,324-325,341-343,346-354,357,376-378,382-383,408,412-416,420-425 -x bigmem2,bigmem4 mafsToSitesFile.sh
+Submitted batch job 6992893 - RUNNING -- CANCELLED DUE TO out-of-memory handler. Adding memory & re-running:
+Submitted batch job 7000964 -COMPLETED (finally)
+
 
 # Now I need to calculate MAF while filtering individuals at sites where they have excessive read coverage
 # And for maize, filtering sites with too low of read depth
@@ -1525,7 +1529,21 @@ Submitted batch job 6812513 -- DEPENDENCY NEVER MET. Fixed sites script, load an
 scripts$ sbatch --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
 Submitted batch job 6894780 -- RAN: cancelled a wide set 60-121,180-295 due to 'slurm 'Munge decode error' expired credential'..not sure what this means. I'm rerunning.
 scripts$ sbatch --array=60-121,180-295 -x bigmem4 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
-Submitted batch job 6960524
+Submitted batch job 6960524 -- NEED TO RERUN 200-221, 60-68; COMPLETED 69-121 and 180-199, 222-295
+# trying just one first with new local save & then transfer over rsync script:
+scripts$ sbatch --array=200 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop_transfer.sh
+Submitted batch job 6986915 - DIDN;T FIND SITES FILE -- fixed typo:
+Submitted batch job 6986952 - DONE EXCEPT rysnc typo. fixed:
+Submitted batch job 6987003 - WORKED!
+scripts$ sbatch --array=201-221,60-68 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop_transfer.sh
+Submitted batch job 6987047 - 60-65 ran (grep 'ALL done' slurm-log/*6987047*) but others STALLED ON bigmem4; so I cancelled just those jobs:
+scripts$ sbatch --array=201-221,66-68%6 -x bigmem2,bigmem4 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop_transfer.sh
+Submitted batch job 6987706 - ALL COMPLETED very fast (a few minutes!). Ooops forgot to redo # 199
+scripts$ sbatch --array=199 -x bigmem2,bigmem4 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
+Submitted batch job 6990165 - COMPLETED. I'm not sure what happened to the following files, if they got overwritten or what (?):
+scripts$ sbatch --array=267-269,324-325,341-343,346-354,357,376-378,382-383,408,412-416,420-425 -x bigmem2,bigmem4 --export="POP=mexicana.allo.withXochi35,ALL" calcAlleleFreqPop.sh
+Submitted batch job 6990924-- CREATED EMPTY FILES -- issue is with sites file containing zero chromosomes. Fixed var.sites files & re-running:
+Submitted batch job 7001245 - COMPLETED
 
 scripts$ sbatch --export=POP=maize.allo.4Low16 --dependency=afterok:6133614 calcAlleleFreqPop.sh
 Submitted batch job 6133644 -- I CANCELLED BECAUSE OF ISSUES ABOVE WITH DEPENDENCY NOT COMPLETING
@@ -1534,10 +1552,19 @@ Submitted batch job 6812998 -- DEPENDENCY NEVER MET. Fixed sites script, load an
 scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
 Submitted batch job 6894990 -- RAN -- all but 0, 252 and 256 completed (these out of memory; I'll double time and memory:)
 scripts$ sbatch -t 20:00:00 --mem=16G --array=0,252,256 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
-Submitted batch job 6960263
+Submitted batch job 6960263 -- CANCELLED b/c STALLED, probably I/O issue
+scripts$ sbatch -t 20:00:00 --array=0,252,256 --mem=16G --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop_transfer.sh
+Submitted batch job 6987156 - COMPLETED
+#Note: I replaced my original calcAlleleFreqPop.sh script with the new working transfer script.
+scripts$ sbatch --array=267-269,324-325,341-343,346-354,357,376-378,382-383,408,412-416,420-425 -x bigmem2,bigmem4 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
+Submitted batch job 6990984 -- CREATED EMPTY FILES -- issue is with sites file containing zero chromosomes. Fixed var.sites files & re-running:
+Submitted batch job 7001332 - RUNNING
+
 
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
-
+scripts$ sbatch filterAlloMAFnInd.sh
+Submitted batch job 6989688 -- MANY finished; but some error on table merging .. need to see issue (empty tables: problem all the way back at var.sites file. fixed now & rerunning)
+# And then filter for minimum cM spacing
 
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
