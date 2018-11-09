@@ -1575,31 +1575,72 @@ Submitted batch job 7002793 - COMPLETED
 # making VCF for allopatric maize
 scripts$ sbatch --dependency=afterok:7002793 getVCFforAllo.sh
 Submitted batch job 7003338 - typo needs to be rerun:
-Submitted batch job ***
+Submitted batch job 7004748 -- all but chr 1 & 2 (on bigmem10) will finish.
+But these two are making little progress, so I'm going to cancel these 2 & restart them:
+scripts$ sbatch -p bigmemh --array=1-2 -x bigmem10,bigmem2,bigmem4 getVCFforAllo.sh
+Submitted batch job 7009561 - 2 is still running; 1 is out of memory CANCELLED
+scripts$ sbatch -p bigmemm --mem=32G --array=1 -x bigmem10,bigmem2,bigmem4 getVCFforAllo.sh
+Submitted batch job 7010274
 scripts$ sbatch --dependency=afterok:7003338 alloVCF2AlleleCounts.sh
 Submitted batch job 7003341 - DEP NEVER MET. Rerunning:
-scripts$ sbatch --dependency=afterok:*** alloVCF2AlleleCounts.sh
+scripts$ sbatch --dependency=afterok:7004748 alloVCF2AlleleCounts.sh
+Submitted batch job 7004779 -- DEP NEVER MET. rerunning in parts:
+scripts$ sbatch -p bigmemm --array=3-10 -x bigmem10,bigmem2,bigmem4 alloVCF2AlleleCounts.sh
+Submitted batch job 7009588 - COMPLETED
+scripts$ sbatch -p bigmemm --dependency=afterok:7009561,7010274 --array=1-2 -x bigmem10,bigmem2,bigmem4 alloVCF2AlleleCounts.sh
+Submitted batch job 7009675 - cancelled. added 2nd dependency:
+Submitted batch job 7010291 - WAITING
 
 # getting counts for hilo ind's
 scripts$ for i in {1..10}; do sbatch --dependency=afterok:7002793 \
 --export="CHR="$i",ALL" countReadsACGT.sh; done
-Submitted batch job 7003349-58
+Submitted batch job 7003349-58 - COMPLETE except stalled on c9-73 jobs 51_88,189,194,195,200:
+scripts$ sbatch -p bigmemm -x bigmem10 --array=1,2,88,189,194,195,200 --export="CHR=3,ALL" countReadsACGT.sh
+Submitted batch job 7009774-cancelled immediately (didn't set array -- only started files 1 and 2 so I'll add those to array)
+Submitted batch job 7009839 -- oops! 188 not 88 needed:
+scripts$ sbatch -p bigmemm -x bigmem10 --array=188 --export="CHR=3,ALL" countReadsACGT.sh
+Submitted batch job 7009861 - COMPLETED. and looks like on from chr4 too got stalled:
+scripts$ sbatch -p bigmemm -x bigmem10 --array=7 --export="CHR=4,ALL" countReadsACGT.sh
+Submitted batch job 7009885 - COMPLETED
+
 # converting ACGT counts to major/minor counts
 scripts$ sbatch --dependency=afterok:$(echo {7003349..7003358} | tr " " ",") countReadsMajorMinor.sh
-Submitted batch job 7004200
+Submitted batch job 7004200 - DEPENDENCY NEVER MET. CANCELLED.
+scripts$ sbatch -p bigmemm -x bigmem10 countReadsMajorMinor.sh
+Submitted batch job 7009949 - COMPLETED
+
 # making allopatric counts input
 scripts$ sbatch --dependency=afterok:7003341,7004200 makeAlloCountsAncHMMInput.sh
-Submitted batch job 7004208
+Submitted batch job 7004208 -- cancelled. New dependency:
+scripts$ sbatch --dependency=afterok:7004779,7004200 makeAlloCountsAncHMMInput.sh
+Submitted batch job 7004978 -- again CANCELLED. New dependency:
+scripts$ sbatch --dependency=afterok:7009949,7009675 makeAlloCountsAncHMMInput.sh
+Submitted batch job 7010176 - WAITING . cancelled. dependency changed:
+scripts$ sbatch --dependency=afterok:7010291 makeAlloCountsAncHMMInput.sh
+Submitted batch job 7010360 - WAITING
+
 # putting it all together
 scripts$ sbatch --dependency=afterok:7004208 makeAncHMMInput.sh
-Submitted batch job 7004214
+Submitted batch job 7004214 -- cancelled--new dependency:
+scripts$ sbatch -p bigmemm --dependency=afterok:7004978 makeAncHMMInput.sh
+Submitted batch job 7005324 -- cancelled--NEW DEPENDENCY:
+scripts$ sbatch -p bigmemm -x bigmem10 --dependency=afterok:7010176 makeAncHMMInput.sh
+Submitted batch job 7010188 - cancelled--NEW DEPENDENCY:
+scripts$ sbatch -p bigmemm -x bigmem10 --dependency=afterok:7010360 makeAncHMMInput.sh
+Submitted batch job 7010417
+
 # copied over global ancestry proportions (can rerun later with last round of sequencing data, but ok proxy for now)
 data$ mkdir -p geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input
 data$ cp var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/.
 # running ancestry_hmm no_boot and bootstrap
-scripts$ sbatch --dependency=afterok:*** runAncHMM_noboot.sh
-scripts$ sbatch --dependency=afterok:*** runAncHMM.sh
-
+scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM_noboot.sh
+Submitted batch job 7010208 - cancelled new dependency:
+scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM_noboot.sh
+Submitted batch job 7010427
+scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM.sh
+Submitted batch job 7010210 - cancelled new dependency:
+scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM.sh
+Submitted batch job 7010444
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
 # (or I could calculate gene density each included site? not sure)
@@ -1626,6 +1667,13 @@ Submitted batch job 6961885 # made temporary tweak to .sh script to run this tes
 scripts$ sbatch getMapPosCDS.sh
 Submitted batch job 6962448 -- RUNNING
 # note: I was having difficulty using pandas and python3 on my laptop, but it works on farm. I stopped the script writing to output once it gets to positions on the mt and pt chromosomes (because not integers)
+# I made some scripts to calculate cM <-> bp and recomb. rates
+# from the maize genetic map as well as gene density
+# within a window, either from % coding bp or calculating a 'linkage score'
+gene_density.R rmap_functions.R
+# rmap.R runs these functions to calculate recombination rate and coding density for every site
+scripts$ sbatch -x bigmem10 getGeneDensity.sh
+Submitted batch job 
 
 # I can write a separate script to divide the whole genome into 1cM chunks and then calculate what % of bp's are CDS within each of those chunks (save start/end and # CDS bp and percent). Also potentially save mean recomb. rate over region.
 # note if I can get a list of start and end bp for the 1cM chunks, I can use IRanges() in R to count overlapping bases with my set of CDS in CDS.txt

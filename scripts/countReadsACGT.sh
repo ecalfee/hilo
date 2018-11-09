@@ -41,7 +41,7 @@ echo ${bam_path} > ${bam_dir}/list_indiv_bams/hilo_${id}.only.list
 
 echo "counting reads supporting ACGT alleles for chr"${CHR}" and individual HILO"${id}
 # counts reads for sites in sites file that pass basic quality filtering
-angsd -out ${dir}/countsACGT/chr${CHR}/hilo_${id} \
+angsd -out ${DIR_SCRATCH}/hilo_${id} \
 -ref refMaize/AGPv4.fa \
 -bam ${bam_dir}/list_indiv_bams/hilo_${id}.only.list \
 -minQ 20 -minMapQ 30 \
