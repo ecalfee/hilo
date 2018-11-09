@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J calcAnc
 #SBATCH -o /home/ecalfee/hilo/slurm-log/calcAnc_%A_%a.out
 #SBATCH -t 4:00:00
@@ -28,7 +28,7 @@ set –o nounset
 module load R
 
 # directory with input/output subdirectories
-DIR_MAIN="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
+DIR_MAIN="../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
 DIR_IN=${DIR_MAIN}/${SUBDIR}
 GLOBAL_ADMIXTURE_FILE=${DIR_MAIN}"/input/globalAdmixtureByPopN.txt"
 DIR_OUT=${DIR_IN}/${anc}
