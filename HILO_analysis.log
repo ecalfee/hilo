@@ -1558,13 +1558,35 @@ Submitted batch job 6987156 - COMPLETED
 #Note: I replaced my original calcAlleleFreqPop.sh script with the new working transfer script.
 scripts$ sbatch --array=267-269,324-325,341-343,346-354,357,376-378,382-383,408,412-416,420-425 -x bigmem2,bigmem4 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
 Submitted batch job 6990984 -- CREATED EMPTY FILES -- issue is with sites file containing zero chromosomes. Fixed var.sites files & re-running:
-Submitted batch job 7001332 - RUNNING
+Submitted batch job 7001332 - RAN but some stalled w/out progress on bigmem10 and bigmem9. Cancelled & rerunning htose below:
+scripts$ sbatch --array=348-353 -x bigmem2,bigmem4,bigmem10,bigmem9 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
+Submitted batch job 7002167 - COMPLETED
 
 
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
 scripts$ sbatch filterAlloMAFnInd.sh
 Submitted batch job 6989688 -- MANY finished; but some error on table merging .. need to see issue (empty tables: problem all the way back at var.sites file. fixed now & rerunning)
+scripts$ sbatch --dependency=afterok:7002167 filterAlloMAFnInd.sh
+Submitted batch job 7002187 - COMPLETED
 # And then filter for minimum cM spacing
+scripts$ sbatch --dependency=afterok:7002187 pruneFixedcM.sh
+Submitted batch job 7002203 - CANCELLED to change output directory (may have started overwriting var_sites files, not sure, but pre depth filter so okay to lose those earlier results)
+scripts$ sbatch pruneFixedcM.sh
+Submitted batch job 7002793 - RUNNING
+# making VCF for allopatric maize
+scripts$ sbatch --dependency=afterok:7002793 getVCFforAllo.sh
+Submitted batch job ****
+scripts$ sbatch --dependency=afterok:**** alloVCF2AlleleCounts.sh
+# getting counts for hilo ind's
+scripts$ for i in {1..10}; do sbatch --dependency=afterok:7002793 \
+--export="CHR="$i",ALL" countReadsACGT.sh; done
+Submitted batch job **
+# converting ACGT counts to major/minor counts
+scripts$ sbatch --dependency=afterok:**,**,** countReadsMajorMinor.sh
+# making allopatric counts input
+scripts$ sbatch --dependency=afterok:**,***** makeAlloCountsAncHMMInput.sh
+# putting it all together
+scripts$ sbatch --dependency=afterok:******** makeAncHMMInput.sh
 
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)

@@ -10,7 +10,7 @@
 # array contains all the chromosome #
 ID=$SLURM_ARRAY_TASK_ID
 # directory for input and output
-dir="../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM"
+dir="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables

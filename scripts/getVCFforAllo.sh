@@ -6,14 +6,19 @@
 #SBATCH -t 12:00:00
 #SBATCH --mem=16G
 #SBATCH --array=1-10
-#SBATCH --export=n_threads=2
+#SBATCH --export="n_threads=2,ALL"
 
 # note: number of threads should not exceed memory requested divided by 8G/thread
 
 # array is the chromosome #
 POP="maize.allo.4Low16"
 i=$SLURM_ARRAY_TASK_ID
-sites_dir="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
+DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
+DIR_SCRATCH="/scratch/ecalfee/vcfAllo_chr"${i}
+
+# minimum and maximum individual depth filters
+MAX_DEPTH_IND=63
+MIN_DEPTH_IND=3
 
 # this script takes in a sites file and calls genotypes for allopatric individuals
 # from high coverage maize, outputing a VCF
@@ -24,12 +29,17 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# don't load angsd, local copy is latest (v9.20)
+# load angsd latest v9.21 using bio module
+module load bio
+
+# make temporary scratch directories
+mkdir -p $DIR_SCRATCH
+
 echo "checking if sites index file exists and making a new one if it does not"
-if [ ! -e ${sites_dir}/chr${i}.var.sites.bin ]
+if [ ! -e ${DIR_SITES}/chr${i}.var.sites.bin ]
 then
     echo "indexing sites file"
-    angsd sites index ${sites_dir}/chr${i}.var.sites
+    angsd sites index ${DIR_SITES}/chr${i}.var.sites
 else
     echo "index already exists"
 fi
@@ -37,9 +47,9 @@ fi
 
 echo "calling genotypes and outputting a vcf chr"${i}" pop "${POP}
 # (1) make VCF in ANGSD
-angsd -out ${sites_dir}/${POP}_chr${i} \
+angsd -out ${DIR_SCRATCH}/${POP}_chr${i} \
 -r ${i} \
--sites ${sites_dir}/chr${i}.var.sites \
+-sites ${DIR_SITES}/chr${i}.var.sites \
 -bam pass1_bam_pops/${POP}.list \
 -remove_bads 1 \
 -minMapQ 30 \
@@ -51,11 +61,15 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 -doPost 1 \
 -postCutoff 0.9 \
 -doVCF 1 \
+-doCounts \
+-setMaxDepthInd ${MAX_DEPTH_IND} \
+-geno_minDepth ${MIN_DEPTH_IND} \
 -P ${n_threads}
 
 # (maybe should be more lenient (.9) posterior prob. for calling genotypes or later additionally sample 1 read for low coverage positions in these allopatric maize individuals .. I'm not sure_
 
 # settings:
+# -doCounts allows us to filter based on maximum and minimum read depths
 # -r specifies which region to work on
 # -remove_bads removes reads with flags like duplicates
 # -doMajorMinor 3: takes major & minor allele from sites file
@@ -73,5 +87,10 @@ angsd -out ${sites_dir}/${POP}_chr${i} \
 # (I pre-computed BAQ scores and replaced quality with minimum of BAQ/base quality,
 # so this is equivalend to -baq 2 option here)
 # -P n means use n threads/nodes for each angsd task (here task=chromosome; then merges threads within-chrom)
+
+# copy results back over
+echo "all done making allopatric maize VCF! Now transfering files from local to home directory"
+rsync -avh --remove-source-files ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory & cleans up scratch dir.
+echo "results copied to home output directory: "${DIR_OUT}
 
 echo "all done!"

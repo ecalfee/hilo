@@ -16,6 +16,7 @@ MAX_DEPTH=1020 # maximum depth for total sample before discarding a site
 DIR_OUT=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt
 BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list
 DIR_REGIONS=refMaize/divide_5Mb
+DIR_SCRATCH="/scratch/ecalfee/angsdVarSites_region"${SLURM_ARRAY_TASK_ID}
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -23,18 +24,19 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# load angsd -- don't load -- updated version 9.20 is local
-#module load angsd
+# angsd v9.21 is in module bio
+module load bio
 
 # make directory to store output (if doesn't yet exist)
 mkdir -p $DIR_OUT
+mkdir -p $DIR_SCRATCH
 
 # apply filtering with SAMtools & PICARD
 echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLURM_ARRAY_TASK_ID
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
-angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
+angsd -out $DIR_SCRATCH/region_$SLURM_ARRAY_TASK_ID \
 -rf $DIR_REGIONS/region_$SLURM_ARRAY_TASK_ID.txt \
 -ref refMaize/AGPv4.fa \
 -bam $BAM_IN \
@@ -46,6 +48,10 @@ angsd -out $DIR_OUT/region_$SLURM_ARRAY_TASK_ID \
 -minInd 40 \
 -P 1 \
 -setMaxDepth ${MAX_DEPTH}
+
+echo "all done identifying variant sites! Now transfering files from local to home directory"
+rsync -avh --remove-source-files ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory & cleans up scratch dir.
+echo "results copied to home output directory: "${DIR_OUT}
 
 
 # settings:

@@ -5,6 +5,7 @@ Local ancestry inference for each admixed individual is done using ancestry_hmm
 1c) pruneFixedcM.sh: uses python script to create a new sites file with a set of SNPs in low LD 
 with high diff. in allele freq between ref panels and meeting minimum # individuals with data in each ref. panel
 (see estimate in plot_mapping_metrics.R) minInd 5 and 11 are similar cutoffs ~86% sites should pass for mex or maize
+But looking at an actual file, minInd 4 for mexicana cuts out ~1/3 of the data, so I'll use that as a bare minimum and somewhat arbitrarily minInd 10 for maize
 
 Now I prepare input files for ancestry_hmm
 2) Get allele counts for allopatric maize based on called genotypes:
@@ -17,7 +18,8 @@ estimated in plot_mapping_metrics.R using depth of coverage for regions as > mu+
 3) Get major & minor reads for each hilo individual, including admixed and ref mexicana individuals
 filters out data for individuals at sites where they have excess coverage
 which is estimated as > 3sd from mean for the highest coverage hilo individual - over 8 reads  
-countReadsMajorMinor.sh
+countReadsACGT.sh: counts raw ACGT bases
+countReadsMajorMinor.sh: associates ACGT with major/minor allele from sites file
 
 4) Get allele counts for allopatric mexicana based on 1 sampled read per individual per site passing filtering:
 4a) makeAlloCountsAncHMMInput.sh

@@ -10,7 +10,7 @@
 # array is the chromosome #
 i=$SLURM_ARRAY_TASK_ID
 POP="maize.allo.4Low16"
-dir="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
+dir="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
 
 # this script takes in a VCF file (for an allopatric population)
 # and outputs a counts file from plink
@@ -24,10 +24,9 @@ set –o nounset
 # load modules
 module load plink
 
-echo "counting ref and alt allele in vcf chr"${i}" pop "${POP}
+echo "counting major and minor allele in vcf chr"${i}" pop "${POP}
 # take name.vcf.gz file from angsd and
 # (1) convert it to a simple vcf format using plink, name.vcf (drops genotype likelihoods etc.)
-# this file can then be read in by GATK for major/minor allele to get read counts for all low-coverage individuals
 # (2) summarize allele counts of major and minor allele for high-coverage allopatric maize in a plink output file, name.frq.count
 plink --vcf ${dir}/${POP}_chr${i}.vcf.gz --recode vcf-iid --freq counts --keep-allele-order --out ${dir}/${POP}_chr${i}
 
