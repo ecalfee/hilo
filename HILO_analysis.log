@@ -1644,14 +1644,15 @@ Submitted batch job 7010427 - DEP NEVER MET:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7014690 runAncHMM_noboot.sh
 Submitted batch job 7014736 -- ERROR: (I'll try to rerun with bio module loaded -- not sure issue (?))
 ancestry_hmm: error while loading shared libraries: libarmadillo.so.6: cannot open shared object file: No such file or directory
-Submitted batch job ***
+GOT FARM UPDATED COPY Ancestry_HMM loaded as a module:
+scripts$ sbatch -x bigmem10 runAncHMM_noboot.sh
+Submitted batch job 7015475 - RUNNING
 
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM.sh
 Submitted batch job 7010210 - cancelled new dependency:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM.sh
-Submitted batch job 7010444 - DEPENDENCY NEVER MET:
+Submitted batch job 7010444 - DEPENDENCY NEVER MET: ( need to update loading module here too)
 
-ACK! WHAT IS THIS STILL RUNNING (?) 6960263_252   bigmemm    calcP  ecalfee CG    18:23:07      1 2   16G    bigmem2
 
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
