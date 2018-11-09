@@ -14,6 +14,7 @@
 POP="maize.allo.4Low16"
 i=$SLURM_ARRAY_TASK_ID
 DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
+DIR_OUT=${DIR_SITES}
 DIR_SCRATCH="/scratch/ecalfee/vcfAllo_chr"${i}
 
 # minimum and maximum individual depth filters
@@ -61,7 +62,7 @@ angsd -out ${DIR_SCRATCH}/${POP}_chr${i} \
 -doPost 1 \
 -postCutoff 0.9 \
 -doVCF 1 \
--doCounts \
+-doCounts 1 \
 -setMaxDepthInd ${MAX_DEPTH_IND} \
 -geno_minDepth ${MIN_DEPTH_IND} \
 -P ${n_threads}

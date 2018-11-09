@@ -3,12 +3,12 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ancNoBoot
 #SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
-#SBATCH -t 24:00:00
+#SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-27
-#SBATCH --export=Ne=10000,SUBDIR_OUT="output_noBoot"
+#SBATCH --export="Ne=10000,SUBDIR_OUT=output_noBoot,ALL"
 
-# NBOTE: pop 366 is a good one to start with and has index 19
+# note: pop 366 is a good one to start with and has index 19
 
 # this script runs local ancestry inference using ancestry_hmm
 
@@ -19,7 +19,7 @@ set –o errexit
 set –o nounset
 
 # directory with input/output subdirectories
-DIR="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
+DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
 cd ${DIR} # move to main directory
 GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt"
 

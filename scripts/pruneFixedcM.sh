@@ -22,7 +22,9 @@ set –o nounset
 
 # load modules
 # using python3 for pandas
+# and bio for angsd v9.21 for angsd sites indexing
 module load python3
+module load bio
 
 # make output directory
 mkdir -p ${DIR_OUT}

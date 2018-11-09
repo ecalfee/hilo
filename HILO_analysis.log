@@ -1562,7 +1562,6 @@ Submitted batch job 7001332 - RAN but some stalled w/out progress on bigmem10 an
 scripts$ sbatch --array=348-353 -x bigmem2,bigmem4,bigmem10,bigmem9 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop.sh
 Submitted batch job 7002167 - COMPLETED
 
-
 # Then I can filter based on MAF diff between allopatric pops and nInd included at a site
 scripts$ sbatch filterAlloMAFnInd.sh
 Submitted batch job 6989688 -- MANY finished; but some error on table merging .. need to see issue (empty tables: problem all the way back at var.sites file. fixed now & rerunning)
@@ -1572,21 +1571,34 @@ Submitted batch job 7002187 - COMPLETED
 scripts$ sbatch --dependency=afterok:7002187 pruneFixedcM.sh
 Submitted batch job 7002203 - CANCELLED to change output directory (may have started overwriting var_sites files, not sure, but pre depth filter so okay to lose those earlier results)
 scripts$ sbatch pruneFixedcM.sh
-Submitted batch job 7002793 - RUNNING
+Submitted batch job 7002793 - COMPLETED
 # making VCF for allopatric maize
 scripts$ sbatch --dependency=afterok:7002793 getVCFforAllo.sh
-Submitted batch job ****
-scripts$ sbatch --dependency=afterok:**** alloVCF2AlleleCounts.sh
+Submitted batch job 7003338 - typo needs to be rerun:
+Submitted batch job ***
+scripts$ sbatch --dependency=afterok:7003338 alloVCF2AlleleCounts.sh
+Submitted batch job 7003341 - DEP NEVER MET. Rerunning:
+scripts$ sbatch --dependency=afterok:*** alloVCF2AlleleCounts.sh
+
 # getting counts for hilo ind's
 scripts$ for i in {1..10}; do sbatch --dependency=afterok:7002793 \
 --export="CHR="$i",ALL" countReadsACGT.sh; done
-Submitted batch job **
+Submitted batch job 7003349-58
 # converting ACGT counts to major/minor counts
-scripts$ sbatch --dependency=afterok:**,**,** countReadsMajorMinor.sh
+scripts$ sbatch --dependency=afterok:$(echo {7003349..7003358} | tr " " ",") countReadsMajorMinor.sh
+Submitted batch job 7004200
 # making allopatric counts input
-scripts$ sbatch --dependency=afterok:**,***** makeAlloCountsAncHMMInput.sh
+scripts$ sbatch --dependency=afterok:7003341,7004200 makeAlloCountsAncHMMInput.sh
+Submitted batch job 7004208
 # putting it all together
-scripts$ sbatch --dependency=afterok:******** makeAncHMMInput.sh
+scripts$ sbatch --dependency=afterok:7004208 makeAncHMMInput.sh
+Submitted batch job 7004214
+# copied over global ancestry proportions (can rerun later with last round of sequencing data, but ok proxy for now)
+data$ mkdir -p geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input
+data$ cp var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/.
+# running ancestry_hmm no_boot and bootstrap
+scripts$ sbatch --dependency=afterok:*** runAncHMM_noboot.sh
+scripts$ sbatch --dependency=afterok:*** runAncHMM.sh
 
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
