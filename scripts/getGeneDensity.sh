@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J geneDens
 #SBATCH -o /home/ecalfee/hilo/slurm-log/getGeneDensity_%A_%a.out
 #SBATCH -t 12:00:00
@@ -23,6 +23,6 @@ module load R
 
 # run R script
 echo "getting gene density for all sites"
-Rscript ../scripts/rmap.R
+Rscript rmap.R
 
 echo 'all done!'
