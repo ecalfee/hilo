@@ -12,7 +12,7 @@ i=$SLURM_ARRAY_TASK_ID #chromosome
 REGIONS_LIST=refMaize/divide_5Mb/ALL_regions.list
 MIN_cM=0.001
 DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/ancestryInformativeFilt"
-DIR_OUT="var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM"
+DIR_OUT="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM"
 DIR_SCRATCH="/scratch/ecalfee/thinned_chr"${i}
 
 # general bash script settings to make sure if any errors in the pipeline fail
