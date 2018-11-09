@@ -5,12 +5,130 @@ library(ggplot2)
 
 pass1 <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
                                      header = T, sep = "\t")
+pop_admix_global <- read.table("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt",
+                               stringsAsFactors = F, header = F, sep = "\t")
+colnames(pop_admix_global) = c("popN", "popMaize", "popMex")
 dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/"
-popN = 23
-ids_list = read.table(paste0("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop",
-                  popN, ".anc_hmm.ids"), stringsAsFactors = F)$V1
+#popN = 23
+include = left_join(pass1, pop_admix_global, by = "popN") %>%
+  filter(., popMaize > 0 & popMex > 0) %>% # admixed pops
+  filter(., est_coverage > 0.05) %>%
+  filter(., symp_allo == "sympatric")
+#ids_list = read.table(paste0("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop",
+#                  popN, ".anc_hmm.ids"), stringsAsFactors = F)$V1
 #ids_list = c(1, 3, 14, 74, 78, 95, 100, 109, 130) # pop366
-for (id in ids_list){
+
+# get posterior for individuals at some resolution
+# by default returns posterior for every 100th snp
+getPostSmall = function(id, dir = dir_in, nSkip = 99){ 
+  post = read.table(paste0(dir_in, "/HILO", id, ".posterior"), stringsAsFactors = F, header = T) %>%
+    rename(., mex.mex = X0.2) %>%
+    rename(., maize.mex = X1.1) %>%
+    rename(., maize.maize = X2.0) %>%
+    mutate(., hilo_id = id)
+  post$max_p = apply(post, 1, function(i) max(i[3:5]))
+  small1 = tidyr::gather(post[c(T, rep(F, 99)), ], "anc", "p", 3:5) %>%
+    filter(., p == max_p) # only keep highest posterior prob. ancestry
+  return(small1)
+}
+# plot one individual
+hilo_14 = getPostSmall(id = 14)
+hilo_14 %>%
+  filter(chrom == 8) %>%
+  ggplot(aes(x=position, y = hilo_id)) +
+  geom_point(aes(color = anc, alpha = p), size = .5)
+# plot a whole population
+pop_23 = do.call(rbind, 
+                 lapply(ids_list, function(i) 
+                   getPostSmall(id=i)))
+pop_23 %>%
+  filter(chrom == 7) %>%
+  ggplot(aes(x=position, y = hilo_id)) +
+  geom_point(aes(color = anc, alpha = p), size = .5)
+
+# for just a couple peaks and the inversions
+# plot all the mexicana individuals 
+# and all of the maize individuals
+# check for anything weird
+include_maize = include %>%
+  filter(zea == "maize")
+include_mex = include %>%
+  filter(zea == "mexicana")
+# I could make this more reasonable
+
+#maize = do.call(rbind,
+#                lapply(include_maize$n, function(i) 
+#  getPostSmall(id = i)))
+#write.table(maize, paste0(dir_in, "/maize_posteriors_small.txt"),
+#                          sep = "\t", col.names = T, row.names = F,
+#                          quote = F)
+maize = read.table(paste0(dir_in, "/maize_posteriors_small.txt"),
+                   sep = "\t", header = T, stringsAsFactors = F)
+#mex = do.call(lapply(include_mex$n, function(i)
+#  getPostSmall(id = i)))
+#write.table(mex, paste0(dir_in, "/mex_posteriors_small.txt"),
+#            sep = "\t", col.names = T, row.names = F,
+#            quote = F)
+mex = read.table(paste0(dir_in, "/mex_posteriors_small.txt"),
+                   sep = "\t", header = T, stringsAsFactors = F)
+
+
+# plot population ancestry (with uncertainty) over some region
+maize %>%
+  filter(chrom == 4) %>%
+  ggplot(aes(x=position, y = hilo_id)) +
+  geom_point(aes(color = anc, alpha = p), size = .5)
+
+mex %>%
+  filter(chrom == 4) %>%
+  ggplot(aes(x=position, y = hilo_id)) +
+  geom_point(aes(color = anc, alpha = p), size = .5)
+
+rbind(maize, mex) %>%
+  filter(chrom == 4) %>%
+  ggplot(aes(x=position, y = hilo_id)) +
+  geom_point(aes(color = anc, alpha = p), size = .5)
+
+
+plot_posteriors = function(post, chr, start, 
+                           end, title, save = F){
+  pA = post %>%
+    filter(chrom == chr) %>%
+    filter(position >= start) %>%
+    filter(position <= end) %>%
+    ggplot(aes(x=position, y = hilo_id)) +
+    geom_point(aes(color = anc, alpha = p), size = .5) +
+    ggtitle(title)
+  pA
+  if (save){
+    ggsave(filename = paste0("../plots/post_", title, ".png"),
+           plot = pA, 
+           device = "png", height = 8, width = 14, units = "in")
+  }
+  return(pA)
+}
+# save some plots
+plot_posteriors(post = mex, chr = 4, start = 0, end = 1000000000000,
+                title = "mexicana_chr_4", save = T)
+plot_posteriors(post = maize, chr = 4, start = 0, end = 1000000000000,
+                title = "maize_chr_4", save = T)
+plot_posteriors(post = rbind(maize, mex), chr = 4, start = 0, end = 1000000000000,
+                title = "mex_and_maize_chr_4", save = T)
+# plot some zAnc peaks
+#4:6000000-10000000
+#4:23000000-28000000
+plot_posteriors(post = rbind(maize), chr = 4, 
+                start = 6000000, end = 10000000,
+                title = "maize_chr_4_peak1", save = T)
+plot_posteriors(post = rbind(maize), chr = 4, 
+                start = 23000000, end = 28000000,
+                title = "maize_chr_4_peak2", save = T)
+
+# plot all of the inversions
+#inv = 
+
+# function to plot one individual at high definition
+plot_hilo_individual <- function(id, dir_in = dir_in){
   coverage = round(pass1[pass1$n == id, "est_coverage"], 2)
   post = read.table(paste0(dir_in, "/HILO", id, ".posterior"), stringsAsFactors = F, header = T) %>%
     rename(., mex.mex = X0.2) %>%
@@ -79,7 +197,8 @@ for (id in ids_list){
   ggsave(filename = paste0("../plots/tractsMexMaizeAnc_HILO", id, "_zoomCHR4"),
          plot = p4, 
          device = "png", height = 12, width = 20, units = "in")
-  
 }
+# run code below to plot one individual at high definition
+# for (i in ids_list) plot_hilo_individual(id = i, dir_in = dir_in)
 
 

@@ -9,6 +9,9 @@
 #SBATCH --export="Ne=10000,SUBDIR_OUT=output_noBoot,ALL"
 
 # note: pop 366 is a good one to start with and has index 19
+# try loading bio module
+module load bio
+which ancestry_hmm
 
 # this script runs local ancestry inference using ancestry_hmm
 

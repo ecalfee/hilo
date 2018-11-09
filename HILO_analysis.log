@@ -1579,8 +1579,8 @@ Submitted batch job 7004748 -- all but chr 1 & 2 (on bigmem10) will finish.
 But these two are making little progress, so I'm going to cancel these 2 & restart them:
 scripts$ sbatch -p bigmemh --array=1-2 -x bigmem10,bigmem2,bigmem4 getVCFforAllo.sh
 Submitted batch job 7009561 - 2 is still running; 1 is out of memory CANCELLED
-scripts$ sbatch -p bigmemm --mem=32G --array=1 -x bigmem10,bigmem2,bigmem4 getVCFforAllo.sh
-Submitted batch job 7010274
+SAID OUT OF MEMORY BUT ALSO LOOKED LIKE CHR2 MAY HAVE FINISHED - ok!
+Submitted batch job 7010274 - COMPLETED
 scripts$ sbatch --dependency=afterok:7003338 alloVCF2AlleleCounts.sh
 Submitted batch job 7003341 - DEP NEVER MET. Rerunning:
 scripts$ sbatch --dependency=afterok:7004748 alloVCF2AlleleCounts.sh
@@ -1589,7 +1589,8 @@ scripts$ sbatch -p bigmemm --array=3-10 -x bigmem10,bigmem2,bigmem4 alloVCF2Alle
 Submitted batch job 7009588 - COMPLETED
 scripts$ sbatch -p bigmemm --dependency=afterok:7009561,7010274 --array=1-2 -x bigmem10,bigmem2,bigmem4 alloVCF2AlleleCounts.sh
 Submitted batch job 7009675 - cancelled. added 2nd dependency:
-Submitted batch job 7010291 - WAITING
+Submitted batch job 7010291 - DEP NEVER MET.
+Submitted batch job 7014656 - COMPLETED
 
 # getting counts for hilo ind's
 scripts$ for i in {1..10}; do sbatch --dependency=afterok:7002793 \
@@ -1617,7 +1618,8 @@ Submitted batch job 7004978 -- again CANCELLED. New dependency:
 scripts$ sbatch --dependency=afterok:7009949,7009675 makeAlloCountsAncHMMInput.sh
 Submitted batch job 7010176 - WAITING . cancelled. dependency changed:
 scripts$ sbatch --dependency=afterok:7010291 makeAlloCountsAncHMMInput.sh
-Submitted batch job 7010360 - WAITING
+Submitted batch job 7010360 - cancelled. dependency never met. rerunning:
+Submitted batch job 7014675
 
 # putting it all together
 scripts$ sbatch --dependency=afterok:7004208 makeAncHMMInput.sh
@@ -1627,7 +1629,9 @@ Submitted batch job 7005324 -- cancelled--NEW DEPENDENCY:
 scripts$ sbatch -p bigmemm -x bigmem10 --dependency=afterok:7010176 makeAncHMMInput.sh
 Submitted batch job 7010188 - cancelled--NEW DEPENDENCY:
 scripts$ sbatch -p bigmemm -x bigmem10 --dependency=afterok:7010360 makeAncHMMInput.sh
-Submitted batch job 7010417
+Submitted batch job 7010417 - DEP NEVER MET:
+scripts$ sbatch -p bigmemm -x bigmem10 --dependency=afterok:7014675 makeAncHMMInput.sh
+Submitted batch job 7014690
 
 # copied over global ancestry proportions (can rerun later with last round of sequencing data, but ok proxy for now)
 data$ mkdir -p geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input
@@ -1636,11 +1640,16 @@ data$ cp var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/inp
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM_noboot.sh
 Submitted batch job 7010208 - cancelled new dependency:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM_noboot.sh
-Submitted batch job 7010427
+Submitted batch job 7010427 - DEP NEVER MET:
+scripts$ sbatch -x bigmem10 --dependency=afterok:7014690 runAncHMM_noboot.sh
+Submitted batch job 7014736 -- ERROR: (I'll try to rerun with bio module loaded -- not sure issue (?))
+ancestry_hmm: error while loading shared libraries: libarmadillo.so.6: cannot open shared object file: No such file or directory
+Submitted batch job ***
+
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM.sh
 Submitted batch job 7010210 - cancelled new dependency:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM.sh
-Submitted batch job 7010444
+Submitted batch job 7010444 - DEPENDENCY NEVER MET:
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
 # (or I could calculate gene density each included site? not sure)
@@ -1673,7 +1682,7 @@ Submitted batch job 6962448 -- RUNNING
 gene_density.R rmap_functions.R
 # rmap.R runs these functions to calculate recombination rate and coding density for every site
 scripts$ sbatch -x bigmem10 getGeneDensity.sh
-Submitted batch job 
+Submitted batch job 7010755
 
 # I can write a separate script to divide the whole genome into 1cM chunks and then calculate what % of bp's are CDS within each of those chunks (save start/end and # CDS bp and percent). Also potentially save mean recomb. rate over region.
 # note if I can get a list of start and end bp for the 1cM chunks, I can use IRanges() in R to count overlapping bases with my set of CDS in CDS.txt
