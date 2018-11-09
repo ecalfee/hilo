@@ -11,7 +11,7 @@
 # note: pop 366 is a good one to start with and has index 19
 # try loading bio module
 module load bio
-which ancestry_hmm
+module load Ancestry_HMM # loads copy from farm
 
 # this script runs local ancestry inference using ancestry_hmm
 
