@@ -4,7 +4,7 @@
 #SBATCH -J MAF2SitesFile
 #SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%A_%a.out
 #SBATCH -t 1:00:00
-#SBATCH --mem=250M
+#SBATCH --mem=2G
 #SBATCH --array=0-425
 #SBATCH --export="DIR=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL"
 
