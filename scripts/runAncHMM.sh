@@ -9,8 +9,9 @@
 #SBATCH --export="Ne=10000,SUBDIR_OUT=output_bootT,ALL"
 
 # note: pop 366 is a good one to start with and has index 19
-
-# this script runs local ancestry inference using ancestry_hmm
+# try loading bio module
+module load bio
+module load Ancestry_HMM # loads copy from farm
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables

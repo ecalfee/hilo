@@ -7,6 +7,7 @@ library(zoo) # for rolling mean (mean across windows)
 # helper file with some useful functions
 source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
 
+#dir_in = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
 dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
 dir_anc = paste0(dir_in, "output_noBoot/anc/")
 # color palette for locations (n=13 locations)
@@ -32,8 +33,8 @@ included_inds = meta %>%
   filter(alpha_maize > 0 & alpha_mex > 0) %>%
   .[order(.$popN), ]
 pops = unique(included_inds[order(included_inds$popN), c("popN", "zea", "LOCALITY", "alpha_maize", "alpha_mex")])
-write.table(pops$popN, paste0(dir_in, "/included_pops.txt"),
-            col.names = F, row.names = F, quote = F)
+#write.table(pops$popN, paste0(dir_in, "/included_pops.txt"),
+#            col.names = F, row.names = F, quote = F)
 
 # read in population ancestry input files from calc_genomewide_pop_anc_freq.R
 pop_anc_list = lapply(pops$popN, function(pop) read.table(paste0(dir_anc, "/pop", pop, ".anc.freq"), 

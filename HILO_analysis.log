@@ -1652,8 +1652,15 @@ scripts$ sbatch -x bigmem10 --dependency=afterok:7010188 runAncHMM.sh
 Submitted batch job 7010210 - cancelled new dependency:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM.sh
 Submitted batch job 7010444 - DEPENDENCY NEVER MET: ( need to update loading module here too)
+scripts$ sbatch -x bigmem10 runAncHMM.sh
 
 
+# Formalized R script to summarise ancestry from posteriors into a bash script
+scripts$ sbatch calcAncfromPost.sh # runs # calc_genomewide_pop_anc_freq.R for each admixed pop
+Submitted batch job 7016848 - ERROR. adding R script to git:
+Submitted batch job 7016963 - munge code error on just some of them, rerunning:
+scripts$ sbatch --array=0-4,6,8 calcAncfromPost.sh
+Submitted batch job 7048166 - RUNNING
 
 # Gene density: I want to calculate exonic bp per cM in 10kb windows across the genome (what Li Wang 2017 does)
 # (or I could calculate gene density each included site? not sure)
@@ -1686,7 +1693,7 @@ Submitted batch job 6962448 -- RUNNING
 gene_density.R rmap_functions.R
 # rmap.R runs these functions to calculate recombination rate and coding density for every site
 scripts$ sbatch -x bigmem10 getGeneDensity.sh
-Submitted batch job 7010755
+Submitted batch job 7010755 -- TIMED OUT at 12 hours
 
 # I can write a separate script to divide the whole genome into 1cM chunks and then calculate what % of bp's are CDS within each of those chunks (save start/end and # CDS bp and percent). Also potentially save mean recomb. rate over region.
 # note if I can get a list of start and end bp for the 1cM chunks, I can use IRanges() in R to count overlapping bases with my set of CDS in CDS.txt
