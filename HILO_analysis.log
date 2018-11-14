@@ -828,7 +828,7 @@ Submitted batch job 23903329-31 - COMPLETED
 ~/hilo/data/SAF/pass1/N1000.L100.regions$ for i in 1000 2000 3000; do awk -v i=$i '{print i "\t" 5000 "\t" $1 "\t" $2}' pop$i.pop5000.fst.stats >> ~/hilo/data/SFS/pass1/N1000.L100.regions/pairwise.group.fst.stats; done
 
 # MAPPING AND COVERAGE METRICS -- I moved the first plots on mapping out of eval_PCA_Fst.R to
-# their own script: plot_mapping_metrics.R . Then I added othere coverage analyses
+# their own script: plot_mapping_metrics.R . Then I added other coverage analyses
 # for (1) Fst regions
 # and (2) a subset of variant sites called in hilo;
 # var_sites/pass1/pruned_positions/all.positions (~170k SNPs separated by >= 10kb; used in initial admixture analysis; with over 100 individuals with some data (MORE than cutoff for other SNPs)).
@@ -836,7 +836,7 @@ Submitted batch job 23903329-31 - COMPLETED
 # Adding 282 reference maize data
 # Getting 282 SRAs for download from NCBI - ACTUALLY michelle will align 282 'ts' tropical/subtropical bams for me
 hilo/data/maize282$ wget -O maize282_SRA_SRP108889 'http://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=runinfo&term="SRP108889"[All Fields]'
-# made symlinks for vcf files (variants re-possitioned onto genome AGPv4):
+# made symlinks for vcf files (variants re-positioned onto genome AGPv4):
 ~/hilo/data/maize282/vcf_AGPv4$ for i in {1..10}; do ln -s /group/jrigrp/Share/genotypes/282_7X/c${i}_282_corrected_onHmp321.vcf.gz chr$i.vcf.gz; done
 # new script to make smaller vcf's with just thinned SNPs for PCA from 282 panel
 scripts$ sbatch -p bigmemh --array=1-10%6 subset_282var_nth.sh
@@ -1653,7 +1653,7 @@ Submitted batch job 7010210 - cancelled new dependency:
 scripts$ sbatch -x bigmem10 --dependency=afterok:7010417 runAncHMM.sh
 Submitted batch job 7010444 - DEPENDENCY NEVER MET: ( need to update loading module here too)
 scripts$ sbatch -x bigmem10 runAncHMM.sh
-
+Submitted batch job 7048315 - RUNNING
 
 # Formalized R script to summarise ancestry from posteriors into a bash script
 scripts$ sbatch calcAncfromPost.sh # runs # calc_genomewide_pop_anc_freq.R for each admixed pop
@@ -1704,3 +1704,6 @@ Submitted batch job 7010755 -- TIMED OUT at 12 hours
 # I found several identified inversion from prior mapping, LD, and experimental studies:
 # Literature citations and descriptions are saved refMaize/inversions/README_knownInv.txt
 # I've put the genomic coordinates in a new file refMaize/inversions/knownInv.txt
+
+# RE-DOING NGSAdmix and PCAngsd with new variant sites filtered for excess depth
+scripts$ sbatch pruneFixedcM_PCA.sh
