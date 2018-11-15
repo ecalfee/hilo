@@ -34,15 +34,16 @@ echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLU
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
-angsd -out $DIR_SCRATCH/chr_$i \
+angsd -out ${DIR_SCRATCH}/chr_$i \
 -r ${i} \
 -sites ${DIR_SITES}/chr${i}.var.sites \
--bam $BAM_IN \
+-bam ${BAM_IN} \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
 -GL 1 -doGlf 2 \
 -P 1 \
+-doCounts 1\
 -setMaxDepthInd ${MAX_DEPTH_IND}
 
 # took out ref -ref refMaize/AGPv4.fa \

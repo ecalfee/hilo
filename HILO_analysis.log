@@ -1717,3 +1717,4 @@ scripts$ sbatch pruneFixedcM_PCA.sh
 Submitted batch job 7049445 - COMPLETED
 # now making GL file for all individuals at these ~125K sites
 scripts$ sbatch thinnedVarAngsdGL1.sh
+Submitted batch job 7103658 -- fixed typo:
