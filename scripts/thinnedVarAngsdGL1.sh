@@ -43,7 +43,7 @@ angsd -out ${DIR_SCRATCH}/chr_$i \
 -doMajorMinor 3 \
 -GL 1 -doGlf 2 \
 -P 1 \
--doCounts 1\
+-doCounts 1 \
 -setMaxDepthInd ${MAX_DEPTH_IND}
 
 # took out ref -ref refMaize/AGPv4.fa \
