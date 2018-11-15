@@ -1705,5 +1705,15 @@ Submitted batch job 7010755 -- TIMED OUT at 12 hours
 # Literature citations and descriptions are saved refMaize/inversions/README_knownInv.txt
 # I've put the genomic coordinates in a new file refMaize/inversions/knownInv.txt
 
+# MAPPING ISSUES: To find out if there are regions not being called for mexicana
+# ancestry due to mapping issues, I need to see if there are places where maize
+# has high coverage but allopatric teosinte and hilo admixed ind's have low coverage
+# I'm not sure how to do this as these sites will be filtered out of 'ancestry informative'
+# SNP set for ancestry_hmm and the may or may not be in the original ANGSD SNP set if my
+# minimum # individuals who need some data is set too high
+
 # RE-DOING NGSAdmix and PCAngsd with new variant sites filtered for excess depth
 scripts$ sbatch pruneFixedcM_PCA.sh
+Submitted batch job 7049445 - COMPLETED
+# now making GL file for all individuals at these ~125K sites
+scripts$ sbatch thinnedVarAngsdGL1.sh
