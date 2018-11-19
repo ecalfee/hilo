@@ -6,10 +6,19 @@
 #SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
-#SBATCH --export=GL_FILE=geno_lik/pass1/pruned_all.beagle.gz,OUT_DIR=NGSadmix/pass1/
+#SBATCH --array=2-4
 
 # slurm array task id sets number of genetic clusters, e.g.
 # set an --array=2 for K = 2 or --array=2-4 to test K = 2, 3, 4 etc.
+
+# set VARIABLES
+k=$SLURM_ARRAY_TASK_ID
+DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+GL_FILE=${DIR}"/whole_genome.beagle.gz"
+OUT_DIR=${DIR}"/NGSAdmix"
+
+# load module for NGSAdmix
+module load bio
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -21,13 +30,12 @@ set –o nounset
 mkdir -p $OUT_DIR
 
 echo "running NGSadmix"
-NGSadmix -likes $GL_FILE \
--K $SLURM_ARRAY_TASK_ID -P 1 \
--o "$OUT_DIR"K"$SLURM_ARRAY_TASK_ID"_pruned_all
+NGSadmix -likes "${GL_FILE}" \
+-K "${k}" -P 1 \
+-o "${OUT_DIR}"/K"${k}"
 
 # settings:
 # -likes beagle genotype likelihood file
 # -K 2 for number of subpopulations/clusters to consider in admixture model
 # -P k splits the analysis job over k nodes (but does not distribute I/O)
 # -o output
-# NGSadmix is installed locally in user's bin & path

@@ -10,7 +10,8 @@
 # skipping headers after first file (region 0)
 
 # set variables
-DIR_OUT="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+DIR_IN="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+DIR_OUT=${DIR_IN}
 DIR_SCRATCH="/scratch/ecalfee/catThinGL4PCA"
 SCRATCH_OUT=${DIR_SCRATCH}"/whole_genome.beagle.gz"
 
@@ -24,9 +25,9 @@ set –o errexit
 set –o nounset
 
 # concatenate
-zcat ${DIR}/region_0.beagle.gz | gzip >> ${SCRATCH_OUT}
+zcat ${DIR_IN}/region_0.beagle.gz | gzip >> ${SCRATCH_OUT}
 for i in {1..425}
-do zcat region_$i.beagle.gz | tail -n +2 | gzip >> ${SCRATCH_OUT}
+do zcat ${DIR_IN}/region_${i}.beagle.gz | tail -n +2 | gzip >> ${SCRATCH_OUT}
 done
 
 echo "done concatenating beagle.gz 4 PCA! Now transfering files from local to home directory"
