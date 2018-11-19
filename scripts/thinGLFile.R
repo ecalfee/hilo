@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # this script takes in a GL file in DIR_GL_IN
-# with all samples and all SNPs for a region of the genome, 
+# with all samples and all SNPs for a region of the genome,
 # and outputs a 'thinned' GL file to DIR_THINNED_SITES
 # with the same samples but only a subset of the SNPs specified by
 # chromosome-level var.sites file in DIR_THINNED_SITES
@@ -34,11 +34,11 @@ DIR_THINNED_SITES = args[3]
 FILE_OUT = paste0(DIR_THINNED_SITES, "/region_", REGION, ".beagle.gz")
 
 # get genotype likelihoods for current region
-region_gl <- read.table(gzfile(FILE_GL_IN), 
+region_gl <- read.table(gzfile(FILE_GL_IN),
                         header = T, stringsAsFactors = F)
 
 # which chromosomes are in my gl file?
-gl_chroms = unique(sapply(region_gl$marker, 
+gl_chroms = unique(sapply(region_gl$marker,
                           function(i) chr_from_marker(i)))
 
 # get list of thinned sites for all present chromosomes
