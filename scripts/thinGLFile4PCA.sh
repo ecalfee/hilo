@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --partition=low
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J thinGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/thinGLFile4PCA_%A_%a.out
 #SBATCH -t 1:00:00
