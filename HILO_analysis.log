@@ -1731,7 +1731,9 @@ Submitted batch job 7104191 - OUT OF MEMORY & TIMED OUT
 # I thin the existing GL file to only include these ~125K sites using R
 # I made a script to accomplish this: thinGLFile.R run from thinGLFile4PCA.sh:
 scripts$ sbatch thinGLFile4PCA.sh
-Submitted batch job 7185757 - error not finding file! changed wkdir to scripts:
-
-
+Submitted batch job 7185757 - error not finding file! changed wkdir to scripts: changed other typos too:
+Submitted batch job 7186486 - ALL completeted really fast EXCEPT 316-319 still not finished at 30 min on c10-75, cancelled & rerunning:
+scripts$ sbatch -x c10-75 -t 5:00 --array=316-319 thinGLFile4PCA.sh
+Submitted batch job 7187499 - COMPLETED
 # Then I need to concatenate all the regions together to 1 large GL file:
+scripts$ sbatch catThinGL4PCA.sh

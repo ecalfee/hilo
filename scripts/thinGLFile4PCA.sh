@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J thinGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/thinGLFile4PCA_%A_%a.out
-#SBATCH -t 1:00:00
+#SBATCH -t 15:00
 #SBATCH --mem=8G
 #SBATCH --array=0-425
 
