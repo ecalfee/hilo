@@ -1735,16 +1735,30 @@ Submitted batch job 7185757 - error not finding file! changed wkdir to scripts: 
 Submitted batch job 7186486 - ALL completeted really fast EXCEPT 316-319 still not finished at 30 min on c10-75, cancelled & rerunning:
 scripts$ sbatch -x c10-75 -t 5:00 --array=316-319 thinGLFile4PCA.sh
 Submitted batch job 7187499 - COMPLETED. But files lack headers, rerunning all:
-
-
+scripts$ sbatch -x c10-75 thinGLFile4PCA.sh
+Submitted batch job 7195815 - RUNNING. Some 'preempted': trying again med priority:
+Submitted batch job 7196409 - DONE
 # Then I need to concatenate all the regions together to 1 large GL file:
 scripts$ sbatch catThinGLFile4PCA.sh
 Submitted batch job 7187648 - DIDN'T FIND FILES .. oops. fixed:
 Submitted batch job 7189916 - COMPLETED BUT FILES LACKED HEADERS:
+scripts$ sbatch --dependency=afterok:7195815 catThinGLFile4PCA.sh
+Submitted batch job 7196181 - DEPENDENCY NEVER MET
+scripts$ sbatch --dependency=afterok:7196409 catThinGLFile4PCA.sh
+Submitted batch job 7196795 - OOPs didn't update:
+scripts$ sbatch catThinGLFile4PCA.sh
 
 # Then run PCA and NGSadmix using this thinned set of sites:
 scripts$ sbatch --dependency=afterok:7189916 runPCAngsd.sh
-Submitted batch job 7190777 - INPUT FILE LACKED HEADER:
+Submitted batch job 7190777 - INPUT FILE LACKED HEADER, fixing:
+scripts$ sbatch --dependency=afterok:7196181 runPCAngsd.sh
+Submitted batch job 7196271 - DEP NEVER MET
+scripts$ sbatch --dependency=afterok:7196795 runPCAngsd.sh
+Submitted batch job 7196901 - Error w/ input file. Need to rerun:
+scripts$ sbatch --dependency=afterok:***** runPCAngsd.sh
 
 scripts$ sbatch --dependency=afterok:7189916 runNGSadmix.sh # outputs to NGSAdmix subdirectory in thinnedPCA/
-Submitted batch job 7190779 - INPUT FILE LACKED HEADER:
+Submitted batch job 7190779 - INPUT FILE LACKED HEADER, fixing:
+scripts$ sbatch --dependency=afterok:7196181 runNGSadmix.sh
+Submitted batch job 7196298 - DEP NEVER MET
+scripts$ sbatch --dependency=afterok:***** runNGSadmix.sh
