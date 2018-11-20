@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --partition=low
+#SBATCH --partition=med
 #SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J thinGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/thinGLFile4PCA_%A_%a.out
