@@ -10,7 +10,7 @@
 # the suffix for the genotype likelihood file in GL_PREFIX is omitted .beagle.gz;
 PREFIX_GL="whole_genome"
 DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
-DIR_OUT=${GL_DIR}"/PCA"
+DIR_OUT=${DIR_GL}"/PCA"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables

@@ -36,7 +36,9 @@ FILE_OUT = paste0(DIR_OUT, "/region_", REGION, ".beagle.gz")
 
 # get genotype likelihoods for current region
 region_gl <- read.table(gzfile(FILE_GL_IN),
-                        header = T, stringsAsFactors = F)
+                        header = T, stringsAsFactors = F,
+                        check.names = F)
+# avoid 'checking names' because of duplicates in beagle GL header ("Ind1 Ind1 Ind1 Ind2 Ind2 Ind2 etc..")
 
 # which chromosomes are in my gl file?
 gl_chroms = unique(sapply(region_gl$marker,
@@ -59,7 +61,8 @@ thin_gl = region_gl[region_gl$marker %in% thin_sites$marker,]
 
 # write thinned gl to gzipped output file
 write.table(thin_gl, gzfile(FILE_OUT),
-            quote = F, col.names = T, row.names = F)
+            quote = F, sep = "\t",
+            col.names = T, row.names = F)
 
 # print any warnings
 warnings()
