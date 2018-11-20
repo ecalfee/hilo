@@ -13,6 +13,9 @@ REGION=$SLURM_ARRAY_TASK_ID
 # directory for input and output
 DIR_GL_IN="../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
 DIR_THINNED_SITES="../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+DIR_OUT=${DIR_THINNED_SITES}"/GL_by_region"
+
+mkdir -p ${DIR_OUT}
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -26,6 +29,6 @@ module load R
 
 # run R script
 echo "thinning GL for PCA: region "${REGION}
-Rscript thinGLFile.R ${REGION} ${DIR_GL_IN} ${DIR_THINNED_SITES}
+Rscript thinGLFile.R ${REGION} ${DIR_GL_IN} ${DIR_THINNED_SITES} ${DIR_OUT}
 
 echo 'all done!'

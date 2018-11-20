@@ -8,7 +8,9 @@
 #SBATCH -n 2
 
 # the suffix for the genotype likelihood file in GL_PREFIX is omitted .beagle.gz;
-GL_PREFIX="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/whole_genome"
+PREFIX_GL="whole_genome"
+DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+DIR_OUT=${GL_DIR}"/PCA"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -20,12 +22,14 @@ set –o nounset
 module load bio
 
 # run PCAngsd
+mkdir -p ${DIR_OUT}
+
 # assumes GL data is already filtered for a minimum MAF; doesn't re-filter
 python2 /home/ecalfee/bin/pcangsd/pcangsd.py \
--beagle $GL_PREFIX.beagle.gz \
+-beagle ${DIR_GL}/${PREFIX_GL}.beagle.gz \
 -threads 2 -iter 100 \
 -minMaf 0 -admix \
--o $GL_PREFIX
+-o ${DIR_OUT}/${PREFIX_GL}
 
 # -admix option calculates admixture proportions in addition to genotype covariance matrix for PCA
 # -iter specifies number of EM steps

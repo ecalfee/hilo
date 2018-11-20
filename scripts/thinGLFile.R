@@ -2,12 +2,12 @@
 
 # this script takes in a GL file in DIR_GL_IN
 # with all samples and all SNPs for a region of the genome,
-# and outputs a 'thinned' GL file to DIR_THINNED_SITES
+# and outputs a 'thinned' GL file to DIR_OUT
 # with the same samples but only a subset of the SNPs specified by
 # chromosome-level var.sites file in DIR_THINNED_SITES
 
 # to run:
-# Rscript thinGLFile.R REGION DIR_GL_IN DIR_THINNED_SITES
+# Rscript thinGLFile.R REGION DIR_GL_IN DIR_THINNED_SITES DIR_OUT
 
 # helper function
 # split marker chr_positionBP into chr and pos_bp; return chromosome
@@ -31,7 +31,8 @@ DIR_GL_IN = args[2]
 FILE_GL_IN = paste0(DIR_GL_IN, "/region_", REGION, ".beagle.gz")
 DIR_THINNED_SITES = args[3]
 #DIR_THINNED_SITES = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
-FILE_OUT = paste0(DIR_THINNED_SITES, "/region_", REGION, ".beagle.gz")
+DIR_OUT = args[4]
+FILE_OUT = paste0(DIR_OUT, "/region_", REGION, ".beagle.gz")
 
 # get genotype likelihoods for current region
 region_gl <- read.table(gzfile(FILE_GL_IN),
@@ -58,7 +59,7 @@ thin_gl = region_gl[region_gl$marker %in% thin_sites$marker,]
 
 # write thinned gl to gzipped output file
 write.table(thin_gl, gzfile(FILE_OUT),
-            quote = F, col.names = F, row.names = T)
+            quote = F, col.names = T, row.names = F)
 
 # print any warnings
 warnings()
