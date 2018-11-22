@@ -1741,7 +1741,7 @@ Submitted batch job 7196409 - DONE.
 NOTE: problem with header R automatically made Ind1 Ind1.1 Ind1.2 column names for repeated columns
 and was space not tab separated -- rerunning:
 scripts$ sbatch -x c10-75 thinGLFile4PCA.sh
-Submitted batch job ********
+Submitted batch job 7200048 - DONE
 
 # Then I need to concatenate all the regions together to 1 large GL file:
 scripts$ sbatch catThinGLFile4PCA.sh
@@ -1753,8 +1753,8 @@ scripts$ sbatch --dependency=afterok:7196409 catThinGLFile4PCA.sh
 Submitted batch job 7196795 - OOPs didn't update catThinGLFile4PCA to git:
 scripts$ sbatch catThinGLFile4PCA.sh
 Submitted batch job 7198979 - DONE. BUT NEED TO RERUN WITH NEW THIN OUTPUT:
-scripts$ sbatch --dependency=afterok:**** catThinGLFile4PCA.sh
-Submitted batch job *****
+scripts$ sbatch --dependency=afterok:7200048 catThinGLFile4PCA.sh
+Submitted batch job 7200397 - COMPLETED
 
 # Then run PCA and NGSadmix using this thinned set of sites:
 scripts$ sbatch --dependency=afterok:7189916 runPCAngsd.sh
@@ -1769,7 +1769,8 @@ scripts$ sbatch runPCAngsd.sh
 Submitted batch job 7199797 - DIFFERENT PROBLEM; not sure what the issue is (no longer neg dim error but)
 # new error is in readGzipBeagle: ValueError: cannot copy sequence with size 0 to array axis with dimension 636
 # PROBLEM WAS SPACE NOT TAB SEPARATED (!) -- NEED TO RERUN FROM THINNING STEP IN R:
-scripts$ sbatch --dependency=afterok:**** runPCAngsd.sh
+scripts$ sbatch --dependency=afterok:7200397 runPCAngsd.sh
+Submitted batch job 7200398 - COMPLETED
 
 # NGSAdmix:
 scripts$ sbatch --dependency=afterok:7189916 runNGSadmix.sh # outputs to NGSAdmix subdirectory in thinnedPCA/
@@ -1778,4 +1779,25 @@ scripts$ sbatch --dependency=afterok:7196181 runNGSadmix.sh
 Submitted batch job 7196298 - DEP NEVER MET
 scripts$ sbatch --dependency=afterok:7198979 runNGSadmix.sh
 Submitted batch job 7198988 - CANCELLED DUE TO SPACE not TAB SEPARATED. RERUNNING:
-scripts$ sbatch --dependency=afterok:**** runNGSadmix.sh
+scripts$ sbatch --dependency=afterok:7200397 runNGSadmix.sh
+Submitted batch job 7200403 - COMPLETED
+
+# Results: The PCA results seem to be driven by individuals,
+# and NGSadmix results show higher mexicana ancestry in most individuals
+# with Fst between the two prominent K ancestries only ~.09
+# I did not expect such large changes. I changed two things:
+# 1) thinning SNPs for PCA based on a fixed cM distance (.01 cM)
+# rather than taking every 1000th SNP
+# 2) not including variant sites w/ very high coverage (>1020 tot cov.)
+# To isolate these two effects, I'm rerunning PCA and NGSadmix
+# with the new set of SNPs (filtered for depth cov.),
+# but thinned by every 1000th SNP (file "prunedBy1000/whole_genome.beagle.gz"
+scripts$ sbatch catBeagleGL_nth
+Submitted batch job **
+
+
+
+# NEXT: redo plots (inspect PCA & NGSAdmix..compare to results from before depth filter..should be very similiar)
+#  & redo local ancestry using new population mean ancestry estimates from NGSAdmix.
+# Get in touch with Li about which files are corrupted. Start processing/downloading the raw data from NCBI
+# Plot PCA and maybe run PCA script again with every 1000th snp, not filtered by cM distance
