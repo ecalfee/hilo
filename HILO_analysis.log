@@ -1793,15 +1793,23 @@ Submitted batch job 7200403 - COMPLETED
 # with the new set of SNPs (filtered for depth cov.),
 # but thinned by every 1000th SNP (file "prunedBy1000/whole_genome.beagle.gz"
 scripts$ sbatch catBeagleGL_nth.sh
-Submitted batch job 7246953
+Submitted batch job 7246953 - COMPLETED
 
 # now running PCA and NGSAdmix with export option to change input DIRECTORY
+# so they use data from SNPs pruned by every 1000 (~56K sites)
 scripts$ sbatch --dependency=afterok:7246953 --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinned1000",ALL runPCAngsd.sh
-Submitted batch job ***
+Submitted batch job 7247108 - WAITING -- oops wrong directory name:
+scripts$ sbatch --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/prunedBy1000",ALL runPCAngsd.sh
+Submitted batch job 7249481 - DONE
 scripts$ sbatch --dependency=afterok:7246953 --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinned1000",ALL runNGSadmix.sh
-Submitted batch job ***
+Submitted batch job 7247110 - WAITING -- oops wrong directory name:
+scripts$ sbatch --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/prunedBy1000",ALL runNGSadmix.sh
+Submitted batch job 7249488 - DONE
 
-# NEXT: redo plots (inspect PCA & NGSAdmix..compare to results from before depth filter..should be very similiar)
-#  & redo local ancestry using new population mean ancestry estimates from NGSAdmix.
+# Using these results I redid the plots and it makes a big difference to compare thinning by .01cM spacing vs.
+# pruning down to every 1000th SNP -- results are fairly different, not just because thinning by .01cM leaves twice as many snps
+# It looks like I get more noise with pruning by SNP density not recombination density, but I'm not sure why
+
+# I will redo local ancestry using new population mean ancestry estimates from NGSadmix.
 # Get in touch with Li about which files are corrupted. Start processing/downloading the raw data from NCBI
 # Plot PCA and maybe run PCA script again with every 1000th snp, not filtered by cM distance

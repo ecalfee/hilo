@@ -16,6 +16,7 @@ K = 3
 K = 4
 # starting with pass1 analysis from 1st round of sequencing
 file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
+
 admix <- read.table(paste0(file_prefix, ".qopt"))
 colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
 
@@ -169,6 +170,48 @@ title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric
 #      line = 1)
 par(new = TRUE)
 plot(x = bar, y = d_meta$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
+     xlab = "", ylab = "")
+axis(side = 4, at = c(1000, 2000, 3000), 
+     tick = T, labels = T, col = "black")
+mtext("Elevation (m)", side=4, line=2.5)
+par(mar=c(5.1,4.1,4.1,2.1)) # set back default
+dev.off()
+
+# make simple plots for SNPs pruned every 1000th SNP
+file_prefix_1000 = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/prunedBy1000/NGSAdmix/K", K)
+
+admix_1000 <- read.table(paste0(file_prefix_1000, ".qopt"))
+colnames(admix_1000) <- paste0("anc", 1:K) #c("anc1", "anc2")
+admix_1000 <- admix_1000[, K:1] # reverse order for pruned by 1000
+d_1000 <- bind_cols(pass1_allo4Low, admix_1000)  %>%
+  arrange(., popN) %>%
+  arrange(., zea) %>%
+  arrange(., symp_allo) %>%
+  mutate(., group = paste(symp_allo, zea, sep = "_"))
+d_meta_1000 = left_join(d_1000, meta, by = c("popN", "zea", "symp_allo", 
+                                   "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
+  .[with(., order(group, ELEVATION)), ]
+
+
+# plot results for SNPs pruned down to 1 per 1000 SNPs
+png(paste0("../plots/NGSadmix_K", K, "_over_0.05x_coverage_wElevation_for_poster_pruned1000.png"),
+    height = 5, width = 8, units = "in", res = 300)
+par(mar=c(4.1,4.1,4.1,4.1))
+bar_1000 = d_meta_1000 %>%
+  select(., colnames(admix_1000)) %>%
+  t(.) %>%
+  barplot(height = .,
+          col = colorsK[1:K],
+          space=0,
+          border=NA, xaxt = "n")
+title(main = "Admixture in highland maize and mexicana; every 1000th SNP",
+      ylab=paste0("Ancestry proportion K=", K, " (NGSAdmix)"))
+title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric Mexicana", 
+      line = 1)
+
+par(new = TRUE)
+plot(x = bar_1000, y = d_meta$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
      xlab = "", ylab = "")
 axis(side = 4, at = c(1000, 2000, 3000), 
      tick = T, labels = T, col = "black")
