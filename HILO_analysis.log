@@ -1792,10 +1792,14 @@ Submitted batch job 7200403 - COMPLETED
 # To isolate these two effects, I'm rerunning PCA and NGSadmix
 # with the new set of SNPs (filtered for depth cov.),
 # but thinned by every 1000th SNP (file "prunedBy1000/whole_genome.beagle.gz"
-scripts$ sbatch catBeagleGL_nth
-Submitted batch job **
+scripts$ sbatch catBeagleGL_nth.sh
+Submitted batch job 7246953
 
-
+# now running PCA and NGSAdmix with export option to change input DIRECTORY
+scripts$ sbatch --dependency=afterok:7246953 --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinned1000",ALL runPCAngsd.sh
+Submitted batch job ***
+scripts$ sbatch --dependency=afterok:7246953 --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinned1000",ALL runNGSadmix.sh
+Submitted batch job ***
 
 # NEXT: redo plots (inspect PCA & NGSAdmix..compare to results from before depth filter..should be very similiar)
 #  & redo local ancestry using new population mean ancestry estimates from NGSAdmix.

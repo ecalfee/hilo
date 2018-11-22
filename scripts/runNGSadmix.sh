@@ -7,15 +7,17 @@
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=2-4
+#SBATCH --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA",ALL
+
 
 # slurm array task id sets number of genetic clusters, e.g.
 # set an --array=2 for K = 2 or --array=2-4 to test K = 2, 3, 4 etc.
 
 # set VARIABLES
 k=$SLURM_ARRAY_TASK_ID
-DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
-GL_FILE=${DIR}"/whole_genome.beagle.gz"
-OUT_DIR=${DIR}"/NGSAdmix"
+#DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+GL_FILE=${DIR_GL}"/whole_genome.beagle.gz"
+OUT_DIR=${DIR_GL}"/NGSAdmix"
 
 # load module for NGSAdmix
 module load bio

@@ -6,10 +6,11 @@
 #SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH -n 2
+#SBATCH --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA",ALL
 
 # the suffix for the genotype likelihood file in GL_PREFIX is omitted .beagle.gz;
 PREFIX_GL="whole_genome"
-DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+#DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
 DIR_OUT=${DIR_GL}"/PCA"
 
 # general bash script settings to make sure if any errors in the pipeline fail
