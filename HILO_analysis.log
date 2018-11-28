@@ -1714,17 +1714,13 @@ Submitted batch job 7332756 - DONE
 # Then, using linear interpolation functions in R, I make 0.1cM windows around each SNP used for ancestry_hmm
 scripts$ sbatch makeWindowsCM.sh
 Submitted batch job 7362596 - DONE (A FEW SECONDS..) -- oops all chr6, need to redo:
-Submitted batch job ****
+Submitted batch job 7365639 - DONE
 # Now I use gffread and bedtools to
-# (1) merge my gff3 file into continuous segments of CDS
-# load programs
-~/hilo/data/refMaize/geneAnnotations$ module load bio
-# limit intervals to only CDS
-~/hilo/data/refMaize/geneAnnotations$ gffread -C -o- Zea_mays.B73_RefGen_v4.41.chr.gff3 | awk '$3=="CDS" {print $0}' > CDS_only.gff
-# sort by coordinates and merge overlapping or contiguous CDS
-~/hilo/data/refMaize/geneAnnotations$ bedtools sort -i CDS_only.gff | bedtools merge  > CDS_merged.bed
-
-# (2) find overlap between each of my windows and these CDS, 'coverage'
+# (1) merge my gff3 file into continuous segments of CDS: CDS_merged.bed
+scripts$ sbatch mergeCDSfromGFF3.sh
+# (2) merge windows into one whole_genome.bed file and
+# find overlap between each of my windows and these CDS, 'coverage'
+scripts$ sbatch geneOverlapWindowsCM.sh
 
 
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
