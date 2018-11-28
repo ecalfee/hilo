@@ -1707,6 +1707,18 @@ Submitted batch job 7010755 -- TIMED OUT at 12 hours
 
 # Or maybe it's better to get start and end bp for 1cM around each included variant site. This is an approximation also of local recombination rate, though somewhat smoothed from the point estimate at a locus.
 
+# First, extend the recombination map from Ogut to span the entire physical length of the chromosomes,
+# using a custom R script:
+scripts$ sbatch -p bigmemh extendOgutMap2fullCHR.sh
+Submitted batch job 7332756 - DONE
+# Then, using linear interpolation functions in R, I make 0.1cM windows around each SNP used for ancestry_hmm
+scripts$ sbatch makeWindowsCM.sh
+# Now I use bedtools to
+# (1) merge my gff3 file into continuous segments of CDS
+
+# (2) find overlap between each of my windows and these CDS, 'coverage'
+
+
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
 # I found several identified inversion from prior mapping, LD, and experimental studies:
 # Literature citations and descriptions are saved refMaize/inversions/README_knownInv.txt
@@ -1810,6 +1822,11 @@ Submitted batch job 7249488 - DONE
 # pruning down to every 1000th SNP -- results are fairly different, not just because thinning by .01cM leaves twice as many snps
 # It looks like I get more noise with pruning by SNP density not recombination density, but I'm not sure why
 
+# TO DO:
 # I will redo local ancestry using new population mean ancestry estimates from NGSadmix.
+# Finish marking inversions (lift v2 coordinates to v4)
+# finish getting gene density around SNPs and high vs. low recomb rates too
 # Get in touch with Li about which files are corrupted. Start processing/downloading the raw data from NCBI
-# Plot PCA and maybe run PCA script again with every 1000th snp, not filtered by cM distance
+# Do f3/f4 formal test of admixture
+
+# Get
