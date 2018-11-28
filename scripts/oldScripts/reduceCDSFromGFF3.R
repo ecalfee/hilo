@@ -4,12 +4,17 @@
 #BiocManager::install("BiocInstaller", version = "3.8")
 #library(BiocManager)
 #BiocManager::install("IRanges")
+#if (!requireNamespace("BiocManager", quietly = TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install("GenomicRanges", version = "3.8")
 library(IRanges)
+library(GenomicRanges)
 library(dplyr)
 d <- read.csv("../data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3",
                 header = F, stringsAsFactors = F, skip = 20,
                 sep = "\t")
 colnames(d) <- c("chrom", "gramene", "type", "start_bp", "end_bp", "V6", "V7", "V8", "ID")
+View(filter(d, type == "CDS"))
 
 cds <- d %>%
   select(chrom, type, start_bp, end_bp) %>%

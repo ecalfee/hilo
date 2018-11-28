@@ -18,8 +18,10 @@ CM_WINDOW = as.numeric(args[1])
 # (2) a tab-deliminated SNP position file (no header) with chromosome and bp position as 1st and 2nd columns
 SNP_FILE_IN = args[2]
 #SNP_FILE_IN = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr6.var.sites"
+BED_FILE_OUT= args[3]
+#BED_FILE_OUT = paste0(tools::file_path_sans_ext(SNP_FILE_IN), "_", CM_WINDOW, "cM_windows.bed")
 
-# output: a bed file "SNP_FILE_IN"_XcM_windows.bed
+# output: a bed file BED_FILE_OUT
 # with each bp interval and the total cM width of the window
 # (end cases are taken to the end of the chromosome)
 # cM distances are calculated using the Ogut 2015 maize genetic map
@@ -35,7 +37,7 @@ chr_ends = rmapEXT[sapply(unique(rmapEXT$chr),
                           function(i) which(rmapEXT$chr == i & 
                                               rmapEXT$pos_bp == max(rmapEXT[rmapEXT$chr == i, "pos_bp"]))), ]
 
-SNPs = read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/chr6.var.sites",
+SNPs = read.table(SNP_FILE_IN,
            stringsAsFactors = F, header = F, sep = "\t")[ , 1:2]
 colnames(SNPs) = c("chrom", "pos_bp")
 
@@ -71,13 +73,12 @@ for (i in high){
 width_cm = round(right_cm - left_cm, 6)
 
 # write a bed file
-OUT_FILE = paste0(tools::file_path_sans_ext(SNP_FILE_IN),
-                  "_", CM_WINDOW, "cM_windows.bed")
+
 write.table(data.frame(chrom = SNPs$chrom,
                        chromStart = left_bp - 1, # standard bed files start is index 0 
                        chromEnd = right_bp, # and end is index 1
                        name = width_cm), # name field saves cM width of window (could be short if near edge of chromosome)
-            file = OUT_FILE,
+            file = BED_FILE_OUT,
             sep = "\t", quote = F, 
             col.names = T, row.names = F)
 
