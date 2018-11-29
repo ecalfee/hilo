@@ -1717,10 +1717,12 @@ Submitted batch job 7362596 - DONE (A FEW SECONDS..) -- oops all chr6, need to r
 Submitted batch job 7365639 - DONE
 # Now I use gffread and bedtools to
 # (1) merge my gff3 file into continuous segments of CDS: CDS_merged.bed
-scripts$ sbatch mergeCDSfromGFF3.sh
+scripts$ sbatch mergeCDSFromGFF3.sh
+Submitted batch job 7365704 - DONE (few secs)
 # (2) merge windows into one whole_genome.bed file and
 # find overlap between each of my windows and these CDS, 'coverage'
 scripts$ sbatch geneOverlapWindowsCM.sh
+Submitted batch job 7365709 -- fixed typo:
 
 
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
