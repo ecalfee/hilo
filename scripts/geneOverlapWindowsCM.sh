@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J geneOverlap
 #SBATCH -o /home/ecalfee/hilo/slurm-log/geneOverlapWindowsCM_%A_%a.out
-#SBATCH -t 10:00:00
+#SBATCH -t 15:00:00
 #SBATCH --mem=8G
 
 
