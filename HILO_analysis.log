@@ -1719,7 +1719,8 @@ Submitted batch job 7365639 - DONE
 # (1) merge my gff3 file into continuous segments of CDS: CDS_merged.bed
 scripts$ sbatch mergeCDSFromGFF3.sh
 Submitted batch job 7365704 - DONE (few secs) - rerunning to sort better order & only get autosome:
-Submitted batch job ***
+Submitted batch job 7366127 -- oops typo:
+Submitted batch job **
 
 # (2) merge windows into one whole_genome.bed file and
 # find overlap between each of my windows and these CDS, 'coverage'

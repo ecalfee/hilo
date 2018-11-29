@@ -21,10 +21,10 @@ module load bio
 
 # limit intervals to only CDS
 echo "filter to only CDS within original GFF3"
-gffread -C -o- $ORIGINAL_GFF | awk '$3=="CDS" && $1!="Pt" && $1!="Mt" {print $0}' > $DIR/CDS_automosome_only.gff
+gffread -C -o- $ORIGINAL_GFF | awk '$3=="CDS" && $1!="Pt" && $1!="Mt" {print $0}' > $DIR/CDS_autosome_only.gff
 
 # sort by coordinates and merge overlapping or contiguous CDS
 echo "sorting by coordinates and merging overlapping or contiguous CDS"
-bedtools sort -g ${CHROM_ORDER_FILE} -i $DIR/CDS_autosomes_only.gff | bedtools merge  > $DIR/CDS_merged.bed
+bedtools sort -g ${CHROM_ORDER_FILE} -i $DIR/CDS_autosome_only.gff | bedtools merge  > $DIR/CDS_merged.bed
 
 echo 'all done!'
