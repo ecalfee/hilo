@@ -429,6 +429,7 @@ hilo/data$ awk '$5 == "mexicana" && $6 == "allopatric" && $11 >= 0.05 {print "fi
 # each individual population
 ~/hilo/data$ for i in $(awk '$1 != "n" && $7 != "NA" {print $3}' HILO_IDs_cov_pass1.csv | sort | uniq); do awk -v i=$i '$3 == i && $7 != "NA" {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' HILO_IDs_cov_pass1.csv >> pass1_bam_pops/pop$i.list; done ---> REDO AFTER LABEL FIX 8.15.18 AND ONLY FILTERING OUT LOW COVERAGE IND'S:
 hilo/data$ for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "filtered_bam/hilo_"$1".sort.dedup.baq.bam"}' pass1_ids.txt > pass1_bam_pops/pop$i.list; done
+# Note: I don't know why pop33.list was missing, but I ran this line of code again on 12.4.18 to create pop33 adn make sure all others were up-to-date
 
 # all steps to SFS are listed here: http://www.popgen.dk/angsd/index.php/Fst
 # should use many cores for step 2 and need to download realSFS software (actually it's part of ANGSD version already on farm)
@@ -1720,14 +1721,14 @@ Submitted batch job 7365639 - DONE
 scripts$ sbatch mergeCDSFromGFF3.sh
 Submitted batch job 7365704 - DONE (few secs) - rerunning to sort better order & only get autosome:
 Submitted batch job 7366127 -- oops typo:
-Submitted batch job **
+Submitted batch job 7366128 - DONE
 
 # (2) merge windows into one whole_genome.bed file and
 # find overlap between each of my windows and these CDS, 'coverage'
 scripts$ sbatch geneOverlapWindowsCM.sh
 Submitted batch job 7365709 -- fixed typo:
 Submitted batch job 7365714 - chr10 out of order, rerunning:
-Submitted batch job ***
+Submitted batch job 7366131 - RUNNING
 
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
 # I found several identified inversion from prior mapping, LD, and experimental studies:
@@ -1754,7 +1755,7 @@ Submitted batch job 7104191 - OUT OF MEMORY & TIMED OUT
 # I made a script to accomplish this: thinGLFile.R run from thinGLFile4PCA.sh:
 scripts$ sbatch thinGLFile4PCA.sh
 Submitted batch job 7185757 - error not finding file! changed wkdir to scripts: changed other typos too:
-Submitted batch job 7186486 - ALL completeted really fast EXCEPT 316-319 still not finished at 30 min on c10-75, cancelled & rerunning:
+Submitted batch job 7186486 - ALL completed really fast EXCEPT 316-319 still not finished at 30 min on c10-75, cancelled & rerunning:
 scripts$ sbatch -x c10-75 -t 5:00 --array=316-319 thinGLFile4PCA.sh
 Submitted batch job 7187499 - COMPLETED. But files lack headers, rerunning all:
 scripts$ sbatch -x c10-75 thinGLFile4PCA.sh
@@ -1830,7 +1831,7 @@ Submitted batch job 7249488 - DONE
 
 # Using these results I redid the plots and it makes a big difference to compare thinning by .01cM spacing vs.
 # pruning down to every 1000th SNP -- results are fairly different, not just because thinning by .01cM leaves twice as many snps
-# It looks like I get more noise with pruning by SNP density not recombination density, but I'm not sure why
+# It looks like I get more noise with pruning by SNP density not recombination density, but I'm not sure why (maybe b/c twice as many snps)
 
 # TO DO:
 # I will redo local ancestry using new population mean ancestry estimates from NGSadmix.
@@ -1839,4 +1840,19 @@ Submitted batch job 7249488 - DONE
 # Get in touch with Li about which files are corrupted. Start processing/downloading the raw data from NCBI
 # Do f3/f4 formal test of admixture
 
-# Get
+# f3/f4 test options:
+#doAbbaBaba2 in Angsd estimates allele freq's from counts for each population (using all reads),
+#then gets expectation of D where the numerator is basically the f4, can use a 4th pop or fasta outgroup
+#the difference between doAbbaBaba2 and an f4 is that it normalizes the f4 with a denominator
+#which effectively conditions on an ABBA or BABA site (all others sites add 0 covariance; assuming pop 4 is always 'A')
+#I don't understand what it's doing when pop4 is polymorphic (does it not count ABAB and BABA? or are those both 'BABA's?)
+#Somewhat low limit on # reads per site and less flexible -- can't do an f3.
+#I understand the weights are proportional to 1 (1 read) to 2 (infinite info/reads), but don't understand how constant for weights are chosen.
+#ok actually they just pick a constant so the weights sum to 1 (so you end up with a frequency..good)
+#and the weights are chosen to minimize the variance in the allele frequency (just taking #As/totalalleles in all individuals would also be unbiased, but higher variance)
+#I could alternatively use the same unbiased estimator of pop allele freq from angsd and calculate f3/f4 myself
+# here I get allele frequencies (unbiased) for the main groups by using counts, for all variant sites passing depth filter
+scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
+scripts$ sbatch --export="POP=mexicana.allo.list,ALL" calcAlleleFreqPopByCounts.sh
+scripts$ sbatch --export="POP=maize.symp.list,ALL" calcAlleleFreqPopByCounts.sh
+scripts$ sbatch --export="POP=mexicana.symp.list,ALL" calcAlleleFreqPopByCounts.sh
