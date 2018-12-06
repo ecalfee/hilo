@@ -11,6 +11,7 @@
 
 DIR_POPS="pass1_bam_pops"
 DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
+DIR_REGIONS="refMaize/divide_5Mb"
 DIR_POP_FREQS="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs"
 
 # to run
@@ -38,6 +39,7 @@ mkdir -p ${DIR_SCRATCH}
 echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP
 
 angsd -out ${DIR_SCRATCH}/region_${REGION_I} \
+-rf ${DIR_REGIONS}/region_${REGION_I}.txt \
 -ref refMaize/AGPv4.fa \
 -bam ${DIR_POPS}/${POP}.list \
 -remove_bads 1 \
@@ -56,6 +58,7 @@ echo "results copied to home output directory: "${DIR_OUT}
 
 
 # settings:
+# -rf specifies regions file
 # -remove_bads removes reads with flags like duplicates
 # -doMajorMinor 3: takes major & minor allele from sites file
 # -sites var.sites file has 4 tab separated columns: chrom pos major minor

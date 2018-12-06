@@ -1852,7 +1852,18 @@ Submitted batch job 7249488 - DONE
 #and the weights are chosen to minimize the variance in the allele frequency (just taking #As/totalalleles in all individuals would also be unbiased, but higher variance)
 #I could alternatively use the same unbiased estimator of pop allele freq from angsd and calculate f3/f4 myself
 # here I get allele frequencies (unbiased) for the main groups by using counts, for all variant sites passing depth filter
-scripts$ sbatch --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
-scripts$ sbatch --export="POP=mexicana.allo.list,ALL" calcAlleleFreqPopByCounts.sh
+scripts$ sbatch --mem=16G --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7458210 - ERRORS:
+Submitted batch job ****
+
+scripts$ sbatch -t 2:00:00 --export="POP=mexicana.allo.list,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7458517 - ERRORS:
+scripts$ sbatch -t 2:00:00 --export="POP=mexicana.allo,ALL" calcAlleleFreqPopByCounts.sh
+
 scripts$ sbatch --export="POP=maize.symp.list,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7458577 - ERRORS:
+scripts$ sbatch --export="POP=maize.symp,ALL" calcAlleleFreqPopByCounts.sh
+
 scripts$ sbatch --export="POP=mexicana.symp.list,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7458578 - ERRORS:
+scripts$ sbatch --export="POP=mexicana.symp,ALL" calcAlleleFreqPopByCounts.sh
