@@ -1856,7 +1856,7 @@ scripts$ sbatch --mem=16G --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPop
 Submitted batch job 7458210 - ERRORS:
 ubmitted batch job 7460094 - all done except 0 (out of memory) and a few stalled so I cancelled & am rerunning:
 scripts$ sbatch --mem=32G --array=0,39,256,410,413,420-424 -x bigmem6,bigmem7,bigmem9,bigmem8 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
-Submitted batch job 7463423 - RUNNING
+Submitted batch job 7463423 - ALL DONE
 
 scripts$ sbatch -t 2:00:00 --export="POP=mexicana.allo.list,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7458517 - ERRORS:
@@ -1879,5 +1879,5 @@ scripts$ sbatch --export="POP=mexicana.symp,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7460253 - ALL DONE
 
 # run script to calculate f4, f3 and jackknife statistics:
-scripts$ sbatch f4fromPopFreq.sh # default is F4(allo maize, symp maize, symp mex, allo mex)
-Submitted batch job ***
+scripts$ sbatch -x bigmem6,bigmem7,bigmem9,bigmem8 --partition bigmemm f4fromPopFreq.sh # default is F4(allo maize, symp maize, symp mex, allo mex)
+Submitted batch job 7467216 -- no bootstrap package (trying again):

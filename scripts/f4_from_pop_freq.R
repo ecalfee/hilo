@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(dplyr)
-library(bootstrap)
+require(bootstrap)
 # this script runs an f4 test of admixture
 # Input:
 # It takes in the names of 4 populations

@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --partition=med
+#SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/scripts
 #SBATCH -J f4
 #SBATCH -o /home/ecalfee/hilo/slurm-log/f4fromPopFreq_%A_%a.out
