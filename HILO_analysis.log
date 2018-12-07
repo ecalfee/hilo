@@ -1854,16 +1854,30 @@ Submitted batch job 7249488 - DONE
 # here I get allele frequencies (unbiased) for the main groups by using counts, for all variant sites passing depth filter
 scripts$ sbatch --mem=16G --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7458210 - ERRORS:
-Submitted batch job ****
+ubmitted batch job 7460094 - all done except 0 (out of memory) and a few stalled so I cancelled & am rerunning:
+scripts$ sbatch --mem=32G --array=0,39,256,410,413,420-424 -x bigmem6,bigmem7,bigmem9,bigmem8 --export="POP=maize.allo.4Low16,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7463423 - RUNNING
 
 scripts$ sbatch -t 2:00:00 --export="POP=mexicana.allo.list,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7458517 - ERRORS:
 scripts$ sbatch -t 2:00:00 --export="POP=mexicana.allo,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7460246 - RUNNING. UGH timed out on some nodes.
+#grep 'walltime used' slurm-log/*7460246_*.out | sort --version-sort | wc -l
+scripts$ sbatch -t 2:00:00 -x bigmem6,bigmem7,bigmem9 --export="POP=mexicana.allo,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7462835 -- ALL DONE> accidentally reran all of them when I meant to run 71,74-75,202-243 but ok
 
 scripts$ sbatch --export="POP=maize.symp.list,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7458577 - ERRORS:
 scripts$ sbatch --export="POP=maize.symp,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7460250 - Cancelled last stalled few and rerunning:
+scripts$ sbatch --array=0,94-114,166,183,185,200,205,227,240,250,251 -x bigmem6,bigmem7,bigmem9,bigmem8 --export="POP=maize.symp,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7463361 - ALL DONE
 
 scripts$ sbatch --export="POP=mexicana.symp.list,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 7458578 - ERRORS:
 scripts$ sbatch --export="POP=mexicana.symp,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 7460253 - ALL DONE
+
+# run script to calculate f4, f3 and jackknife statistics:
+scripts$ sbatch f4fromPopFreq.sh # default is F4(allo maize, symp maize, symp mex, allo mex)
+Submitted batch job ***
