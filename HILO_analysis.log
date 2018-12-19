@@ -1904,3 +1904,5 @@ Some of the .fq files are also empty, e.g. RIMMA0409.fq
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
 scripts$ sbatch download_ncbi_tripsacum.sh
+Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too big of files) - rerunningP
+Submitted batch job ****
