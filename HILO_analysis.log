@@ -1881,3 +1881,26 @@ Submitted batch job 7460253 - ALL DONE
 # run script to calculate f4, f3 and jackknife statistics:
 scripts$ sbatch -x bigmem6,bigmem7,bigmem9,bigmem8 --partition bigmemm f4fromPopFreq.sh # default is F4(allo maize, symp maize, symp mex, allo mex)
 Submitted batch job 7467216 -- no bootstrap package (trying again):
+Submitted batch job 7467237 - RUNNING
+
+# Updating reference genome: I want to use the latest release, which includes spare contiguous
+ftp site:  ftp://ftp.gramene.org/pub/gramene/release-59/fasta/zea_mays/dna/
+file: Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+works on farm if I use the following commands (in srun interactive at 8G, 8hrs (large file!)):
+ftp -p ftp.gramene.org
+cd pub/gramene/release-59/fasta/zea_mays/dna/
+get README # works!
+get CHECKSUMS
+get Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # only took a few minutes!
+grep 'toplevel' CHECKSUMS
+sum Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # CHECKSUM match verified
+(if prompted, login as anonymous with a password as your email as a courtesy)
+
+This is the genome Li's landraces are mapped to except RIMMA0625_Andean.IndelRealigned.bam which is mapped to v3
+so I will need to use my 'remapping' script to just remap that one individual b/c v4 bam was truncated.
+BUT my remapping script doesn't work: all files are empty in remapped/*.bam and I'll delete them.
+Some of the .fq files are also empty, e.g. RIMMA0409.fq
+
+It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
+Downloading Tripsacum reads from NCBI:
+scripts$ sbatch download_ncbi_tripsacum.sh

@@ -23,7 +23,7 @@ set –o nounset
 # load modules
 module load bio3
 
-LIST_OF_SAMPLEs=($(awk '{print $12}' landraces_fromLi/SraRunTable.txt))
+LIST_OF_SAMPLEs=($(awk '{print $12}' landraces_fromLi/SraRunTable.txt)) # careful not always same columns!
 LIST_OF_SRAs=($(awk '{print $10}' landraces_fromLi/SraRunTable.txt))
 SAMPLE_ID=${LIST_OF_SAMPLEs[$SLURM_ARRAY_TASK_ID]} # get individual i based on SLURM_ARRAY_TASK_ID
 SRA_ID=${LIST_OF_SRAs[$SLURM_ARRAY_TASK_ID]}
