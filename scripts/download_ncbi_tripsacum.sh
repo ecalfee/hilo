@@ -4,8 +4,8 @@
 #SBATCH -J downTRIP
 #SBATCH -o /home/ecalfee/hilo/slurm-log/downTRIP_%A_%a.out
 #SBATCH -t 240:00:00
-#SBATCH --mem=4G
-#SBATCH -n 4
+#SBATCH --mem=8G
+#SBATCH -n 1
 #SBATCH --array=0-1
 
 # this script downloads raw reads from NCBI
@@ -26,26 +26,15 @@ i=$SLURM_ARRAY_TASK_ID
 LIST_OF_SRAs=($(cat tripsacum/SRR_Acc_List.txt))
 SRA_ID=${LIST_OF_SRAs[$i]}
 OUTPUT_DIR="tripsacum" # directory to store .fq files downloaded
-#SCRATCH_DIR="/scratch/ecalfee/tripsacum_"$i # worry is locally there may not be enough storage (large files!)
-SCRATCH_DIR=$OUTPUT_DIR
-TMP_DIR=${SCRATCH_DIR}"/tmp"
-
 
 # output directories
 mkdir -p ${OUTPUT_DIR}
-# scratch directories
-mkdir -p ${SCRATCH_DIR}
-mkdir -p ${TMP_DIR}
 
 echo "Downloading data for SRA accession "${SRA_ID}
-parallel-fastq-dump --sra-id ${SRA_ID} \
---threads 4 --outdir ${SCRATCH_DIR} \
---gzip --clip --split-files --skip-technical \
---tmpdir ${TMP_DIR}
-
-# copy results back over
-#echo "all done downloading from NCBI! Now transfering files from local to home directory"
-#rsync -avh --remove-source-files ${DIR_SCRATCH}/ ${DIR_OUT}/ # copies all contents of output directory over to the appropriate home directory & cleans up scratch dir.
-#echo "results copied to home output directory: "${DIR_OUT}
+prefetch -v -X 90G -O ${OUTPUT_DIR} ${SRA_ID}
 
 echo "all done for SRA accession "${SRA_ID}
+# options:
+# -v for verbose output
+# -X is maximum file size to downloads in Gb -- these are big files!
+# -O specifies output directory to save downloaded file

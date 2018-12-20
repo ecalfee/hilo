@@ -1905,4 +1905,7 @@ It may only make sense to calculate fD once I have a true outgroup, like Tripsac
 Downloading Tripsacum reads from NCBI:
 scripts$ sbatch download_ncbi_tripsacum.sh
 Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too big of files) - rerunningP
-Submitted batch job ****
+Submitted batch job 7638025 - DID NOT WORK. I am going to split this into 2 steps: 1) download .sra with wget and 2) use fastq-dump to convert to .fq.gz file
+scripts$ sbatch download_ncbi_tripsacum.sh
+***
+scripts$ -- Modify script to find correct file name for .sra file
