@@ -57,7 +57,7 @@ echo "results copied to home output directory: "${DIR_OUT}
 
 
 # settings:
-# -r specifies which region to work on; -rf is the regions file
+# -rf specifies regions file
 # -remove_bads removes reads with flags like duplicates
 # -doMajorMinor 3: takes major & minor allele from sites file
 # -sites var.sites file has 4 tab separated columns: chrom pos major minor

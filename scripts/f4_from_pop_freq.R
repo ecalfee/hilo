@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(dplyr)
-require(bootstrap)
+library(bootstrap)
 # this script runs an f4 test of admixture
 # Input:
 # It takes in the names of 4 populations
@@ -107,12 +107,17 @@ write.table(d,
             paste0(file_out, ".regions"), 
             col.names = T, row.names = F, quote = F, sep = "\t")
 
+# read in from file because farm couldn't load package 'bootstrap'
+#d <- read.table(paste0(file_out, ".regions"),
+#                header= T, stringsAsFactors = F, sep = "\t")
+
 # compute jackknife across regions
 calc_f4 <- function(x, df){ # x is a vector of included rows
   sum(df[x, "f4_sum"])/sum(df[x, "n"])
 }
 jack_f4 <- jackknife(1:nrow(d), calc_f4, d)
 f4 <- calc_f4(1:nrow(d), d) # with all data
+jack_f4$mean <- f4
 
 # function to calculate normalized f4
 # equivalent to D from doAbbaBaba2 in angsd
@@ -121,6 +126,7 @@ calc_D <- function(x, df){
 }
 jack_D <- jackknife(1:nrow(d), calc_D, d)
 D <- calc_D(1:nrow(d), d)
+jack_D$mean <- D
 
 # both possible f3 tests:
 calc_f3 <- function(x, df, f3_pop){ # x is a vector of included rows
@@ -130,24 +136,31 @@ jack_f3 <- lapply(2:3, function(i)
                   jackknife(1:nrow(d), calc_f3, d, paste0("f3_sum", i)))
 f3 <- lapply(2:3, function(i)
   calc_f3(1:nrow(d), d, paste0("f3_sum", i))) # with all data
+jack_f3[[1]]$mean <- f3[[1]]
+jack_f3[[2]]$mean <- f3[[2]]
+
+jack_all <- list(jack_f4, jack_D, jack_f3[[1]], jack_f3[[2]])
+#f4*426 - 425*mean(jack_f4$jack.values) # corrected estimate
+#f4 - jack_f4$jack.bias # same thing
+summary <- data.frame(stat = c("f4", "D", 
+                        paste0("f3_", pops[[2]]), 
+                        paste0("f3_", pops[[3]])), 
+                      pop1 = pops[1],
+                      pop2 = pops[2],
+                      pop3 = pops[3],
+                      pop4 = pops[4],
+                      t(sapply(jack_all, function(j) 
+                        j$mean - j$jack.bias + 
+                          c(-j$jack.se, 0, j$jack.se)))) %>%
+  rename(., lower_3se = X1) %>%
+  rename(., mean_corrected = X2) %>%
+  rename(., upper_3se = X3) %>%
+  mutate(., mean_raw = sapply(jack_all, function(i) i$mean)) %>%
+  mutate(., jack.se = sapply(jack_all, function(i) i$jack.se)) %>%
+  mutate(., jack.bias = sapply(jack_all, function(i) i$jack.bias))
 
 # write output file for summary of jackknife
-write.table(data.frame(pop1 = pops[1],
-                       pop2 = pops[2],
-                       pop3 = pops[3],
-                       pop4 = pops[4],
-                       f4 = f4,
-                       f4.jack.se = jack_f4$jack.se,
-                       f4.jack.bias = jack_f4$jack.bias,
-                       D = D,
-                       D.jack.se = jack_D$jack.se,
-                       D.jack.bias = jack_D$jack.bias,
-                       f3.pop2 = f3[[1]],
-                       f3.pop2.jack.se = jack_f3[[1]]$jack.se,
-                       f3.pop2.jack.bias = jack_f3[[1]]$jack.bias,
-                       f3.pop3 = f3[[2]],
-                       f3.pop3.jack.se = jack_f3[[2]]$jack.se,
-                       f3.pop3.jack.bias = jack_f3[[2]]$jack.bias),
+write.table(summary,
             paste0(file_out, ".summary"), 
             col.names = T, row.names = F, quote = F, sep = "\t")
 

@@ -3,12 +3,19 @@ library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
 library(scales)
+require(hexbin)
+library(reshape2)
 library(zoo) # for rolling mean (mean across windows)
 # helper file with some useful functions
 source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
 
-#dir_in = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
-dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
+# get inversions:
+inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
+                 stringsAsFactors = F, header = T)
+excl_inv_buffer = 1000000 # exclude 1 megabase around inversion
+
+dir_in = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
+#dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
 dir_anc = paste0(dir_in, "output_noBoot/anc/")
 # color palette for locations (n=13 locations)
 location_colors = c("gray10", "deepskyblue1",
@@ -24,15 +31,23 @@ alphas <- read.table("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinne
                      stringsAsFactors = F, header = F)
 colnames(alphas) <- c("popN", "alpha_maize", "alpha_mex")
 # metadata for each individual, including pop association
+pop_elev <- read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+                       stringsAsFactors = F, header = T, sep = "\t") %>%
+  dplyr::select(., popN, ELEVATION)
 meta <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
                    header = T, sep = "\t") %>%
   filter(., est_coverage >= 0.05) %>%
-  left_join(., alphas, by = c("popN"))
+  left_join(., alphas, by = c("popN")) %>%
+  left_join(., pop_elev, by = c("popN"))
+
+
 # individual by individual K matrix
 included_inds = meta %>%
   filter(alpha_maize > 0 & alpha_mex > 0) %>%
   .[order(.$popN), ]
-pops = unique(included_inds[order(included_inds$popN), c("popN", "zea", "LOCALITY", "alpha_maize", "alpha_mex")])
+pops = unique(included_inds[order(included_inds$popN), c("popN", "zea", "LOCALITY", "alpha_maize", "alpha_mex", "ELEVATION")])
+pops$zea_SHORT = abbreviate(pops$zea, min = 4, use.classes = F)
+pops$LOC_SHORT = abbreviate(pops$LOCALITY, min = 6, method = "both.sides", use.classes = F)
 #write.table(pops$popN, paste0(dir_in, "/included_pops.txt"),
 #            col.names = F, row.names = F, quote = F)
 
@@ -43,7 +58,7 @@ pop_anc_list = lapply(pops$popN, function(pop) read.table(paste0(dir_anc, "/pop"
 # combine population ancestry frequencies into a matrix
 # where rows are populations and columns are snps
 all_anc = t(do.call(cbind, pop_anc_list))
-rownames(all_anc) <- paste(substr(pops$zea, 1, 4), substr(pops$LOCALITY, 1, 2), sep = ".")
+rownames(all_anc) <- paste(pops$zea_SHORT, pops$LOC_SHORT, sep = ".")
 make_calcs = function(pop_anc){
   # calculate mean population frequency across all snps
   pop_alpha = apply(pop_anc, 1, mean)
@@ -77,7 +92,8 @@ png(paste("../plots/K_covplot_combined.png"), # saves plot as pin in ../plots/
 col_pop_location=location_colors[my_group=as.numeric(as.factor(pops$LOCALITY))]
 heatmap(all$K, Colv = NA, Rowv = NA, main = "mex/maize pop anc cov.",
         col= colorRampPalette(brewer.pal(8, "Blues"))(25), 
-        RowSideColors = col_pop_location)
+        RowSideColors = col_pop_location,
+        scale = "none")
 dev.off()
 
 # read in individual ancestry input files from calc_genomewide_pop_anc_freq.R
@@ -109,8 +125,11 @@ heatmap(all_ind$K,
         Colv = NA, Rowv = NA, 
         main = "mex/maize ind anc cov.",
         col = colorRampPalette(brewer.pal(8, "Blues"))(25),
-        RowSideColors = col_ind_location)
+        RowSideColors = col_ind_location,
+        scale = "none")
 dev.off()
+
+
 
 # I don't have a good idea yet how much of the ancestry covariance across all maize has to do with selection
 # at the same loci for mexicana introgression.
@@ -122,20 +141,37 @@ dev.off()
 # and visualize K by high/low recomb. where alpha is a genomewide mean 
 # and visualize K by high/low recomb. where alpha is a recombination bin mean
 # script rmap.R generates recombination rates for each position in thinned positions
-pos <- read.table(
-            paste0(dir_in, "input/pos_recomb_rates.txt"), 
-            header = T, stringsAsFactors = F)
+#pos <- read.table(
+#            paste0(dir_in, "input/pos_recomb_rates.txt"), 
+#            header = T, stringsAsFactors = F)
 # use if no recombination rates have been calculated
 #pos = read.table(paste0(dir_in, "/output_noBoot/HILO1.posterior"),
 #                 stringsAsFactors = F, header = T)[ , 1:2] %>%
 #  rename(pos = position)
 
+# I'll get position info from var.sites used for ancestry_hmm
+# and then gene density from the 0.1cM windows around each SNP
+sites <- do.call(rbind, 
+               lapply(1:10, function(i)
+                 read.table(paste0(dir_in, "../chr", i, ".var.sites"),
+                            header = F, stringsAsFactors = F)))
+colnames(sites) <- c("chr", "pos", "major", "minor")
+wind <- read.table(paste0(dir_in, "/../windows0.1cM/gene_overlap.bed"),
+                 header = F, stringsAsFactors = F)
+colnames(wind) <- c("chr_wind", "start", "end", 
+                    "width_cM", "coding_bp",
+                    "n_CDS", "width_bp", # note number CDS is number contigous coding sequences (may be more than one gene (?))
+                    "perc_coding")
+pos <- cbind(sites, wind)
+# calculate local recombination rate
+# in cM/Mb
+pos$rate <- pos$width_cM/(pos$width_bp/10^6)
 hist(pos$rate)
 summary(pos$rate)
 # quantiles for defining 'low' and 'high' recomb.
-low_quant = .1
-high_quant = .9
-
+low_quant = .2
+high_quant = .8
+quantile(pos$rate, c(low_quant, high_quant)) # 0.2 and 4.0
 
 # low recombination rate regions <= low quantile:
 low_r_anc = all_anc[ , pos$rate <= quantile(pos$rate, low_quant)]
@@ -153,14 +189,16 @@ png(paste("../plots/K_covplot_pop_combined_low_recomb_rate.png"), # saves plot a
     height = 7, width = 7, units = "in", res = 150)
 heatmap(low_r$K, Colv = NA, Rowv = NA, main = "low recomb - pop anc cov.",
         col= colorRampPalette(brewer.pal(8, "Blues"))(25), 
-        RowSideColors = col_pop_location)
+        RowSideColors = col_pop_location,
+        scale = "none")
 dev.off()
 
 png(paste("../plots/K_covplot_pop_combined_high_recomb_rate.png"), # saves plot as pin in ../plots/
     height = 7, width = 7, units = "in", res = 150)
 heatmap(high_r$K, Colv = NA, Rowv = NA, main = "high recomb - pop anc cov.",
         col= colorRampPalette(brewer.pal(8, "Blues"))(25), 
-        RowSideColors = col_pop_location)
+        RowSideColors = col_pop_location,
+        scale = "none")
 dev.off()
 
 
@@ -169,14 +207,16 @@ png(paste("../plots/K_covplot_ind_combined_low_recomb_rate.png"), # saves plot a
     height = 14, width = 14, units = "in", res = 150)
 heatmap(low_r_ind$K, Colv = NA, Rowv = NA, main = "low recomb - ind anc cov.",
         col= colorRampPalette(brewer.pal(8, "Blues"))(25), 
-        RowSideColors = col_ind_location)
+        RowSideColors = col_ind_location,
+        scale = "none")
 dev.off()
 
 png(paste("../plots/K_covplot_ind_combined_high_recomb_rate.png"), # saves plot as pin in ../plots/
     height = 14, width = 14, units = "in", res = 150)
 heatmap(high_r_ind$K, Colv = NA, Rowv = NA, main = "high recomb - ind anc cov.",
         col= colorRampPalette(brewer.pal(8, "Blues"))(25), 
-        RowSideColors = col_ind_location)
+        RowSideColors = col_ind_location,
+        scale = "none")
 dev.off()
 
 # correlation matrices low vs. high recomb.
@@ -201,11 +241,106 @@ png(paste("../plots/K_corrplot_ind_combined_high_recomb_rate.png"),
     height = 14, width = 14, units = "in", res = 150)
 corrplot(cov2cor(high_r_ind$K), method="shade", main = "High recomb. ind anc corr.")
 dev.off()
+
+# I can plot the covariances from the K matrices 
+# as box plots to compare covariances
+# for specific pairs of pops
+
+# do pairs of maize-mex populations at the same location 
+# covary more with each other than random pairs?
+# which populations have mex-maize pairs?
+pop_pairs = pops$LOCALITY[duplicated(pops$LOCALITY)]
+pops$paired = pops$LOCALITY %in% pop_pairs
+pop_pairs_SHORT = unique(pops$LOC_SHORT[pops$LOCALITY %in% pop_pairs])
+# How many haplotypes were sequenced per population
+# (so I can do a finite sample size correction for
+# the variance within pop to fairly compare it with
+# covariances between populations)
+pops$N_haps = unlist(lapply(ind_anc_list, 
+                            function(i) dim(i)[2]))
+
+
+# flatten or 'melt' covariance matrices K
+kmelt <- function(K, haps_per_pop, regions = NULL){ 
+  # haps per pop is to do the finite sample size correction
+  # for the variance (on the diagonal) so it can be compared
+  # to covariances between populations
+  
+  # not quite : want matrix 1's everywhere else but N/N-1 on diagonals--
+  K_corrected = K*(matrix(1, dim(K)[1], dim(K)[2]) + diag(haps_per_pop))
+  k_melted = reshape2::melt(K_corrected, 
+                         value.name = "covariance")[upper.tri(K_corrected, diag = T),] %>%
+    separate(., Var1, c("zea_SHORT_1", "LOC_SHORT_1")) %>%
+    separate(., Var2, c("zea_SHORT_2", "LOC_SHORT_2")) %>%
+    mutate(., same_location = LOC_SHORT_1 == LOC_SHORT_2) %>%
+    mutate(., mex_vs_maize = zea_SHORT_1 != zea_SHORT_2) %>%
+    mutate(., have_pairs = LOC_SHORT_1 %in% pop_pairs_SHORT & LOC_SHORT_2 %in% pop_pairs_SHORT)
+  if (! is.null(regions)){ # label these results
+    k_melted$regions <- regions
+  }
+  return(k_melted)
+  }
+
+melted_ks <- do.call(rbind,
+             lapply(c("all", "low_r", "high_r"),
+                    function(i) kmelt(get(i)$K, regions = i)))
+# show patterns for covarience between maize-mex pairs
+melted_ks %>%
+  filter(., have_pairs & mex_vs_maize) %>%
+  ggplot(., aes(y = covariance, x = same_location,
+                      fill = regions)) + 
+  geom_boxplot() +
+    ggtitle("covariance mex-maize pairs at same and diff locations")
+# show patterns of covariance for maize-maize pairs
+melted_ks %>%
+  filter(., (!mex_vs_maize) & zea_SHORT_1 == "maiz") %>%
+  ggplot(., aes(y = covariance, x = same_location,
+                      fill = regions)) + 
+  geom_boxplot() +
+    ggtitle("covariance maize-maize pairs at same and diff locations")
+# show patterns of covariance for mex-mex pairs
+melted_ks %>%
+  filter(., (!mex_vs_maize) & zea_SHORT_1 == "mexi") %>%
+  ggplot(., aes(y = covariance, x = same_location,
+                      fill = regions)) + 
+  geom_boxplot() +
+    ggtitle("covariance mex-mex pairs at same and diff locations")
+
+
+# pairs_k is a k matrix with covariances between mexicana pops (rows)
+# and maize pops (cols), where diagonal is same location,
+# and only pops with a pair are included in the matrix
+for (i in c("all", "low_r", "high_r")){
+    k = get(i)
+  pairs_k_unordered = k$K[pops$zea == "mexicana" & pops$paired, 
+                            pops$zea == "maize" & pops$paired]
+  k$pairs_k = pairs_k_unordered[order(rownames(pairs_k_unordered)), 
+                        order(colnames(pairs_k_unordered))]
+  # make dataframe with columns 'paired', 'unpaired', 'nonpair'
+  cov_pairs = diag(k$pairs_k)
+  cov_nonpairs = pairs_k[col(k$pairs_k) != row(k$pairs_k)]
+  boxplot(cov_pairs, cov_nonpairs,
+          main = i)
+}
+
+
+
+
+
+
 # I am not sure whether this is the appropriate
 # alpha to recalculate it for just high or low recombining regions --
 # I think I should be using a global alpha from genomewide
 # or maybe weighing it differently than just taking mean across thinned snps
 # because SNPs kept are more likely in low recomb. areas
+# BUT we do think the alphas from low recombination are
+# being affected by selection; in finding e.g. mexicana
+# outlier loci in maize it's conservative to take the genomewide
+# avg. in regions of low recombination but maybe anti-conservative 
+# for potenital outliers in regions of high recombination
+
+
+
 
 # plot estimated mexicana ancestry
 # by high vs. low recomb. rate regions
@@ -223,11 +358,15 @@ legend(x = "topleft",
 abline(a = 0, b = 1)
 dev.off()
 
+
+
+
+
 # how much of the genome appears to be under selection?
 sum(maize[["p_ZAnc"]] < .01)/sum(maize[["ZAnc"]] > 0)
 # ~ 9% of teosinte-biased ancestry segments appear to be selected for mexicana upon rough approximation
 maize_bound = qnorm(p = .01, mean = 0, sd = sqrt(nrow(maize_anc)), lower.tail = F)
-sum(abs(maize[["ZAnc"]]) < maize_bound)/ncol(maize_anc) # 3.6% genome overall appears to be under selection
+sum(abs(maize[["ZAnc"]]) > maize_bound)/ncol(maize_anc) # 3.6% genome overall appears to be under selection
 sum(maize[["ZAnc"]] > maize_bound)/ncol(maize_anc) # nearly all of it in the teosinte direction
 mex_bound = qnorm(p = .01, mean = 0, sd = sqrt(nrow(mex_anc)), lower.tail = F)
 all_bound = qnorm(p = .01, mean = 0, sd = sqrt(nrow(all_anc)), lower.tail = F)
@@ -237,38 +376,20 @@ sum(mex[["ZAnc"]] < -mex_bound)/ncol(mex_anc) # 1-2% maize biased
 
 # histogram of ZAnc statistic
 pop_results = list(all, maize, mex)
-for (i in pop_results){
-  png(paste("../plots/ZAnc_hist_", deparse(substitute(i)) , ".png"), # saves plot as pin in ../plots/
+pop_name = list("all", "maize", "mex")
+bounds = list(all_bound, maize_bound, mex_bound)
+for (i in 1:length(pop_results)){
+  pr <- pop_results[[i]]
+  name <- pop_name[[i]]
+  png(paste("../plots/ZAnc_hist_", name , ".png"), # saves plot as pin in ../plots/
       height = 5, width = 5, units = "in", res = 150)
-  hist(i[["ZAnc"]], main = paste("ZAnc", deparse(substitute(i))))
-  mtext(paste0("p<.01 outliers maize:", round(sum(i[["ZAnc"]] < -all_bound)/ncol(all_anc), 3), 
-               " mex:", round(sum(i[["ZAnc"]] > all_bound)/ncol(all_anc), 3))) # I suspect outliers are driven mainly by maize
-  abline(v = c(all_bound, -all_bound), col = "red")
+  hist(pr[["ZAnc"]], main = paste("ZAnc", name))
+  mtext(paste0("p<.01 outliers maize:", round(sum(pr[["ZAnc"]] < -bounds[[i]])/ncol(all_anc), 3), 
+               " mex:", round(sum(pr[["ZAnc"]] > bounds[[i]])/ncol(all_anc), 3))) # I suspect outliers are driven mainly by maize
+  abline(v = c(bounds[[i]], -bounds[[i]]), col = "red")
   dev.off()
 }
-
-
-png(paste("../plots/ZAnc_hist_combined.png"), # saves plot as pin in ../plots/
-    height = 5, width = 5, units = "in", res = 150)
-hist(all[["ZAnc"]], main = "Combined ZAnc")
-mtext(paste0("p<.01 outliers maize:", round(sum(all[["ZAnc"]] < -all_bound)/ncol(all_anc), 3), 
-                  " mex:", round(sum(all[["ZAnc"]] > all_bound)/ncol(all_anc), 3))) # I suspect outliers are driven mainly by maize
-abline(v = c(all_bound, -all_bound), col = "red")
-dev.off()
-png(paste("../plots/ZAnc_hist_maize.png"), # saves plot as pin in ../plots/
-    height = 5, width = 5, units = "in", res = 150)
-hist(maize[["ZAnc"]], main = "maize ZAnc")
-mtext(paste0("p<.01 outliers maize:", round(sum(maize[["ZAnc"]] < -maize_bound)/ncol(maize_anc), 3), 
-             " mex:", round(sum(maize[["ZAnc"]] > maize_bound)/ncol(maize_anc), 3)))
-abline(v = c(maize_bound, -maize_bound), col = "red")
-dev.off()
-png(paste("../plots/ZAnc_hist_mex.png"), # saves plot as pin in ../plots/
-    height = 5, width = 5, units = "in", res = 150)
-hist(mex[["ZAnc"]], main = "mex ZAnc")
-mtext(paste0("p<.01 outliers maize:", round(sum(mex[["ZAnc"]] < -mex_bound)/ncol(mex_anc), 3), 
-             " mex:", round(sum(mex[["ZAnc"]] > mex_bound)/ncol(mex_anc), 3)))
-abline(v = c(mex_bound, -mex_bound), col = "red") # may be too close to the boundary to get high mex. outliers
-dev.off()
+# plot p-values for maize ZAnc
 plot(maize[["ZAnc"]], maize[["p_ZAnc"]], cex = .1, 
      col = ifelse(maize[["p_ZAnc"]] < .01 | maize[["p_ZAnc"]] > .99, "red", "blue"),
      main = "p_values for ZAnc statistic across sites in maize")
@@ -288,7 +409,8 @@ d = data.frame(pos, ZAnc_maize = maize[["ZAnc"]], ZAnc_mex = mex[["ZAnc"]], ZAnc
 d %>%
   #filter(., chr == "4") %>%
   ggplot(., aes(x = pos, y = ZAnc_maize)) + 
-  geom_point(cex= .1, alpha = .5, col = "orange") + facet_wrap(~chr)
+  geom_point(cex= .1, alpha = .5, col = "orange") + 
+  facet_wrap(~chr)
 ggsave("../plots/ZAnc_maize_whole_genome.png", height = 15, width = 15, units = "in", device = "png")
 d %>%
   #filter(., chr == "4") %>%
@@ -301,6 +423,166 @@ d %>%
   geom_point(cex= .1, alpha = .5, col = "black") + facet_wrap(~chr)
 ggsave("../plots/ZAnc_combined_whole_genome.png", height = 15, width = 15, units = "in", device = "png")
 
+
+# plot ZAnc against recombination rates in 0.1cM windows around SNPs
+d %>%
+  filter(., chr == "4") %>%
+  ggplot(., aes(x = pos, y = rate)) + 
+  geom_point(cex= .1, alpha = .5, col = "black") +
+  geom_smooth(col = "blue")
+d %>%
+  #filter(., chr == "4") %>%
+  ggplot(., aes(x = rate, y = ZAnc_maize)) + 
+  geom_point(cex= .1, alpha = .5, col = "black") +
+  geom_smooth(col = "blue")
+
+# group rates by quantiles for barplots:
+d$bin_rate = cut(d$rate, # include full range of depth in cut
+                 breaks = quantile(d$rate, p = seq(0, 1, by = .2)),
+                 right = T,
+                 include.lowest = T)
+d$coding_density = d$coding_bp/d$width_cM
+d$bin_coding_density = cut(d$coding_density,
+                           breaks = quantile(d$coding_density, p = seq(0, 1, by = .2)),
+                           right = T,
+                           include.lowest = T)
+d$meanAlpha_maize = colMeans(maize_anc)
+d$meanAlpha_mex = colMeans(mex_anc)
+# exclude inversion area
+d$excl_inv <- d$chr == inv[inv$ID=="Inv4m", "chrom"] & 
+  d$pos > inv[inv$ID == "Inv4m", "start"] - excl_inv_buffer &
+  d$pos < inv[inv$ID == "Inv4m", "end"] + excl_inv_buffer
+d_split <- d %>%
+  filter(., !excl_inv) %>%
+  gather(., "group_alpha", "alpha", 
+         c("meanAlpha_mex", "meanAlpha_maize")) %>%
+  gather(., "group_ZAnc", "ZAnc",
+         c("ZAnc_mex", "ZAnc_maize", "ZAnc_all"))
+
+# make bar plot
+box_rate_ZAnc <- 
+  ggplot(d_split, aes(y = ZAnc, x = bin_rate,
+                fill = group_ZAnc)) + 
+  scale_fill_manual(values = c("grey", colors_maize2mex[c(1,4)])) +
+  geom_boxplot() +
+  facet_wrap(~group_ZAnc) +
+  labs(x = "recombination rate (0.1cM winds)", 
+       y = "ZAnc statistic by group",
+       main = "Effect of local recomb. on ZAnc statistic")
+plot(box_rate_ZAnc)
+ggsave("../plots/box_rate_ZAnc_0.1cM_windows.png", 
+       height = 15, width = 20, 
+       units = "in", device = "png")
+
+# make bar plot for mean ancestry mexicna
+box_rate_alpha <- 
+  ggplot(d_split, aes(y = alpha, x = bin_rate,
+                      fill = group_alpha)) + 
+  scale_fill_manual(values = colors_maize2mex[c(1,4)]) +
+  geom_boxplot() +
+  facet_wrap(~group_alpha) +
+  labs(x = "recombination rate (0.1cM winds)", 
+       y = "Mean mex. ancestry by group",
+       main = "Effect of local recomb. on mean mex ancestry (alpha)")
+plot(box_rate_alpha)
+ggsave("../plots/box_rate_alpha_0.1cM_windows.png", 
+       height = 15, width = 20, 
+       units = "in", device = "png")
+
+# now for gene density: make bar plot for mean ancestry mexicna
+box_coding_density_alpha <- 
+  ggplot(d_split, aes(y = alpha, x = bin_coding_density,
+                      fill = group_alpha)) + 
+  scale_fill_manual(values = colors_maize2mex[c(1,4)]) +
+  geom_boxplot() +
+  facet_wrap(~group_alpha) +
+  labs(x = "coding density (bp/cM)", 
+       y = "Mean mex. ancestry by group",
+       main = "Effect of local coding desnity on mean mex ancestry (alpha)")
+plot(box_coding_density_alpha)
+ggsave("../plots/box_coding_density_alpha_0.1cM_windows.png", 
+       height = 15, width = 20, 
+       units = "in", device = "png")
+
+
+# plot ZAnc against gene density in 0.1cM windows around SNPs
+d %>%
+  #filter(., chr == "4") %>%
+  ggplot(., aes(x = perc_coding, y = ZAnc_maize)) + 
+  geom_point(cex= .1, alpha = .5, col = "black") +
+  geom_smooth(col = "blue")
+
+
+# plot recomb. rate against gene density in 0.1cM windows around SNPs
+d %>%
+  #filter(., chr == "4") %>%
+  ggplot(., aes(x = rate, y = perc_coding)) + 
+  geom_point(cex= .1, alpha = .5, col = "black") +
+  geom_smooth(col = "blue")
+
+# plot ancestry by recombination rate
+#rownames(d)<-NULL
+# add in ancestry information for each population 
+# at each site
+d_anc <- bind_cols(d, data.frame(t(maize_anc)), 
+                   data.frame(t(mex_anc))) %>%
+  gather(., "pop", "alpha_mex", 17:37)
+# for individual pops, plot recomb. rate vs. ancestry
+d_anc %>%
+  filter(., chr == "4") %>%
+  filter(., pop == "maiz.Na" | pop == "maiz.Op") %>%
+  ggplot(., aes(x = rate, y = alpha_mex)) +
+  geom_point(cex= .1, alpha = .5, col = "black") +
+  geom_smooth(col = "blue") +
+  facet_wrap(~pop)
+ggsave("../plots/anc_by_recomb_rate_0.1cM_windows.png", 
+       height = 20, width = 25, 
+       units = "in", device = "png")
+# and plot coding density vs. ancestry
+d_anc %>%
+  #filter(., chr == "4") %>%
+  #filter(., pop == "maiz.Na" | pop == "maiz.Op") %>%
+  ggplot(., aes(x = coding_bp, y = alpha_mex)) +
+  geom_point(cex= .1, alpha = .5, 
+             col = "black") +
+  geom_smooth(col = "blue") +
+  facet_wrap(~pop)
+ggsave("../plots/anc_by_coding_bp.png", 
+       height = 20, width = 25, 
+       units = "in", device = "png")
+# percent coding bp
+d_anc %>%
+  #filter(., chr == "4") %>%
+  #filter(., pop == "maiz.Na" | pop == "maiz.Op") %>%
+  ggplot(., aes(x = coding_bp/width_cM, y = alpha_mex)) +
+  geom_bin2d() +
+  #geom_point(cex= .1, alpha = .5, 
+  #           col = "black") +
+  geom_smooth(col = "blue") +
+  facet_wrap(~pop)
+ggsave("../plots/anc_by_coding_bp_per_cM.png", 
+       height = 20, width = 25, 
+       units = "in", device = "png")
+
+# plain linked bp within 0.1cM windows
+p_bp <- d_anc %>%
+  #filter(., chr == "4") %>%
+  #filter(., pop == "maiz.Na" | pop == "maiz.Op") %>%
+  ggplot(., aes(x = width_bp, y = alpha_mex)) 
+#p_bp + geom_hex() # try hexbin out with smaller data
+p_bp + geom_hex() +
+  geom_smooth(col = "blue") +
+  facet_wrap(~pop)
+p_bp + geom_bin2d() +
+  geom_smooth(col = "blue") +
+  facet_wrap(~pop)
+#p_bp + geom_point(cex= .1, alpha = .05, 
+#             col = "black") +
+#  geom_smooth(col = "blue") +
+#  facet_wrap(~pop)
+ggsave("../plots/anc_by_width_bp_0.1cM_windows_bins.png", 
+       height = 20, width = 25, 
+       units = "in", device = "png")
 
 # Now get smoothed ZAnc statistic plots 
 # (taking mean across windows of 50 thinned positons ~ 50-100 kb)
@@ -571,5 +853,12 @@ str(maize_ind_anc)
 # what does REFERENCE panel coverage look like (from ancestry_hmm input)?
 
 # Now repeat these sanity checks with a few outlier regions in mexicana --
+
+# are there associations between ZAnc and environment?
+# start w/ maize
+
+# how does this compare to just plain Anc ~ Env?
+
+
 
 

@@ -85,13 +85,13 @@ maize = do.call(rbind,
 #                          quote = F)
 maize = read.table(paste0(dir_in, "/maize_posteriors_small.txt"),
                    sep = "\t", header = T, stringsAsFactors = F)
-mex = do.call(lapply(include_mex$n, function(i)
-  getPostSmall(id = i)))
+mex = do.call(rbind,
+              lapply(include_mex$n, function(i) getPostSmall(id = i)))
 #write.table(mex, paste0(dir_in, "/mex_posteriors_small.txt"),
 #            sep = "\t", col.names = T, row.names = F,
 #            quote = F)
-mex = read.table(paste0(dir_in, "/mex_posteriors_small.txt"),
-                   sep = "\t", header = T, stringsAsFactors = F)
+#mex = read.table(paste0(dir_in, "/mex_posteriors_small.txt"),
+#                   sep = "\t", header = T, stringsAsFactors = F)
 
 
 # plot population ancestry (with uncertainty) over some region
@@ -167,7 +167,7 @@ plot_posteriors(post = peak2_maize, chr = 4,
                 title = "maize_chr_4_peak2_zoom", save = T)
 
 # plot all of the inversions
-inv = read.table("../data/refMaize/inversions/knownInv.txt",
+inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
                  stringsAsFactors = F, header = T)
 
 plot_inversion = function(post, chr, start, 

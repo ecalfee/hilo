@@ -10,7 +10,7 @@ calcTheta <- function(popN){
   # actually I accidentally didn't create a folded SFS, but it's not polarized with an outgroup
   # so we can't identify the derived allele (doesn't matter)
   # 0 minor alleles, 1 minor allele, 2 minor alleles etc.
-  
+
   sfs_perc <- sfs/sum(sfs) # percent of sites falling into each bin of SFS; divide by total number of sites
   N = length(sfs)-1
   sfs_freq <- (0:N)/N # divide by total # of individuals in sample
@@ -23,7 +23,6 @@ calcTheta <- function(popN){
 }
 # calculate diversity and add population labels
 # pop labels
-#hilo <- read.table("../data/HILO_IDs_cov_pass1.csv", stringsAsFactors = F, header = T)
 hilo <- read.table("../data/pass1_ids.txt", sep = "\t", header = T, stringsAsFactors = F)
 groups = data.frame(popN = c(1000, 2000, 3000, 5000), zea = c("maize", "mexicana", "mexicana", "maize"),
                     symp_allo = c("sympatric", "sympatric", "allopatric", "allopatric"),
