@@ -15,5 +15,5 @@ set –o nounset
 # load samtools
 module load bwa
 echo "indexing maize reference"
-bwa index -a bwtsw refMaize/AGPv4.fa # bwtsw algorithm should work for data > 2G and APGv4 is ~2.15G
+bwa index -a bwtsw Zea_mays.B73_RefGen_v4.dna.toplevel.fa # bwtsw algorithm should work for data > 2G and APGv4 is ~2.15G
 echo "all done!"

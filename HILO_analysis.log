@@ -1908,6 +1908,23 @@ First, bams to fastq: sort reads by name -n in samtools, then use bedtools to cr
 Next, index newest reference genome as a symlink (Add original to Share folder)
 And map reads using bwa-mem
 Asuming this works, re-map all hilo individuals to this new reference genome. Get bams/fastq from Anne too for parviglumis.
+I downloaded the official v4 genome release to farm and unzipped using gunzip --keep Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+Moved draft reference with no contigs and its indexes to new subdirectory: data/refMaize/AGPv4_no_contigs/
+Now making symlink:
+refMaize$ ln -s /group/jrigrp/Share/assemblies/Zea_mays_RefGen_Officialv4Release_AllChrsAndContigs/Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+ Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+And indexing for bwa, picard, and samtools
+module load bio
+refMaize$ samtools faidx Zea_mays.B73_RefGen_v4.dna.toplevel.fa # COMPLETED
+module load picardtools # saves variable $PICARD for path to picard v.2.7.1
+refMaize$ java -jar $PICARD/picard.jar CreateSequenceDictionary R=AGPv4_official.fa O=AGPv4_official.dict
+# now for bwa indexing:
+scripts$ sbatch indexRefBWA.sh
+Submitted batch job ****
+# made 2 helper scripts: bam2fastq.sh and map2maizeAGPv4.sh that are called by the script below to remap the one landrace from Li on v3 genome version:
+scripts$ sbatch --dependency=afterok:*** remapV4_RIMMA0625.sh
+Submitted batch job ***
+
 
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
@@ -1917,6 +1934,6 @@ Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too
 Submitted batch job 7638025 - DID NOT WORK. I am going to split this into 2 steps: 1) download .sra with wget and 2) use fastq-dump to convert to .fq.gz file
 scripts$ sbatch -x bigmem3,bigmem9 download_ncbi_tripsacum.sh
 Submitted batch job 7682734 -- needed to delete .lock and .tmp files from partial downloads
-Submitted batch job 7682791 - RUNNING
+Submitted batch job 7682791 - CANCELLED : contacted NCBI and they're workign on an issue on their end
 scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7682791 sra_to_fastq_ncbi_tripsacum.sh
 Submitted batch job 7682866 -- WAITING ON DEPENDENCY
