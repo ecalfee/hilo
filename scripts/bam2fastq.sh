@@ -1,10 +1,16 @@
 #!/bin/bash
+#SBATCH --partition=bigmemm
+#SBATCH -D /home/ecalfee/hilo/data/
+#SBATCH -J bam2FQ
+#SBATCH -o /home/ecalfee/hilo/slurm-log/bam2fastq_%A_%a.out
+#SBATCH -t 64:00:00
+#SBATCH --mem=32G
 
 # this script is a helper script called by slurm scripts
 # with two input arguments: bam prefix and fastq prefix
 # it takes bam files with reads aligned to one reference and converts them to fastq
 # so these .fq files can then be remapped to the APGv4 reference
-# to run: bam2fastq.sh input_dir/HILO23 output_dir/HILO23
+# to run: sbatch --export="BAM_IN_PREFIX=input_dir/HILO23,FASTQ_OUT_PREFIX=output_dir/HILO23,ALL" bam2fastq.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -14,12 +20,6 @@ set –o nounset
 
 # load modules
 module load bio # loads samtools and bedtools
-
-echo "$0"
-echo "$# parameters"; echo "$@"
-
-BAM_IN_PREFIX=$1
-FASTQ_OUT_PREFIX=$2
 
 echo "sorting BAM by name"
 # use samtools to sort input bam file by name (so paired reads are together)

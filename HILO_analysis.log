@@ -1925,9 +1925,12 @@ Submitted batch job 7695980 - COMPLETE
 # made 2 helper scripts: bam2fastq.sh and map2maizeAGPv4.sh that are called by the script below to remap the one landrace from Li on v3 genome version:
 scripts$ sbatch --dependency=afterok:7695980 remapV4_RIMMA0625.sh
 Submitted batch job 7695981 - forgot to add script bam2fastq.sh to farm:
-Submitted batch job 7712508 - added source to call subscripts:
-
-
+Submitted batch job 7712508 - added source to call subscripts (careful not overwriting local variables with same name !):
+Submitted batch job 7712692 - FAILED
+# I think the two subscripts both need to be SBATCH scripts with arguments passed using 'export'
+# and where I scrape the job ID (print it) to set a dependency for the 2nd job
+# e.g. https://github.com/statgen/SLURM-examples/blob/master/README.md#a-simple-job-from-a-bash-script:
+scripts$ sbatch remapV4_RIMMA0625.sh
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
