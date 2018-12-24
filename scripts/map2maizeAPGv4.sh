@@ -18,11 +18,15 @@ module load bio # loads samtools and bwa
 ID=$1
 FASTQ1=$2
 FASTQ2=$3
-OUTPUT_DIR=$4
-REF="refMaize/AGPv4_official.fa"
+DIR_OUT=$4
+REF="refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+
+echo "$0"
+echo "$# parameters"; echo "$@"
+echo "ref: "${REF}
 
 # make output directory
-mkdir -p $OUTPUT_DIR
+mkdir -p ${DIR_OUT}
 
 
 # note: reference genome needs to already be indexed, e.g. bwa index ref.fa
