@@ -1921,10 +1921,10 @@ refMaize$ java -jar $PICARD/picard.jar CreateSequenceDictionary R=AGPv4_official
 # now for bwa indexing:
 scripts$ sbatch indexRefBWA.sh
 Submitted batch job 7695978 - try again:
-
+Submitted batch job 7695980 - RUNNING
 # made 2 helper scripts: bam2fastq.sh and map2maizeAGPv4.sh that are called by the script below to remap the one landrace from Li on v3 genome version:
-scripts$ sbatch --dependency=afterok:** remapV4_RIMMA0625.sh
-Submitted batch job **
+scripts$ sbatch --dependency=afterok:7695980 remapV4_RIMMA0625.sh
+Submitted batch job 7695981 - WAITING 4 DEPENDENCY
 
 
 
