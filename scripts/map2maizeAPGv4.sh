@@ -31,7 +31,7 @@ mkdir -p ${DIR_OUT}
 echo "running bwa mem for sample "${ID}
 # realign fastq using bwa to maize reference AGPv4 official release
 bwa mem -t 16 -v 3 ${REF} ${FASTQ1} ${FASTQ2}  | \
-samtools view -bS -o ${OUTPUT_DIR}/${ID}.bam -
+samtools view -bS -o ${DIR_OUT}/${ID}.bam -
 
 echo "all done!"
 # options
