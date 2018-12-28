@@ -44,7 +44,7 @@ then
     else
         echo "bam already grouped by name: ${TMPDIR}/${IND}.collated.bam"
     fi
-    samtools fastq -0 /dev/null -F 0x900 ${TMPDIR}/${IND}.collated.bam > ${INPUT_DIR}/${IND}.fq
+    samtools fastq -0 /dev/null -F 0x900 ${TMPDIR}/${IND}.collated.bam > ${TMPDIR}/${IND}.fq
 else
     echo "fastq already exists: ${TMPDIR}/${IND}.fq"
 fi

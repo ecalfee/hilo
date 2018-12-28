@@ -40,7 +40,7 @@ mkdir -p ${SCRATCH_DIR}
 mkdir -p ${TMP_DIR}
 
 echo "converting local .sra to .fq.gz for file: "${SRA_FILE}
-fastq-dump --threads 4 --outdir ${SCRATCH_DIR} \
+parallel-fastq-dump --threads 4 --outdir ${SCRATCH_DIR} \
 --gzip --clip --split-files --skip-technical \
 --tmpdir ${TMP_DIR} ${OUTPUT_DIR}"/"${SRA_FILE}
 
