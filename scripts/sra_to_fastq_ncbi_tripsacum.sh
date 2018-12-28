@@ -42,7 +42,7 @@ mkdir -p ${TMP_DIR}
 echo "converting local .sra to .fq.gz for file: "${SRA_FILE}
 parallel-fastq-dump --threads 4 --outdir ${SCRATCH_DIR} \
 --gzip --clip --split-files --skip-technical \
---tmpdir ${TMP_DIR} ${OUTPUT_DIR}"/"${SRA_FILE}
+--tmpdir ${TMP_DIR} -s ${OUTPUT_DIR}"/"${SRA_FILE}
 
 # copy results back over
 #echo "all done downloading from NCBI! Now transfering files from local to home directory"
