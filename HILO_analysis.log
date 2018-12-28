@@ -1932,8 +1932,11 @@ Submitted batch job 7712692 - FAILED
 # e.g. https://github.com/statgen/SLURM-examples/blob/master/README.md#a-simple-job-from-a-bash-script:
 scripts$ sbatch remapV4_RIMMA0625.sh - WILL RUN LATER (need to push & pull git changes):
 Submitted batch job 7720454 - FAILED (1st sbatch script failed, bam2fastq.sh..fixed order of samtools sort input / output):
-Submitted batch job ****
+Submitted batch job 7800935 - RUNNING
 
+# Re-mapping all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
+scripts$ sbatch map2maizeAPGv4_hilo.sh
+Submitted batch job *****
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
