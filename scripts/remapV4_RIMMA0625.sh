@@ -18,7 +18,7 @@ ID="RIMMA0625"
 DIR_OUT="landraces_fromLi/original"
 
 # Submit part 1 slurm job: bam to fastq
-echo "submitting script BAM -> fastq for "${ID}
+echo "submitting script for BAM -> fastq for "${ID}
 slurm1_message=$(sbatch --export="BAM_IN_PREFIX=${BAM_IN},FASTQ_OUT_PREFIX=${BAM_IN},ALL" ../scripts/bam2fastq.sh)
 echo ${slurm1_message}
 

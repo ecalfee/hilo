@@ -1930,7 +1930,10 @@ Submitted batch job 7712692 - FAILED
 # I think the two subscripts both need to be SBATCH scripts with arguments passed using 'export'
 # and where I scrape the job ID (print it) to set a dependency for the 2nd job
 # e.g. https://github.com/statgen/SLURM-examples/blob/master/README.md#a-simple-job-from-a-bash-script:
-scripts$ sbatch remapV4_RIMMA0625.sh
+scripts$ sbatch remapV4_RIMMA0625.sh - WILL RUN LATER (need to push & pull git changes):
+Submitted batch job 7720454 - FAILED (1st sbatch script failed, bam2fastq.sh..fixed order of samtools sort input / output):
+Submitted batch job ****
+
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
@@ -1939,6 +1942,12 @@ Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too
 Submitted batch job 7638025 - DID NOT WORK. I am going to split this into 2 steps: 1) download .sra with wget and 2) use fastq-dump to convert to .fq.gz file
 scripts$ sbatch -x bigmem3,bigmem9 download_ncbi_tripsacum.sh
 Submitted batch job 7682734 -- needed to delete .lock and .tmp files from partial downloads
-Submitted batch job 7682791 - CANCELLED : contacted NCBI and they're workign on an issue on their end
+Submitted batch job 7682791 - CANCELLED : contacted NCBI and they're workign on an issue on their end. Retrying 12.27.18:
+Submitted batch job 7778149 - RUNNING 12.27.18 - COMPLETED - validating checksums:
+module load bio3; vdb-validate SRR7758238.sra; validate SRR7758239.sra - COMPLETED & found consistent/complete. Ran in interactive srun session.
 scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7682791 sra_to_fastq_ncbi_tripsacum.sh
-Submitted batch job 7682866 -- WAITING ON DEPENDENCY
+Submitted batch job 7682866 -- need to use PARALLEL-fastq-dump:
+scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7778149 sra_to_fastq_ncbi_tripsacum.sh
+Submitted batch job 7782630 - Needed -s to indicate file with local .sra:
+scripts$ sbatch -x bigmem3,bigmem9 sra_to_fastq_ncbi_tripsacum.sh
+Submitted batch job 7796546 - RUNNING 12.27.18

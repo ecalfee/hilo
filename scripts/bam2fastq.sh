@@ -23,7 +23,7 @@ module load bio # loads samtools and bedtools
 
 echo "sorting BAM by name"
 # use samtools to sort input bam file by name (so paired reads are together)
-samtools sort -n ${BAM_IN_PREFIX}".bam" ${BAM_IN_PREFIX}".sortName.bam"
+samtools sort -n -o ${BAM_IN_PREFIX}".sortName.bam" ${BAM_IN_PREFIX}".bam"
 
 echo "BAM -> fastq"
 # use bedtools to convert bam to fastq file only if fastq does not already exist
