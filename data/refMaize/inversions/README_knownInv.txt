@@ -1,10 +1,11 @@
 Results of brief literature search for major known inversions:
 These 4 inversions and their positions are based on LD patterns in 21 wild teosinte populations from Fig 3 in Pyhajarvi 2013:
 Listed by them are other papers, sometimes with distinct methods, that also identified these inversions (see text near Fig. 3 for more information)
-Inv1n 1:64389681-116086290  [Fang et al. 2012; Hufford et al. 2012]
-Inv4m 4:168832447-182596678 [Mano et al. 2012]
-Inv9e 9:0-29403252 [Ting 1964] -- citation & coordinates could be switched; I'm not sure which is 9e vs. 9d
-Inv9d 9:118862807-143163957
+Also anything in old coordinates was converted to APGv4 genome assembly with this tool: http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter?db=core
+Inv1n 1:64389681-116086290  [Fang et al. 2012; Hufford et al. 2012] - APGv2 coordinates
+Inv4m 4:168832447-182596678 [Mano et al. 2012] - APGv2 coordinates
+Inv9e 9:0-29403252 [Ting 1964] -- citation & coordinates could be switched; I'm not sure which is 9e vs. 9d - APGv2 coordinates
+Inv9d 9:118862807-143163957 - APGv2 coordinates
 Separately from Pyhajarvi, in a large maize mapping population,
 Romero Navarro 2017 find "a 6-Mb region on chromosome 3 beginning at 79 Mb. The 6-Mb region on chromosome 3 has similar segregation to that of Inv4, and its increased LD suggests that it might be an inversion. In NAM populations, this putative inversion and the centromere comprise a single quantitative trait locus (QTL) for flowering time" (Romero 2017)
 putative_flowering_time_inversion_chr3 3:79000000-85000000
@@ -15,5 +16,5 @@ Inv_NAM_chr1 1:217900000-245500000 "Figure S13. The inversion of the B73 chromso
 crossovers." (from mapping it goes up to 245.5)
 Inv_NAM_chr3 3:167200000–176500000 (no crossovers in some families -- no found inversion with sorghum synteny)
 Inv_NAM_chr5 5:177800000–194100000 (also no crossovers in some families -- no found inversion with sorghum synteny)
-# I've put these coordinates in a file refMaize/inversions/knownInv.txt
+# I've put these coordinates in a file refMaize/inversions/knownInv.txt		
 

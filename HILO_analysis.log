@@ -1936,7 +1936,9 @@ Submitted batch job 7800935 - RUNNING
 
 # Re-mapping all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
 scripts$ sbatch map2maizeAPGv4_hilo.sh
-Submitted batch job *****
+Submitted batch job 7806669 - RUNNING 12.27.18. Rerunning the 3 that timed out:
+scripts$ sbatch --array=15,17,149 -x bigmem3,bigmem6 -t 6-00:00:00 map2maizeAPGv4_hilo.sh
+Submitted batch job 7997990 - RUNNING 1.4.19
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
@@ -1953,4 +1955,17 @@ Submitted batch job 7682866 -- need to use PARALLEL-fastq-dump:
 scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7778149 sra_to_fastq_ncbi_tripsacum.sh
 Submitted batch job 7782630 - Needed -s to indicate file with local .sra:
 scripts$ sbatch -x bigmem3,bigmem9 sra_to_fastq_ncbi_tripsacum.sh
-Submitted batch job 7796546 - RUNNING 12.27.18
+Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
+# now I need to map these tripsacum reads to the maize reference genome (will take a long time):
+
+# and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
+
+# analylsis updates 1.4.19:
+# ZAnc_statistic.R got unwieldly long so I kept basic K and ZAnc calculations THERE
+# but moved all ZAnc plotting to ZAnc_results.R and moved recomb rate/gene density analyses/boxplots
+# to their own script: ancestry_by_recomb_and_gene_density.R
+# new analysis: do individuals have more covariance within population than between? yes
+# what about mex-maize pairs at the same location? no
+# what about in regions of low r vs. high r (yes, even mex-maize pairs curiously).
+# still need to look w/out inversions, but code to make plots is here:
+# scripts/plot_ancestry_covariance_demography.R
