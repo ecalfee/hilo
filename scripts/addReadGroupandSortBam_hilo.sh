@@ -38,15 +38,15 @@ module load picardtools # saves path to loaded versin in $PICARD variable
 echo "adding Read Groups to BAM and sorting for hilo "$i
 # (1) Add read group to BAM header using Picard
 # (2) Sort reads by coordinate with samtools
-java -jar $PICARD/picard.jar AddOrReplaceReadGroups \
+java -Xmx6g -jar $PICARD/picard.jar AddOrReplaceReadGroups \
 INPUT="${DIR_IN}/hilo_$i.bam" \
-OUTPUT=dev/stdout \
+OUTPUT=/dev/stdout \
 QUIET=true \
 RGPL=illumina \
 RGPU=HILO$i \
 RGSM=HILO$i \
 RGLB=$SEQ_LIBRARY | \
 samtools sort -m 6G -T "${DIR_TMP}" \
--o "${DIR_OUT}/hilo_$i.sort.bam"
+-o "${DIR_OUT}/hilo_$i.sort.bam" -
 
 echo "all done!"

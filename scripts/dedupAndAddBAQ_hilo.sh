@@ -49,8 +49,8 @@ INPUT="${BAM_SORTED}" OUTPUT=/dev/stdout QUIET=true \
 REMOVE_DUPLICATES=true \
 TMP_DIR="${DIR_TMP}" \
 METRICS_FILE="${DIR_METRICS}/hilo_${i}.metrics.txt" | \
-samtools calmd -SbArE --reference ${REF} - | \
-samtools view -b -q 30 > ${BAM_OUT}
+samtools calmd -SArE --reference ${REF} - | \
+samtools view -bS -q 30 - > ${BAM_OUT}
 
 echo "all done removing duplicates and calculating BAQ, now indexing!"
 sleep 5s # because index needs to have a later timestamp
