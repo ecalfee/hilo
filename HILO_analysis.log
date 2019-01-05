@@ -1938,7 +1938,11 @@ Submitted batch job 7800935 - RUNNING
 scripts$ sbatch map2maizeAPGv4_hilo.sh
 Submitted batch job 7806669 - RUNNING 12.27.18. Rerunning the 3 that timed out:
 scripts$ sbatch --array=15,17,149 -x bigmem3,bigmem6 -t 6-00:00:00 map2maizeAPGv4_hilo.sh
-Submitted batch job 7997990 - RUNNING 1.4.19
+Submitted batch job 7997990 - COMPLETE 1.4.19
+# now filtering newly mapped bams
+scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 addReadGroupandSortBam_hilo.sh
+Submitted batch job ***
+scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:*** dedupAndAddBAQ_hilo.sh
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
@@ -1957,6 +1961,16 @@ Submitted batch job 7782630 - Needed -s to indicate file with local .sra:
 scripts$ sbatch -x bigmem3,bigmem9 sra_to_fastq_ncbi_tripsacum.sh
 Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
 # now I need to map these tripsacum reads to the maize reference genome (will take a long time):
+# first sequencing lane
+scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8008516
+# second sequencing lane
+scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8008527 - RUNNING
+
+# after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
+# THEN I can merge the files using samtools merge.
+
 
 # and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
 
