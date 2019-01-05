@@ -39,8 +39,8 @@ echo "adding Read Groups to BAM and sorting for hilo "$i
 # (1) Add read group to BAM header using Picard
 # (2) Sort reads by coordinate with samtools
 java -jar $PICARD/picard.jar AddOrReplaceReadGroups \
-I="${DIR}/hilo_$i.bam" \
-O=dev/stdout \
+INPUT="${DIR_IN}/hilo_$i.bam" \
+OUTPUT=dev/stdout \
 QUIET=true \
 RGPL=illumina \
 RGPU=HILO$i \

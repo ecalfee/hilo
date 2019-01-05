@@ -1932,7 +1932,7 @@ Submitted batch job 7712692 - FAILED
 # e.g. https://github.com/statgen/SLURM-examples/blob/master/README.md#a-simple-job-from-a-bash-script:
 scripts$ sbatch remapV4_RIMMA0625.sh - WILL RUN LATER (need to push & pull git changes):
 Submitted batch job 7720454 - FAILED (1st sbatch script failed, bam2fastq.sh..fixed order of samtools sort input / output):
-Submitted batch job 7800935 - RUNNING
+Submitted batch job 7800935 - FAILED -- NEED TO SOLVE ISSUE
 
 # Re-mapping all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
 scripts$ sbatch map2maizeAPGv4_hilo.sh
@@ -1963,10 +1963,10 @@ Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
 # now I need to map these tripsacum reads to the maize reference genome (will take a long time):
 # first sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008516
+Submitted batch job 8008516 - RUNNING 1.4.19
 # second sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008527 - RUNNING
+Submitted batch job 8008527 - RUNNING 1.4.19
 
 # after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
 # THEN I can merge the files using samtools merge.
