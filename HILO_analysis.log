@@ -1941,8 +1941,10 @@ scripts$ sbatch --array=15,17,149 -x bigmem3,bigmem6 -t 6-00:00:00 map2maizeAPGv
 Submitted batch job 7997990 - COMPLETE 1.4.19
 # now filtering newly mapped bams
 scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 addReadGroupandSortBam_hilo.sh
-Submitted batch job ***
-scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:*** dedupAndAddBAQ_hilo.sh
+Submitted batch job 8010922 - Cancelled:
+Submitted batch job 8011221 - RUNNING 1.4.19
+scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:8011221 dedupAndAddBAQ_hilo.sh
+Submitted batch job 8011413 - WAITING 4 DEPENDENCY 1.4.19
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
@@ -1969,8 +1971,8 @@ scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FA
 Submitted batch job 8008527 - RUNNING 1.4.19
 
 # after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
+to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # THEN I can merge the files using samtools merge.
-
 
 # and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
 
@@ -1983,3 +1985,22 @@ Submitted batch job 8008527 - RUNNING 1.4.19
 # what about in regions of low r vs. high r (yes, even mex-maize pairs curiously).
 # still need to look w/out inversions, but code to make plots is here:
 # scripts/plot_ancestry_covariance_demography.R
+
+# getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
+# when assessing % admixture in sympatric maize and mexicana:
+# there are 50 individuals from large Palmar Chico population from Balsas River Valley
+# (Li used just 4 parv. individuals from same pop in her paper)
+# most are already on farm:
+# ind's 1-20:
+# ind's 25-48
+# 1.7.19 downloading remaining ind's 21-24, 49-50 from iplant: 
+my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+$ module load icommands
+$ iinit
+$ icd /iplant/home/rossibarra/PalmarChico_parents/merged_iput/merged/fastq
+$ cd hilo/data/parviglumis
+$ iget -K Sample_JRIAL8_21_R1.fastq.gz .
+# TO DO: Anne will send me a list of half-sibs to exclude 1 per pair
+# rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
+# NOTE: fastq file sizes for ind's 49-50 are quite small (ask or exclude for low coverage?)
+
