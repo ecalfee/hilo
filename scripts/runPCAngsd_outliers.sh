@@ -22,7 +22,7 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-# load python 2 from bio module
+# load python 2 and angsd from bio
 module load bio
 
 # run PCAngsd

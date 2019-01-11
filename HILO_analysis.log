@@ -2013,11 +2013,21 @@ $ iget -K Sample_JRIAL8_21_R1.fastq.gz .
 # making GL file so I can plot PCA for outlier regions:
 sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
 Submitted batch job 8116330 - CANCELLED & fixed:
-Submitted batch job 8116409 - RUNNING 1.11.19
+Submitted batch job 8116409 - COMPLETED 1.11.19
 sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
 Submitted batch job 8116332 - fixed error:
 Submitted batch job 8116410 - COMPLETE 1.11.19 (quick)
 # note: had to add all the files to transfer them via git -- will sort out later.
 # running PCA for outlier regions:
 sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
+Submitted batch job 8118412 - RUNNING
 sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
+Submitted batch job 8118419 - RUNNING
+
+# calculate FST for regions:
+#SAF
+sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
+sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
+mkdir
+#2DSFS
+#FST
