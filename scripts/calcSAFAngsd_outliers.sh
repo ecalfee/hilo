@@ -14,9 +14,11 @@
 # sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
 i=$(($SLURM_ARRAY_TASK_ID-1)) # because 0 indexed
 LIST_OF_POPS=($(cat $DIR/hap_groups.list))
-POP=$LIST_OF_POPS[$i]
+echo ${LIST_OF_POPS}
+POP=${LIST_OF_POPS["$i"]}
 LIST_OF_BAMS=($(cat $DIR/hap_groups.files))
-BAM=$LIST_OF_BAMS[$i]
+echo ${LIST_OF_BAMS}
+BAM=${LIST_OF_BAMS["$i"]}
 REGION_FILE="$DIR/regions.txt"
 DIR_OUT="$DIR/SAF"
 REF=refMaize/AGPv4_no_contigs/AGPv4.fa
@@ -38,19 +40,17 @@ echo "finding site allele frequencies for pop $POP, listed at $BAM for outlier $
 # (0) Start with filtered BAM files and reference genome
 # (1) Use all sites to estimate site allele frequency
 angsd -out "$DIR_OUT/$POP" \
--anc $REF \
+-anc "$REF" \
 -fold 0 \
 -underFlowProtect 1 \
--doThetas 1 \
--rf $REGION_FILE \
--bam $BAM \
--remove_bads 1 -minMapQ 30 -minQ 20\
+-rf "$REGION_FILE" \
+-bam "$BAM" \
+-remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 -dosaf 1 \
 -P 1
 echo "done with SAF!"
 
 # options
-# all the usual quality filtering for reads
-# doThetas calculates thetas
+# basic quality filtering for reads
 # anc polarizes SFS by reference genome
 # underFlowProtect is necessary for large #s of bams

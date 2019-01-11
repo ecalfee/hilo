@@ -1,10 +1,10 @@
 #!/bin/bash -l
-#SBATCH --partition=med
+#SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/data
-#SBATCH -J out2DSFS
-#SBATCH -o /home/ecalfee/hilo/slurm-log/outliers2DSFS_%A_%a.out
+#SBATCH -J outFST
+#SBATCH -o /home/ecalfee/hilo/slurm-log/outliersFST_2DSFSAngsd_%A_%a.out
 #SBATCH -t 4:00:00
-#SBATCH --mem=1G
+#SBATCH --mem=2G
 #SBATCH -n 6
 
 # note: must set the directory to print output and find regions.txt file
@@ -15,9 +15,9 @@
 
 i=$(($SLURM_ARRAY_TASK_ID-1)) # because 0 indexed
 LIST_OF_PAIR1=($(cat $DIR/hap_groups_pair1.list))
-POP1=${LIST_OF_PAIR1[{$i}]}
-LIST_OF_PAIR2=($(cat $DIR/hap_groups_pair2.files))
-POP2=${LIST_OF_PAIR2[{$i}]}
+POP1=${LIST_OF_PAIR1["$i"]}
+LIST_OF_PAIR2=($(cat $DIR/hap_groups_pair2.list))
+POP2=${LIST_OF_PAIR2["$i"]}
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -25,7 +25,7 @@ set –o pipefail
 set –o errexit
 set –o nounset
 
-mkdir -p "$DIR/2DSFS"
+mkdir -p "$DIR/SFS"
 mkdir -p "$DIR/FST"
 
 # calculate pairwise 2D SFS
