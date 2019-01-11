@@ -29,17 +29,18 @@ set –o nounset
 module load bio
 
 # make scratch directory
-mkdir -p $DIR_SCRATCH
+mkdir -p "$DIR_SCRATCH"
 
 # apply filtering with SAMtools & PICARD
-echo "calling variants and GL using ANGSD on BAMS for hilo genomic regions "$SLURM_ARRAY_TASK_ID
+echo "calling variants and GL using ANGSD on BAMS for hilo genomic outlier region"
+echo "$DIR"
 # steps:
 # (0) Start with filtered BAM files and reference genome
 # (1) For each chromosomal region individually, find variant sites
-angsd -out $DIR_SCRATCH \
--rf $DIR/regions.txt \
--ref $REF \
--bam $BAM_IN \
+angsd -out "$DIR_SCRATCH/GL" \
+-rf "$DIR/regions.txt" \
+-ref "$REF" \
+-bam "$BAM_IN" \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 2 \

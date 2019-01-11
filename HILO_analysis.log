@@ -2012,5 +2012,9 @@ $ iget -K Sample_JRIAL8_21_R1.fastq.gz .
 # I'm not sure how to automate/improve deciding where an outlier region starts and ends
 # making GL file so I can plot PCA for outlier regions:
 sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
+Submitted batch job 8116330 - CANCELLED & fixed:
+Submitted batch job
 sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
+Submitted batch job 8116332 - fixed error:
+Submitted batch job
 # note: had to add all the files to transfer them via git -- will sort out later.
