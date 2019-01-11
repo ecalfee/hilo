@@ -1985,6 +1985,7 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # what about in regions of low r vs. high r (yes, even mex-maize pairs curiously).
 # still need to look w/out inversions, but code to make plots is here:
 # scripts/plot_ancestry_covariance_demography.R
+# TO DO: redo while excluding inv4m!
 
 # getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
 # when assessing % admixture in sympatric maize and mexicana:
@@ -1993,7 +1994,7 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # most are already on farm:
 # ind's 1-20:
 # ind's 25-48
-# 1.7.19 downloading remaining ind's 21-24, 49-50 from iplant: 
+# 1.7.19 downloading remaining ind's 21-24, 49-50 from iplant:
 my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
 $ module load icommands
 $ iinit
@@ -2002,5 +2003,14 @@ $ cd hilo/data/parviglumis
 $ iget -K Sample_JRIAL8_21_R1.fastq.gz .
 # TO DO: Anne will send me a list of half-sibs to exclude 1 per pair
 # rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
-# NOTE: fastq file sizes for ind's 49-50 are quite small (ask or exclude for low coverage?)
+# NOTE: fastq file sizes for ind's 49-50 are quite small (ask or exclude for low coverage?) -- NO, found good copies.
 
+
+# outlier analysis: what do haplotypes (eg. pi, fst) look like under ZAnc peaks?
+# compare mex.mex mex.maize, maize.maize and unclear haplotypes with both mex and maize background
+# using basic summary statistics. right now anything <.80% time categorized the same is excluded
+# I'm not sure how to automate/improve deciding where an outlier region starts and ends
+# making GL file so I can plot PCA for outlier regions:
+sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
+sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
+# note: had to add all the files to transfer them via git -- will sort out later.

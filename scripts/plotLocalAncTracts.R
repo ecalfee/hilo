@@ -83,8 +83,8 @@ maize = do.call(rbind,
 #write.table(maize, paste0(dir_in, "/maize_posteriors_small.txt"),
 #                          sep = "\t", col.names = T, row.names = F,
 #                          quote = F)
-maize = read.table(paste0(dir_in, "/maize_posteriors_small.txt"),
-                   sep = "\t", header = T, stringsAsFactors = F)
+#maize = read.table(paste0(dir_in, "/maize_posteriors_small.txt"),
+#                   sep = "\t", header = T, stringsAsFactors = F)
 mex = do.call(rbind,
               lapply(include_mex$n, function(i) getPostSmall(id = i)))
 #write.table(mex, paste0(dir_in, "/mex_posteriors_small.txt"),
@@ -166,6 +166,137 @@ plot_posteriors(post = peak2_maize, chr = 4,
                 start = 0, end = 1000000000,
                 title = "maize_chr_4_peak2_zoom", save = T)
 
+# try to figure out the boundaries:
+peak2_mex = do.call(rbind, 
+                      lapply(include_mex$n, 
+                             function(i) 
+                               getPostSeg(id = i, chr = 4, start = 23000000,
+                                          end = 28000000, buffer = 1000000,
+                                          nSkip = 9))) # every 10th point plot
+
+peak2_maize_plot <- plot_posteriors(post = peak2_maize, chr = 4, 
+                start = 0, end = 1000000000,
+                title = "maize_chr_4_peak2_zoom", save = F)
+peak2_mex_plot <- plot_posteriors(post = peak2_mex, chr = 4, 
+                                    start = 0, end = 1000000000,
+                                    title = "mex_chr_4_peak2_zoom", save = F)
+
+# I'll define peak2 on chr4 using this narrower region
+#4:25800000-26400000
+plot(peak2_maize_plot + 
+       geom_vline(aes(xintercept=25900000)) +
+       geom_vline(aes(xintercept=26300000)))
+plot(peak2_mex_plot + 
+       geom_vline(aes(xintercept=25800000)) +
+       geom_vline(aes(xintercept=26400000)))
+# show ZAnc peak?
+# Now I classify individuals as maize_0, mex_1 etc. 
+# where 0,1,2 is # mexicana alleles
+head(peak2_mex)
+peak2_anc <- rbind(peak2_mex, peak2_maize) %>% 
+  filter(chrom == 4 & position > 25800000 & position < 26400000) %>%
+  count(hilo_id, anc) %>%
+  group_by(hilo_id) %>%
+  slice(which.max(n)) %>%
+  left_join(., meta[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
+
+table(peak2_anc$n)
+table(peak2_anc[,c("zea", "anc", "n")])
+# say 20/25 or more of one category can be classified
+peak2_anc$anc[peak2_anc$n<20] <- "unc.unc" # unknown
+
+# write files to folder for outlier region
+peak2_name <- "chr4/peak2"
+peak2_dir <- paste0("../data/outliers/", 
+                    peak2_name)
+dir.create(peak2_dir,
+           recursive = T)
+peak2_anc <- peak2_anc %>% 
+  mutate(hap_group = paste(zea, anc, sep = "_"))
+# write a file with all haplotype groups that exist in this focal locus
+write.table(x = unique(peak2_anc$hap_group), 
+            file = paste0(peak2_dir, "/", "hap_groups.list"),
+            row.names = F, col.names = F, quote = F) 
+# write a file linking each hilo ID to its hapgroup:
+write.table(x = peak2_anc,
+            file = paste0(peak2_dir, "/", "hap_groups.txt"),
+            col.names = T, row.name = F, quote = F, sep = "\t")
+
+
+# write a bam file list for each haplotype group
+for (i in unique(peak2_anc$hap_group)){
+  write.table(x = sapply(peak2_anc[peak2_anc$hap_group == i, "hilo_id"],
+                         function(x) paste0("filtered_bam/hilo_", x, 
+                         ".sort.dedup.baq.bam")),
+              file = paste0(peak2_dir, "/", i, ".list"),
+              col.names = F, row.names = F, quote = F)
+}
+# write regions file
+write.table(x = "4:25800000-26400000",
+            file = paste0(peak2_dir, "/", "regions.txt"),
+            col.names = F, row.names = F, quote = F)
+
+# a different peak - inversion on chr4: Inv4m
+
+inv4m_post = do.call(rbind, 
+                    lapply(c(include_mex$n, include_maize$n), 
+                           function(i) 
+                             getPostSeg(id = i, chr = 4, 
+                                        start = inv[inv$ID=="Inv4m" & inv$chrom == 4, "start"],
+                                        end = inv[inv$ID=="Inv4m" & inv$chrom == 4, "end"], 
+                                        buffer = 0,
+                                        nSkip = 99))) # don't need all the points
+inv4m_anc <- inv4m_post %>% 
+  count(hilo_id, anc) %>%
+  group_by(hilo_id) %>%
+  slice(which.max(n)) %>%
+  left_join(., meta[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
+
+table(inv4m_anc$n)
+table(inv4m_anc[,c("zea", "anc", "n")])
+# say 80% or more of one category can be classified
+inv4m_anc$anc[inv4m_anc$n<.8*max(inv4m_anc$n)] <- "unc.unc" # unknown
+
+# write files to folder for outlier region
+inv4m_name <- "chr4/inv4m"
+inv4m_dir <- paste0("../data/outliers/", 
+                    inv4m_name)
+dir.create(inv4m_dir,
+           recursive = T)
+inv4m_anc <- inv4m_anc %>% 
+  mutate(hap_group = paste(zea, anc, sep = "_"))
+# write a file with all haplotype groups that exist in this focal locus
+write.table(x = unique(inv4m_anc$hap_group), 
+            file = paste0(inv4m_dir, "/", "hap_groups.list"),
+            col.names = F, row.names = F, quote = F) 
+# write a file linking each hilo ID to its hapgroup:
+write.table(x = inv4m_anc,
+            file = paste0(inv4m_dir, "/", "hap_groups.txt"),
+            col.names = T, row.name = F, quote = F, sep = "\t")
+
+# write a bam file for each
+for (i in unique(inv4m_anc$hap_group)){
+  write.table(x = sapply(inv4m_anc[inv4m_anc$hap_group == i, "hilo_id"],
+                         function(x) paste0("filtered_bam/hilo_", x, 
+                                            ".sort.dedup.baq.bam")),
+              file = paste0(inv4m_dir, "/", i, ".list"),
+              col.names = F, row.names = F, quote = F)
+}
+# write regions file
+write.table(x = "4:171771502-185951149",
+            file = paste0(inv4m_dir, "/", "regions.txt"),
+            col.names = F, row.names = F, quote = F)
+
+# now with these files I can calculate Fst between all the haplotype groups
+# and pi within, and even plot the local ancestry tracts
+# in PCA
+
+
+
+
+
+
+
 # plot all of the inversions
 inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
                  stringsAsFactors = F, header = T)
@@ -200,6 +331,12 @@ inv_plots = lapply(1:nrow(inv), function(i)
                  end = inv$end[i], 
                  ID = paste(inv$ID[i], 
                             "maize_mex", sep = "_")))
+
+plot_inversion(post = rbind(maize, mex), 
+               chr = inv$chrom[1], 
+               start = inv$start[1], 
+               end = inv$end[1], 
+               ID = paste(inv$ID[1]), save = F)
 
 
 
