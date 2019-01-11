@@ -16,7 +16,7 @@ sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
 # some VARIABLES
 MAX_DEPTH=1020 # maximum depth for total sample before discarding a site
 BAM_IN=merged_bam.pass1_all.alloMaize4Low_16.list
-REF=refMaize/AGPv4.fa
+REF=refMaize/AGPv4_no_contigs/AGPv4.fa
 DIR_SCRATCH="/scratch/ecalfee/"${DIR}
 
 # general bash script settings to make sure if any errors in the pipeline fail
