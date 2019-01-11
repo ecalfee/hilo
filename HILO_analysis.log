@@ -2026,8 +2026,12 @@ Submitted batch job 8118419 - RUNNING
 
 # calculate FST for regions:
 #SAF
-sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
-sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
-mkdir
-#2DSFS
-#FST
+sbatch --array=1-$(wc -l ../data/outliers/chr4/inv4m/hap_groups.list) --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
+# didn't work
+ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
+Submitted batch job 8119364 - RUNNING
+ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/peak2,ALL" calcSAFAngsd_outliers.sh
+Submitted batch job 8119373 - COMPLETE
+#FST using 2DSFS:
+sbatch --array=1-28 --dependency=afterok:8119364 --export="DIR=outliers/chr4/inv4m,ALL" calcFST_2DSFSAngsd_outliers.sh
+sbatch --array=1-28 --export="DIR=outliers/chr4/peak2,ALL" calcFST_2DSFSAngsd_outliers.sh

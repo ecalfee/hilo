@@ -18,6 +18,9 @@ include = left_join(pass1, pop_admix_global, by = "popN") %>%
 #                  popN, ".anc_hmm.ids"), stringsAsFactors = F)$V1
 #ids_list = c(1, 3, 14, 74, 78, 95, 100, 109, 130) # pop366
 
+# allopatric haplotypes to compare to
+allo_haps <- c("maize.allo.4Low16", "mexicana.allo.withXochi35")
+
 # get posterior for individuals at some resolution
 # by default returns posterior for every 100th snp
 getPostSmall = function(id, dir = dir_in, nSkip = 99){ 
@@ -213,10 +216,33 @@ dir.create(peak2_dir,
            recursive = T)
 peak2_anc <- peak2_anc %>% 
   mutate(hap_group = paste(zea, anc, sep = "_"))
+peak2_hap_groups <- c(unique(peak2_anc$hap_group), allo_haps)
+peak2_hap_files <- c(paste0(peak2_dir,"/", unique(peak2_anc$hap_group), ".list"), 
+                     paste0("../pass1_bam_pops/", allo_haps, ".list"))
+# create all pairs of haplotype groups
+peak2_hap_groups_pairs <- t(combn(peak2_hap_groups, m=2))
+peak2_hap_files_pairs <- t(combn(peak2_hap_files, m=2))
+# write pairs to a file
+for (i in 1:2){
+  write.table(x = peak2_hap_groups_pairs[i,], 
+              file = paste0(peak2_dir, "/", "hap_groups_pair", i, ".list"),
+              col.names = F, row.names = F, quote = F) 
+}
+for (i in 1:2){
+  write.table(x = peak2_hap_files_pairs[i,], 
+              file = paste0(peak2_dir, "/", "hap_files_pair", i, ".list"),
+              col.names = F, row.names = F, quote = F) 
+}
+
 # write a file with all haplotype groups that exist in this focal locus
-write.table(x = unique(peak2_anc$hap_group), 
+write.table(x = peak2_hap_groups, 
             file = paste0(peak2_dir, "/", "hap_groups.list"),
             row.names = F, col.names = F, quote = F) 
+# write file list
+write.table(x = peak2_hap_files, 
+            file = paste0(peak2_dir, "/", "hap_groups.files"),
+            col.names = F, row.names = F, quote = F) 
+
 # write a file linking each hilo ID to its hapgroup:
 write.table(x = peak2_anc,
             file = paste0(peak2_dir, "/", "hap_groups.txt"),
@@ -266,8 +292,31 @@ dir.create(inv4m_dir,
 inv4m_anc <- inv4m_anc %>% 
   mutate(hap_group = paste(zea, anc, sep = "_"))
 # write a file with all haplotype groups that exist in this focal locus
-write.table(x = unique(inv4m_anc$hap_group), 
+inv4m_hap_groups <- c(unique(inv4m_anc$hap_group), allo_haps)
+inv4m_hap_files <- c(paste0(inv4m_dir,"/", unique(inv4m_anc$hap_group), ".list"), 
+                     paste0("../pass1_bam_pops/", allo_haps, ".list"))
+# create all pairs of haplotype groups
+inv4m_hap_groups_pairs <- t(combn(inv4m_hap_groups, m=2))
+inv4m_hap_files_pairs <- t(combn(inv4m_hap_files, m=2))
+# write pairs to a file
+for (i in 1:2){
+  write.table(x = inv4m_hap_groups_pairs[i,], 
+              file = paste0(inv4m_dir, "/", "hap_groups_pair", i, ".list"),
+              col.names = F, row.names = F, quote = F) 
+}
+for (i in 1:2){
+  write.table(x = inv4m_hap_files_pairs[i,], 
+              file = paste0(inv4m_dir, "/", "hap_files_pair", i, ".list"),
+              col.names = F, row.names = F, quote = F) 
+}
+
+# write all haplotype groups to a file
+write.table(x = inv4m_hap_groups, 
             file = paste0(inv4m_dir, "/", "hap_groups.list"),
+            col.names = F, row.names = F, quote = F) 
+# write a file with all haplotype groups files
+write.table(x = inv4m_hap_files, 
+            file = paste0(inv4m_dir, "/", "hap_groups.files"),
             col.names = F, row.names = F, quote = F) 
 # write a file linking each hilo ID to its hapgroup:
 write.table(x = inv4m_anc,
