@@ -11,7 +11,7 @@
 # note: must set the directory to print output and find regions.txt file
 # when calling the script:
 # to run:
-sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
+# sbatch --export="DIR=outliers/chr4/inv4m,ALL" allVarAngsdGL1_outliers.sh
 
 # some VARIABLES
 MAX_DEPTH=1020 # maximum depth for total sample before discarding a site
