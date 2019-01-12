@@ -1965,10 +1965,16 @@ Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
 # now I need to map these tripsacum reads to the maize reference genome (will take a long time):
 # first sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008516 - RUNNING 1.4.19
+Submitted batch job 8008516 - RUNNING 1.4.19 - TIMEOUT - rerunning:
+scripts$ sbatch -x bigmem3,bigmem9 -t 18-00:00:00 --export="ID=SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8122106 - RUNNING 1.11.19
+
 # second sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008527 - RUNNING 1.4.19
+Submitted batch job 8008527 - RUNNING 1.4.19 - TIMEOUT - rerunning :
+scripts$ sbatch -x bigmem3,bigmem9 -t 17-00:00:00 --export="ID=SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8122108 - RUNNING 1.11.19
+
 
 # after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
 to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
@@ -1991,19 +1997,23 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # when assessing % admixture in sympatric maize and mexicana:
 # there are 50 individuals from large Palmar Chico population from Balsas River Valley
 # (Li used just 4 parv. individuals from same pop in her paper)
-# most are already on farm:
-# ind's 1-20:
+# some are already on farm:
 # ind's 25-48
-# 1.7.19 downloading remaining ind's 21-24, 49-50 from iplant:
+# 1.7.19 downloading remaining ind's 1-24, 49-50 from iplant:
 my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
 $ module load icommands
 $ iinit
 $ icd /iplant/home/rossibarra/PalmarChico_parents/merged_iput/merged/fastq
 $ cd hilo/data/parviglumis
 $ iget -K Sample_JRIAL8_21_R1.fastq.gz .
-# TO DO: Anne will send me a list of half-sibs to exclude 1 per pair
+actually getting better copies from here:
+/iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
+and subfolders iplant4/iplant4
+I used irsync to transfer to my own directory, then irsync to get them onto farm
+# TO DO: 
 # rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
-# NOTE: fastq file sizes for ind's 49-50 are quite small (ask or exclude for low coverage?) -- NO, found good copies.
+# and same with symlinks from the ones stored locally on farm
+# map all to the maize reference genome
 
 
 # outlier analysis: what do haplotypes (eg. pi, fst) look like under ZAnc peaks?
@@ -2029,7 +2039,7 @@ Submitted batch job 8118419 - RUNNING
 sbatch --array=1-$(wc -l ../data/outliers/chr4/inv4m/hap_groups.list) --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
 # didn't work
 ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
-Submitted batch job 8119364 - RUNNING
+Submitted batch job 8119364 - COMPLETE
 ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/peak2,ALL" calcSAFAngsd_outliers.sh
 Submitted batch job 8119373 - COMPLETE
 #FST using 2DSFS:
