@@ -32,6 +32,12 @@ make_calcs = function(pop_anc){
 inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
                  stringsAsFactors = F, header = T)
 excl_inv_buffer = 1000000 # exclude 1 megabase around inversion
+inv$excl_start = inv$start - excl_inv_buffer
+inv$excl_end = inv$end + excl_inv_buffer
+# which inversions are segregating
+# and therefore should be excluded from some analyses?
+inv$present = (inv$ID %in% c("Inv4m"))
+
 
 dir_in = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
 #dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
@@ -147,6 +153,35 @@ high_r_anc = all_anc[ , pos$rate >= quantile(pos$rate, high_quant)]
 high_r = make_calcs(high_r_anc)
 high_r_ind_anc = all_ind_anc[ , pos$rate >= quantile(pos$rate, high_quant)]
 high_r_ind = make_calcs(high_r_ind_anc)
+
+# which positions / loci are within present inversions?
+# for each inversion present, create a column in pos table
+# for whether that SNP is within the inversion
+for (i in unique(inv[inv$present, "ID"])){
+  pos[ , paste0("inv_", i)] <- (pos$chr == inv[inv$ID == i, "chrom"] &
+                                  pos$pos >= inv[inv$ID == i, "excl_start"] &
+                                  pos$pos <= inv[inv$ID == i, "excl_end"])
+}
+# is this position within any segregating inversions?
+pos$inv_any <- dplyr::select(pos, starts_with("inv_")) %>%
+  apply(., 1, any) # across all the inversions, are any values TRUE?
+
+# put all the K and ZAnc calculations together in one list
+
+# individual and population ancestry calls
+ancestry = list(ind = all_ind_anc, pop = all_anc)
+
+# first with all loci, including those within inversions
+with_inv = list(ind = list(high_r = high_r_ind, low_r = low_r_ind, all = all_ind), 
+                pop = list(high_r = high_r, low_r = low_r, all = all))
+
+# then do the same for positions not within any known inversions
+no_inv = lapply(ancestry, function(i)
+  list(high_r = i[ , !pos$inv_any & pos$rate >= quantile(pos$rate, high_quant)], 
+       low_r = i[ , !pos$inv_any & pos$rate <= quantile(pos$rate, low_quant)], 
+       all = i[ , !pos$inv_any ]) %>% 
+    lapply(., make_calcs)) 
+
 
 #note:
 # I am not sure whether this is the appropriate

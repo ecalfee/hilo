@@ -6,7 +6,7 @@
 # (I need haps_per_pop so I can do a finite sample size correction for
 # the variance within pop to fairly compare it with
 # covariances between populations)
-kmelt <- function(K, haps_per_pop, cov2corr = F, regions = NULL){ 
+kmelt <- function(K, haps_per_pop, correlation = F, regions = NULL){ 
   # haps per pop is to do the finite sample size correction
   # for the variance (on the diagonal) so it can be compared
   # to covariances between populations
@@ -14,7 +14,7 @@ kmelt <- function(K, haps_per_pop, cov2corr = F, regions = NULL){
   # want matrix 1's everywhere else but (N-1)/N on diagonals--
   K_corrected = K*(matrix(1, dim(K)[1], dim(K)[2]) + diag((haps_per_pop-1)/haps_per_pop))
   # alternatively look at correlations, not covariances
-  if (cov2corr) K_corrected = cov2cor(K_corrected)
+  if (correlation) K_corrected = cov2cor(K_corrected)
   k_melted = reshape2::melt(K_corrected, 
                             value.name = "covariance")[upper.tri(K_corrected, diag = T),] %>%
     separate(., Var1, c("zea_SHORT_1", "LOC_SHORT_1")) %>%
@@ -29,7 +29,7 @@ kmelt <- function(K, haps_per_pop, cov2corr = F, regions = NULL){
 }
 
 # individual by individual covariance matrix K
-kmelt_ind <- function(K, regions = NULL, cov2cor = F){ 
+kmelt_ind <- function(K, regions = NULL, correlation = F){ 
   # with individuals, the finite sample size correction
   # for the variance (on the diagonal) is N = 2, 
   # so it can be compared to individual covariances 
@@ -37,7 +37,7 @@ kmelt_ind <- function(K, regions = NULL, cov2cor = F){
   
   # want matrix 1's everywhere else but N-1/N on diagonals = 1/2 (b/c diploid) --
   K_corrected = K*(matrix(1, dim(K)[1], dim(K)[2]) + diag(rep(1/2, dim(K)[1])))
-  if (cov2cor) K_corrected = cov2cor(K_corrected)
+  if (correlation) K_corrected = cov2cor(K_corrected)
   k_melted = reshape2::melt(K_corrected, 
                             value.name = "covariance")[upper.tri(K_corrected, diag = T),] %>%
     mutate(., ID_1 = as.character(Var1)) %>%

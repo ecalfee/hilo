@@ -2013,16 +2013,19 @@ $ iget -K Sample_JRIAL8_21_R1.fastq.gz .
 # making GL file so I can plot PCA for outlier regions:
 sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
 Submitted batch job 8116330 - CANCELLED & fixed:
-Submitted batch job 8116409 - COMPLETED 1.11.19
+Submitted batch job 8118412 - FAILED: retry
+Submitted batch job 8121618
+
 sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
 Submitted batch job 8116332 - fixed error:
-Submitted batch job 8116410 - COMPLETE 1.11.19 (quick)
+Submitted batch job 8118419 - COMPLETE 1.11.19 (quick)
 # note: had to add all the files to transfer them via git -- will sort out later.
 # running PCA for outlier regions:
-sbatch --export="DIR=outliers/chr4/inv4m" allVarAngsdGL1_outliers.sh
-Submitted batch job 8118412 - RUNNING
-sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
+sbatch --export="DIR=outliers/chr4/inv4m" runPCAngsd_outliers.sh
+Submitted batch job 8121590 - RUNNING
+sbatch --export="DIR=outliers/chr4/peak2" runPCAngsd_outliers.sh
 Submitted batch job 8118419 - RUNNING
+
 
 # calculate FST for regions:
 #SAF
@@ -2034,4 +2037,10 @@ ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/p
 Submitted batch job 8119373 - COMPLETE
 #FST using 2DSFS:
 sbatch --array=1-28 --dependency=afterok:8119364 --export="DIR=outliers/chr4/inv4m,ALL" calcFST_2DSFSAngsd_outliers.sh
+Submitted batch job 8121584 - RUNNING
 sbatch --array=1-28 --export="DIR=outliers/chr4/peak2,ALL" calcFST_2DSFSAngsd_outliers.sh
+Submitted batch job 8121556 - WAITING 4 DEPENDENCY
+
+# Jan 14, 2019
+# plotted within and between population ancestry covariance : plot_ancestry_covariance_demography.R
+# Also starting to look at an analog of Fst for ancestry: Ast.R

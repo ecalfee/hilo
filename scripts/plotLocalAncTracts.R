@@ -217,20 +217,15 @@ dir.create(peak2_dir,
 peak2_anc <- peak2_anc %>% 
   mutate(hap_group = paste(zea, anc, sep = "_"))
 peak2_hap_groups <- c(unique(peak2_anc$hap_group), allo_haps)
-peak2_hap_files <- c(paste0(peak2_dir,"/", unique(peak2_anc$hap_group), ".list"), 
-                     paste0("../pass1_bam_pops/", allo_haps, ".list"))
+peak2_hap_files <- c(paste0("outliers/", peak2_name,"/", unique(peak2_anc$hap_group), ".list"), 
+                     paste0("pass1_bam_pops/", allo_haps, ".list"))
 # create all pairs of haplotype groups
 peak2_hap_groups_pairs <- t(combn(peak2_hap_groups, m=2))
-peak2_hap_files_pairs <- t(combn(peak2_hap_files, m=2))
+#peak2_hap_files_pairs <- t(combn(peak2_hap_files, m=2))
 # write pairs to a file
 for (i in 1:2){
-  write.table(x = peak2_hap_groups_pairs[i,], 
+  write.table(x = peak2_hap_groups_pairs[ , i], 
               file = paste0(peak2_dir, "/", "hap_groups_pair", i, ".list"),
-              col.names = F, row.names = F, quote = F) 
-}
-for (i in 1:2){
-  write.table(x = peak2_hap_files_pairs[i,], 
-              file = paste0(peak2_dir, "/", "hap_files_pair", i, ".list"),
               col.names = F, row.names = F, quote = F) 
 }
 
@@ -293,20 +288,15 @@ inv4m_anc <- inv4m_anc %>%
   mutate(hap_group = paste(zea, anc, sep = "_"))
 # write a file with all haplotype groups that exist in this focal locus
 inv4m_hap_groups <- c(unique(inv4m_anc$hap_group), allo_haps)
-inv4m_hap_files <- c(paste0(inv4m_dir,"/", unique(inv4m_anc$hap_group), ".list"), 
-                     paste0("../pass1_bam_pops/", allo_haps, ".list"))
+inv4m_hap_files <- c(paste0("outliers/", inv4m_name,"/", unique(inv4m_anc$hap_group), ".list"), 
+                     paste0("pass1_bam_pops/", allo_haps, ".list"))
 # create all pairs of haplotype groups
 inv4m_hap_groups_pairs <- t(combn(inv4m_hap_groups, m=2))
-inv4m_hap_files_pairs <- t(combn(inv4m_hap_files, m=2))
+#inv4m_hap_files_pairs <- t(combn(inv4m_hap_files, m=2))
 # write pairs to a file
 for (i in 1:2){
-  write.table(x = inv4m_hap_groups_pairs[i,], 
+  write.table(x = inv4m_hap_groups_pairs[ , i], 
               file = paste0(inv4m_dir, "/", "hap_groups_pair", i, ".list"),
-              col.names = F, row.names = F, quote = F) 
-}
-for (i in 1:2){
-  write.table(x = inv4m_hap_files_pairs[i,], 
-              file = paste0(inv4m_dir, "/", "hap_files_pair", i, ".list"),
               col.names = F, row.names = F, quote = F) 
 }
 

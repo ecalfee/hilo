@@ -443,8 +443,26 @@ ggsave("../plots/PCA_facet_by_population.png", plot = p + facet_wrap(~LOCALITY),
        width = 12, height = 8, units = "in",
        dpi = 200)
 
-
-
-
-
-
+# plot PCA for outliers
+m <- as.matrix(read.table("../data/outliers/chr4/peak2/PCA.cov", stringsAsFactors = F, header = F))
+e <- eigen(m)
+colors = ifelse(pass1$zea=="maize", "orange", 
+                ifelse(pass1$symp_allo=="sympatric", "blue", "darkblue"))
+# load inv4m_anc from plotLocalAncTracts.R for lables
+pca = e$vectors[, 1:2]
+colnames(pca) = paste0("PC", 1:2)
+pca2 = cbind(pass1_allo4Low, pca) %>%
+  left_join(., inv4m_anc, by = "ID")
+pca2 <- data.frame(pca2)
+pca2$hap_group[is.na(pca2$hap_group)] <- paste(pca2$zea.x, pca2$symp_allo, sep = "_")[is.na(pca2$hap_group)]
+pca2 %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = hap_group))
+pca2 %>%
+  filter(., zea.x == "maize") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = hap_group))
+pca2 %>%
+  filter(., zea.x == "mexicana") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = hap_group))
