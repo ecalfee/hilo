@@ -1738,6 +1738,9 @@ Submitted batch job 7366131 - RUNNING
 # and used Assembly Converter to lift these ranges from APGv2 to APGv4 (http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter)
 # The resulting bed files (e.g. refMaize/inversions/v4_coord/inv1n.bed) have many ranges, because some bp locations do not map.
 # So I re-create a contiguous range for each inversion using bedtools:
+# Specifically, I used bedtools to merge all ranges closer than 1Mb
+#and identified the true inversion coordinates as the only merged range > 5Mb:
+inversions/v4_coord$ for bed in $(ls *.bed); do bedtools sort -i $bed | bedtools merge -d 1000000 -i - | awk '{print $0"\t"$3-$2}' | awk -v b=${bed%.*} '$4>=5000000 {print b"\t"$0}'; done > ../knownInv_v4_coord.txt
 
 # MAPPING ISSUES: To find out if there are regions not being called for mexicana
 # ancestry due to mapping issues, I need to see if there are places where maize

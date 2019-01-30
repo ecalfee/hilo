@@ -22,4 +22,6 @@ Inv3NAM 3:167200000–176500000 (no crossovers in some families -- no found inve
 Inv5NAM 5:177800000–194100000 (also no crossovers in some families -- no found inversion with sorghum synteny) - APGv2 coordinates
 # I've put these coordinates in a file refMaize/inversions/knownInv.txt (all in v2 coordinates)
 
-# All v2 coordinates were converted to v4 using gramene Zea Mays web tool Assembly Converter (http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter)
+# All v2 coordinates were converted to v4 using gramene Zea Mays web tool Assembly Converter (http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter). Then I used bedtools to merge all ranges closer than 1Mb
+and identified the true inversion coordinates as the only merged range > 5Mb:
+inversions/v4_coord$ for bed in $(ls *.bed); do bedtools sort -i $bed | bedtools merge -d 1000000 -i - | awk '{print $0"\t"$3-$2}' | awk -v b=${bed%.*} '$4>=5000000 {print b"\t"$0}'; done > ../knownInv_v4_coord.txt
