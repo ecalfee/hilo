@@ -7,8 +7,7 @@
 #SBATCH --mem=8G
 
 # script to divide genome into fixed non-overlapping 10kb windows 
-# and calculate gene density within each window.
-# Another script will calculate recombination rates by window
+# and calculate gene density within each window and recombination rates by window
 
 CDS_FILE="refMaize/geneAnnotations/CDS_merged.bed"
 GENOME_FILE="refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
@@ -25,6 +24,7 @@ set –o nounset
 
 # load software needed
 module load bio
+module load R
 
 # make output directory
 mkdir -p ${DIR_OUT}
@@ -36,4 +36,9 @@ bedtools makewindows -g ${GENOME_FILE} -w ${WINDOW_SIZE_BP} -i winnum > ${WINDOW
 # then calculate overlap:
 echo "calculating gene overlap"
 bedtools coverage -sorted -a ${WINDOWS_FILE} -b ${CDS_FILE} > ${GENE_OVERLAP_FILE}
+
+# then calculate recombination rates for windows:
+echo "calculate recombination rate"
+Rscript ../scripts/bed_wind_2_recomb_rate.R ${WINDOWS_FILE}
+
 echo 'all done!'
