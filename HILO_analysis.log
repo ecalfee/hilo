@@ -2060,7 +2060,10 @@ Submitted batch job 8121556 - WAITING 4 DEPENDENCY
 # to compare with mean ancestry estimates and recombination rates (calls helper script bed_wind_2_recomb_rate.R)
 sbatch geneOverlapWindows10KB.sh
 Submitted batch job 8301049 - COMPLETED within seconds 1.29.19. Edited to include recomb. rate calculation:
-Submitted batch job 
+Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
+# TO DO: use linear map to identify window for each ancestry call, going in lower bin if on edge,
+# plot ancestry by r and by gene density and r ~ gene_density for all individuals together (maize then mex)
+# and for individual populations. Also mask inversions and rerun plots/analyses.
 
 
 
