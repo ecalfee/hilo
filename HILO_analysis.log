@@ -1967,13 +1967,13 @@ Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
 Submitted batch job 8008516 - RUNNING 1.4.19 - TIMEOUT - rerunning:
 scripts$ sbatch -x bigmem3,bigmem9 -t 18-00:00:00 --export="ID=SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8122106 - RUNNING 1.11.19
+Submitted batch job 8122106 - RUNNING 1.11.19 - NEAR TIMEOUT -- PROBABLY WON'T FINISH 1.29.19
 
 # second sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
 Submitted batch job 8008527 - RUNNING 1.4.19 - TIMEOUT - rerunning :
 scripts$ sbatch -x bigmem3,bigmem9 -t 17-00:00:00 --export="ID=SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8122108 - RUNNING 1.11.19
+Submitted batch job 8122108 - RUNNING 1.11.19 - CANCELLED DUE TO TIMEOUT 1.29.19
 
 
 # after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
@@ -2054,3 +2054,9 @@ Submitted batch job 8121556 - WAITING 4 DEPENDENCY
 # Jan 14, 2019
 # plotted within and between population ancestry covariance : plot_ancestry_covariance_demography.R
 # Also starting to look at an analog of Fst for ancestry: Ast.R
+
+# Jan 29, 2019 
+# Dividing genome into 10kb fixed non-overlapping windows & calculating gene density per window
+# to compare with mean ancestry estimates and recombination rates
+sbatch geneOverlapWindows10KB.sh
+
