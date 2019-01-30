@@ -3,9 +3,7 @@
 # this script takes in a bed file and calculate the local recombination rate for
 # each window in that bed file, using linear interpolation
 
-library(dplyr)
-library(tidyr)
-source("calcMapLinearApprox.R") # loads recomb map and function bp2cM()
+source("../scripts/calcMapLinearApprox.R") # loads recomb map and function bp2cM()
 
 # to run:
 # Rscript bed_wind_2_recomb_rate.R ../data/refMaize/windows_10kb/whole_genome.bed
@@ -18,6 +16,7 @@ input_file = args[1]
 output_file = paste0(tools::file_path_sans_ext(input_file), ".recomb")
 
 # read input.bed
+print(paste("input:", input_file))
 bed = read.table(input_file, sep = "\t", header = F, stringsAsFactors = F)[ , 1:3]
 colnames(bed) = c("chr", "start", "end")
 
