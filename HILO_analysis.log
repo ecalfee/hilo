@@ -1733,7 +1733,11 @@ Submitted batch job 7366131 - RUNNING
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
 # I found several identified inversion from prior mapping, LD, and experimental studies:
 # Literature citations and descriptions are saved refMaize/inversions/README_knownInv.txt
-# I've put the genomic coordinates in a new file refMaize/inversions/knownInv.txt
+# I've put the genomic coordinates in a new file refMaize/inversions/knownInv.txt.
+# these coordinates are all on v2 of the maize genome, so I put the coordinates into their own bed files (e.g. refMaize/inversions/v2_coord/inv1n.bed)
+# and used Assembly Converter to lift these ranges from APGv2 to APGv4 (http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter)
+# The resulting bed files (e.g. refMaize/inversions/v4_coord/inv1n.bed) have many ranges, because some bp locations do not map.
+# So I re-create a contiguous range for each inversion using bedtools:
 
 # MAPPING ISSUES: To find out if there are regions not being called for mexicana
 # ancestry due to mapping issues, I need to see if there are places where maize
@@ -1835,7 +1839,6 @@ Submitted batch job 7249488 - DONE
 
 # TO DO:
 # I will redo local ancestry using new population mean ancestry estimates from NGSadmix.
-# Finish marking inversions (lift v2 coordinates to v4)
 # finish getting gene density around SNPs and high vs. low recomb rates too
 # Get in touch with Li about which files are corrupted. Start processing/downloading the raw data from NCBI
 # Do f3/f4 formal test of admixture
@@ -2010,7 +2013,7 @@ actually getting better copies from here:
 /iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
 and subfolders iplant4/iplant4
 I used irsync to transfer to my own directory, then irsync to get them onto farm
-# TO DO: 
+# TO DO:
 # rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
 # and same with symlinks from the ones stored locally on farm
 # map all to the maize reference genome
@@ -2055,7 +2058,7 @@ Submitted batch job 8121556 - WAITING 4 DEPENDENCY
 # plotted within and between population ancestry covariance : plot_ancestry_covariance_demography.R
 # Also starting to look at an analog of Fst for ancestry: Ast.R
 
-# Jan 29, 2019 
+# Jan 29, 2019
 # Dividing genome into 10kb fixed non-overlapping windows & calculating gene density per window
 # to compare with mean ancestry estimates and recombination rates (calls helper script bed_wind_2_recomb_rate.R)
 sbatch geneOverlapWindows10KB.sh
@@ -2064,7 +2067,3 @@ Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 # TO DO: use linear map to identify window for each ancestry call, going in lower bin if on edge,
 # plot ancestry by r and by gene density and r ~ gene_density for all individuals together (maize then mex)
 # and for individual populations. Also mask inversions and rerun plots/analyses.
-
-
-
-
