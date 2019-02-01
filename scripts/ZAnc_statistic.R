@@ -31,12 +31,13 @@ make_calcs = function(pop_anc){
 # get inversions:
 inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
                  stringsAsFactors = F, header = T)
+colnames(inv) = c("ID", "chr", "start", "end", "length")
 excl_inv_buffer = 1000000 # exclude 1 megabase around inversion
 inv$excl_start = inv$start - excl_inv_buffer
 inv$excl_end = inv$end + excl_inv_buffer
-# which inversions are segregating
-# and therefore should be excluded from some analyses?
-inv$present = (inv$ID %in% c("Inv4m"))
+# which inversions are segregating and therefore should be excluded from some analyses?
+# this list of inversions is checked visually for long ancestry blocks at potential inversion locations
+inv$present = (inv$ID %in% c("inv4m"))
 
 
 dir_in = "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
@@ -52,7 +53,8 @@ colors_maize2mex = c(yellows, blues)
 labels_maize2mex = c("allopatric_maize", "sympatric_maize", "sympatric_mexicana", "allopatric_mexicana")
 
 # admixture proportions per pop
-alphas <- read.table("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt",
+# substituted out var_sites
+alphas <- read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt",
                      stringsAsFactors = F, header = F)
 colnames(alphas) <- c("popN", "alpha_maize", "alpha_mex")
 # metadata for each individual, including pop association
@@ -72,6 +74,7 @@ included_inds = meta %>%
 pops = unique(included_inds[order(included_inds$popN), c("popN", "zea", "LOCALITY", "alpha_maize", "alpha_mex", "ELEVATION")])
 pops$zea_SHORT = abbreviate(pops$zea, min = 4, use.classes = F)
 pops$LOC_SHORT = abbreviate(pops$LOCALITY, min = 6, method = "both.sides", use.classes = F)
+pops$name_SHORT = paste(pops$zea_SHORT, pops$LOC_SHORT, sep = ".")
 #write.table(pops$popN, paste0(dir_in, "/included_pops.txt"),
 #            col.names = F, row.names = F, quote = F)
 
@@ -82,7 +85,7 @@ pop_anc_list = lapply(pops$popN, function(pop) read.table(paste0(dir_anc, "/pop"
 # combine population ancestry frequencies into a matrix
 # where rows are populations and columns are snps
 all_anc = t(do.call(cbind, pop_anc_list))
-rownames(all_anc) <- paste(pops$zea_SHORT, pops$LOC_SHORT, sep = ".")
+rownames(all_anc) <- pops$name_SHORT
 
 # run K-matrix and ZAnc calculations:
 all = make_calcs(pop_anc = all_anc)
@@ -92,7 +95,6 @@ maize = make_calcs(maize_anc)
 # just mexicana separately:
 mex_anc = all_anc[pops$zea == "mexicana", ]
 mex = make_calcs(mex_anc)
-
 
 # read in individual ancestry input files from calc_genomewide_pop_anc_freq.R
 ind_anc_list = lapply(pops$popN, function(pop) read.table(paste0(dir_anc, "/pop", pop, ".anc.ind"), 
@@ -158,12 +160,12 @@ high_r_ind = make_calcs(high_r_ind_anc)
 # for each inversion present, create a column in pos table
 # for whether that SNP is within the inversion
 for (i in unique(inv[inv$present, "ID"])){
-  pos[ , paste0("inv_", i)] <- (pos$chr == inv[inv$ID == i, "chrom"] &
+  pos[ , i] <- (pos$chr == inv[inv$ID == i, "chr"] &
                                   pos$pos >= inv[inv$ID == i, "excl_start"] &
                                   pos$pos <= inv[inv$ID == i, "excl_end"])
 }
 # is this position within any segregating inversions?
-pos$inv_any <- dplyr::select(pos, starts_with("inv_")) %>%
+pos$inv_any <- dplyr::select(pos, starts_with("inv")) %>%
   apply(., 1, any) # across all the inversions, are any values TRUE?
 
 # put all the K and ZAnc calculations together in one list
