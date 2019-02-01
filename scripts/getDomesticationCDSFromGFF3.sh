@@ -9,7 +9,7 @@
 DIR="refMaize/geneAnnotations"
 CDS_GFF=$DIR"/CDS_autosome_only.gff" # output of mergeCDSFromGFF3.sh
 CHROM_ORDER_FILE="refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
-DOMESTICATION_LIST="domestication/genes_on_APGv4_Zm00001d.2_gene_model.list"
+DOMESTICATION_LIST="domestication/gene_model_translation_to_APGv4.txt"
 CDS_DOMESTICATION=$DIR"/CDS_domestication_Hufford2012_merged.bed"
 DIR_WINDOWS_CM="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/windows0.1cM"
 DIR_WINDOWS_BP="refMaize/windows_10kb"
@@ -18,8 +18,6 @@ DIR_WINDOWS_BP="refMaize/windows_10kb"
 # gene names from Hufford 2012's original paper to the names used for the maize v4 genome assembly:
 # https://www.maizegdb.org/gene_center/gene# "Translate Gene Model IDs" to Zm00001d.2.
 # Saved output file as gene_model_translation_to_APGv4.txt
-# domestication$ cut -f 3 gene_model_translation_to_APGv4.txt | uniq | awk '$0 != "" && $0 != "Zm00001d.2" {print $0}' | \
-# head > genes_on_APGv4_Zm00001d.2_gene_model.list
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -31,7 +29,7 @@ set –o nounset
 module load bio
 
 # find domestication genes and gff3 overlap:
-for i in $(cat $DOMESTICATION_LIST); \
+for i in $(cut -f 3 $DOMESTICATION_LIST | uniq | awk '$0 != "" && $0 != "Zm00001d.2" {print $0}'); \
 do grep $i $CDS_GFF; done > $DIR/CDS_domestication_Hufford2012_only.gff
 
 # sort by coordinates and merge overlapping or contiguous CDS
