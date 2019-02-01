@@ -7,9 +7,9 @@
 #SBATCH --mem=8G
 
 DIR="refMaize/geneAnnotations"
-CDS_GFF=$DIR"/CDS_autosome_only.gff3" # output of mergeCDSFromGFF3.sh
+CDS_GFF=$DIR"/CDS_autosome_only.gff" # output of mergeCDSFromGFF3.sh
 CHROM_ORDER_FILE="refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
-DOMESTICATION_LIST="domestication/genes_on_APGv4_Zm0001d.2_gene_model.list"
+DOMESTICATION_LIST="domestication/genes_on_APGv4_Zm00001d.2_gene_model.list"
 CDS_DOMESTICATION=$DIR"/CDS_domestication_Hufford2012_merged.bed"
 DIR_WINDOWS_CM="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/windows0.1cM"
 DIR_WINDOWS_BP="refMaize/windows_10kb"
@@ -45,7 +45,6 @@ bedtools coverage -sorted -a ${DIR_WINDOWS_CM}/whole_genome.bed -b ${CDS_DOMESTI
 > ${DIR_WINDOWS_CM}/domestication_Hufford2012_overlap.bed
 
 echo "calculating domestication gene overlap with fixed bp windows genomewide"
-DIR_WINDOWS_BP
 bedtools coverage -sorted -a ${DIR_WINDOWS_BP}/whole_genome.bed -b ${CDS_DOMESTICATION} \
 > ${DIR_WINDOWS_BP}/domestication_Hufford2012_overlap.bed
 echo 'all done!'
