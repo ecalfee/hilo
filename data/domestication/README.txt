@@ -12,3 +12,11 @@ to identify regions of the genome with elevated divergence between parviglumis a
 extending over large regions, consistent with fast rises in frequency (ie selection) during domestication
 Candidate genes were identified within these elevated regions. One concern is that adaptive introgression
 or even neutral introgression, from mexicana might also create elevated XP-CLR (not sure).
+
+I have translated the gene names from Hufford's original paper to the names used for the maize v4 genome assembly:
+https://www.maizegdb.org/gene_center/gene#
+copy-and-paste into "Translate Gene Model IDs" tool. Selected 'translate to' Zm00001d.2.
+Saved output file as gene_model_translation_to_APGv4.txt
+Saved just list of gene names on APGv4 to 
+domestication$ cut -f 3 gene_model_translation_to_APGv4.txt | uniq | awk '$0 != "" && $0 != "Zm00001d.2" {print $0}' | \
+head > genes_on_APGv4_Zm00001d.2_gene_model.list

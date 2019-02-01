@@ -1,4 +1,4 @@
-hilo_id	anc	n	ID	zea	hap_group
+hilo_id	anc	top_anc_n	ID	zea	hap_group
 1	mex.mex	57	HILO1	maize	maize_mex.mex
 2	maize.maize	58	HILO2	maize	maize_maize.maize
 3	mex.mex	56	HILO3	maize	maize_mex.mex

@@ -201,12 +201,13 @@ peak2_anc <- rbind(peak2_mex, peak2_maize) %>%
   count(hilo_id, anc) %>%
   group_by(hilo_id) %>%
   slice(which.max(n)) %>%
-  left_join(., meta[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
+  rename(top_anc_n = n) %>%
+  left_join(., pass1[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
 
-table(peak2_anc$n)
-table(peak2_anc[,c("zea", "anc", "n")])
+table(peak2_anc$top_anc_n)
+table(peak2_anc[,c("zea", "anc", "top_anc_n")])
 # say 20/25 or more of one category can be classified
-peak2_anc$anc[peak2_anc$n<20] <- "unc.unc" # unknown
+peak2_anc$anc[peak2_anc$top_anc_n<20] <- "unc.unc" # unknown
 
 # write files to folder for outlier region
 peak2_name <- "chr4/peak2"
@@ -258,25 +259,25 @@ write.table(x = "4:25800000-26400000",
             col.names = F, row.names = F, quote = F)
 
 # a different peak - inversion on chr4: Inv4m
-
 inv4m_post = do.call(rbind, 
                     lapply(c(include_mex$n, include_maize$n), 
                            function(i) 
                              getPostSeg(id = i, chr = 4, 
-                                        start = inv[inv$ID=="Inv4m" & inv$chrom == 4, "start"],
-                                        end = inv[inv$ID=="Inv4m" & inv$chrom == 4, "end"], 
+                                        start = inv[inv$ID=="inv4m" & inv$chr == 4, "start"],
+                                        end = inv[inv$ID=="inv4m" & inv$chr == 4, "end"], 
                                         buffer = 0,
                                         nSkip = 99))) # don't need all the points
 inv4m_anc <- inv4m_post %>% 
   count(hilo_id, anc) %>%
   group_by(hilo_id) %>%
   slice(which.max(n)) %>%
-  left_join(., meta[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
+  rename(top_anc_n = n) %>%
+  left_join(., pass1[ , c("ID", "n", "zea")], by = c("hilo_id" = "n"))
 
-table(inv4m_anc$n)
-table(inv4m_anc[,c("zea", "anc", "n")])
+table(inv4m_anc$top_anc_n)
+table(inv4m_anc[,c("zea", "anc", "top_anc_n")])
 # say 80% or more of one category can be classified
-inv4m_anc$anc[inv4m_anc$n<.8*max(inv4m_anc$n)] <- "unc.unc" # unknown
+inv4m_anc$anc[inv4m_anc$top_anc_n<.8*max(inv4m_anc$top_anc_n)] <- "unc.unc" # unknown
 
 # write files to folder for outlier region
 inv4m_name <- "chr4/inv4m"
@@ -338,7 +339,8 @@ write.table(x = "4:171771502-185951149",
 
 # plot all of the inversions
 inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
-                 stringsAsFactors = F, header = T)
+                 stringsAsFactors = F, header = F)
+colnames(inv) = c("ID", "chr", "start", "end", "length")
 
 plot_inversion = function(post, chr, start, 
                            end, ID, 
