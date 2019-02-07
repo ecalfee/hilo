@@ -1948,9 +1948,22 @@ Submitted batch job 7997990 - COMPLETE 1.4.19
 # now filtering newly mapped bams
 scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 addReadGroupandSortBam_hilo.sh
 Submitted batch job 8010922 - Cancelled:
-Submitted batch job 8011221 - RUNNING 1.4.19
+Submitted batch job 8011221 - RAN 1.4.19 - ERROR (no space on device for samtools sort tmp) for several individuals, re-running those individuals:
+scripts$ sbatch --array=27-29,34,36-38,40-46,48,50-51,60-61,63,65,72,73,76,78-79,81-83,176-177,194,197,199-200 -p med2 addReadGroupandSortBam_hilo.sh
+Submitted batch job 8407394 - 2.4.19. COMPLETED 2.6.19
 scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:8011221 dedupAndAddBAQ_hilo.sh
-Submitted batch job 8011413 - WAITING 4 DEPENDENCY 1.4.19
+Submitted batch job 8011413 - RAN WITH ERRORS 1.4.19 (no sam for ones that didn't finish above, and no space left on disk for others. Re-running:
+scripts$ sbatch --array=1-83,117-200 -p med2 dedupAndAddBAQ_hilo.sh
+Submitted batch job 8453633 - RUNNING 2.6.19 -- ACK! memory and input SAM issues (no header -- maybe no file -- ok only for HILO80 which doesn't exist)
+ERRORS:
+[bam_fillmd] input SAM does not have header. Abort!
+OUT-OF-MEMORY
+
+# Do I have adapter contamination? Let's check..
+hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
+
+# TO DO: I can add RG identifiers with bwa in the first step:
+-R "@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330"
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
 Downloading Tripsacum reads from NCBI:
