@@ -3,9 +3,8 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J geneOverlap
 #SBATCH -o /home/ecalfee/hilo/slurm-log/geneOverlapWindowsCM_%A_%a.out
-#SBATCH -t 15:00:00
+#SBATCH -t 5:00:00
 #SBATCH --mem=8G
-
 
 DIR_WINDOWS="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/windows0.1cM"
 CDS_FILE="refMaize/geneAnnotations/CDS_merged.bed"

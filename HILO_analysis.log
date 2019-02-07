@@ -1684,6 +1684,7 @@ Submitted batch job 7104529 - COMPLETED
 # realized there was lots of overlap between different CDS.
 # So I first made an R script to pre-process the gff3 file into the largest contiguous CDS (ignoring strand identity) from any overlapping or adjacent CDS
 reduceCDSFromGFF3.R # ran interactively to produce output: CDS_1.txt, CDS_2.txt ... CDS_Mt.txt (1 per chromosome)
+# NOTE (!) this is not the right approach -- use bedtools instead (mergeCDSFromGFF3.sh)
 
 # Now using a short python script to output the map position (in cM) for the start, end, and midpoint of each CDS. And its total length too.
 scripts$ module load python3
@@ -1728,7 +1729,12 @@ Submitted batch job 7366128 - DONE
 scripts$ sbatch geneOverlapWindowsCM.sh
 Submitted batch job 7365709 -- fixed typo:
 Submitted batch job 7365714 - chr10 out of order, rerunning:
-Submitted batch job 7366131 - RUNNING
+Submitted batch job 7366131 - COMPLETE
+
+# (3) Domestication loci: find overlap between windows and CDS on APGv4 and Hufford 2012's list of domestication genes
+scrips$ sbatch getDomesticationCDSFromGFF3.sh
+Submitted batch job 8372943 - Errors only ran first 10 genes haha. rerunning after fix:
+Submitted batch job 8372999 - RUNNING 2.1.19
 
 # INVERSIONS: I want to run all analyses with and without major known inversions. So I'm getting from the literature the inversion coordinates.
 # I found several identified inversion from prior mapping, LD, and experimental studies:
@@ -2051,9 +2057,18 @@ Submitted batch job 8118419 - COMPLETE 1.11.19 (quick)
 # note: had to add all the files to transfer them via git -- will sort out later.
 # running PCA for outlier regions:
 sbatch --export="DIR=outliers/chr4/inv4m" runPCAngsd_outliers.sh
-Submitted batch job 8121590 - RUNNING
+Submitted batch job 8121590 - DID NOT RUN. looked up online and can ignore numpy error RuntimeWarning: numpy.dtype size changed
+So I ran it interactively to produce output file -- no issues 1.31.19:
+Individual allele frequencies estimated (95). RMSD=4.17551386712e-05
+Estimation of individual allele frequencies has converged due to small change in differences: 4.75336169346e-07
+Saved covariance matrix as outliers/chr4/inv4m/PCA.cov
+Estimating admixture using NMF with K=2, alpha=0, batch=5 and seed=1549003743
+Frobenius error: 40.3891416691
+Log-likelihood: -55147002.065275
+sbatch --export="DIR=outliers/chr4/peak2" allVarAngsdGL1_outliers.sh
+Submitted batch job 8118419 - COMPLETED. Rerunning PCA:
 sbatch --export="DIR=outliers/chr4/peak2" runPCAngsd_outliers.sh
-Submitted batch job 8118419 - RUNNING
+Submitted batch job 8370889 - COMPLETED (few minutes) 1.31.19
 
 
 # calculate FST for regions:
@@ -2061,7 +2076,9 @@ Submitted batch job 8118419 - RUNNING
 sbatch --array=1-$(wc -l ../data/outliers/chr4/inv4m/hap_groups.list) --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
 # didn't work
 ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/inv4m,ALL" calcSAFAngsd_outliers.sh
-Submitted batch job 8119364 - COMPLETE
+Submitted batch job 8119364 - PROBLEMS with 3,6 (unc.unc. not found) and 4 (timeout). Rerunning:
+
+
 ecalfee@bigmem1:~/hilo/scripts$ sbatch --array=1-8 --export="DIR=outliers/chr4/peak2,ALL" calcSAFAngsd_outliers.sh
 Submitted batch job 8119373 - COMPLETE
 #FST using 2DSFS:
@@ -2080,6 +2097,4 @@ Submitted batch job 8121556 - WAITING 4 DEPENDENCY
 sbatch geneOverlapWindows10KB.sh
 Submitted batch job 8301049 - COMPLETED within seconds 1.29.19. Edited to include recomb. rate calculation:
 Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
-# TO DO: use linear map to identify window for each ancestry call, going in lower bin if on edge,
-# plot ancestry by r and by gene density and r ~ gene_density for all individuals together (maize then mex)
-# and for individual populations. Also mask inversions and rerun plots/analyses.
+# 1.31.19: results are plotted for 10kb, 100kb and 1000kb (1Mb) fixed windows in ancestry_by_recomb_and_gene_density.R

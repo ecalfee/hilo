@@ -176,7 +176,7 @@ p <- ggplot(data =  data_mG, aes(x = Group1, y = Group2)) +
   theme(axis.title.x = element_blank(), 
        axis.title.y = element_blank())
 p
-ggsave("../plots/Fst_maize_mex_100000bp.png", plot = p, device = png(), 
+ggsave("../plots/Fst_maize_mex_100000bp.png", plot = p, device = "png", 
        width = 10, height = 8, units = "in",
        dpi = 100)
 
@@ -323,7 +323,7 @@ pass1_allo4Low_wPC_grow2 %>%
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage") +
   facet_wrap(~as.factor(grow))
-ggsave("../plots/PCA_by_greenhouse_group.png", device = png(), 
+ggsave("../plots/PCA_by_greenhouse_group.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 # plotting again, this time so it's easier to see the one outlier
@@ -334,7 +334,7 @@ pass1_allo4Low_wPC_grow2 %>%
                  alpha = .6)) +
   labs(color = "Grow Group", size = "Est. coverage") +
   facet_wrap(~zea)
-ggsave("../plots/PCA_by_greenhouse_group2.png", device = png(), 
+ggsave("../plots/PCA_by_greenhouse_group2.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 
@@ -345,7 +345,7 @@ pass1_allo4Low_wPC_grow2 %>%
                  size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage")
-ggsave("../plots/PCA_newIDs_all.png", device = png(), 
+ggsave("../plots/PCA_newIDs_all.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 # exclude individuals with very low coverage < 0.5x estimated from # reads passing sequencing fiilters
@@ -356,7 +356,7 @@ pass1_allo4Low_wPC_grow2 %>%
                  size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage")
-ggsave("../plots/PCA_newIDs_all_over_0.05x_coverage.png", device = png(), 
+ggsave("../plots/PCA_newIDs_all_over_0.05x_coverage.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 
@@ -370,7 +370,7 @@ pass1_allo4Low_wPC_grow2 %>%
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage") +
   facet_wrap(~as.factor(id_batch))
-ggsave("../plots/PCA_newIDs_sep143-160.png", device = png(), 
+ggsave("../plots/PCA_newIDs_sep143-160.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 # same plot but with individuals given different shapes for different populations
@@ -387,7 +387,7 @@ for (i in c("first142", "hilo <143 or >160", "hilo > 160")){
     facet_wrap(~as.factor(paste(symp_allo, zea, sep = "_")))
 }
 
-ggsave("../plots/PCA_newIDs_sep143-160_by population.png", device = png(), 
+ggsave("../plots/PCA_newIDs_sep143-160_by population.png", device = "png", 
        width = 12, height = 6, units = "in",
        dpi = 200)
 
@@ -402,7 +402,7 @@ pass1_allo4Low_wPC_wMetrics %>%
                  #size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage", y = "proportion reads not mapped")
-ggsave("../plots/PC1_by_unmapped.png", device = png(), 
+ggsave("../plots/PC1_by_unmapped.png", device = "png", 
        width = 8, height = 6, units = "in",
        dpi = 200)
 
@@ -413,7 +413,7 @@ pass1_allo4Low_wPC_wMetrics %>%
   #size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage", y = "proportion reads filtered total")
-ggsave("../plots/PC1_by_filtered_total.png", device = png(), 
+ggsave("../plots/PC1_by_filtered_total.png", device = "png", 
        width = 8, height = 6, units = "in",
        dpi = 200)
 
@@ -424,7 +424,7 @@ pass1_allo4Low_wPC_wMetrics %>%
   #size = est_coverage)) +
   scale_colour_manual(values = c("yellow", "darkblue", "orange", "blue")) +
   labs(color = "Group", size = "Est. coverage", y = "proportion reads mapped but mapQ<30")
-ggsave("../plots/PC1_by_mapQ30.png", device = png(), 
+ggsave("../plots/PC1_by_mapQ30.png", device = "png", 
        width = 8, height = 6, units = "in",
        dpi = 200)
 
@@ -439,30 +439,123 @@ p <- pass1_allo4Low_wPC_grow2 %>%
 
 # Use vars() to supply faceting variables:
 p + facet_wrap(~LOCALITY)
-ggsave("../plots/PCA_facet_by_population.png", plot = p + facet_wrap(~LOCALITY), device = png(), 
+ggsave("../plots/PCA_facet_by_population.png", plot = p + facet_wrap(~LOCALITY), device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 # plot PCA for outliers
-m <- as.matrix(read.table("../data/outliers/chr4/peak2/PCA.cov", stringsAsFactors = F, header = F))
+m <- as.matrix(read.table("../data/outliers/chr4/inv4m/PCA.cov", stringsAsFactors = F, header = F))
 e <- eigen(m)
 colors = ifelse(pass1$zea=="maize", "orange", 
                 ifelse(pass1$symp_allo=="sympatric", "blue", "darkblue"))
-# load inv4m_anc from plotLocalAncTracts.R for lables
+
+# load inv4m_anc from plotLocalAncTracts.R for labels
 pca = e$vectors[, 1:2]
 colnames(pca) = paste0("PC", 1:2)
 pca2 = cbind(pass1_allo4Low, pca) %>%
-  left_join(., inv4m_anc, by = "ID")
-pca2 <- data.frame(pca2)
-pca2$hap_group[is.na(pca2$hap_group)] <- paste(pca2$zea.x, pca2$symp_allo, sep = "_")[is.na(pca2$hap_group)]
+  left_join(., inv4m_anc, by = c("ID", "n"="hilo_id", "zea"))
+# there are some NAs because they are from pops without ancestry calls
+pca2$hap_group[is.na(pca2$hap_group)] <- paste(pca2$zea, pca2$symp_allo, sep = "_")[is.na(pca2$hap_group)]
 pca2 %>%
   ggplot(., aes(x = PC1, y = PC2)) +
   geom_point(aes(color = hap_group))
 pca2 %>%
-  filter(., zea.x == "maize") %>%
+  #filter(!hap_group == "maize_sympatric" & !hap_group == "mexicana_sympatric") %>%
+  #filter(!LOCALITY == "Puerta Encantada") %>%
   ggplot(., aes(x = PC1, y = PC2)) +
-  geom_point(aes(color = hap_group))
+  geom_point(aes(color = anc, 
+                 #size = top_anc_n,
+                 shape = paste(zea,symp_allo)),
+             alpha = .8) + 
+  labs(title = "PCA of haplotypes at inv4m",
+       x = paste("PC 1 -", round(e$values[1]), "%"),
+       y = paste("PC 2 -", round(e$values[2]), "%"))
+ggsave("../plots/PCA_inv4m.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+# do the mexicana haplotypes appear to cluster at all by location?
+# no, not really. I see this when I just plot mex.mex haplotypes
 pca2 %>%
-  filter(., zea.x == "mexicana") %>%
+  filter(anc == "mex.mex" | hap_group == "mexicana_allopatric") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = LOCALITY, 
+                 shape = paste(zea,symp_allo)), 
+                 alpha = .8) + 
+  labs(title = "PCA of mex.mex haplotypes at inv4m",
+       x = paste("PC 1 -", round(e$values[1]), "%"),
+       y = paste("PC 2 -", round(e$values[2]), "%"))
+ggsave("../plots/PCA_inv4m_mex_haps.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+# and just the maize haplotypes:
+pca2 %>%
+  filter(anc == "maize.maize" | hap_group == "maize_allopatric") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = LOCALITY, shape = paste(zea,symp_allo)), 
+                 alpha = .8) + 
+  labs(title = "PCA of maize.maize haplotypes at inv4m",
+       x = paste("PC 1 -", round(e$values[1]), "%"),
+       y = paste("PC 2 -", round(e$values[2]), "%"))
+ggsave("../plots/PCA_inv4m_maize_haps.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+
+
+
+# TO DO: write a function to make key plots for outlier regions
+# also get coverage for this region, to plot too
+# but for not plot pca for peak2 on chr4
+m1 <- as.matrix(read.table("../data/outliers/chr4/peak2/PCA.cov", stringsAsFactors = F, header = F))
+e1 <- eigen(m1)
+
+# load inv4m_anc from plotLocalAncTracts.R for labels
+pca0 = e1$vectors[, 1:2]
+colnames(pca0) = paste0("PC", 1:2)
+pca1 = cbind(pass1_allo4Low, pca0) %>%
+  left_join(., peak2_anc, by = c("ID", "n"="hilo_id", "zea"))
+# there are some NAs because they are from pops without ancestry calls
+pca1$hap_group[is.na(pca1$hap_group)] <- paste(pca1$zea, pca1$symp_allo, sep = "_")[is.na(pca1$hap_group)]
+pca1 %>%
   ggplot(., aes(x = PC1, y = PC2)) +
   geom_point(aes(color = hap_group))
+pca1 %>%
+  #filter(!hap_group == "maize_sympatric" & !hap_group == "mexicana_sympatric") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = anc, 
+                 #size = top_anc_n,
+                 size = est_coverage,
+                 shape = paste(zea,symp_allo)),
+             alpha = .8) + 
+  labs(title = "PCA of haplotypes at peak 2 chr4",
+       x = paste("PC 1 -", round(e1$values[1]), "%"),
+       y = paste("PC 2 -", round(e1$values[2]), "%"))
+ggsave("../plots/PCA_peak2.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+# do the mexicana haplotypes appear to cluster at all by location?
+# no, not really. I see this when I just plot mex.mex haplotypes
+pca1 %>%
+  filter(anc == "mex.mex" | hap_group == "mexicana_allopatric") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = LOCALITY, 
+                 shape = paste(zea,symp_allo)), 
+             alpha = .8) + 
+  labs(title = "PCA of mex.mex haplotypes at peak2 chr4",
+       x = paste("PC 1 -", round(e1$values[1]), "%"),
+       y = paste("PC 2 -", round(e1$values[2]), "%"))
+ggsave("../plots/PCA_peak2_mex_haps.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+# and just the maize haplotypes:
+pca1 %>%
+  filter(anc == "maize.maize" | hap_group == "maize_allopatric") %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  geom_point(aes(color = LOCALITY, shape = paste(zea,symp_allo)), 
+             alpha = .8) + 
+  labs(title = "PCA of maize.maize haplotypes at peak2 chr4",
+       x = paste("PC 1 -", round(e1$values[1]), "%"),
+       y = paste("PC 2 -", round(e1$values[2]), "%"))
+ggsave("../plots/PCA_peak2_maize_haps.png", device = "png", 
+       width = 12, height = 10, units = "in",
+       dpi = 200)
+
