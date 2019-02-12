@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/analyses/filtered_bams
+#SBATCH -D /home/ecalfee/hilo/filtered_bams
 #SBATCH -J mapFilt
 #SBATCH -o /home/ecalfee/hilo/slurm-log/mapAndFilter_%A_%a.out
 #SBATCH -t 6-00:00:00
@@ -33,7 +33,7 @@ module load picardtools # saves path to loaded versin in $PICARD variable
 echo "working directory: ${PWD}" # print current working directory
 echo "picard path: ${PICARD}"
 
-REF="refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 i=$SLURM_ARRAY_TASK_ID
 ids=($(cat ${DIR_IN}/${PREFIX_LIST}_IDs.list))
 ID=${ids["$i"]}
@@ -56,7 +56,7 @@ mkdir -p ${DIR_TMP}
 # note: reference genome needs to already be indexed, e.g. bwa index ref.fa
 echo "running bwa mem for sample ${ID} lane ${LANE} library ${LIBRARY}"
 bwa mem -t 16 -v 3 \
--R "@RG\tID:${LANE}\tSM:${ID}\tPL:ILLUMINA\tLB:${LIBRARY}\tPU:${LANE}.${ID}"
+-R "@RG\tID:${LANE}\tSM:${ID}\tPL:ILLUMINA\tLB:${LIBRARY}\tPU:${ID}.${LANE}" \
 "${REF}" "${FASTQ1}" "${FASTQ2}"  | \
 samtools view -bS -o "${DIR_OUT}/${ID}.bam" -
 
