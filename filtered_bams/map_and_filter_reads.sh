@@ -6,15 +6,15 @@
 #SBATCH -t 6-00:00:00
 #SBATCH --mem=32G
 #SBATCH -n 16
-#SBATCH --array=0-6
-#SBATCH --export=DIR_IN=../../data/HILO_raw_reads,PREFIX_LIST=Jan2019
+#SBATCH --array=0
+#SBATCH --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019
 
 # START WITH ZERO FOR ARRAY INDEXES (!)
 
 # this script takes in fastq files with raw paired reads
 # and aligns reads to APGv4 reference with all chromosome and contigs
 # sample ID, fastq file 1, fastq file 2, output bam directory
-# to run: sbatch --array=1-$(wc -l prefix_ids_and_lanes_IDs.list) map_and_filter_reads.sh directory/with/fastq_files prefix_ids_and_lanes
+# to run: sbatch --array=1 --export=DIR_IN=../data/HILO_raw_reads/TEST,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -35,11 +35,11 @@ echo "picard path: ${PICARD}"
 
 REF="refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 i=$SLURM_ARRAY_TASK_ID
-ids=($(cat ${PREFIX_LIST}_IDs.list))
+ids=($(cat ${DIR_IN}/${PREFIX_LIST}_IDs.list))
 ID=${ids["$i"]}
-libraries=($(cat ${PREFIX_LIST}_libraries.list))
+libraries=($(cat ${DIR_IN}/${PREFIX_LIST}_libraries.list))
 LIBRARY=${libraries["$i"]}
-lanes=($(cat ${PREFIX_LIST}_lanes.list))
+lanes=($(cat ${DIR_IN}/${PREFIX_LIST}_lanes.list))
 LANE=${lanes["$i"]}
 FASTQ1=${DIR_IN}/${LANE}/${ID}_1.fq.gz
 FASTQ2=${DIR_IN}/${LANE}/${ID}_2.fq.gz

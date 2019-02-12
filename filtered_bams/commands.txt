@@ -1,0 +1,17 @@
+# mapping reads to maize reference genome:
+
+# Mapping new sequences from novogene:
+# First making symlink to rename logically:
+hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fq.gz data/HILO_raw_reads/Jan2019_{3}/hilo_{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
+# make files that save lanes and HILO ID's
+hilo/data/HILO_raw_reads$ for i in $(cut -f1 Jan2019_id_link_HILO_novogene.txt | cut -c5-); do echo hilo_$i; done > Jan2019_IDs.list
+data/HILO_raw_reads$ for i in $(cut -f2 Jan2019_id_link_HILO_novogene.txt | cut -c5); do echo Jan2019_$i; done > Jan2019_lanes.list
+# libraries should be the same as March2018 (just re-sequenced same libraries)
+hilo/data/HILO_raw_reads$ for i in {1..114}; do echo "March2018"; done > Jan2019_libraries.list
+# made new script that takes in a directory and a file prefix for _IDs.txt and _lanes.txt files, then maps, adds readgroups (library = March2018, RG ID=lane, Sample_ID = HILO_ID)
+# testing script analyses/filtered_bams/map_and_filter_reads.sh using just 50 reads from 1 sample:
+data/HILO_raw_reads$ zcat Jan2019_6/hilo_201_1.fq.gz | head -n 50 | gzip > TEST/Jan2019_6/hilo_201_1.fq.gz
+data/HILO_raw_reads$ zcat Jan2019_6/hilo_201_2.fq.gz | head -n 50 | gzip > TEST/Jan2019_6/hilo_201_2.fq.gz
+
+
+# TO DO: merge sets of reads from the same sample & dedup & index again
