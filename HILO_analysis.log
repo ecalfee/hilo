@@ -1960,10 +1960,12 @@ Submitted batch job 8407394 - 2.4.19. COMPLETED 2.6.19
 scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:8011221 dedupAndAddBAQ_hilo.sh
 Submitted batch job 8011413 - RAN WITH ERRORS 1.4.19 (no sam for ones that didn't finish above, and no space left on disk for others. Re-running:
 scripts$ sbatch --array=1-83,117-200 -p med2 dedupAndAddBAQ_hilo.sh
-Submitted batch job 8453633 - RUNNING 2.6.19 -- ACK! memory and input SAM issues (no header -- maybe no file -- ok only for HILO80 which doesn't exist)
+Submitted batch job 8453633 - stopped with OUT OF MEMORY errors 2.6.19 -- ACK! memory and input SAM issues (no header -- maybe no file -- ok only for HILO80 which doesn't exist)
 ERRORS:
 [bam_fillmd] input SAM does not have header. Abort!
-OUT-OF-MEMORY
+OUT-OF-MEMORY -- this is because med2 by default only allocates 2000M memory instead of 8G. rerunning:
+scripts$ sbatch --array=1-83,117-200 -p bigmemm dedupAndAddBAQ_hilo.sh
+Submitted batch job 8673528 - RUNNING 2.11.19
 
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
@@ -2098,3 +2100,16 @@ sbatch geneOverlapWindows10KB.sh
 Submitted batch job 8301049 - COMPLETED within seconds 1.29.19. Edited to include recomb. rate calculation:
 Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 # 1.31.19: results are plotted for 10kb, 100kb and 1000kb (1Mb) fixed windows in ancestry_by_recomb_and_gene_density.R
+
+# Mapping new sequences from novogene:
+# First making symlink to rename logically:
+hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fz.gz data/HILO_raw_reads/Jan2019_{3}/{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
+# make files that save lanes and HILO ID's
+hilo/data/HILO_raw_reads$ cut -f1 Jan2019_id_link_HILO_novogene.txt > Jan2019_IDs.list
+data/HILO_raw_reads$ for i in $(cut -f2 Jan2019_id_link_HILO_novogene.txt | cut -c5); do echo Jan2019_$i; done > Jan2019_lanes.list
+# TO DO: make new script that takes in a directory and a file prefix for _IDs.txt and _lanes.txt files, then maps, adds readgroups (library = March2018, RG though has lane + ID, Sample_ID = HILO_ID)
+
+
+
+
+
