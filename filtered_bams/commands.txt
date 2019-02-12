@@ -1,10 +1,41 @@
 # mapping reads to maize reference genome:
 
+# Re-mapping pass1 = all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
+scripts$ sbatch map2maizeAPGv4_hilo.sh
+Submitted batch job 7806669 - RUNNING 12.27.18. Rerunning the 3 that timed out:
+scripts$ sbatch --array=15,17,149 -x bigmem3,bigmem6 -t 6-00:00:00 map2maizeAPGv4_hilo.sh
+Submitted batch job 7997990 - COMPLETE 1.4.19
+# now filtering newly mapped bams
+scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 addReadGroupandSortBam_hilo.sh
+Submitted batch job 8010922 - Cancelled:
+Submitted batch job 8011221 - RAN 1.4.19 - ERROR (no space on device for samtools sort tmp) for several individuals, re-running those individuals:
+scripts$ sbatch --array=27-29,34,36-38,40-46,48,50-51,60-61,63,65,72,73,76,78-79,81-83,176-177,194,197,199-200 -p med2 addReadGroupandSortBam_hilo.sh
+Submitted batch job 8407394 - 2.4.19. COMPLETED 2.6.19
+scripts$ sbatch --array=1-200 -x bigmem3,bigmem6 --dependency=afterok:8011221 dedupAndAddBAQ_hilo.sh
+Submitted batch job 8011413 - RAN WITH ERRORS 1.4.19 (no sam for ones that didn't finish above, and no space left on disk for others. Re-running:
+scripts$ sbatch --array=1-83,117-200 -p med2 dedupAndAddBAQ_hilo.sh
+Submitted batch job 8453633 - stopped with OUT OF MEMORY errors 2.6.19 -- ACK! memory and input SAM issues (no header -- maybe no file -- ok only for HILO80 which doesn't exist)
+ERRORS:
+[bam_fillmd] input SAM does not have header. Abort!
+OUT-OF-MEMORY -- this is because med2 by default only allocates 2000M memory instead of 8G. rerunning:
+scripts$ sbatch --array=1-83,117-200 -p bigmemm dedupAndAddBAQ_hilo.sh
+Submitted batch job 8673528 - COMPLETED 2.11.19
+# made symlink to new folder and naming system
+# NOTE: better to use absolute paths for target (=actual file) of symbolic links
+filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam results/pass1/HILO$i.sort.dedup.baq.bam; done
+filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam.bai results/pass1/HILO$i.sort.dedup.baq.bam.bai; done
+
+
+
+# Do I have adapter contamination? Let's check..
+hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
+
+
 # Mapping new sequences from novogene:
 # First making symlink to rename logically:
-hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fq.gz data/HILO_raw_reads/Jan2019_{3}/hilo_{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
+hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fq.gz data/HILO_raw_reads/Jan2019_{3}/{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
 # make files that save lanes and HILO ID's
-hilo/data/HILO_raw_reads$ for i in $(cut -f1 Jan2019_id_link_HILO_novogene.txt | cut -c5-); do echo hilo_$i; done > Jan2019_IDs.list
+hilo/data/HILO_raw_reads$ cut -f1 Jan2019_id_link_HILO_novogene.txt > Jan2019_IDs.list
 data/HILO_raw_reads$ for i in $(cut -f2 Jan2019_id_link_HILO_novogene.txt | cut -c5); do echo Jan2019_$i; done > Jan2019_lanes.list
 # libraries should be the same as March2018 (just re-sequenced same libraries)
 hilo/data/HILO_raw_reads$ for i in {1..114}; do echo "March2018"; done > Jan2019_libraries.list
@@ -12,6 +43,10 @@ hilo/data/HILO_raw_reads$ for i in {1..114}; do echo "March2018"; done > Jan2019
 # testing script analyses/filtered_bams/map_and_filter_reads.sh using just 50 reads from 1 sample:
 data/HILO_raw_reads$ zcat Jan2019_6/hilo_201_1.fq.gz | head -n 50 | gzip > TEST/Jan2019_6/hilo_201_1.fq.gz
 data/HILO_raw_reads$ zcat Jan2019_6/hilo_201_2.fq.gz | head -n 50 | gzip > TEST/Jan2019_6/hilo_201_2.fq.gz
-
+# testing:
+filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads/TEST,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
+# running all newly sequenced novogene samples:
+filtered_bams$ sbatch --array=0-113 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
+Submitted batch job 8711515 - RUNNING 2.12.19
 
 # TO DO: merge sets of reads from the same sample & dedup & index again

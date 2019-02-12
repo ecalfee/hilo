@@ -1965,7 +1965,7 @@ ERRORS:
 [bam_fillmd] input SAM does not have header. Abort!
 OUT-OF-MEMORY -- this is because med2 by default only allocates 2000M memory instead of 8G. rerunning:
 scripts$ sbatch --array=1-83,117-200 -p bigmemm dedupAndAddBAQ_hilo.sh
-Submitted batch job 8673528 - RUNNING 2.11.19
+Submitted batch job 8673528 - COMPLETED 2.11.19
 
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
