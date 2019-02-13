@@ -57,8 +57,8 @@ mapped & sorted, just needs duplicates marked: 17,70,72,91,101,102,105,108
 filtered_bams$ sbatch --array=6,77,78,81,90,94,96,106,110,111 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
 Submitted batch job 8754543
 # deduplicating/BAQ ones that did map but didn't finish:
-filtered_bams$ just_filter_reads --array=17,70,72,91,101,102,105,108 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 just_filter_reads.sh
-Submitted batch job ***
+filtered_bams$ sbatch --array=17,70,72,91,101,102,105,108 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 just_filter_reads.sh
+Submitted batch job 8754793
 
 Tripsacum:
 Tripsacum line (TDD39103)
