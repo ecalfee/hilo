@@ -1993,29 +1993,6 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # scripts/plot_ancestry_covariance_demography.R
 # TO DO: redo while excluding inv4m!
 
-# getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
-# when assessing % admixture in sympatric maize and mexicana:
-# there are 50 individuals from large Palmar Chico population from Balsas River Valley
-# (Li used just 4 parv. individuals from same pop in her paper)
-# some are already on farm:
-# ind's 25-48
-# 1.7.19 downloading remaining ind's 1-24, 49-50 from iplant:
-my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
-$ module load icommands
-$ iinit
-$ icd /iplant/home/rossibarra/PalmarChico_parents/merged_iput/merged/fastq
-$ cd hilo/data/parviglumis
-$ iget -K Sample_JRIAL8_21_R1.fastq.gz .
-actually getting better copies from here:
-/iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
-and subfolders iplant4/iplant4
-I used irsync to transfer to my own directory, then irsync to get them onto farm
-# TO DO:
-# rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
-# and same with symlinks from the ones stored locally on farm
-# map all to the maize reference genome
-
-
 # outlier analysis: what do haplotypes (eg. pi, fst) look like under ZAnc peaks?
 # compare mex.mex mex.maize, maize.maize and unclear haplotypes with both mex and maize background
 # using basic summary statistics. right now anything <.80% time categorized the same is excluded
