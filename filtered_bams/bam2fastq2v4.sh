@@ -44,13 +44,13 @@ echo "mapping paired reads with bwa for sample $ID"
 # align fastq to maize reference AGPv4 official release using bwa mem
 # note: reference genome needs to already be indexed, e.g. bwa index ref.fa
 bwa mem -t 16 -v 3 \
--R "@RG\tID:${ID}\tSM:${ID}\tPL:ILLUMINA\tLB:${ID}\tPU:${ID}" \
+-R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
 "${REF}" "$DIR_IN"/fastq/"$ID"_1.fq.gz "$DIR_IN"/fastq/"$ID"_2.fq.gz  | \
 samtools view -bS -o "${DIR_IN}/remapped/${ID}_12.bam" -
 
 echo "mapping unpaired reads with bwa for sample $ID"
 bwa mem -t 16 -v 3 \
--R "@RG\tID:${ID}\tSM:${ID}\tPL:ILLUMINA\tLB:${ID}\tPU:${ID}" \
+-R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
 "${REF}" "$DIR_IN"/fastq/"$ID"_3.fq.gz  | \
 samtools view -bS -o "${DIR_IN}/remapped/${ID}_3.bam" -
 
