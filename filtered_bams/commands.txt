@@ -1,4 +1,33 @@
-# mapping reads to maize reference genome:
+# mapping reads to maize reference genome APGv4 official release (with all contigs):
+
+# download and index reference genome:
+I downloaded the official v4 genome release to farm and unzipped using gunzip --keep Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+# Download record:
+ftp site:  ftp://ftp.gramene.org/pub/gramene/release-59/fasta/zea_mays/dna/
+file: Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+works on farm if I use the following commands (in srun interactive at 8G, 8hrs (large file!)):
+ftp -p ftp.gramene.org
+cd pub/gramene/release-59/fasta/zea_mays/dna/
+get README # works!
+get CHECKSUMS
+get Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # only took a few minutes!
+grep 'toplevel' CHECKSUMS
+sum Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # CHECKSUM match verified
+(if prompted, login as anonymous with a password as your email as a courtesy)
+Moved draft reference with no contigs and its indexes to new subdirectory: data/refMaize/AGPv4_no_contigs/
+Now making symlink:
+refMaize$ ln -s /group/jrigrp/Share/assemblies/Zea_mays_RefGen_Officialv4Release_AllChrsAndContigs/Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+ Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+And indexing for bwa, picard, and samtools
+module load bio
+refMaize$ samtools faidx Zea_mays.B73_RefGen_v4.dna.toplevel.fa # COMPLETED
+module load picardtools # saves variable $PICARD for path to picard v.2.7.1
+refMaize$ java -jar $PICARD/picard.jar CreateSequenceDictionary R=AGPv4_official.fa O=AGPv4_official.dict
+# now index for BWA
+scripts$ sbatch indexRefBWA.sh
+Submitted batch job 7695978 - try again:
+Submitted batch job 7695980 - COMPLETE
+
 
 # HILO PASS1 - MARCH2018
 # Re-mapping pass1 = all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
@@ -129,21 +158,62 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # THEN I can merge the files using samtools merge.
 # and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
 
+
 # NEW PLAN FOR TRIPSACUM 2.13.19 - I DON'T NEED ALL THE READS, ~30X SHOULD BE SUFFICIENT
 # The short paired-end sequences SRR7758238 have ~136.5G. That is 59x for a 2.3Gbp maize genome.
 # So I will start by randomly sampling 50% of the reads
-# TO DO: downsample short reads to 50% (use same random seed for _1 and _2 to get pairs):
-filtered_bams$ sbatch subsample_tripsacum_fastq.sh
-Submitted batch job ***
+
+# Downsample short reads to 50% (use same random seed for _1 and _2 to get pairs):
+filtered_bams$ sbatch -p med2 subsample_tripsacum_fastq.sh
+Submitted batch job 8777638 - RUNNING 2.13.19
+
 # making all additional files to run mapping once above is finished
 data/tripsacum$ echo TRIP > SRR7758238_IDs.list
 data/tripsacum$ echo SRR7758238 > SRR7758238_libraries.list
 data/tripsacum$ echo SRR7758238 > SRR7758238_lanes.list
+
 # mapping on med2 with 15 days to map, 32G total memory, and 16 threads:
-filtered_bams$ sbatch --dependency=afterok:*** -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
+filtered_bams$ sbatch --dependency=afterok:8777638 -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
+Submitted batch job 8777664 - WAITING 4 DEPENDENCY 2.13.19
+
+
+# MAIZE LANDRACES:
+# LANDRACES ACROSS AMERICAS FROM LI:
+# New landraces : 4 lowland mexico, 6 lowland South America & 5 Andes
+# ind's listed in ~/hilo/data/landraces_fromLi/alloMaizeInclude.list
+# (will check andean ind's to confirm no admixture later)
+
+# Li used v3 but remapped to APGv4 and shared her remapped bams here: /iplant/home/lilepisorus/landraces_AGPv4
+# downloading bams
+ssh -p 2022 ecalfee@farm.cse.ucdavis.edu # connect to port 2022 for file downloads on farm
+cd hilo/data/landraces_fromLi/original
+# use icommands to get files (sign in for iplant use, -K checks checksums)
+module load icommands
+iinit # login w/ password
+# run my script to download data from iplant with nohup in background, hopefully this works (?)
+ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
+[1] 18482
+# did not work :/ . So first I am using irsync to get files from Li's iplant directory
+# onto mine (to free up her space). Then I'll delete files I don't need (DONE) and use irsync
+# again to get the files onto farm
+my_computer$ irsync -r -V i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
+# now attempting to sync directly to farm
+my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+$ module load icommands
+$ iinit
+$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fromLi/original
+# first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
+
+# ISSUE: RIMMA0625.bam was corrupted, so I downloaded an older uncorrupted v3 version from Li's iplant and will have to remap it to v4 myself:
+/iplant/home/lilepisorus/RIMMA0625_Andean.IndelRealigned.bam
+# NOTE: I moved the corrupted/truncated v4 bam to data/landraces_fromLi/original/corrupt/RIMMA0625.bam
+# remapping corrupted bam:
+filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+
+# TO DO: Copy newly remapped RIMMA0625 into /original folder. Then all of Li's remapped bams need to be deduplicated, BAQ, and indexed
 
 # TO DO: I could divide into smaller files to map & then merge sets of reads for tripsacum
 # TO DO: merge sets of reads from the same sample & dedup & index again
 # TO DO: check on Li's maize reads/bams. what needs to be done to incorporate these?
 # TO DO: change headers for some of Anne's maize bams to view on PCA
-# TO DO: update on parviglumis progress - make symlinks and map.
+# TO DO: confirm with Anne correct parviglumis
