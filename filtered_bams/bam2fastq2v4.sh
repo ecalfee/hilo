@@ -36,7 +36,7 @@ module load bio # loads samtools and bedtools
 echo "sorting BAM by name then output fastq"
 # use samtools to sort input bam file by name (so paired reads are together)
 # then use samtools to output fastq files
-samtools sort -n "$BAM" | \
+samtools sort -n "$DIR_IN"/"$BAM" | \
 samtools fastq -c 6 -1 "$DIR_IN"/fastq/"$ID"_1.fq.gz -2 "$DIR_IN"/fastq/"$ID"_2.fq.gz -s "$DIR_IN"/fastq/"$ID"_3.fq.gz -
 
 

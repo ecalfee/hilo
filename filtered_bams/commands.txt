@@ -208,7 +208,8 @@ $ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fro
 /iplant/home/lilepisorus/RIMMA0625_Andean.IndelRealigned.bam
 # NOTE: I moved the corrupted/truncated v4 bam to data/landraces_fromLi/original/corrupt/RIMMA0625.bam
 # remapping corrupted bam:
-filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+filtered_bams$ sbatch -p med2 --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+Submitted batch job 8781437 - RUNNING 2.13.19
 
 # TO DO: Copy newly remapped RIMMA0625 into /original folder. Then all of Li's remapped bams need to be deduplicated, BAQ, and indexed
 
