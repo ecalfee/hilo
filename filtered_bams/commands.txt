@@ -146,7 +146,7 @@ Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
 Submitted batch job 8008516 - RUNNING 1.4.19 - TIMEOUT - rerunning:
 scripts$ sbatch -x bigmem3,bigmem9 -t 18-00:00:00 --export="ID=SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8122106 - RUNNING 1.11.19 - NEAR TIMEOUT -- PROBABLY WON'T FINISH 1.29.19
+Submitted batch job 8122106 - TIMEOUT - DID NOT FINISH 1.29.19
 
 # second sequencing lane
 scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
@@ -165,7 +165,7 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 
 # Downsample short reads to 50% (use same random seed for _1 and _2 to get pairs):
 filtered_bams$ sbatch -p med2 subsample_tripsacum_fastq.sh
-Submitted batch job 8777638 - RUNNING 2.13.19
+Submitted batch job 8777638 - COMPLETED 2.13.19
 
 # making all additional files to run mapping once above is finished
 data/tripsacum$ echo TRIP > SRR7758238_IDs.list
@@ -174,7 +174,7 @@ data/tripsacum$ echo SRR7758238 > SRR7758238_lanes.list
 
 # mapping on med2 with 15 days to map, 32G total memory, and 16 threads:
 filtered_bams$ sbatch --dependency=afterok:8777638 -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
-Submitted batch job 8777664 - WAITING 4 DEPENDENCY 2.13.19
+Submitted batch job 8777664 - RUNNING 2.13.19
 
 
 # MAIZE LANDRACES:
@@ -209,12 +209,18 @@ $ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fro
 # NOTE: I moved the corrupted/truncated v4 bam to data/landraces_fromLi/original/corrupt/RIMMA0625.bam
 # remapping corrupted bam:
 filtered_bams$ sbatch -p med2 --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
-Submitted batch job 8781437 - RUNNING 2.13.19
+Submitted batch job 8781503 - RUNNING 2.13.19
 
-# TO DO: Copy newly remapped RIMMA0625 into /original folder. Then all of Li's remapped bams need to be deduplicated, BAQ, and indexed
+# made ID files for allopatric maize from Li:
+data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
+data/landraces_fromLi/original$ for i in {1..15}; do echo alloMAIZE; done > ../alloMAIZE_lanes.list
+data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_libraries.list
+
+# TO DO: make symlink for each landrace bam (including remapped/RIMMA0625.bam) from data to filtered_bams/results/alloMAIZE directory (use full path)
+# TO DO: Run sort and read filtering on Li's landraces:
+# TO DO: filtered_bams$ sbatch -p med2 --array=0-14 --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh (NOT RUN YET)
 
 # TO DO: I could divide into smaller files to map & then merge sets of reads for tripsacum
 # TO DO: merge sets of reads from the same sample & dedup & index again
-# TO DO: check on Li's maize reads/bams. what needs to be done to incorporate these?
 # TO DO: change headers for some of Anne's maize bams to view on PCA
 # TO DO: confirm with Anne correct parviglumis
