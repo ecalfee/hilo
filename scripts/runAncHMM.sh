@@ -6,7 +6,7 @@
 #SBATCH -t 24:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-27
-#SBATCH --export="Ne=10000,SUBDIR_OUT=output_bootT,ALL"
+#SBATCH --export="Ne=10000,SUBDIR_OUT=output_bootT,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN.txt,ALL"
 
 # note: pop 366 is a good one to start with and has index 19
 # try loading bio module
@@ -22,7 +22,7 @@ set –o nounset
 # directory with input/output subdirectories
 DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
 cd ${DIR} # move to main directory
-GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt"
+#GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt" # set in export so it can change
 
 # pull columns from file into arrays
 LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))

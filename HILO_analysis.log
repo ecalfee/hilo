@@ -1972,3 +1972,21 @@ Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 # 1.31.19: results are plotted for 10kb, 100kb and 1000kb (1Mb) fixed windows in ancestry_by_recomb_and_gene_density.R
 
 # Feb 11 2019 - mapping new reads from novogene (scripts run tracked in analyses/filtered_bams/commands.txt)
+
+# Feb 15 2019 - Running sensitivity analysis for ancestry_hmm input.
+# Specifically I'm testing the effects of using an equal ancestry contribution prior (.5/.5)
+# A high mexicana prior (.01/.99) and a high maize ancestry prior (.99/.01) on all admixed populations separately
+# making global admixture files:
+# NOTE: this will run on all populations, even those with initially 0% admixture estimated
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.5"\t"0.5}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_equal_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.01"\t"0.99}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_mex_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.99"\t"0.01}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_maize_prior.txt
+# now running 2.15.19:
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_equal_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_equal_prior.txt,ALL" runAncHMM_noboot.sh
+
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+
+
+
