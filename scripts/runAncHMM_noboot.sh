@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/data
 #SBATCH -J ancNoBoot
 #SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
-#SBATCH -t 6:00:00
+#SBATCH -t 1:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-27
 #SBATCH --export="Ne=10000,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN.txt,ALL"

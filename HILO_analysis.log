@@ -1981,12 +1981,28 @@ Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.5"\t"0.5}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_equal_prior.txt
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.01"\t"0.99}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_mex_prior.txt
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.99"\t"0.01}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_maize_prior.txt
+
 # now running 2.15.19:
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_equal_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_equal_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884405 - COMPLETED 2.15.19 (fast)
 
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884454 - NOT GETTING ALLOCATED, RETRY 2.15.19:
+scripts$ sbatch -p med2 -x c12-79 --mem 2G --array=0-27 -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884744 - RUNNING 2.15.19
 
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884486 - NOT GETTING ALLOCATED. RETRY:
+scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884791 - RUNNING 2.15.19
 
 
+# Now summarizing ancestry proportions from posteriors based on ancestry_hmm with equal, low, and high mex-maize ancestry priors
+scripts$ sbatch -p med2 --export="SUBDIR=output_equal_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_equal_prior.txt,ALL" calcAncfromPost.sh
+
+
+scripts$ sbatch -p med2 --dependency=afterok:8884744 --export="SUBDIR=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_maize_prior.txt,ALL" calcAncfromPost.sh
+
+
+scripts$ sbatch -p med2 --dependency=afterok:8884791 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
 
