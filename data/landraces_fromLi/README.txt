@@ -10,3 +10,5 @@
 # (see also mislabel here: https://www.ncbi.nlm.nih.gov/Traces/study/?acc=SRP065483)
 
 # Li identified this error. RIMA0625 is from the Andes and RIMMA043 is from the Mexican highlands. This correction is reflected in the ID by population .txt files.
+
+# Also RIMMA1010 was originally identified as a lowland mexican maize but Li removed it from her analysis for 'weird behavior' so I will exclude that sample too.
