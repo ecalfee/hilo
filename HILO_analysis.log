@@ -1989,20 +1989,30 @@ Submitted batch job 8884405 - COMPLETED 2.15.19 (fast)
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
 Submitted batch job 8884454 - NOT GETTING ALLOCATED, RETRY 2.15.19:
 scripts$ sbatch -p med2 -x c12-79 --mem 2G --array=0-27 -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
-Submitted batch job 8884744 - RUNNING 2.15.19
+Submitted batch job 8884744 - KILLED OVER TIME 2.15.19
+Submitted batch job 8888218 - RERUNNING FIRST COMMAND
 
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
 Submitted batch job 8884486 - NOT GETTING ALLOCATED. RETRY:
 scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
-Submitted batch job 8884791 - RUNNING 2.15.19
+Submitted batch job 8884791 - KILLED 2.15.19
+Submitted batch job 8888276 - RUNNING
 
 
 # Now summarizing ancestry proportions from posteriors based on ancestry_hmm with equal, low, and high mex-maize ancestry priors
 scripts$ sbatch -p med2 --export="SUBDIR=output_equal_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_equal_prior.txt,ALL" calcAncfromPost.sh
-
+Submitted batch job 8885036 - COMPLETED 2.15.19 (fast)
 
 scripts$ sbatch -p med2 --dependency=afterok:8884744 --export="SUBDIR=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_maize_prior.txt,ALL" calcAncfromPost.sh
-
+Submitted batch job 8885070 - WAITING 4 DEPENDENCY 2.15.19
+Submitted batch job 8888311
 
 scripts$ sbatch -p med2 --dependency=afterok:8884791 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8885075 - WAITING 4 DEPENDENCY 2.15.19
+~/hilo/scripts$ sbatch -p med2 --dependency=afterok:8888276 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8888360
+
+
+# DELETED SOME FILES BECAUSE RUNNING LOW ON MEMORY:
+hilo$ du -h -t 10G # see memory usage
 
