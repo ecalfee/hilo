@@ -54,15 +54,12 @@ mkdir -p ${DIR_TMP}
 
 # align fastq to maize reference AGPv4 official release using bwa mem
 # note: reference genome needs to already be indexed, e.g. bwa index ref.fa
-echo "running bwa mem for sample ${ID} lane ${LANE} library ${LIBRARY}"
+echo "running bwa mem for sample ${ID} lane ${LANE} library ${LIBRARY} and sorting BAM file"
 bwa mem -t 16 -v 3 \
 -R "@RG\tID:${LANE}\tSM:${ID}\tPL:ILLUMINA\tLB:${LIBRARY}\tPU:${ID}.${LANE}" \
 "${REF}" "${FASTQ1}" "${FASTQ2}"  | \
-samtools view -bS -o "${DIR_OUT}/${ID}.bam" -
-
-echo "sorting BAM file"
-samtools sort -m 6G -@ 4 -T "${DIR_TMP}" \
--o "${DIR_OUT}/${ID}.sort.bam" "${DIR_OUT}/${ID}.bam"
+samtools view -Shu - | \
+samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}.sort.bam"
 
 echo "marking duplicates with PICARD and calculating BAQ with SAMTOOLS"
 java -Xmx6g -jar ${PICARD}/picard.jar MarkDuplicates \
@@ -72,6 +69,9 @@ TMP_DIR="${DIR_TMP}" \
 METRICS_FILE="${DIR_METRICS}/${ID}.metrics.txt" | \
 samtools calmd -SArE --reference ${REF} - | \
 samtools view -bS -q 30 - > "${DIR_OUT}/${ID}.sort.dedup.baq.bam"
+
+echo "removing intermediate sorted BAM file"
+rm "${DIR_OUT}/${ID}.sort.bam"
 
 echo "all done removing duplicates and calculating BAQ, now indexing!"
 sleep 5s # because index needs to have a later timestamp
