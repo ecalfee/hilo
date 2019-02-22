@@ -40,34 +40,7 @@ samtools sort -n "$DIR_IN"/"$BAM" | \
 samtools fastq -c 6 -1 "$DIR_IN"/fastq/"$ID"_1.fq.gz -2 "$DIR_IN"/fastq/"$ID"_2.fq.gz -s "$DIR_IN"/fastq/"$ID"_3.fq.gz -
 
 
-echo "mapping paired reads with bwa for sample $ID"
-# align fastq to maize reference AGPv4 official release using bwa mem
-# note: reference genome needs to already be indexed, e.g. bwa index ref.fa
-bwa mem -t 16 -v 3 \
--R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/fastq/"$ID"_1.fq.gz "$DIR_IN"/fastq/"$ID"_2.fq.gz  | \
-samtools view -bS -o "${DIR_IN}/remapped/${ID}_12.bam" -
-
-echo "mapping unpaired reads with bwa for sample $ID"
-bwa mem -t 16 -v 3 \
--R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/fastq/"$ID"_3.fq.gz  | \
-samtools view -bS -o "${DIR_IN}/remapped/${ID}_3.bam" -
-
-echo "sorting BAM - paired reads"
-samtools sort -m 6G -@ 4 -T "${DIR_TMP}" \
--o "${DIR_IN}/remapped/${ID}_12.sort.bam" "${DIR_IN}/remapped/${ID}_12.bam"
-
-echo "sorting BAM - unpaired reads"
-samtools sort -m 6G -@ 4 -T "${DIR_TMP}" \
--o "${DIR_IN}/remapped/${ID}_3.sort.bam" "${DIR_IN}/remapped/${ID}_3.bam"
-
-echo "merging paired and unpaired reads into final BAM"
-samtools merge "${DIR_IN}/remapped/${ID}.sort.bam" "${DIR_IN}/remapped/${ID}_12.sort.bam" "${DIR_IN}/remapped/${ID}_3.sort.bam"
-
 echo "all done!"
-
-
 
 # options
 

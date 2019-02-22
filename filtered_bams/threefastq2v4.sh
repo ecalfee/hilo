@@ -4,7 +4,7 @@
 #SBATCH -J 3fq2v4
 #SBATCH -o /home/ecalfee/hilo/slurm-log/threefastq2v4_%A_%a.out
 #SBATCH -t 10-00:00:00
-#SBATCH --mem=32G
+#SBATCH --mem=64G
 #SBATCH -n 16
 
 # this script creates a bam mapped to v4 ref genome starting with 3 fastq files --
@@ -33,22 +33,31 @@ set –o nounset
 
 # load modules
 module load bio # loads samtools and bedtools
+module load picardtools # saves path to loaded versin in $PICARD variable
 
 echo "mapping paired reads with bwa for sample $ID and sorting with samtools"
 # align fastq to maize reference AGPv4 official release using bwa mem
 # note: reference genome needs to already be indexed, e.g. bwa index ref.fa
-bwa mem -t 16 -v 3 \
--R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/"$ID"_1.fq.gz "$DIR_IN"/"$ID"_2.fq.gz | \
-samtools view -Shu - | \
-samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
+# IF bams already exist, they will be used rather than re-mapping (!)
+if [ ! -f "${DIR_OUT}/${ID}_12.sort.bam" ]; then
+	bwa mem -t 16 -v 3 \
+	-R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
+	"${REF}" "$DIR_IN"/"$ID"_1.fq.gz "$DIR_IN"/"$ID"_2.fq.gz | \
+	samtools view -Shu - | \
+	samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
+else
+	echo "file ${DIR_OUT}/${ID}_12.sort.bam already exists and will be used"
 
 echo "mapping unpaired reads with bwa for sample $ID and sorting with samtools"
-bwa mem -t 16 -v 3 \
--R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/fastq/"$ID"_3.fq.gz  | \
-samtools view -Shu - | \
-samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
+
+if [ ! -f "${DIR_OUT}/${ID}_3.sort.bam" ]; then
+	bwa mem -t 16 -v 3 \
+	-R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
+	"${REF}" "$DIR_IN"/"$ID"_3.fq.gz  | \
+	samtools view -Shu - | \
+	samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
+else
+	echo "file ${DIR_OUT}/${ID}_3.sort.bam already exists and will be used"
 
 echo "merging paired and unpaired reads into final BAM"
 samtools merge "${DIR_OUT}/${ID}.sort.bam" "${DIR_OUT}/${ID}_12.sort.bam" "${DIR_OUT}/${ID}_3.sort.bam"
