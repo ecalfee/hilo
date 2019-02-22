@@ -958,29 +958,7 @@ Submitted batch job 25497879
 # next use tripsacum or sorghum as outgroup and possibly extend to a much larger portion of the genome
 # can I actually do an f3 or 3 population test?
 
-# New landraces : 4 lowland mexico, 6 lowland South America & 5 Andes
-# ind's listed in ~/hilo/data/landraces_fromLi/alloMaizeInclude.list
-# (will check andean ind's to confirm no admixture later)
-# Getting new landraces aligned properly:
-# downloading bams from li
-ssh -p 2022 ecalfee@farm.cse.ucdavis.edu # connect to port 2022 for file downloads on farm
-cd hilo/data/landraces_fromLi/original
-# use icommands to get files (sign in for iplant use, -K checks checksums)
-module load icommands
-iinit # login w/ password
-# run my script to download data from iplant with nohup in background, hopefully this works (?)
-ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
-[1] 18482
-# did not work :/ . So first I am using irsync to get files from Li's iplant directory
-# onto mine (to free up her space). Then I'll delete files I don't need (DONE) and use irsync
-# again to get the files onto farm
-my_computer$ irsync -r -V i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
-# now attempting to sync directly to farm
-my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
-$ module load icommands
-$ iinit
-$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fromLi/original
-# first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
+# OLD NOTES FROM WHEN I WAS TRYING TO REMAP LI'S LANDRACES TO THE GENOME WITHOUT EXTRA CONTIGS (NOW DOING INVERSE)
 # using script to re-align to my version of v4 maize genome (no extra contigs)
 scripts$ sbatch remapAlloMaizeV4.sh
 Submitted batch job 25847933 - # needed to index reference, but did get all files to .fq output
@@ -1021,6 +999,7 @@ scripts$ sbatch --array=3 -t 120:00:00 -p bigmemm download_ncbi_allo_landraces.s
 Submitted batch job 6811947 -- CANCELLED
 scripts$ sbatch --mem=32G --array=3 -t 120:00:00 -p bigmemm download_ncbi_allo_landraces.sh -- added memory
 Submitted batch job 6811949
+
 
 ##### how to make better slurm dependencies scripts/pipelines:
 https://hpc.nih.gov/docs/job_dependencies.html
@@ -1895,19 +1874,6 @@ scripts$ sbatch -x bigmem6,bigmem7,bigmem9,bigmem8 --partition bigmemm f4fromPop
 Submitted batch job 7467216 -- no bootstrap package (trying again):
 Submitted batch job 7467237 - RUNNING
 
-# Updating reference genome: I want to use the latest release, which includes spare contiguous
-ftp site:  ftp://ftp.gramene.org/pub/gramene/release-59/fasta/zea_mays/dna/
-file: Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
-works on farm if I use the following commands (in srun interactive at 8G, 8hrs (large file!)):
-ftp -p ftp.gramene.org
-cd pub/gramene/release-59/fasta/zea_mays/dna/
-get README # works!
-get CHECKSUMS
-get Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # only took a few minutes!
-grep 'toplevel' CHECKSUMS
-sum Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # CHECKSUM match verified
-(if prompted, login as anonymous with a password as your email as a courtesy)
-
 This is the genome Li's landraces are mapped to except RIMMA0625_Andean.IndelRealigned.bam which is mapped to v3
 so I will need to use my 'remapping' script to just remap that one individual b/c v4 bam was truncated.
 BUT my remapping script doesn't work: all files are empty in remapped/*.bam and I'll delete them.
@@ -1920,20 +1886,6 @@ First, bams to fastq: sort reads by name -n in samtools, then use bedtools to cr
 Next, index newest reference genome as a symlink (Add original to Share folder)
 And map reads using bwa-mem
 Asuming this works, re-map all hilo individuals to this new reference genome. Get bams/fastq from Anne too for parviglumis.
-I downloaded the official v4 genome release to farm and unzipped using gunzip --keep Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
-Moved draft reference with no contigs and its indexes to new subdirectory: data/refMaize/AGPv4_no_contigs/
-Now making symlink:
-refMaize$ ln -s /group/jrigrp/Share/assemblies/Zea_mays_RefGen_Officialv4Release_AllChrsAndContigs/Zea_mays.B73_RefGen_v4.dna.toplevel.fa
- Zea_mays.B73_RefGen_v4.dna.toplevel.fa
-And indexing for bwa, picard, and samtools
-module load bio
-refMaize$ samtools faidx Zea_mays.B73_RefGen_v4.dna.toplevel.fa # COMPLETED
-module load picardtools # saves variable $PICARD for path to picard v.2.7.1
-refMaize$ java -jar $PICARD/picard.jar CreateSequenceDictionary R=AGPv4_official.fa O=AGPv4_official.dict
-# now for bwa indexing:
-scripts$ sbatch indexRefBWA.sh
-Submitted batch job 7695978 - try again:
-Submitted batch job 7695980 - COMPLETE
 # made 2 helper scripts: bam2fastq.sh and map2maizeAGPv4.sh that are called by the script below to remap the one landrace from Li on v3 genome version:
 scripts$ sbatch --dependency=afterok:7695980 remapV4_RIMMA0625.sh
 Submitted batch job 7695981 - forgot to add script bam2fastq.sh to farm:
@@ -1947,40 +1899,8 @@ Submitted batch job 7720454 - FAILED (1st sbatch script failed, bam2fastq.sh..fi
 Submitted batch job 7800935 - FAILED -- NEED TO SOLVE ISSUE
 
 It may only make sense to calculate fD once I have a true outgroup, like Tripsacum, as pop 4 to polarize ancestral/derived
-Downloading Tripsacum reads from NCBI:
-scripts$ sbatch download_ncbi_tripsacum.sh
-Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too big of files) - rerunningP
-Submitted batch job 7638025 - DID NOT WORK. I am going to split this into 2 steps: 1) download .sra with wget and 2) use fastq-dump to convert to .fq.gz file
-scripts$ sbatch -x bigmem3,bigmem9 download_ncbi_tripsacum.sh
-Submitted batch job 7682734 -- needed to delete .lock and .tmp files from partial downloads
-Submitted batch job 7682791 - CANCELLED : contacted NCBI and they're workign on an issue on their end. Retrying 12.27.18:
-Submitted batch job 7778149 - RUNNING 12.27.18 - COMPLETED - validating checksums:
-module load bio3; vdb-validate SRR7758238.sra; validate SRR7758239.sra - COMPLETED & found consistent/complete. Ran in interactive srun session.
-scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7682791 sra_to_fastq_ncbi_tripsacum.sh
-Submitted batch job 7682866 -- need to use PARALLEL-fastq-dump:
-scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7778149 sra_to_fastq_ncbi_tripsacum.sh
-Submitted batch job 7782630 - Needed -s to indicate file with local .sra:
-scripts$ sbatch -x bigmem3,bigmem9 sra_to_fastq_ncbi_tripsacum.sh
-Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
-# now I need to map these tripsacum reads to the maize reference genome (will take a long time):
-# first sequencing lane
-scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008516 - RUNNING 1.4.19 - TIMEOUT - rerunning:
-scripts$ sbatch -x bigmem3,bigmem9 -t 18-00:00:00 --export="ID=SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8122106 - RUNNING 1.11.19 - NEAR TIMEOUT -- PROBABLY WON'T FINISH 1.29.19
-
-# second sequencing lane
-scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8008527 - RUNNING 1.4.19 - TIMEOUT - rerunning :
-scripts$ sbatch -x bigmem3,bigmem9 -t 17-00:00:00 --export="ID=SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
-Submitted batch job 8122108 - RUNNING 1.11.19 - CANCELLED DUE TO TIMEOUT 1.29.19
 
 
-# after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
-to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
-# THEN I can merge the files using samtools merge.
-
-# and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
 
 # analylsis updates 1.4.19:
 # ZAnc_statistic.R got unwieldly long so I kept basic K and ZAnc calculations THERE
@@ -1992,29 +1912,6 @@ to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
 # still need to look w/out inversions, but code to make plots is here:
 # scripts/plot_ancestry_covariance_demography.R
 # TO DO: redo while excluding inv4m!
-
-# getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
-# when assessing % admixture in sympatric maize and mexicana:
-# there are 50 individuals from large Palmar Chico population from Balsas River Valley
-# (Li used just 4 parv. individuals from same pop in her paper)
-# some are already on farm:
-# ind's 25-48
-# 1.7.19 downloading remaining ind's 1-24, 49-50 from iplant:
-my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
-$ module load icommands
-$ iinit
-$ icd /iplant/home/rossibarra/PalmarChico_parents/merged_iput/merged/fastq
-$ cd hilo/data/parviglumis
-$ iget -K Sample_JRIAL8_21_R1.fastq.gz .
-actually getting better copies from here:
-/iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
-and subfolders iplant4/iplant4
-I used irsync to transfer to my own directory, then irsync to get them onto farm
-# TO DO:
-# rename all as symlinks to parv1_1.fastq.gz, parv1_2.fastq.gz etc.
-# and same with symlinks from the ones stored locally on farm
-# map all to the maize reference genome
-
 
 # outlier analysis: what do haplotypes (eg. pi, fst) look like under ZAnc peaks?
 # compare mex.mex mex.maize, maize.maize and unclear haplotypes with both mex and maize background
@@ -2075,3 +1972,47 @@ Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 # 1.31.19: results are plotted for 10kb, 100kb and 1000kb (1Mb) fixed windows in ancestry_by_recomb_and_gene_density.R
 
 # Feb 11 2019 - mapping new reads from novogene (scripts run tracked in analyses/filtered_bams/commands.txt)
+
+# Feb 15 2019 - Running sensitivity analysis for ancestry_hmm input.
+# Specifically I'm testing the effects of using an equal ancestry contribution prior (.5/.5)
+# A high mexicana prior (.01/.99) and a high maize ancestry prior (.99/.01) on all admixed populations separately
+# making global admixture files:
+# NOTE: this will run on all populations, even those with initially 0% admixture estimated
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.5"\t"0.5}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_equal_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.01"\t"0.99}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_mex_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.99"\t"0.01}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_maize_prior.txt
+
+# now running 2.15.19:
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_equal_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_equal_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884405 - COMPLETED 2.15.19 (fast)
+
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884454 - NOT GETTING ALLOCATED, RETRY 2.15.19:
+scripts$ sbatch -p med2 -x c12-79 --mem 2G --array=0-27 -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884744 - KILLED OVER TIME 2.15.19
+Submitted batch job 8888218 - RERUNNING FIRST COMMAND
+
+scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884486 - NOT GETTING ALLOCATED. RETRY:
+scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8884791 - KILLED 2.15.19
+Submitted batch job 8888276 - RUNNING
+
+
+# Now summarizing ancestry proportions from posteriors based on ancestry_hmm with equal, low, and high mex-maize ancestry priors
+scripts$ sbatch -p med2 --export="SUBDIR=output_equal_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_equal_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8885036 - COMPLETED 2.15.19 (fast)
+
+scripts$ sbatch -p med2 --dependency=afterok:8884744 --export="SUBDIR=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_maize_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8885070 - WAITING 4 DEPENDENCY 2.15.19
+Submitted batch job 8888311
+
+scripts$ sbatch -p med2 --dependency=afterok:8884791 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8885075 - WAITING 4 DEPENDENCY 2.15.19
+~/hilo/scripts$ sbatch -p med2 --dependency=afterok:8888276 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8888360
+
+
+# DELETED SOME FILES BECAUSE RUNNING LOW ON MEMORY:
+hilo$ du -h -t 10G # see memory usage
+

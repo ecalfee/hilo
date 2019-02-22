@@ -1,5 +1,35 @@
-# mapping reads to maize reference genome:
+# mapping reads to maize reference genome APGv4 official release (with all contigs):
 
+# download and index reference genome:
+I downloaded the official v4 genome release to farm and unzipped using gunzip --keep Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+# Download record:
+ftp site:  ftp://ftp.gramene.org/pub/gramene/release-59/fasta/zea_mays/dna/
+file: Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz
+works on farm if I use the following commands (in srun interactive at 8G, 8hrs (large file!)):
+ftp -p ftp.gramene.org
+cd pub/gramene/release-59/fasta/zea_mays/dna/
+get README # works!
+get CHECKSUMS
+get Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # only took a few minutes!
+grep 'toplevel' CHECKSUMS
+sum Zea_mays.B73_RefGen_v4.dna.toplevel.fa.gz # CHECKSUM match verified
+(if prompted, login as anonymous with a password as your email as a courtesy)
+Moved draft reference with no contigs and its indexes to new subdirectory: data/refMaize/AGPv4_no_contigs/
+Now making symlink:
+refMaize$ ln -s /group/jrigrp/Share/assemblies/Zea_mays_RefGen_Officialv4Release_AllChrsAndContigs/Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+ Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+And indexing for bwa, picard, and samtools
+module load bio
+refMaize$ samtools faidx Zea_mays.B73_RefGen_v4.dna.toplevel.fa # COMPLETED
+module load picardtools # saves variable $PICARD for path to picard v.2.7.1
+refMaize$ java -jar $PICARD/picard.jar CreateSequenceDictionary R=AGPv4_official.fa O=AGPv4_official.dict
+# now index for BWA
+scripts$ sbatch indexRefBWA.sh
+Submitted batch job 7695978 - try again:
+Submitted batch job 7695980 - COMPLETE
+
+
+# HILO PASS1 - MARCH2018
 # Re-mapping pass1 = all currently sequenced hilo individuals to the official v4 genome with all contigs: data/hilo_bam_mapped2v4_allContigs
 scripts$ sbatch map2maizeAPGv4_hilo.sh
 Submitted batch job 7806669 - RUNNING 12.27.18. Rerunning the 3 that timed out:
@@ -30,7 +60,7 @@ filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapp
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
 
-
+# HILO PASS2 - JANUARY 2019: 
 # Mapping new sequences from novogene:
 # First making symlink to rename logically:
 hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fq.gz data/HILO_raw_reads/Jan2019_{3}/{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
@@ -55,18 +85,177 @@ Failed jobs (n=18): 6,17,70,72,77,78,81,90,91,94,96,101,102,105,106,108,110,111
 mapped & sorted, just needs duplicates marked: 17,70,72,91,101,102,105,108
 # mapping again ones that didn't map:
 filtered_bams$ sbatch --array=6,77,78,81,90,94,96,106,110,111 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
-Submitted batch job 8754543
+Submitted batch job 8754543 - RUNNING 2.12.19
 # deduplicating/BAQ ones that did map but didn't finish:
 filtered_bams$ sbatch --array=17,70,72,91,101,102,105,108 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 just_filter_reads.sh
-Submitted batch job 8754793
+Submitted batch job 8754793 - COMPLETED 2.13.19 (note #17 had many 'large duplicate sets')
 
-Tripsacum:
-Tripsacum line (TDD39103)
-# TO DO: what x coverage is reasonable for the tripsacum individual (20? 30?) -- take random subset of reads.
-# for example, I can subsample down to 10% of reads (use same random seed for _1 and _2 to get pairs):
-seqtk sample -s100 read2.fq 0.1 > sub2.fq
-seqtk sample -s100 read1.fq 0.1 > sub1.fq
+# PARVIGLUMIS - PALMAR CHICO POPULATION:
+# getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
+# when assessing % admixture in sympatric maize and mexicana:
+# there are 50 individuals from large Palmar Chico population from Balsas River Valley
+# (Li used just 4 parv. individuals from same pop in her paper)
+# some are already on farm:
+# ind's 25-48
+# 1.7.19 downloading remaining ind's 1-24, 49-50 from iplant:
+my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+$ module load icommands
+$ iinit
+$ icd /iplant/home/rossibarra/PalmarChico_parents/merged_iput/merged/fastq
+$ cd hilo/data/parviglumis
+$ iget -K Sample_JRIAL8_21_R1.fastq.gz .
+actually getting better copies from here:
+/iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
+and subfolders iplant4/iplant4
+I used irsync to transfer to my own directory, then irsync to get them onto farm
+# TO DO:
+# rename all as symlinks to PARV1_1.fq.gz, PARV1_2.fq.gz etc.
+data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R1.fastq.gz PARV"$i"_1.fq.gz; done
+data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R2.fastq.gz PARV"$i"_2.fq.gz; done
+# and same with symlinks from the ones stored locally on farm
+data/parviglumis/PalmarChico$ for i in {25..48}; do ln -s /group/jrigrp9/wbmei/PalmarChico_70samples/50sample/cleaned_fastq_JRIAL8/clean_JRIAL8_"$i"_R1.fastq.gz PARV"$i"_1.fq.gz; done
+data/parviglumis/PalmarChico$ for i in {25..48}; do ln -s /group/jrigrp9/wbmei/PalmarChico_70samples/50sample/cleaned_fastq_JRIAL8/clean_JRIAL8_"$i"_R2.fastq.gz PARV"$i"_2.fq.gz; done
+# make lists of IDs, libraries, and lanes (lane I don't know)
+data/parviglumis$ for i in {1..50}; do echo PARV"$i"; done > PalmarChico_IDs.list
+data/parviglumis$ for i in {1..50}; do echo JRIAL8-"$i"; done > PalmarChico_libraries.list
+data/parviglumis$ for i in {1..50}; do echo PalmarChico; done > PalmarChico_lanes.list
+# map all parviglumis 1-50 to the maize reference genome
+filtered_bams$ sbatch --array=0-49 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
+Submitted batch job 8772167 - RUNNING 2.13.19 (note that it's PARV1-PARV50 but array is indexed 0-49
+# DISK SPACE ISSUES - I HAD TO CANCEL MANY JOBS:
+# ID those jobs with issues
+hilo$ grep 'failed: No space left on device' slurm-log/*8772167*.out | sort --version-sort
+# cancel those that ran into disk write issues
+for i in {1..7} {10..17} 19 21 22 {24..27} 34 36 37 40 41 43; do scancel 8772167_17 8772167_"$i"; done
+# Transferring files to jrigrp3/ partition on farm: (then I can delete after transfer those not actively used locally)
+data/parviglumis$ sbatch transfer.sh
+# this script does ~/hilo/data/parviglumis$ rsync -av teosinte_50/ /group/jrigrp3/PalmarChicoParvilgumis/
+Submitted batch job 8896058 - RUNNING 2.15.19. Error:
+rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20) at rsync.c(644) [sender=3.1.2]
+slurmstepd: error: get_exit_code task 0 died by signal
+# TRYING AGAIN:
+data/parviglumis$ sbatch -p bigmemm transfer.sh
+Submitted batch job 8899203 - RUNNING 2.15.19
+
+# TO DO: RESTART ALL PARVIGLUMIS ALIGNMENT AFTER FILES TRANSFER AND I MAKE SYMLINKS
+
+
+TRIPSACUM:
+Downloading Tripsacum reads from NCBI:
+scripts$ sbatch download_ncbi_tripsacum.sh
+Submitted batch job 7637946 - I cancelled to not use local scratch (possibly too big of files) - rerunningP
+Submitted batch job 7638025 - DID NOT WORK. I am going to split this into 2 steps: 1) download .sra with wget and 2) use fastq-dump to convert to .fq.gz file
+scripts$ sbatch -x bigmem3,bigmem9 download_ncbi_tripsacum.sh
+Submitted batch job 7682734 -- needed to delete .lock and .tmp files from partial downloads
+Submitted batch job 7682791 - CANCELLED : contacted NCBI and they're workign on an issue on their end. Retrying 12.27.18:
+Submitted batch job 7778149 - RUNNING 12.27.18 - COMPLETED - validating checksums:
+module load bio3; vdb-validate SRR7758238.sra; validate SRR7758239.sra - COMPLETED & found consistent/complete. Ran in interactive srun session.
+scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7682791 sra_to_fastq_ncbi_tripsacum.sh
+Submitted batch job 7682866 -- need to use PARALLEL-fastq-dump:
+scripts$ sbatch -x bigmem3,bigmem9 --dependency=afterok:7778149 sra_to_fastq_ncbi_tripsacum.sh
+Submitted batch job 7782630 - Needed -s to indicate file with local .sra:
+scripts$ sbatch -x bigmem3,bigmem9 sra_to_fastq_ncbi_tripsacum.sh
+Submitted batch job 7796546 - RUNNING 12.27.18 - COMPLETED
+# now I need to map these tripsacum reads to the maize reference genome (will take a long time):
+# first sequencing lane
+scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8008516 - RUNNING 1.4.19 - TIMEOUT - rerunning:
+scripts$ sbatch -x bigmem3,bigmem9 -t 18-00:00:00 --export="ID=SRR7758238,FASTQ1=tripsacum/SRR7758238_1.fastq.gz,FASTQ2=tripsacum/SRR7758238_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8122106 - TIMEOUT - DID NOT FINISH 1.29.19
+
+# second sequencing lane
+scripts$ sbatch -x bigmem3,bigmem9 -t 6-00:00:00 --export="ID=trip_SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8008527 - RUNNING 1.4.19 - TIMEOUT - rerunning :
+scripts$ sbatch -x bigmem3,bigmem9 -t 17-00:00:00 --export="ID=SRR7758239,FASTQ1=tripsacum/SRR7758239_1.fastq.gz,FASTQ2=tripsacum/SRR7758239_2.fastq.gz,DIR_OUT=tripsacum,ALL" map2maizeAPGv4.sh
+Submitted batch job 8122108 - RUNNING 1.11.19 - CANCELLED DUE TO TIMEOUT 1.29.19
+# after mapping both sets of fastq files, I'll remove duplicates, filter for quality,
+to do this make addReadGroupandSortBam.sh and dedupAndAddBAQ_hilo.sh
+# THEN I can merge the files using samtools merge.
+# and put the bams and fastq files in the Shared folder on farm where I keep a symlink from my directory:
+
+
+# NEW PLAN FOR TRIPSACUM 2.13.19 - I DON'T NEED ALL THE READS, ~30X SHOULD BE SUFFICIENT
+# The short paired-end sequences SRR7758238 have ~136.5G. That is 59x for a 2.3Gbp maize genome.
+# So I will start by randomly sampling 50% of the reads
+
+# Downsample short reads to 50% (use same random seed for _1 and _2 to get pairs):
+filtered_bams$ sbatch -p med2 subsample_tripsacum_fastq.sh
+Submitted batch job 8777638 - COMPLETED 2.13.19
+
+# making all additional files to run mapping once above is finished
+data/tripsacum$ echo TRIP > SRR7758238_IDs.list
+data/tripsacum$ echo SRR7758238 > SRR7758238_libraries.list
+data/tripsacum$ echo SRR7758238 > SRR7758238_lanes.list
+
+# mapping on med2 with 15 days to map, 32G total memory, and 16 threads:
+filtered_bams$ sbatch --dependency=afterok:8777638 -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
+Submitted batch job 8777664 - CANCELLED 2.13.19 - I cancelled due to memory issues.
+# how I confirmed needed to be cancelled:
+hilo$ grep 'failed: No space left on device' slurm-log/*8777664*
+# RERUNNING:
+
+
+# MAIZE LANDRACES:
+# LANDRACES ACROSS AMERICAS FROM LI:
+# New landraces : 4 lowland mexico, 6 lowland South America & 5 Andes
+# ind's listed in ~/hilo/data/landraces_fromLi/alloMaizeInclude.list
+# (will check andean ind's to confirm no admixture later)
+
+# Li used v3 but remapped to APGv4 and shared her remapped bams here: /iplant/home/lilepisorus/landraces_AGPv4
+# downloading bams
+ssh -p 2022 ecalfee@farm.cse.ucdavis.edu # connect to port 2022 for file downloads on farm
+cd hilo/data/landraces_fromLi/original
+# use icommands to get files (sign in for iplant use, -K checks checksums)
+module load icommands
+iinit # login w/ password
+# run my script to download data from iplant with nohup in background, hopefully this works (?)
+ecalfee@c11-42:~/hilo/data/landraces_fromLi/original$ nohup ../../../scripts/getLiDataiplant.sh &
+[1] 18482
+# did not work :/ . So first I am using irsync to get files from Li's iplant directory
+# onto mine (to free up her space). Then I'll delete files I don't need (DONE) and use irsync
+# again to get the files onto farm
+my_computer$ irsync -r -V i:/iplant/home/lilepisorus/landraces_AGPv4 i:/iplant/home/ecalfee/landraces_fromLi
+# now attempting to sync directly to farm
+my_computer$ ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+$ module load icommands
+$ iinit
+$ irsync -r -V i:/iplant/home/ecalfee/landraces_fromLi ~/hilo/data/landraces_fromLi/original
+# first ran above with -s option (faster, only checks size), then ran without -s so it uses checksums
+
+# ISSUE: RIMMA0625.bam was corrupted, so I downloaded an older uncorrupted v3 version from Li's iplant and will have to remap it to v4 myself:
+/iplant/home/lilepisorus/RIMMA0625_Andean.IndelRealigned.bam
+# NOTE: I moved the corrupted/truncated v4 bam to data/landraces_fromLi/original/corrupt/RIMMA0625.bam
+# remapping corrupted bam:
+filtered_bams$ sbatch -p med2 --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+Submitted batch job 8781503 - RUNNING 2.13.19. FAILED 2.15.19 DUE TO DISK SPACE OVERLOAD.
+NEED TO RERUN JUST FROM FASTQ PART
+# redoing from fastq stage all the way through deduplication:
+filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
+**** - RUNNING 2.15.19
+
+# made ID files for allopatric maize from Li:
+data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
+data/landraces_fromLi/original$ for i in {1..15}; do echo alloMAIZE; done > ../alloMAIZE_lanes.list
+data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_libraries.list
+
+# DUE TO DISK SPACE, I moved Li's landrace bams to another directory on farm:
+/group/jrigrp4/landraces_v4_fromLi2017$ mv ~/hilo/data/landraces_fromLi/original/ ./original/
+# NEXT I'LL NEED TO RESTART REMAPPING PROCESS. OOPS file transfer interrupted. Using a script with rsync:
+~/hilo/data/landraces_fromLi$ sbatch transfer.sh 
+script runs: rsync -av original/ /group/jrigrp4/landraces_v4_fromLi2017/original/
+Submitted batch job 8896263 -- RUNNING 2.15.19. Added --checksum to command because I likely partially transferred some files with mv earlier (oops):
+Submitted batch job 8896787 - RUNNING 2.15.19 (ok, well, this second attempt didn't work because source folder was removed when transferred, so it's all done, but no bams look truncated so that's good).
+# made symlink for bams back to my results directory:
+filtered_bams/results/alloMAIZE$ for i in $(cat ../../data/landraces_fromLi/alloMAIZE_IDs.list); \
+do ln -s /group/jrigrp4/landraces_v4_fromLi2017/original/"$i".bam "$i".bam; done # made link for all but RIMMA0625.bam of course which I'll need to add later after remapping
+
+# Run sort and read filtering on Li's landraces (#9, RIMMA0625) will have to be done later:
+filtered_bams$ sbatch -p med2 --array=0-8,10-14 --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
+Submitted batch job 8898118 - DIED 2.15.19 'slurmstepd: error: get_exit_code task 0 died by signal'. RERUNNING:
+Submitted batch job 8898756 - RUNNING 2.15.19
+
+
+# TO DO: I could divide into smaller files to map & then merge sets of reads for tripsacum
 # TO DO: merge sets of reads from the same sample & dedup & index again
-# TO DO: check on Li's maize reads/bams. what needs to be done to incorporate these?
 # TO DO: change headers for some of Anne's maize bams to view on PCA
-# TO DO: update on parviglumis progress - make symlinks and map.
+# TO DO: confirm with Anne correct parviglumis

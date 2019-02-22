@@ -6,7 +6,7 @@
 #SBATCH -t 4:00:00
 #SBATCH --mem=8G
 #SBATCH --array=0-27
-#SBATCH --export="SUBDIR=output_noBoot,ALL"
+#SBATCH --export="SUBDIR=output_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN.txt,ALL"
 
 # note: pop 366 is a good one to start with and has index 19
 
@@ -30,7 +30,7 @@ module load R
 # directory with input/output subdirectories
 DIR_MAIN="../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
 DIR_IN=${DIR_MAIN}/${SUBDIR}
-GLOBAL_ADMIXTURE_FILE=${DIR_MAIN}"/input/globalAdmixtureByPopN.txt"
+GLOBAL_ADMIXTURE_FILE="${DIR_MAIN}/input/${GLOBAL_ADMIXTURE}"
 DIR_OUT=${DIR_IN}/${anc}
 # make output directory
 mkdir -p ${DIR_OUT}

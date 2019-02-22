@@ -1,19 +1,17 @@
 #!/bin/bash
 #SBATCH --partition=bigmemm
 #SBATCH -D /home/ecalfee/hilo/filtered_bams
-#SBATCH -J justFilt
-#SBATCH -o /home/ecalfee/hilo/slurm-log/justFilter_%A_%a.out
-#SBATCH -t 2-00:00:00
+#SBATCH -J sortFilt
+#SBATCH -o /home/ecalfee/hilo/slurm-log/sortFilter_%A_%a.out
+#SBATCH -t 3-00:00:00
 #SBATCH --mem=32G
 #SBATCH -n 4
-#SBATCH --array=0
-#SBATCH --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019
 
 # START WITH ZERO FOR ARRAY INDEXES (!)
 
-# this script takes in bam file with reads to APGv4 reference with all chromosome and contigs
-# and sorted. It marks duplicates, calculates BAQ scores, and indexes the resulting BAM.
-# to run: sbatch --array=1 --export=DIR_IN=../data/HILO_raw_reads/TEST,PREFIX_LIST=Jan2019 just_filter_reads.sh
+# this script takes in an unsorted bam file with reads to APGv4 reference with all chromosome and contigs.
+# It sorts, marks duplicates, calculates BAQ scores, and indexes the resulting BAM.
+# to run: sbatch --array=0-14 --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -50,6 +48,9 @@ mkdir -p ${DIR_METRICS}
 mkdir -p ${DIR_TMP}
 
 # note: this script is for reads already aligned to the reference genome & sorted
+echo "sorting BAM file"
+samtools sort -m 6G -@ 4 -T "${DIR_TMP}" \
+-o "${DIR_OUT}/${ID}.sort.bam" "${DIR_OUT}/${ID}.bam"
 
 echo "marking duplicates with PICARD and calculating BAQ with SAMTOOLS"
 java -Xmx6g -jar ${PICARD}/picard.jar MarkDuplicates \

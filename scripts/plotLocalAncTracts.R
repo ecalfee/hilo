@@ -29,9 +29,10 @@ getPostSmall = function(id, dir = dir_in, nSkip = 99){
     rename(., maize.mex = X1.1) %>%
     rename(., maize.maize = X2.0) %>%
     mutate(., hilo_id = id)
-  post$max_p = apply(post, 1, function(i) max(i[3:5]))
+  post$max_p = apply(post[ , 3:5], 1, max)
   small1 = tidyr::gather(post[c(T, rep(F, nSkip)), ], "anc", "p", 3:5) %>%
-    filter(., p == max_p) # only keep highest posterior prob. ancestry
+    filter(., p == max_p) %>% # only keep highest posterior prob. ancestry
+    arrange(., chrom, position)
   return(small1)
 }
 # get full posterior but only for a small range of values
@@ -45,9 +46,10 @@ getPostSeg = function(id, chr, start, end, buffer = 0,
     rename(., maize.mex = X1.1) %>%
     rename(., maize.maize = X2.0) %>%
     mutate(., hilo_id = id)
-  post$max_p = apply(post, 1, function(i) max(i[3:5]))
+  post$max_p = apply(post[ , 3:5], 1, max)
   seg1 = tidyr::gather(post[c(T, rep(F, nSkip)), ], "anc", "p", 3:5) %>%
-    filter(., p == max_p) # only keep highest posterior prob. ancestry
+    filter(., p == max_p) %>% # only keep highest posterior prob. ancestry
+    arrange(., chrom, position)
   return(seg1)
 }
 
