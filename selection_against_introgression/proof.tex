@@ -12,7 +12,7 @@ One way to estimate the portion of ancestry in X derived from a B-like source is
 \begin{equation}
 \alpha = \frac{f_4(A,D;X,C)}{f_4(A,D;B,C)} := \frac{E[(x_A - x_D)(x_X - x_C)]}{E[(x_A - x_D)(x_B - x_C)]}
 \end{equation}
-where $x_i$ is the allele frequency in population $i$ and the expectation is taken over a set of genomic loci. To see how this works, we can break down each of these allele frequencies into the shared ancestral allele frequency $x_anc$ plus some change in allele frequency due to drift along each branch of the tree leading to the present-day population. For example, $x_B = x_anc + \Delta{x_{ABC}} + \delta{x_{AB}} + \Delta{x_B}$ where $\Delta{x_{ABC}}$ describes the change in allele frequency along the branch leading to populations A, B, and C; $\Delta{x_{AB}}$ describes the change in allele frequency along the branch leading to only populations A and B; lastly, $\Delta{x_B}$ describes the change in allele frequency along the final branch leading to the tip at population B. In expectation, the change in allele frequencies due to drift along any branch is zero, i.e. $E[\Delta{x_i}]=0$, but there is shared covariance between population allele frequencies when populations share drift along a common branch of the tree. Therefore, we expect the denominator of the $f_4$ statistic to be non-zero due to drift along the branch shared by populations A and B, as a result of a common $\Delta{x_{AB}}$ term:
+where $x_i$ is the allele frequency in population $i$ and the expectation is taken over a set of genomic loci. To see how this works, we can break down each of these allele frequencies into the shared ancestral allele frequency $x_{anc}$ plus some change in allele frequency due to drift along each branch of the tree leading to the present-day population. For example, $x_B = x_anc + \Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_B}$ where $\Delta{x_{ABC}}$ describes the change in allele frequency along the branch leading to populations A, B, and C; $\Delta{x_{AB}}$ describes the change in allele frequency along the branch leading to only populations A and B; lastly, $\Delta{x_B}$ describes the change in allele frequency along the final branch leading to the tip at population B. In expectation, the change in allele frequencies due to drift along any branch is zero, i.e. $E[\Delta{x_i}]=0$, but there is shared covariance between population allele frequencies when populations share drift along a common branch of the tree. Therefore, we expect the denominator of the $f_4$ statistic to be non-zero due to drift along the branch shared by populations A and B, as a result of a common $\Delta{x_{AB}}$ term:
 \begin{align*}
 &E[(x_A - x_D)(x_B - x_C)] \\
 &= E[((x_{anc} + \Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}}) - (x_{anc} + \Delta{x_{D}})) \\
@@ -29,10 +29,10 @@ We can also write out the numerator of the $f_4$ ratio statistic in the same way
 &=E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})*\alpha(\Delta{x_{AB}} + \Delta{x_B} - \Delta{x_C})]\\
 &=\alpha E[(\Delta{x_{AB}})^2].
 \end{align*}
-Therefore the numerator of the $f_4$ ratio represents the portion of drift along the branch leading to populations A and B that is incorporated into population X via gene from from B and the ratio of $f_4$ statistics is an estimator for $\alpha$.
+Therefore the numerator of the $f_4$ ratio represents the portion of drift along the branch leading to populations A and B that is incorporated into population X via gene from B, and the ratio of $f_4$ statistics is an estimator for $\alpha$.
 
 \subsection{Robustness to assumptions about gene flow and the tree}
-The proof of the $f_4$ statistic above assumes that admixed population X was created in the immediate past via gene flow directly from populations B and C. However, more biologically realistic scenarios do not change the results. For example, there may be additional changes in allele frequency in population X $\Delta{x_X}$ due to drift since admixture and/or population X may be derived from populations B' and C' related but not identical to sampled proxy source populations B and C. In this case, the allele frequencies in population X can be written as a slightly more complicated sum: 
+The proof of the $f_4$ statistic above assumes that admixed population X was created in the immediate past via gene flow directly from populations B and C. However, more biologically realistic scenarios do not change the results. For example, there may be additional changes in allele frequency in population X ($\Delta{x_X}$) due to drift since admixture and/or population X may be derived from populations B' and C', related to but not identical to sampled proxy source populations B and C. In this case, the allele frequencies in population X can be written as a slightly more complicated sum: 
 \begin{align*}
 x_X = x_{anc} + \Delta{x_{ABC}} + \alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_C'}) + \Delta{x_X}
 \end{align*}
@@ -40,15 +40,93 @@ where $\Delta{x_{BB'}}$, for example, represents drift along the branch shared b
 However, none of these additional terms contribute to allele frequency change in any of the other sampled populations and will therefore cancel out of the expected product. Below, we consider further two cases where this last assumption of independent drift may be broken: 
 \begin{enumerate}
 	\item Gene flow from X into C or B (e.g. sympatric mexicana (alt. maize) into allopatric maize or allopatric mexicana).
+	Assume migration from X occurs at time t and replaces some fraction $\beta$ of population B (closely related to population B' that initially created population X). In this case, the $f_4$ ratio estimates $\frac{\alpha}{1 + \beta + \beta\alpha}$, which reduces back to $\alpha$ if gene flow from X into B is sufficiently small. Proof:
+	We use subscripts 1 and 2 to divide drift in the branches leading to population X and B into two parts, before (1) and after (2) gene flow at time t:
+	\begin{align*}
+	x_B &= x_{anc} + \Delta{x_{B2}} + (1 - \beta)\\
+	&*(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_{B1}}) \\
+	&+ \beta*(\Delta{x_{X1}} + \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}})\\
+	x_X &= x_{anc} + \Delta{x_{X1}} + \Delta{x_{X2}} \\
+	&+ \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}})\\
+	\end{align*}
+	Then we plug these values into the numerator and denominator of the $f_4$ ratio statistic:
+	\begin{align*}
+	f_4(A,D;X,C) &= E[(x_A - x_D)(x_X - x_C)] \\
+	&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})*(\Delta{x_{X1}} + \Delta{x_{X2}} \\
+	&+ \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}}) \\
+	&- (\Delta{x_{CC'}} + \Delta{x_{C}}))]\\
+	&=\alpha E[(\Delta{x_{AB}})^2]\\
+	f_4(A,D;B,C) &= E[(x_A - x_D)(x_B - x_C)] \\
+	&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})*(\Delta{x_{B2}} \\
+	&+ (1 - \beta)*(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_{B1}}) \\
+	&+ \beta*(\Delta{x_{X1}} + \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}}) \\
+	&- (\Delta{x_{CC'}} + \Delta{x_{C}})))]\\
+	&=(1 - \beta + \beta\alpha)E[(\Delta{x_{AB}})^2]
+	\end{align*}
+	
+	Using the same notation, we also examine the effects of gene flow from X into proxy source population C at time t, and find that in this case the $f_4$ statistic estimates $\frac{\alpha(1 - \beta)}{1 - \beta\alpha}$. Proof:
+	\begin{align*}
+	x_C &= x_{anc} + \Delta{x_{C2}} + (1 - \beta)(\Delta{x_{CC'}} + \Delta{x_{C}} + \Delta{x_{C1}})\\
+	&+ \beta(\Delta{x_{X1}} + \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}})\\
+	\\
+	f_4(A,D;X,C) &= E[(x_A - x_D)(x_X - x_C)] \\
+	&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})*(\Delta{x_{X1}} + \Delta{x_{X2}} \\
+	&+ \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}})) \\
+	&- (\Delta{x_{C2}} + (1 - \beta)(\Delta{x_{CC'}} + \Delta{x_{C}} + \Delta{x_{C1}})\\
+	&+ \beta(\Delta{x_{X1}} + \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}})))]\\
+	&=\alpha(1 - \beta)E[(\Delta{x_{AB}})^2]\\
+	\\
+	f_4(A,D;B,C) &= E[(x_A - x_D)(x_B - x_C)] \\
+	&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})*(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_{B}} \\
+	& - (\Delta{x_{C2}} + (1 - \beta)(\Delta{x_{CC'}} + \Delta{x_{C}} + \Delta{x_{C1}})\\
+	&+ \beta(\Delta{x_{X1}} + \alpha(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{BB'}}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_{C'}}))))]\\
+	&=(1 - \beta\alpha)E[(\Delta{x_{AB}})^2]
+	\end{align*}
 	
 	\item Gene flow from X into A or A into X (e.g. sympatric mexicana (alt. maize) into parviglumis).
-	Assume migration from A into X replaces some fraction $\beta$ of X's population at time $t$ after B contributes $\alpha$ ancestry to population X. The only allele frequency that is changed by this scenario is $x_X$, which we can rewrite as a weighted average:
+	Assume migration from A into X replaces some fraction $\beta$ of X's population at time $t$ after the initial admixture event between B' and C' creates population X. The only allele frequency that is changed by this scenario is $x_X$, which we can rewrite as a weighted average:
 	\begin{align*}
-	x_X = x_{anc} + \Delta{x_{ABC}} + (1 - \beta)(\alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_C'})) + \beta(some_stuff...)
+	x_X &= x_{anc} + \Delta{x_{ABC}} \\
+	&+ (1 - \beta)(\alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{CC'}} + \Delta{x_C'})) \\
+	&+ \beta(some_stuff...)
 	\end{align*}
+	Above, $\Delta{x_X}$, or drift in the branch leading to population X, is divided into two parts, before $\Delta{x_{Xb}}$ and after $\Delta{x_{Xa}}$ gene flow from A at time t.
 	\item Additional gene flow between A and B (e.g. parviglumis and allopatric maize) \par
-	Additional gene flow pre-admixture simply lengthens the branch shared by A and B, which affects the numerator and denominator of the $f_4$ ratio statistic equally. Gene flow after admixture, or between A and B but not between A and B', ..*
+	Additional gene flow between populations A and B before the admixture event that creates population X simply lengthens the branch shared by A and B, which affects the numerator and denominator of the $f_4$ ratio statistic equally. We test the effects of gene flow after the creation of admixed population X by letting some fraction $\beta$ of population B come from population A, but with no gene flow from A into B', the true source of B-like ancestry in X. Using our notation from before, $\Delta{x_{BB'}}$ is drift shared between true source population B' and proxy source B, while $\Delta{x_B}$ is drift exclusive to proxy source B:
+	\begin{align*}
+	x_X &= x_{anc} + \Delta{x_{ABC}} + \alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{C}}) + \Delta{x_X} \\
+	x_B &= x_{anc} + \Delta{x_{ABC}} + \Delta{x_{AB}} + (1 - \beta)(\Delta{x_{BB'}} + \Delta{x_{B}}) + \beta(\Delta{x_{A}})
+	\end{align*}
+	The terms for $x_A$ and $x_D$ are unchanged. We can plug these new values into the numerator of the $f_4$ ratio statistic and find that its expectation does not change:
+	\begin{align*}
+	f_4(A,D;X,C) &= E[(x_A - x_D)(x_X - x_C)] \\
+	&= E[((x_{anc} + \Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}}) - (x_{anc} + \Delta{x_{D}}))\\
+	&*((x_{anc} + \Delta{x_{ABC}} + \alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{C}}) + \Delta{x_X}) \\
+	&- (x_{anc} + \Delta{x_{ABC}} + \Delta{x_C}))] \\
+	&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})\\
+	&*(\alpha(\Delta{x_{AB}} + \Delta{x_{BB'}} + \Delta{x_B'}) + (1 - \alpha)(\Delta{x_{C}}) + \Delta{x_X} \\
+	&- \Delta{x_C}))]\\
+	&=\alpha E[(\Delta{x_{AB}})^2]
+	\end{align*}
+	
+The denominator of the $f_4$ ratio statistic, however, increases:
+\begin{align*}
+f_4(A,D;B,C) &= E[(x_A - x_D)(x_B - x_C)] \\
+&= E[((x_{anc} + \Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}}) - (x_{anc} + \Delta{x_{D}}))\\
+&*((x_{anc} + \Delta{x_{ABC}} + \Delta{x_{AB}} + (1 - \beta)(\Delta{x_{BB'}} + \Delta{x_{B}}) + \beta(\Delta{x_{A}})) \\
+&- (x_{anc} + \Delta{x_{ABC}} + \Delta{x_C}))] \\
+&= E[(\Delta{x_{ABC}} + \Delta{x_{AB}} + \Delta{x_{A}} - \Delta{x_{D}})\\
+&*(\Delta{x_{AB}} + (1 - \beta)(\Delta{x_{BB'}} + \Delta{x_{B}}) + \beta(\Delta{x_{A}}) - \Delta{x_C})]\\
+&=E[(\Delta{x_{AB}})^2] + \beta E[(\Delta{x_{A}})^2]
+\end{align*}
 \end{enumerate}
+Similarly, gene flow $\beta$ from B into A (after the split of B and B') would not change the numerator of the $f_4$ ratio, but would increase the denominator to $E[(\Delta{x_{AB}})^2] + \beta E[(\Delta{x_{B}})^2]$.\\
+In either case, the $f_4$ ratio statistic underestimates true admixture from B' into X when using B as the proxy source population. 
+
+We conclude, as others have done previously, that the $f_4$ ratio estimator of the admixture fraction $\alpha$ is affected by some, though not all, cases of gene flow not captured by the population tree and occurring after the formation of focal admixed population X. Based on likely scenarios of additional admixture, we can say that the $f_4$ estimator is a lower or upper bound on the admixture fraction. Additionally, we note that these additional gene flow events can be grouped into 'pre' and 'post' formation of X, but exact timing within these groupings has no effect, only the total proportion $\beta$ of gene flow post the formation of X. \\
+So does this affect our ability to compare $f_4$-based estimators of $\alpha$ from regions of the genome with low and high background selection? My intuition is no, $\beta$ should not vary systematically with background selection. We can think about the most likely problem case, with ongoing admixture from B' and C' into X, rather than a single pulse event. At equilibrium, X has some fraction $\alpha$ of B-like ancestry across the genome (under neutrality), and that ancestry is no more likely to descent from an older or more recent migration event in a region of the genome with low vs. high background selection, therefore the total $\beta$ should be the same across the genome. \\
+However, some scenarios of extraneous gene flow could influence our estimates of selection coefficients. If there is selection against, say, B-like ancestry in X, then we expect the true B-like fraction $\alpha$ to be reduced in regions of the genome with low recombination rates and high gene density. However, we also expect that fraction $\alpha$ to be $younger$, potentially changing our expectations for $\beta$ across more and less strongly selected regions of the genome. The magnitude of this effect depends on the size of $\beta$, how strongly $\beta$ changes across recent time, and how much of a difference in mean age of B-like ancestry there is across the genome... if at least some of these are small (which seems likely, right?), this should have a minor affect on our analysis.\\
+
 
 \subsection{Robustness to variation in background selection across the genome}
 Importantly, this estimate of $\alpha$ is unbiased by the strength of background selection, which is also known to covary with gene density and recombination rates. The effect of background selection on linked neutral variation can be well approximated by a local reduction in effective population size (cite). Thus high background selection would increase the rate of drift and the term $E[(\Delta{x_{AB}})^2]$. But because this term appears in both the numerator and denominator, and all other branch lengths cancel out, even if background selection had different effects in different populations (e.g. due to different effective population sizes), it would not bias our estimate of $\alpha$. It might, however, affect the variance of our estimator (?) which is based on the ratio of two expectations.
