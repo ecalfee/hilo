@@ -47,6 +47,7 @@ if [ ! -f "${DIR_OUT}/${ID}_12.sort.bam" ]; then
 	samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
 else
 	echo "file ${DIR_OUT}/${ID}_12.sort.bam already exists and will be used"
+fi
 
 echo "mapping unpaired reads with bwa for sample $ID and sorting with samtools"
 
@@ -58,6 +59,7 @@ if [ ! -f "${DIR_OUT}/${ID}_3.sort.bam" ]; then
 	samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
 else
 	echo "file ${DIR_OUT}/${ID}_3.sort.bam already exists and will be used"
+fi
 
 echo "merging paired and unpaired reads into final BAM"
 samtools merge "${DIR_OUT}/${ID}.sort.bam" "${DIR_OUT}/${ID}_12.sort.bam" "${DIR_OUT}/${ID}_3.sort.bam"
