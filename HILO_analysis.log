@@ -1981,6 +1981,8 @@ Submitted batch job 8302171 - COMPLETED within seconds 1.29.19
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.5"\t"0.5}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_equal_prior.txt
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.01"\t"0.99}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_mex_prior.txt
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.99"\t"0.01}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_high_maize_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.001"\t"0.999}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_very_high_mex_prior.txt
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input$ awk '{print $1"\t"0.999"\t"0.001}' globalAdmixtureByPopN.txt > globalAdmixtureByPopN_very_high_maize_prior.txt
 
 # now running 2.15.19:
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_equal_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_equal_prior.txt,ALL" runAncHMM_noboot.sh
@@ -1990,13 +1992,30 @@ scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_no
 Submitted batch job 8884454 - NOT GETTING ALLOCATED, RETRY 2.15.19:
 scripts$ sbatch -p med2 -x c12-79 --mem 2G --array=0-27 -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
 Submitted batch job 8884744 - KILLED OVER TIME 2.15.19
-Submitted batch job 8888218 - RERUNNING FIRST COMMAND
+Submitted batch job 8888218 - RERUNNING FIRST COMMAND - COMPLETED 2.15.19
 
 scripts$ sbatch -p med2 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
 Submitted batch job 8884486 - NOT GETTING ALLOCATED. RETRY:
 scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
 Submitted batch job 8884791 - KILLED 2.15.19
-Submitted batch job 8888276 - RUNNING
+Submitted batch job 8888276 - RERUNNING FIRST COMMAND - COMPLETED 2.15.19
+
+# running very extreme priors with ancestry_hmm .999 vs. .001
+scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_very_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_very_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8899897 - RUNNING 2.15.19 - OUT OF MEMORY, RERUNNING:
+scripts$ sbatch -p med2 --mem 4G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_very_high_mex_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_very_high_mex_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8900155 - COMPLETED 2.15.19
+# anc summary
+scripts$ sbatch -p med2 --export="SUBDIR=output_very_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_very_high_mex_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8900282 - COMPLETED 2.15.19
+
+# extremely high maize ancestry prior:
+scripts$ sbatch -p med2 --mem 1G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_very_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_very_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8899855 - RUNNING 2.15.19. OUT-OF-MEMORY. So retrying:
+scripts$ sbatch -p bigmemm --mem 4G -t 1:00:00 --export="Ne=10000,SUBDIR_OUT=output_very_high_maize_prior_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN_very_high_maize_prior.txt,ALL" runAncHMM_noboot.sh
+Submitted batch job 8900225 - RUNNING 2.15.19
+scripts$ sbatch -p med2 --dependency=afterok:8900225 --export="SUBDIR=output_very_high_maize_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_very_high_maize_prior.txt,ALL" calcAncfromPost.sh
+Submitted batch job 8900349 - COMPLETED 2.15.19
 
 
 # Now summarizing ancestry proportions from posteriors based on ancestry_hmm with equal, low, and high mex-maize ancestry priors

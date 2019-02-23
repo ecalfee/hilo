@@ -135,10 +135,18 @@ rsync error: received SIGINT, SIGTERM, or SIGHUP (code 20) at rsync.c(644) [send
 slurmstepd: error: get_exit_code task 0 died by signal
 # TRYING AGAIN:
 data/parviglumis$ sbatch -p bigmemm transfer.sh
-Submitted batch job 8899203 - RUNNING 2.15.19
+Submitted batch job 8899203 - RUNNING 2.15.19 -- Actually farm cse help ran transfer for me. BUT overwrote one file. Getting again from iplant:
+module load icommands
+iinit
+icd /iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
+/group/jrigrp3/PalmarChicoParvilgumis$ iget -K Sample_JRIAL8_8_R1.fastq.gz .
+# updated symlinks from new data home at /group/jrigrp3/ :
+~/hilo/data/parviglumis/PalmarChico$ for i in {1..24} {49..50}; do rm PARV"$i"_1.fq.gz; rm PARV"$i"_2.fq.gz; ln -s /group/jrigrp3/PalmarChicoParvilgumis/Sample_JRIAL8_"$i"_R1.fastq.gz PARV"$i"_1.fq.gz; ln -s /group/jrigrp3/PalmarChicoParvilgumis/Sample_JRIAL8_"$i"_R2.fastq.gz PARV"$i"_2.fq.gz; done
 
-# TO DO: RESTART ALL PARVIGLUMIS ALIGNMENT AFTER FILES TRANSFER AND I MAKE SYMLINKS
-
+# RESTART ALL PARVIGLUMIS ALIGNMENT AFTER FILES TRANSFERED AND I MAKE SYMLINKS
+filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
+Submitted batch job 9130041 - oops I wanted to specify med2 partition. scancel and rerunning:
+Submitted batch job 9130075 - RUNNING 2.22.19
 
 TRIPSACUM:
 Downloading Tripsacum reads from NCBI:
@@ -191,9 +199,9 @@ data/tripsacum$ echo SRR7758238 > SRR7758238_lanes.list
 filtered_bams$ sbatch --dependency=afterok:8777638 -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
 Submitted batch job 8777664 - CANCELLED 2.13.19 - I cancelled due to memory issues.
 # how I confirmed needed to be cancelled:
-hilo$ grep 'failed: No space left on device' slurm-log/*8777664*
-# RERUNNING:
-
+hilo$ grep 'failed: No space left on device' slurm-log/*8777664* # RERUNNING:
+filtered_bams$ sbatch -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
+Submitted batch job 9130021 - RUNNING 2.22.19
 
 # MAIZE LANDRACES:
 # LANDRACES ACROSS AMERICAS FROM LI:
@@ -231,7 +239,9 @@ Submitted batch job 8781503 - RUNNING 2.13.19. FAILED 2.15.19 DUE TO DISK SPACE 
 NEED TO RERUN JUST FROM FASTQ PART
 # redoing from fastq stage all the way through deduplication:
 filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
-**** - RUNNING 2.15.19
+Submitted batch job 8899475 - 2.15.19. KILLED (OUT OF MEMORY). Also problem with picard. RESTARTING (but won't have to realign paired 12 reads):
+filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
+Submitted batch job 9130024 - RUNNING 2.22.19
 
 # made ID files for allopatric maize from Li:
 data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
@@ -252,8 +262,9 @@ do ln -s /group/jrigrp4/landraces_v4_fromLi2017/original/"$i".bam "$i".bam; done
 # Run sort and read filtering on Li's landraces (#9, RIMMA0625) will have to be done later:
 filtered_bams$ sbatch -p med2 --array=0-8,10-14 --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
 Submitted batch job 8898118 - DIED 2.15.19 'slurmstepd: error: get_exit_code task 0 died by signal'. RERUNNING:
-Submitted batch job 8898756 - RUNNING 2.15.19
-
+Submitted batch job 8898756 - 2.15.19 0,1 COMPLETED. SOME JOBS NEED RERUNNING (don't rerun 14 -- it's separately created):
+filtered_bams$ sbatch -p med2 --array=2,3,7 --mem=40G --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
+Submitted batch job 9130010 - RUNNING 2.22.19
 
 # TO DO: I could divide into smaller files to map & then merge sets of reads for tripsacum
 # TO DO: merge sets of reads from the same sample & dedup & index again
