@@ -19,13 +19,14 @@
 # after merging aligned bams, the script deduplicates, adds BAQ, and indexes final bam
 
 
-# to run: sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW bam2fastq2v4_MAIZE4LOW.sh
+# to run: sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW,MAKEFASTQ=TRUE bam2fastq2v4_MAIZE4LOW.sh
 
 ID=MAIZE4LOW"$SLURM_ARRAY_TASK_ID"
 DIR_TMP="/scratch/ecalfee/${ID}" # for memory overflow
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 DIR_OUT=results/${LANE} # results directory for final and intermediate bam files
 DIR_METRICS=metrics/${LANE} # metrics directory
+DIR_FASTQ="$DIR_IN"/fastq
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -38,7 +39,7 @@ module load bio # loads samtools and bedtools
 module load picardtools # saves path to loaded versin in $PICARD variable
 
 # make directories
-mkdir -p "$DIR_IN"/fastq
+mkdir -p "$DIR_FASTQ"
 mkdir -p "$DIR_OUT"
 mkdir -p "$DIR_TMP"
 mkdir -p "$DIR_METRICS"
@@ -47,15 +48,20 @@ mkdir -p "$DIR_METRICS"
 echo "sorting BAM by name then output fastq"
 # use samtools to sort input bam file by name (so paired reads are together)
 # then use samtools to output fastq files
-samtools sort -n "$DIR_IN"/"$ID".bam | \
-samtools fastq -c 6 -1 "$DIR_IN"/fastq/"$ID"_1.fq.gz -2 "$DIR_IN"/fastq/"$ID"_2.fq.gz -s "$DIR_IN"/fastq/"$ID"_3.fq.gz -
+if [ "$MAKEFASTQ" = FALSE ]; then
+	echo "skipping making new fastq files (3) from original bam"
+else
+	samtools sort -n -m 6G -@ 6 -T "${DIR_TMP}" "$DIR_IN"/"$ID".bam | \
+	samtools fastq -c 6 -1 "$DIR_FASTQ"/"$ID"_1.fq.gz -2 "$DIR_FASTQ"/"$ID"_2.fq.gz -s "$DIR_FASTQ"/"$ID"_3.fq.gz -
+fi
+
 
 # align fastq to maize reference AGPv4 official release using bwa mem
 echo "mapping paired reads with bwa for sample $ID and sorting with samtools"
 
 bwa mem -t 16 -v 3 \
 -R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/"$ID"_1.fq.gz "$DIR_IN"/"$ID"_2.fq.gz | \
+"${REF}" "$DIR_FASTQ"/"$ID"_1.fq.gz "$DIR_FASTQ"/"$ID"_2.fq.gz | \
 samtools view -Shu - | \
 samtools sort -m 6G -@ 6 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
 
@@ -63,7 +69,7 @@ echo "mapping unpaired reads with bwa for sample $ID and sorting with samtools"
 
 bwa mem -t 16 -v 3 \
 -R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
-"${REF}" "$DIR_IN"/"$ID"_3.fq.gz  | \
+"${REF}" "$DIR_FASTQ"/"$ID"_3.fq.gz  | \
 samtools view -Shu - | \
 samtools sort -m 6G -@ 6 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
 
