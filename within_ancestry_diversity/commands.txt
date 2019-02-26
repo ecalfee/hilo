@@ -1,0 +1,20 @@
+# This analysis looks at within-ancestry diversity to assess
+# (1) is there evidence of bottlenecks or sweeps for outlier introgressed regions
+# This analysis compares pi within introgressed segments to pi within local and allopatric populations for the same regions
+# (2) what is the likely source population for adaptive introgression and is it the same across populations?
+# This analysis uses Fst calculations between introgressed segments and potential donor populations that are sympatric or allopatric
+
+# Step 1: use R and bedtools to identify regions with homozygous ancestry for each individual:
+# ID.2mex.bed and ID.2maize.bed
+
+# Step 2: use bedtools to filter bam files to only include regions homozygous for ancestry
+
+# Step 3: use ANGSD to calculate allele frequencies for each population (SAF)
+# and for each pair of populations (2DSFS) for segments that are maize homozygous,
+# and separately for segments that are mexicana homozygous
+
+# Step 4: use the results from step 3 to calculate pi-within and Fst between
+# all pairs of populations across the genome
+
+# Step 5: Summarize statistics to characterize genomewide patterns but also 
+# large outlier regions individually

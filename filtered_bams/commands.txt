@@ -275,7 +275,8 @@ Submitted batch job 9144283 - RUNNING 2.25.19
 # REMAPPING Anne's 4 LOWLAND MEXICAN MAIZE POPULATIONS TOO (n=16):
 # ALTERNATIVE would be to change headers (see 'reorder' script) for some of Anne's maize bams just to view on PCA
 filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW bam2fastq2v4_MAIZE4LOW.sh
-
+Submitted batch job 9144329 - ERROR 2.25.19. note this is on bigmemm, so may take longer (check in). Fixed typo in bam file name. rerunning:
+Submitted batch job ***
 
 # TO DO: merge sets of reads from the same sample & dedup & index again
 

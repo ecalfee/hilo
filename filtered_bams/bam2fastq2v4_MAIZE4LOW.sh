@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/filtered_bams
 #SBATCH -J bam2fq
 #SBATCH -o /home/ecalfee/hilo/slurm-log/bam2fastqMAIZE4LOW_%A_%a.out
-#SBATCH -t 10-00:00:00
+#SBATCH -t 14-00:00:00
 #SBATCH --mem=48G
 #SBATCH -n 16
 #SBATCH --array=1-4,11-14,21-24,31-34
@@ -21,7 +21,7 @@
 
 # to run: sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW bam2fastq2v4_MAIZE4LOW.sh
 
-ID="MAIZE4LOW$SLURM_ARRAY_TASK_ID"
+ID=MAIZE4LOW"$SLURM_ARRAY_TASK_ID"
 DIR_TMP="/scratch/ecalfee/${ID}" # for memory overflow
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 DIR_OUT=results/${LANE} # results directory for final and intermediate bam files
@@ -47,7 +47,7 @@ mkdir -p "$DIR_METRICS"
 echo "sorting BAM by name then output fastq"
 # use samtools to sort input bam file by name (so paired reads are together)
 # then use samtools to output fastq files
-samtools sort -n "$DIR_IN"/"$BAM" | \
+samtools sort -n "$DIR_IN"/"$ID".bam | \
 samtools fastq -c 6 -1 "$DIR_IN"/fastq/"$ID"_1.fq.gz -2 "$DIR_IN"/fastq/"$ID"_2.fq.gz -s "$DIR_IN"/fastq/"$ID"_3.fq.gz -
 
 # align fastq to maize reference AGPv4 official release using bwa mem
