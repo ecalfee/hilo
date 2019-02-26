@@ -14,14 +14,9 @@
 
 # to run: sbatch --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
 
-DIR_TMP="/scratch/ecalfee/${ID}" # for memory overflow
-REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
-
 
 # so these .fq files can then be remapped to the APGv4 reference
 mkdir -p "$DIR_IN"/fastq
-mkdir -p "$DIR_IN"/remapped
-mkdir -p "$DIR_TMP"
 
 
 # general bash script settings to make sure if any errors in the pipeline fail

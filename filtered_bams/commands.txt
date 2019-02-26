@@ -146,7 +146,9 @@ icd /iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
 # RESTART ALL PARVIGLUMIS ALIGNMENT AFTER FILES TRANSFERED AND I MAKE SYMLINKS
 filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
 Submitted batch job 9130041 - oops I wanted to specify med2 partition. scancel and rerunning:
-Submitted batch job 9130075 - RUNNING 2.22.19
+Submitted batch job 9130075 - 2.22.19. OUT-OF-MEMORY errors on all (even though I don't see that bams are truncated.). Also 'Broken pipe' errors in logs. Rerunning:
+filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 --mem=48G -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
+Submitted batch job 9144213 - RUNNING 2.25.19
 
 TRIPSACUM:
 Downloading Tripsacum reads from NCBI:
@@ -201,7 +203,9 @@ Submitted batch job 8777664 - CANCELLED 2.13.19 - I cancelled due to memory issu
 # how I confirmed needed to be cancelled:
 hilo$ grep 'failed: No space left on device' slurm-log/*8777664* # RERUNNING:
 filtered_bams$ sbatch -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
-Submitted batch job 9130021 - RUNNING 2.22.19
+Submitted batch job 9130021 - 2.22.19. OUT-OF-MEMORY. Rerunning:
+filtered_bams$ sbatch -p med2 -t 15-00:00:00 --array=0 --mem=64G --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
+Submitted batch job 9143417
 
 # MAIZE LANDRACES:
 # LANDRACES ACROSS AMERICAS FROM LI:
@@ -241,7 +245,7 @@ NEED TO RERUN JUST FROM FASTQ PART
 filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
 Submitted batch job 8899475 - 2.15.19. KILLED (OUT OF MEMORY). Also problem with picard. RESTARTING (but won't have to realign paired 12 reads):
 filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
-Submitted batch job 9130024 - RUNNING 2.22.19
+Submitted batch job 9130024 - 2.22.19. COMPLETED.
 
 # made ID files for allopatric maize from Li:
 data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
@@ -264,9 +268,15 @@ filtered_bams$ sbatch -p med2 --array=0-8,10-14 --export=DIR_IN=../data/landrace
 Submitted batch job 8898118 - DIED 2.15.19 'slurmstepd: error: get_exit_code task 0 died by signal'. RERUNNING:
 Submitted batch job 8898756 - 2.15.19 0,1 COMPLETED. SOME JOBS NEED RERUNNING (don't rerun 14 -- it's separately created):
 filtered_bams$ sbatch -p med2 --array=2,3,7 --mem=40G --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
-Submitted batch job 9130010 - RUNNING 2.22.19
+Submitted batch job 9130010 - 2.22.19. COMPLETED. I skipped #9 (RIMMA0399) when I shouldn't have:
+filtered_bams$ sbatch -p med2 --array=9 --mem=40G --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
+Submitted batch job 9144283 - RUNNING 2.25.19
 
-# TO DO: I could divide into smaller files to map & then merge sets of reads for tripsacum
+# REMAPPING Anne's 4 LOWLAND MEXICAN MAIZE POPULATIONS TOO (n=16):
+# ALTERNATIVE would be to change headers (see 'reorder' script) for some of Anne's maize bams just to view on PCA
+filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW bam2fastq2v4_MAIZE4LOW.sh
+
+
 # TO DO: merge sets of reads from the same sample & dedup & index again
-# TO DO: change headers for some of Anne's maize bams to view on PCA
+
 # TO DO: confirm with Anne correct parviglumis
