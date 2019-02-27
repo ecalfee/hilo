@@ -3,8 +3,8 @@
 #SBATCH -D /home/ecalfee/hilo/filtered_bams
 #SBATCH -J bam2fq
 #SBATCH -o /home/ecalfee/hilo/slurm-log/bam2fastqMAIZE4LOW_%A_%a.out
-#SBATCH -t 14-00:00:00
-#SBATCH --mem=48G
+#SBATCH -t 10-00:00:00
+#SBATCH --mem=64G
 #SBATCH -n 16
 #SBATCH --array=1-4,11-14,21-24,31-34
 
@@ -51,7 +51,7 @@ echo "sorting BAM by name then output fastq"
 if [ "$MAKEFASTQ" = FALSE ]; then
 	echo "skipping making new fastq files (3) from original bam"
 else
-	samtools sort -n -m 6G -@ 6 -T "${DIR_TMP}" "$DIR_IN"/"$ID".bam | \
+	samtools sort -n -m 6G -@ 4 -T "${DIR_TMP}" "$DIR_IN"/"$ID".bam | \
 	samtools fastq -c 6 -1 "$DIR_FASTQ"/"$ID"_1.fq.gz -2 "$DIR_FASTQ"/"$ID"_2.fq.gz -s "$DIR_FASTQ"/"$ID"_3.fq.gz -
 fi
 
@@ -63,7 +63,7 @@ bwa mem -t 16 -v 3 \
 -R "@RG\tID:paired\tSM:${ID}\tPL:ILLUMINA\tLB:paired\tPU:${ID}" \
 "${REF}" "$DIR_FASTQ"/"$ID"_1.fq.gz "$DIR_FASTQ"/"$ID"_2.fq.gz | \
 samtools view -Shu - | \
-samtools sort -m 6G -@ 6 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
+samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_12.sort.bam"
 
 echo "mapping unpaired reads with bwa for sample $ID and sorting with samtools"
 
@@ -71,7 +71,7 @@ bwa mem -t 16 -v 3 \
 -R "@RG\tID:unpaired\tSM:${ID}\tPL:ILLUMINA\tLB:unpaired\tPU:${ID}" \
 "${REF}" "$DIR_FASTQ"/"$ID"_3.fq.gz  | \
 samtools view -Shu - | \
-samtools sort -m 6G -@ 6 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
+samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}_3.sort.bam"
 
 echo "merging paired and unpaired reads into final BAM"
 samtools merge "${DIR_OUT}/${ID}.sort.bam" "${DIR_OUT}/${ID}_12.sort.bam" "${DIR_OUT}/${ID}_3.sort.bam"

@@ -278,7 +278,8 @@ filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/allo
 Submitted batch job 9144329 - ERROR 2.25.19. note this is on bigmemm, so may take longer (check in). Fixed typo in bam file name. rerunning:
 Submitted batch job 9144377 - IS NOT FINDING FASTQ FILES because of typo. Rerunning that part when first part finishes:
 filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --dependency=afterok:9144377 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW,MAKEFASTQ=FALSE bam2fastq2v4_MAIZE4LOW.sh
-Submitted batch job 9148795 - RUNNIUNG 2.26.19
+Submitted batch job 9148795 - out of memory 2.26.19. not sure why it's exceeding memory, but I reduce sorting threads and re-run:
+Submitted batch job 9164106
 
 # TO DO: merge sets of reads from the same sample & dedup & index again
 
