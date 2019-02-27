@@ -28,8 +28,8 @@ all_sites <- do.call(rbind,
                      lapply(1:10, function(i)
                        get_start_end(chrom = i, dir = input_dir)))
 # create output directory
-dir.create(file.path("results", "input"))
+dir.create(file.path("results", "input"), recursive = T)
 # write sites to output file
 write.table(all_sites, file.path("results", "input", "var.sites.bed"),
-            col.names = F, row.names = F, quote = F)
+            sep = "\t", col.names = F, row.names = F, quote = F)
 
