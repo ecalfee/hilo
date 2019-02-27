@@ -4,7 +4,7 @@
 # into tracts around those sites
 
 # to run:
-# Rscript ancestry_posterior_to_tracts.R ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM
+# Rscript ancestry_sites_to_tracts.R ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM
 
 # arguments
 args = commandArgs(trailingOnly=TRUE)
@@ -32,4 +32,3 @@ dir.create(file.path("results", "input"), recursive = T)
 # write sites to output file
 write.table(all_sites, file.path("results", "input", "var.sites.bed"),
             sep = "\t", col.names = F, row.names = F, quote = F)
-

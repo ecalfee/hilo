@@ -5,9 +5,25 @@
 # This analysis uses Fst calculations between introgressed segments and potential donor populations that are sympatric or allopatric
 
 # Step 1: use R and bedtools to identify regions with homozygous ancestry for each individual:
-# ID.2mex.bed and ID.2maize.bed
 
-# Step 2: use bedtools to filter bam files to only include regions homozygous for ancestry
+# 1a: R script makes short tracts around variant sites: ancestry_sites_to_tracts.R
+within_ancestry_diversity$ Rscript ./ancestry_sites_to_tracts.R ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM
+# (I ran on barbara & copied result file over to farm. only need to run once for all chr and all samples)
+# 1b: then use awk to identify which tracts have posterior > 0.8
+# and bedtools to merge adjacent tracts
+# TESTING:
+hilo/within_ancestry_diversity$ pr -mt -s$'\t' results/input/var.sites.bed  \
+<(tail -n +2 ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/HILO1.posterior | cut -f3) \
+| awk '$4 > 0.8 {print $0}' | bedtools merge -sorted -d 1 | head > results/input/hom_maize/tracts/HILO1.bed
+
+# Step 2: use bedtools to filter bam files to only include regions homozygous for ancestry (identified in .bed files above)
+# TESTING:
+hilo/within_ancestry_diversity$ bedtools intersect -sorted -a ../filtered_bams/results/pass1/HILO1.sort.dedup.baq.bam \
+-b results/input/hom_maize/tracts/HILO1.bed > results/input/hom_maize/bams/HILO1.sort.dedup.baq.bam
+
+# running all HILO individuals with new script for 1b & 2 (find tracts and filter bams):
+within_ancestry_diversity$ sbatch --export=DIR_BAM=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams.sh
+Submitted batch job ***
 
 # Step 3: use ANGSD to calculate allele frequencies for each population (SAF)
 # and for each pair of populations (2DSFS) for segments that are maize homozygous,
@@ -16,5 +32,9 @@
 # Step 4: use the results from step 3 to calculate pi-within and Fst between
 # all pairs of populations across the genome
 
-# Step 5: Summarize statistics to characterize genomewide patterns but also 
+# Step 5: Summarize statistics to characterize genomewide patterns but also
 # large outlier regions individually
+
+# TO DO: Make steps 1-2 a script that creates maize and mex output for a list of input ID's,
+# given a bam input directory DIR_BAM, and a posterior files directory DIR_POST
+# can save bam list here: results/input/
