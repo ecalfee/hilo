@@ -26,9 +26,9 @@ within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pas
 Submitted batch job 9175362 - cancelled (typo bams vs. bam) 2.27.19. rerunning:
 Submitted batch job 9175657 - I CANCELLED 2.27.19. Actually, want to split into 2 scripts so I can prioritize looking at mexicana ancestry in maize:
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
-Submitted batch job ****
+Submitted batch job 9175973 - RUNNING 2.27.19
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
-Submitted batch job ****
+Submitted batch job 9176068 - RUNNING 2.27.19
 
 # Step 3: use ANGSD to calculate allele frequencies for each population (SAF)
 # and for each pair of populations (2DSFS) for segments that are maize homozygous,
