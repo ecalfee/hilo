@@ -69,17 +69,18 @@ within_ancestry_diversity$ ls ../filtered_bams/results/alloMAIZE/*.sort.dedup.ba
 # start with getting allele frequencies for maize landraces:
 within_ancestry_diversity$ sbatch --export="POP=landraces,PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 9189903 - typo, fixing 2.27.19:
+Submitted batch job 9191743 - RUNNING 2.27.19
 
 # then for all populations (homozygous mexicana tracts):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
-Submitted ****
-# all populations homozygous maize tracts too:
+Submitted batch job 9190332-9190362 - RUNNING 2.27.19
+# all populations homozygous maize tracts too (higher priority):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
-Submitted ****
+Submitted batch job 9191136,9191184-9191213 - RUNNING 2.27.19
 
 
 
