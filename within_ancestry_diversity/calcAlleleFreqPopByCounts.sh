@@ -31,19 +31,19 @@ DIR_SCRATCH="/scratch/ecalfee/${POP}_alleleFreqCounts/region_${REGION_I}"
 module load bio
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p ${DIR_OUT}
-mkdir -p ${DIR_SCRATCH}
+mkdir -p "${DIR_OUT}"
+mkdir -p "${DIR_SCRATCH}"
 
 echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$POP
 
-angsd -out ${DIR_SCRATCH}/region_${REGION_I} \
--rf ${DIR_REGIONS}/region_${REGION_I}.txt \
--ref refMaize/AGPv4.fa \
--bam ${DIR_POPS}/${POP}.list \
+angsd -out "${DIR_SCRATCH}/region_${REGION_I}" \
+-rf "${DIR_REGIONS}/region_${REGION_I}.txt" \
+-ref "$REF" \
+-bam "${DIR_POPS}/${POP}.list" \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
--sites ${DIR_SITES}/region_${REGION_I}.var.sites \
+-sites "${DIR_SITES}/region_${REGION_I}.var.sites" \
 -doCounts 1 \
 -doMaf 8 \
 -P 1
