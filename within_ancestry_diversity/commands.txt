@@ -30,16 +30,48 @@ Submitted batch job 9175973 - RUNNING 2.27.19
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 9176068 - RUNNING 2.27.19
 
-# Step 3: use ANGSD to calculate allele frequencies for each population (SAF)
-# and for each pair of populations (2DSFS) for segments that are maize homozygous,
-# and separately for segments that are mexicana homozygous
+# TO DO: for populations with no admixture from NGSadmix, either use all of bams, or rely 
+# on posteriors from very low (.001) admixture prior 
 
-# Step 4: use the results from step 3 to calculate pi-within and Fst between
-# all pairs of populations across the genome
+# high maize prior:
+output_very_high_maize_prior_noBoot - pops 361,369,371
+
+within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+Submitted batch job 9181138 - RUNNING 2.27.19
+
+within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
+Submitted batch job 9181158 - RUNNINGN 2.27.19
+
+# low maize prior:
+output_very_high_mex_prior_noBoot - pops 25,27,31,(35 - used as allopatric pop in pass1; for now exclude)
+
+within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 25 27 31; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+Submitted batch job 9181177 - RUNNING 2.27.19
+
+within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 25 27 31; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
+Submitted batch job 9181198 - RUNNING 2.27.19
+
+
+# TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
+
+# Step 3: Calcuate pi (and SAF) per population
+
+# 3a. make a file list of all populations to include (sympatric maize, sympatric mex, allo maize, allo mex in addition to 
+# individual sympatric populations)
+
+# 3b. use ANGSD to calculate allele frequencies for each population (SAF)
+# for segments that are maize homozygous, and separately for segments that are mexicana homozygous
+# Q. DO I NEED FOLDED OR UNFOLDED SFS?
+
+# 3c: use the results from step 3b to calculate pi-within using ANGSD
+
+# Step 4: calculate Fst between all pairs of populations across the genome
+
+# 4a. make a file list of all population pairs to calculate Fst between 
+
+# 4b. caculate 2DSFS for each pair of populations
 
 # Step 5: Summarize statistics to characterize genomewide patterns but also
 # large outlier regions individually
 
-# TO DO: Make steps 1-2 a script that creates maize and mex output for a list of input ID's,
-# given a bam input directory DIR_BAM, and a posterior files directory DIR_POST
-# can save bam list here: results/input/
+# TO DO: 
