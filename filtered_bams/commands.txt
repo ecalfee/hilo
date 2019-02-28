@@ -60,7 +60,7 @@ filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapp
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
 
-# HILO PASS2 - JANUARY 2019: 
+# HILO PASS2 - JANUARY 2019:
 # Mapping new sequences from novogene:
 # First making symlink to rename logically:
 hilo$ parallel 'ln -s /group/jrigrp3/HILO/hwftp.novogene.com/C202SC18113915/raw_data/HILOpl{1}/HILOpl{1}_*_{4}.fq.gz data/HILO_raw_reads/Jan2019_{3}/{2}_{4}.fq.gz' ::: $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5-) :::+ $(cut -f1 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt) :::+ $(cut -f2 data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt | cut -c5) ::: 1 2
@@ -255,7 +255,7 @@ data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1
 # DUE TO DISK SPACE, I moved Li's landrace bams to another directory on farm:
 /group/jrigrp4/landraces_v4_fromLi2017$ mv ~/hilo/data/landraces_fromLi/original/ ./original/
 # NEXT I'LL NEED TO RESTART REMAPPING PROCESS. OOPS file transfer interrupted. Using a script with rsync:
-~/hilo/data/landraces_fromLi$ sbatch transfer.sh 
+~/hilo/data/landraces_fromLi$ sbatch transfer.sh
 script runs: rsync -av original/ /group/jrigrp4/landraces_v4_fromLi2017/original/
 Submitted batch job 8896263 -- RUNNING 2.15.19. Added --checksum to command because I likely partially transferred some files with mv earlier (oops):
 Submitted batch job 8896787 - RUNNING 2.15.19 (ok, well, this second attempt didn't work because source folder was removed when transferred, so it's all done, but no bams look truncated so that's good).
@@ -270,7 +270,7 @@ Submitted batch job 8898756 - 2.15.19 0,1 COMPLETED. SOME JOBS NEED RERUNNING (d
 filtered_bams$ sbatch -p med2 --array=2,3,7 --mem=40G --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
 Submitted batch job 9130010 - 2.22.19. COMPLETED. I skipped #9 (RIMMA0399) when I shouldn't have:
 filtered_bams$ sbatch -p med2 --array=9 --mem=40G --export=DIR_IN=../data/landraces_fromLi,PREFIX_LIST=alloMAIZE sort_and_filter_reads.sh
-Submitted batch job 9144283 - RUNNING 2.25.19
+Submitted batch job 9144283 - 2.25.19 COMPLETED.
 
 # REMAPPING Anne's 4 LOWLAND MEXICAN MAIZE POPULATIONS TOO (n=16):
 # ALTERNATIVE would be to change headers (see 'reorder' script) for some of Anne's maize bams just to view on PCA

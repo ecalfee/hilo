@@ -30,33 +30,63 @@ Submitted batch job 9175973 - RUNNING 2.27.19
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 9176068 - RUNNING 2.27.19
 
-# TO DO: for populations with no admixture from NGSadmix, either use all of bams, or rely 
-# on posteriors from very low (.001) admixture prior 
+# TO DO: for populations with no admixture from NGSadmix, either use all of bams, or rely
+# on posteriors from very low (.001) admixture prior
 
 # high maize prior:
 output_very_high_maize_prior_noBoot - pops 361,369,371
 
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot get_homozyg_tracts_and_bams_mexicana.sh
-Submitted batch job 9181138 - RUNNING 2.27.19
+Submitted batch job 9181138 - COMPLETED (fast) 2.27.19
 
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
-Submitted batch job 9181158 - RUNNINGN 2.27.19
+Submitted batch job 9181158 - COMPLETELETED (fast) 2.27.19
 
 # low maize prior:
 output_very_high_mex_prior_noBoot - pops 25,27,31,(35 - used as allopatric pop in pass1; for now exclude)
 
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 25 27 31; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_mexicana.sh
-Submitted batch job 9181177 - RUNNING 2.27.19
+Submitted batch job 9181177 - COMPLETED 2.27.19
 
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 25 27 31; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
-Submitted batch job 9181198 - RUNNING 2.27.19
+Submitted batch job 9181198 - COMPLETED 2.27.19
+
+# NEW PLAN: FOR A FIRST PASS, JUST CALCULATE ALLELE FREQ. FOR EACH POP. ONLY INCLUDING READS FROM HOMOZYGOUS REGIONS:
+# THEN CALCULATE PI AND FST ESTIMATES FROM THESE ALLELE FREQs IN R -- I can refine this approach later.
+# allele frequencies for allo4low16 maize and allopatric mexicana already exist:
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/maize.allo.4Low16/region_399.mafs.gz
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/mexicana.allo.withXochi35/region_399.mafs.gz
+# and I already have the list of variant sites, e.g.:
+hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/region_163.var.sites
+
+# get lists of bams to use from hilo populations:
+within_ancestry_diversity$ mkdir -p results/input/mex2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "results/input/mex2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
+within_ancestry_diversity$ mkdir -p results/input/maize2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "results/input/maize2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/maize2/pops/pop$i.list; done
+# also make a list of new allopatric maize bams:
+within_ancestry_diversity$ ls ../filtered_bams/results/alloMAIZE/*.sort.dedup.baq.bam | sort --version-sort > results/input/maize2/pops/landraces.list
+# I can just use the already-calculated allele freq's for old allopatric maize and mex.
+
+# start with getting allele frequencies for maize landraces:
+within_ancestry_diversity$ sbatch --export="POP=landraces,PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL" calcAlleleFreqPopByCounts.sh
+Submitted ****
+# then for all populations (homozygous mexicana tracts):
+within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
+--export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted ****
+# all populations homozygous maize tracts too:
+within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
+--export=POP=pop"$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted ****
+
 
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 
 # Step 3: Calcuate pi (and SAF) per population
 
-# 3a. make a file list of all populations to include (sympatric maize, sympatric mex, allo maize, allo mex in addition to 
+# 3a. make a file list of all populations to include (sympatric maize, sympatric mex, allo maize, allo mex in addition to
 # individual sympatric populations)
 
 # 3b. use ANGSD to calculate allele frequencies for each population (SAF)
@@ -67,11 +97,11 @@ Submitted batch job 9181198 - RUNNING 2.27.19
 
 # Step 4: calculate Fst between all pairs of populations across the genome
 
-# 4a. make a file list of all population pairs to calculate Fst between 
+# 4a. make a file list of all population pairs to calculate Fst between
 
 # 4b. caculate 2DSFS for each pair of populations
 
 # Step 5: Summarize statistics to characterize genomewide patterns but also
 # large outlier regions individually
 
-# TO DO: 
+# TO DO:
