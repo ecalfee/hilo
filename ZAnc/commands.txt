@@ -6,12 +6,21 @@ ZAnc$ ls ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_
 ZAnc$ for i in 361 369 371; do echo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot/anc/pop$i.anc.freq; done >> results/pass1_maize/pop.anc.list
 # mexicana pops:
 ZAnc$ ls ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/anc/pop*.anc.freq | head -n 10 > results/pass1_mex/pop.anc.list
-ZAnc$ for i in 25 27 31; do echo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mexicana_prior_noBoot/anc/pop$i.anc.freq; done >> results/pass1_mex/pop.anc.list
+ZAnc$ for i in 25 27 31; do echo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot/anc/pop$i.anc.freq; done >> results/pass1_mex/pop.anc.list
 
-# getting ZAnc across the genome:
-
+# getting ZAnc across the genome (had to run on barbara b/c of calling covAncestry script at beginning):
+hilo/ZAnc$ Rscript ./calc_ZAnc_from_pop_freq.R pass1_maize
+hilo/ZAnc$ Rscript ./calc_ZAnc_from_pop_freq.R pass1_mex
+COMPLETED - very fast.
 
 # finding outlier tracts:
-echo "finding maize tracts"
-pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST"/HILO"$i".posterior | cut -f3) | \
-awk '$4 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > results/input/maize2/tracts/HILO"$i".bed
+# narrowed down to 26 top outliers for high mex. introgression in maize for a first pass
+# took all tracts with max ZAnc > 15 and went out until ZAnc dropped < 8.. mostly 100's of kb long
+# note this doesn't include the putative inversion which I will run separately and added to the end
+ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.bed <(tail -n +2 results/pass1_maize/pop.ZAnc) | awk '$4 > 8 {print $0}' | bedtools merge -sorted -d 1 -c 4,6 -o max | awk '$4 > 15 {print $0}' > results/pass1_maize/outliers.bed
+inv4m (approx location): 4       171771502       185951149
+
+# making allopatric list: within_ancestry_diversity/results/input/mex2/pops$ cat pop20.list pop22.list pop33.list pop35.list > allo.mexicana.list
+# I may need additional angsd tools to view and interpret output
+# these are written as 'log scale per site thetas'
+# e.g. thetaStat print out.thetas.idx. Can also print as sliding window http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests
