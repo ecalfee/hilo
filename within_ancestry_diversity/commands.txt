@@ -157,11 +157,11 @@ Submitted batch job 9306709 - segfaults may be part of doThetas issue. But i'll 
 Submitted batch job 9306710 - trying with slightly larger region (maybe no sites? seems unlikely but ok). still seg. fault.
 Submitted batch job 9306711 - found an error where region was size zero (!). retry:
 Submitted batch job 9306713 - try again
+Submitted batch job 9306714 - ran out of time but seemed to move past doThetas (yay!)
 
-
-
-within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
-
+# now running my jobs for 26 outliers:
+within_ancestry_diversity$ sbatch --array=0-25 --mem=8G --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9306742 - RUNNING 2.29.19
 # I may need additional angsd tools to view and interpret output
 # these are written as 'log scale per site thetas'
 # e.g. thetaStat print out.thetas.idx. Can also print as sliding window http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests
