@@ -154,6 +154,8 @@ Submitted batch job 9305851. problem need to exclude HILO71:
 Submitted batch job 9306046 - slurm segmentation fault. trying again:
 within_ancestry_diversity$ sbatch --array=0 -t 2:00 -p low --export=OUTLIERS=../ZAnc/results/test.bed,PREFIX=mex2 piFstAngsd_outliers.sh
 Submitted batch job 9306709 - segfaults may be part of doThetas issue. But i'll try one more time without n_threads
+Submitted batch job 9306710 - trying with slightly larger region (maybe no sites? seems unlikely but ok). still seg. fault.
+Submitted batch job 9306711 - found an error where region was size zero (!). retry:
 
 
 within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh

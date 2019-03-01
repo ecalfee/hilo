@@ -28,7 +28,7 @@ CHR="${LIST_CHR["$i"]}"
 LIST_START=($(cut -f2 $OUTLIERS))
 START="${LIST_START["$i"]}"
 LIST_END=($(cut -f3 $OUTLIERS))
-END="${LIST_START["$i"]}"
+END="${LIST_END["$i"]}"
 
 DIR_OUT="results/piFst_outliers/$PREFIX/chr${CHR}_${START}-${END}"
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
