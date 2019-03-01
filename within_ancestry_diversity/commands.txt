@@ -153,6 +153,7 @@ Submitted batch job 9305846 - typo. still didn't work. fixed list of allopatric 
 Submitted batch job 9305851. problem need to exclude HILO71:
 Submitted batch job 9306046 - slurm segmentation fault. trying again:
 within_ancestry_diversity$ sbatch --array=0 -t 2:00 -p low --export=OUTLIERS=../ZAnc/results/test.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9306709 - segfaults may be part of doThetas issue. But i'll try one more time without n_threads
 
 
 within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
