@@ -1,0 +1,17 @@
+
+# calc_Zanc_from_pop_freq.R script calculates population ZAnc score for all sites
+# requires input list of population mean ancestry files
+# maize pops:
+ZAnc$ ls ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/anc/pop*.anc.freq | tail -n 11 > results/pass1_maize/pop.anc.list
+ZAnc$ for i in 361 369 371; do echo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot/anc/pop$i.anc.freq; done >> results/pass1_maize/pop.anc.list
+# mexicana pops:
+ZAnc$ ls ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot/anc/pop*.anc.freq | head -n 10 > results/pass1_mex/pop.anc.list
+ZAnc$ for i in 25 27 31; do echo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mexicana_prior_noBoot/anc/pop$i.anc.freq; done >> results/pass1_mex/pop.anc.list
+
+# getting ZAnc across the genome:
+
+
+# finding outlier tracts:
+echo "finding maize tracts"
+pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST"/HILO"$i".posterior | cut -f3) | \
+awk '$4 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > results/input/maize2/tracts/HILO"$i".bed

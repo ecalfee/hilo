@@ -54,8 +54,17 @@ Submitted batch job 8673528 - COMPLETED 2.11.19
 # NOTE: better to use absolute paths for target (=actual file) of symbolic links
 filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam results/pass1/HILO$i.sort.dedup.baq.bam; done
 filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam.bai results/pass1/HILO$i.sort.dedup.baq.bam.bai; done
-
-
+# oops 71 didn't actually work (empty bam). Will redo:
+# first making symlinks:
+data/HILO_raw_reads/March2018$ ln -s $(ls /group/jrigrp6/DanAlignments/HILO71/HILO71_*_1.fq.gz) HILO71_1.fq.gz
+data/HILO_raw_reads/March2018$ ln -s $(ls /group/jrigrp6/DanAlignments/HILO71/HILO71_*_2.fq.gz) HILO71_2.fq.gz
+# and files with just one ID to redo listed:
+hilo/data/HILO_raw_reads$ echo March2018 > March2018_lanes.list
+hilo/data/HILO_raw_reads$ echo HILO71 > March2018_IDs.list
+hilo/data/HILO_raw_reads$ echo March2018 > March2018_libraries.list
+# now running mapping script:
+filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads/March2018,PREFIX_LIST=March2018 map_and_filter_reads.sh
+Submitted batch job 9297991 - RUNNING 2.29.18
 
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)

@@ -28,7 +28,7 @@ Submitted batch job 9175657 - I CANCELLED 2.27.19. Actually, want to split into 
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
 Submitted batch job 9175973 - 2.27.19. Redoing #68:
 sbatch --array=68 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
-Submitted batch job 9233049 - RUNNING 2.28.19
+Submitted batch job 9233049 - COMPLETED 2.28.19
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 9176068 - RAN 2.27.19
 
@@ -42,7 +42,7 @@ within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do
 Submitted batch job 9181138 - COMPLETED (fast) 2.27.19
 
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 361 369 371; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_maize_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
-Submitted batch job 9181158 - COMPLETELETED (fast) 2.27.19
+Submitted batch job 9181158 - COMPLETED (fast) 2.27.19
 
 # low maize prior:
 output_very_high_mex_prior_noBoot - pops 25,27,31,(35 - used as allopatric pop in pass1; for now exclude)
@@ -53,6 +53,19 @@ Submitted batch job 9181177 - COMPLETED 2.27.19
 within_ancestry_diversity$ sbatch -t 24:00:00 --array=$(for i in 25 27 31; do cat ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/pop"$i".anc_hmm.ids; done | sort --version-sort | paste -sd",") --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 9181198 - COMPLETED 2.27.19
 
+# NEED TO REDO:
+# which individuals are missing?
+within_ancestry_diversity$ for i in $(cat results/input/mex2/pops/symp.mexicana.list results/input/mex2/pops/symp.maize.list); do echo $i; samtools view -H $i | head -n 1; done
+71,73,75,77,78,79,104,190 # of these, 71 is in the very high mex prior and the rest regular
+within_ancestry_diversity$ sbatch -t 5:00:00 --array=71 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+Submitted batch job 9295897 - ERROR 2.28.19 -- ACK HILO71 needs to be redone. Empty bam. I'll skip for now.
+within_ancestry_diversity$ sbatch -t 5:00:00 --array=73,75,77,78,79,104,190 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+Submitted batch job 9295917 - COMPLETE 2.28.19 (BUT 190 has no posterior; ok to skip -- it's low coverage)
+within_ancestry_diversity$ sbatch -t 5:00:00 --array=71 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_very_high_mex_prior_noBoot get_homozyg_tracts_and_bams_maize.sh
+Submitted batch job 9296388 - ERROR 2.28.19 -- ACK HILO71 needs to be redone. Empty bam. I'll skip for now.
+within_ancestry_diversity$ sbatch -t 5:00:00 --array=76,84,87,92,104,190 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
+Submitted batch job 9296442 - COMPLETE 2.28.19 (Except 190 has no posterior; ok to skip -- it's low coverage)
+
 # NEW PLAN: FOR A FIRST PASS, JUST CALCULATE ALLELE FREQ. FOR EACH POP. ONLY INCLUDING READS FROM HOMOZYGOUS REGIONS:
 # THEN CALCULATE PI AND FST ESTIMATES FROM THESE ALLELE FREQs IN R -- I can refine this approach later.
 # allele frequencies for allo4low16 maize and allopatric mexicana already exist:
@@ -62,10 +75,18 @@ hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/mexicana.a
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/region_163.var.sites
 
 # get lists of bams to use from hilo populations:
-within_ancestry_diversity$ mkdir -p results/input/mex2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "results/input/mex2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
-within_ancestry_diversity$ mkdir -p results/input/maize2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -v i=$i '$3 == i && $11 >= 0.05 {print "results/input/maize2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/maize2/pops/pop$i.list; done
+within_ancestry_diversity$ mkdir -p results/input/mex2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != HILO71 {print "results/input/mex2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
+within_ancestry_diversity$ mkdir -p results/input/maize2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != HILO71 {print "results/input/maize2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/maize2/pops/pop$i.list; done
+# NOTE: I exclude 71 for now (needs bam alignment redone)
+
 # also make a list of new allopatric maize bams:
 within_ancestry_diversity$ ls ../filtered_bams/results/alloMAIZE/*.sort.dedup.baq.bam | sort --version-sort > results/input/maize2/pops/landraces.list
+# and get sympatric maize and mexicana all together:
+within_ancestry_diversity$ for j in {360..363} {365..374}; do cat results/input/mex2/pops/pop$j.list; done > results/input/mex2/pops/symp.maize.list
+within_ancestry_diversity$ for j in {360..363} {365..374}; do cat results/input/maize2/pops/pop$j.list; done > results/input/maize2/pops/symp.maize.list
+within_ancestry_diversity$ for j in 18 19 21 {23..31} 34; do cat results/input/mex2/pops/pop$j.list; done > results/input/mex2/pops/symp.mexicana.list
+within_ancestry_diversity$ for j in 18 19 21 {23..31} 34; do cat results/input/maize2/pops/pop$j.list; done > results/input/maize2/pops/symp.mexicana.list
+
 # I can just use the already-calculated allele freq's for old allopatric maize and mex.
 
 # start with getting allele frequencies for maize landraces:
@@ -81,17 +102,40 @@ Submitted batch job 9190332-9190362 - 2.27.19. Error only for population 23. And
 within_ancestry_diversity$ sbatch --export=POP=pop23,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
 Submitted batch job 9230594 - 2.28.19. REDID mex2 bam for HILO68, now rerunning again:
 within_ancestry_diversity$ sbatch --dependency=afterok:9233049 --export=POP=pop23,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
-Submitted batch job 9233271 - WAITING 4 DEPENDENCY 2.28.19
+Submitted batch job 9233271 -  COMPLETED 2.28.19. REDID mex2 bam for a few individuals and rerunning:
+within_ancestry_diversity$ for i in 19 21 28 31 366 370 374; do sbatch \
+--export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted batch job 9298015-21 - RUNNING 2.28.19
+# also running all sympatric individuals as a group to get larger n and big picture:
+within_ancestry_diversity$ for i in symp.maize symp.mexicana; do sbatch \
+--export=POP="$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted batch job 9302206-7 - RUNNING 2.28.19
 
 # all populations homozygous maize tracts too (lower priority):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
 Submitted batch job 9191136,9191184-9191213 - 2.27.19. Completed except skipping allopatric pops.
+# remade some of the individual bams and redoing those populations:
+within_ancestry_diversity$ for i in 21 28 31 367 370 373; do sbatch \
+--export=POP=pop"$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted batch job 9300912-17 - RUNNING 2.28.19
+# running all sympatric individuals as one population:
+within_ancestry_diversity$ for i in symp.maize symp.mexicana; do sbatch \
+--export=POP="$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
+calcAlleleFreqPopByCounts.sh; done
+Submitted batch job 9302554-5 - RUNNING 2.28.19
 
 # TO DO: FOR A SET OF RANDOM REGIONS, AS WELL AS SOME OUTLIERS with high mex ancestry, use angsd to calculate Fst
 # between homozygous mexicana tracts in sympatric mexicana, sympatric maize, and allopatric mexicana. Also calculate pi.
-# I'll need a list of sympatric maize and sympatric mexicana (exclude pop35 for now).
+
+# First ID a set of outlier regions with high mexicana ZAnc scores and > 100kb, say 100 longest high mex outlier regions
+# put all ancestry calculations in one place and calculate ZAnc
+# like get_homozyg_tracts_and_bams_mexicana.sh I want to make tracts
+
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 

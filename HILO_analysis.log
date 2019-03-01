@@ -2017,7 +2017,6 @@ Submitted batch job 8900225 - RUNNING 2.15.19
 scripts$ sbatch -p med2 --dependency=afterok:8900225 --export="SUBDIR=output_very_high_maize_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_very_high_maize_prior.txt,ALL" calcAncfromPost.sh
 Submitted batch job 8900349 - COMPLETED 2.15.19
 
-
 # Now summarizing ancestry proportions from posteriors based on ancestry_hmm with equal, low, and high mex-maize ancestry priors
 scripts$ sbatch -p med2 --export="SUBDIR=output_equal_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_equal_prior.txt,ALL" calcAncfromPost.sh
 Submitted batch job 8885036 - COMPLETED 2.15.19 (fast)
@@ -2031,7 +2030,5 @@ Submitted batch job 8885075 - WAITING 4 DEPENDENCY 2.15.19
 ~/hilo/scripts$ sbatch -p med2 --dependency=afterok:8888276 --export="SUBDIR=output_high_mex_prior_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN_high_mex_prior.txt,ALL" calcAncfromPost.sh
 Submitted batch job 8888360
 
-
 # DELETED SOME FILES BECAUSE RUNNING LOW ON MEMORY:
 hilo$ du -h -t 10G # see memory usage
-
