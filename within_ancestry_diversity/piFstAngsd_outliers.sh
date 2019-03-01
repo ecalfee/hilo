@@ -49,7 +49,7 @@ angsd -out "$DIR_OUT/$POP" \
 -fold 0 \
 -underFlowProtect 1 \
 -r "$CHR:$START-$END" \
--bam "results/input/$PREFIX/$POP.list" \
+-bam "results/input/$PREFIX/pops/$POP.list" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
 -doSaf 1 \
@@ -66,7 +66,7 @@ angsd -out "$DIR_OUT/$POP" \
 -pest "$DIR_OUT/$POP.sfs" \
 -underFlowProtect 1 \
 -r "$CHR:$START-$END" \
--bam "results/input/$PREFIX/$POP.list" \
+-bam "results/input/$PREFIX/pops/$POP.list" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
 -P 4
