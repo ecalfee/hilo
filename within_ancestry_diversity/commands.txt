@@ -156,6 +156,8 @@ within_ancestry_diversity$ sbatch --array=0 -t 2:00 -p low --export=OUTLIERS=../
 Submitted batch job 9306709 - segfaults may be part of doThetas issue. But i'll try one more time without n_threads
 Submitted batch job 9306710 - trying with slightly larger region (maybe no sites? seems unlikely but ok). still seg. fault.
 Submitted batch job 9306711 - found an error where region was size zero (!). retry:
+Submitted batch job 9306713 - try again
+
 
 
 within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh

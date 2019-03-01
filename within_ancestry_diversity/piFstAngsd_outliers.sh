@@ -53,7 +53,7 @@ angsd -out "$DIR_OUT/$POP" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
 -doSaf 1 \
--P 1
+-P 2
 
 echo "done with SAF! calculating SFS"
 realSFS "$DIR_OUT/$POP.saf.idx" -P 4 > "$DIR_OUT/$POP.sfs"
@@ -64,12 +64,12 @@ angsd -out "$DIR_OUT/$POP" \
 -doThetas 1 \
 -doSaf 1 \
 -pest "$DIR_OUT/$POP.sfs" \
-#-underFlowProtect 1 \
+-underFlowProtect 1 \
 -r "$CHR:$START-$END" \
 -bam "results/input/$PREFIX/pops/$POP.list" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
--P 1
+-P 2
 
 done
 
