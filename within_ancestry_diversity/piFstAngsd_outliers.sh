@@ -9,7 +9,7 @@
 
 # this script calculate pi and fst for outlier regions from a file
 # to run:
-# within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd.sh
+# within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -22,14 +22,13 @@ module load bio
 
 i=$SLURM_ARRAY_TASK_ID # 0 indexed!
 
-OUTLIERS_FILE="../Zanc/results/$OUTLIERS"
 
-LIST_CHR=($(cut -f1 $OUTLIERS_FILE))
-CHR=${LIST_CHR["$i"]}
-LIST_START=($(cut -f2 $OUTLIERS_FILE))
-START=${LIST_START["$i"]}
-LIST_END=($(cut -f3 $OUTLIERS_FILE))
-END=${LIST_START["$i"]}
+LIST_CHR=($(cut -f1 $OUTLIERS))
+CHR="${LIST_CHR["$i"]}"
+LIST_START=($(cut -f2 $OUTLIERS))
+START="${LIST_START["$i"]}"
+LIST_END=($(cut -f3 $OUTLIERS))
+END="${LIST_START["$i"]}"
 
 DIR_OUT="results/piFst_outliers/$PREFIX/chr${CHR}_${START}-${END}"
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
