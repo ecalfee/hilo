@@ -26,9 +26,11 @@ within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pas
 Submitted batch job 9175362 - cancelled (typo bams vs. bam) 2.27.19. rerunning:
 Submitted batch job 9175657 - I CANCELLED 2.27.19. Actually, want to split into 2 scripts so I can prioritize looking at mexicana ancestry in maize:
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
-Submitted batch job 9175973 - RUNNING 2.27.19
+Submitted batch job 9175973 - 2.27.19. Redoing #68:
+sbatch --array=68 --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+Submitted batch job 9233049 - RUNNING 2.28.19
 within_ancestry_diversity$ sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams_maize.sh
-Submitted batch job 9176068 - RUNNING 2.27.19
+Submitted batch job 9176068 - RAN 2.27.19
 
 # TO DO: for populations with no admixture from NGSadmix, either use all of bams, or rely
 # on posteriors from very low (.001) admixture prior
@@ -75,14 +77,21 @@ Submitted batch job 9191743 - RUNNING 2.27.19
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
-Submitted batch job 9190332-9190362 - RUNNING 2.27.19
-# all populations homozygous maize tracts too (higher priority):
+Submitted batch job 9190332-9190362 - 2.27.19. Error only for population 23. And allopatric pops not really run (20,22,33,35). RERUNNING:
+within_ancestry_diversity$ sbatch --export=POP=pop23,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
+Submitted batch job 9230594 - 2.28.19. REDID mex2 bam for HILO68, now rerunning again:
+within_ancestry_diversity$ sbatch --dependency=afterok:9233049 --export=POP=pop23,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
+Submitted batch job 9233271 - WAITING 4 DEPENDENCY 2.28.19
+
+# all populations homozygous maize tracts too (lower priority):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
-Submitted batch job 9191136,9191184-9191213 - RUNNING 2.27.19
+Submitted batch job 9191136,9191184-9191213 - 2.27.19. Completed except skipping allopatric pops.
 
-
+# TO DO: FOR A SET OF RANDOM REGIONS, AS WELL AS SOME OUTLIERS with high mex ancestry, use angsd to calculate Fst
+# between homozygous mexicana tracts in sympatric mexicana, sympatric maize, and allopatric mexicana. Also calculate pi.
+# I'll need a list of sympatric maize and sympatric mexicana (exclude pop35 for now).
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 
