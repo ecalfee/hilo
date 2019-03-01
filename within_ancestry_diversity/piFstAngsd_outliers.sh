@@ -64,7 +64,7 @@ angsd -out "$DIR_OUT/$POP" \
 -doThetas 1 \
 -doSaf 1 \
 -pest "$DIR_OUT/$POP.sfs" \
--underFlowProtect 1 \
+#-underFlowProtect 1 \
 -r "$CHR:$START-$END" \
 -bam "results/input/$PREFIX/pops/$POP.list" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
@@ -75,14 +75,14 @@ done
 
 # calculate pairwise 2D SFS
 echo "calculating pairwise 2D SFS for each pair of pops"
-realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/symp.maize.saf.idx" -P 2 > "$DIR_OUT/symp.maize-symp.mexicana.sfs"
+realSFS "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/symp.mexicana.saf.idx" -P 2 > "$DIR_OUT/symp.maize-symp.mexicana.sfs"
 realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 2 > "$DIR_OUT/symp.mexicana-allo.mexicana.sfs"
 realSFS "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 2 > "$DIR_OUT/symp.maize-allo.mexicana.sfs"
 
 echo "now calculating FST for each pair"
 # calculate FST (-whichFst 1 indicates Hudson/Bhatia2013 estimator for Fst)
 # sympatric maize and mexicana
-realSFS fst index "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/symp.maize.saf.idx" \
+realSFS fst index "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/symp.mexicana.saf.idx" \
 -sfs "$DIR_OUT/symp.maize-symp.mexicana.sfs" \
 -whichFst 1 \
 -fstout "$DIR_OUT/symp.maize-symp.mexicana"
