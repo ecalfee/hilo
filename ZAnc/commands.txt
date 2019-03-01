@@ -19,8 +19,3 @@ COMPLETED - very fast.
 # note this doesn't include the putative inversion which I will run separately and added to the end
 ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.bed <(tail -n +2 results/pass1_maize/pop.ZAnc) | awk '$4 > 8 {print $0}' | bedtools merge -sorted -d 1 -c 4,6 -o max | awk '$4 > 15 {print $0}' > results/pass1_maize/outliers.bed
 inv4m (approx location): 4       171771502       185951149
-
-# making allopatric list: within_ancestry_diversity/results/input/mex2/pops$ cat pop20.list pop22.list pop33.list pop35.list > allo.mexicana.list
-# I may need additional angsd tools to view and interpret output
-# these are written as 'log scale per site thetas'
-# e.g. thetaStat print out.thetas.idx. Can also print as sliding window http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests

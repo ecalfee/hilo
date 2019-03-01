@@ -4,8 +4,8 @@
 #SBATCH -J piFst
 #SBATCH -o /home/ecalfee/hilo/slurm-log/calcPiFstAngsd_%A_%a.out
 #SBATCH -t 6:00:00
-#SBATCH -n 4
-#SBATCH --mem=8G
+#SBATCH -n 2
+#SBATCH --mem=4G
 
 # this script calculate pi and fst for outlier regions from a file
 # to run:
@@ -53,7 +53,7 @@ angsd -out "$DIR_OUT/$POP" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
 -doSaf 1 \
--P 4
+-P 2
 
 echo "done with SAF! calculating SFS"
 realSFS "$DIR_OUT/$POP.saf.idx" -P 4 > "$DIR_OUT/$POP.sfs"
@@ -69,15 +69,15 @@ angsd -out "$DIR_OUT/$POP" \
 -bam "results/input/$PREFIX/pops/$POP.list" \
 -remove_bads 1 -minMapQ 30 -minQ 20 \
 -GL 1 \
--P 4
+-P 2
 
 done
 
 # calculate pairwise 2D SFS
 echo "calculating pairwise 2D SFS for each pair of pops"
-realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/symp.maize.saf.idx" -P 4 > "$DIR_OUT/symp.maize-symp.mexicana.sfs"
-realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 4 > "$DIR_OUT/symp.mexicana-allo.mexicana.sfs"
-realSFS "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 4 > "$DIR_OUT/symp.maize-allo.mexicana.sfs"
+realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/symp.maize.saf.idx" -P 2 > "$DIR_OUT/symp.maize-symp.mexicana.sfs"
+realSFS "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 2 > "$DIR_OUT/symp.mexicana-allo.mexicana.sfs"
+realSFS "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" -P 2 > "$DIR_OUT/symp.maize-allo.mexicana.sfs"
 
 echo "now calculating FST for each pair"
 # calculate FST (-whichFst 1 indicates Hudson/Bhatia2013 estimator for Fst)

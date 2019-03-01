@@ -75,12 +75,16 @@ hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/mexicana.a
 hilo/data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/region_163.var.sites
 
 # get lists of bams to use from hilo populations:
-within_ancestry_diversity$ mkdir -p results/input/mex2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != HILO71 {print "results/input/mex2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
-within_ancestry_diversity$ mkdir -p results/input/maize2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != HILO71 {print "results/input/maize2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/maize2/pops/pop$i.list; done
+within_ancestry_diversity$ mkdir -p results/input/mex2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != "HILO71" {print "results/input/mex2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
+within_ancestry_diversity$ mkdir -p results/input/maize2/pops; for i in $(awk '$1 != "n" && $11 >= 0.05 {print $3}' ../data/pass1_ids.txt | sort | uniq); do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != "HILO71" {print "results/input/maize2/bams/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/maize2/pops/pop$i.list; done
 # NOTE: I exclude 71 for now (needs bam alignment redone)
 
 # also make a list of new allopatric maize bams:
 within_ancestry_diversity$ ls ../filtered_bams/results/alloMAIZE/*.sort.dedup.baq.bam | sort --version-sort > results/input/maize2/pops/landraces.list
+# allo mexicana (assumed every part of genome is diploid mex. ancestry ):
+within_ancestry_diversity$ for i in 20 22 33 35; do awk -F $'\t' -v i=$i '$3 == i && $11 >= 0.05 && $2 != "HILO71" {print "../filtered_bams/results/pass1/HILO"$1".sort.dedup.baq.bam"}' ../data/pass1_ids.txt > results/input/mex2/pops/pop$i.list; done
+within_ancestry_diversity$ for i in 20 22 33 35; do cat results/input/mex2/pops/pop$i.list; done > results/input/mex2/pops/allo.mexicana.list
+
 # and get sympatric maize and mexicana all together:
 within_ancestry_diversity$ for j in {360..363} {365..374}; do cat results/input/mex2/pops/pop$j.list; done > results/input/mex2/pops/symp.maize.list
 within_ancestry_diversity$ for j in {360..363} {365..374}; do cat results/input/maize2/pops/pop$j.list; done > results/input/maize2/pops/symp.maize.list
@@ -111,7 +115,11 @@ Submitted batch job 9298015-21 - RUNNING 2.28.19
 within_ancestry_diversity$ for i in symp.maize symp.mexicana; do sbatch \
 --export=POP="$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
-Submitted batch job 9302206-7 - RUNNING 2.28.19
+Submitted batch job 9302206-7 - RUNNING 2.28.19. RERUNNING AFTER ACTUALLY EXCLUDING HILO71
+within_ancestry_diversity$ sbatch --export=POP=symp.mexicana,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
+Submitted batch job 9305854 - RUNNING 2.29.19
+within_ancestry_diversity$ sbatch --export=POP=pop31,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
+Submitted batch job 9305983 - RUNNING 2.29.19 # affected by HILO71
 
 # all populations homozygous maize tracts too (lower priority):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
@@ -135,6 +143,25 @@ Submitted batch job 9302554-5 - RUNNING 2.28.19
 # First ID a set of outlier regions with high mexicana ZAnc scores and > 100kb, say 100 longest high mex outlier regions
 # put all ancestry calculations in one place and calculate ZAnc
 # like get_homozyg_tracts_and_bams_mexicana.sh I want to make tracts
+
+# lookign at pi and fst in specific outlier regions:
+# testing script with one small 20kb outlier
+within_ancestry_diversity$ sbatch --array=0 --export=OUTLIERS=test.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9305844 - fixing errors:
+within_ancestry_diversity$ sbatch --array=0 --export=OUTLIERS=../ZAnc/results/test.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9305846 - typo. still didn't work. fixed list of allopatric mex. bams:
+Submitted batch job 9305851. problem need to exclude HILO71:
+Submitted batch job 9306046 - slurm segmentation fault. trying again:
+within_ancestry_diversity$ sbatch --array=0 -t 2:00 -p low --export=OUTLIERS=../ZAnc/results/test.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+
+
+within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+
+# I may need additional angsd tools to view and interpret output
+# these are written as 'log scale per site thetas'
+# e.g. thetaStat print out.thetas.idx. Can also print as sliding window http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests
+
+
 
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
