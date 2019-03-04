@@ -157,17 +157,39 @@ Submitted batch job 9306709 - segfaults may be part of doThetas issue. But i'll 
 Submitted batch job 9306710 - trying with slightly larger region (maybe no sites? seems unlikely but ok). still seg. fault.
 Submitted batch job 9306711 - found an error where region was size zero (!). retry:
 Submitted batch job 9306713 - try again
+Submitted batch job 9306714 - ran out of time but seemed to move past doThetas (yay!)
 
-
-
-within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
-
+# now running my jobs for 26 outliers:
+within_ancestry_diversity$ sbatch --array=0-25 --mem=8G --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9306742 - RUNNING 2.29.19
 # I may need additional angsd tools to view and interpret output
 # these are written as 'log scale per site thetas'
 # e.g. thetaStat print out.thetas.idx. Can also print as sliding window http://www.popgen.dk/angsd/index.php/Thetas,Tajima,Neutrality_tests
 
+# windows of pi:
+chr1_5865576-6182939$ thetaStat do_stat allo.mexicana.thetas.idx -outnames allo.mexicana.thetasAll
+mex2/chr1_20487201-21009933$ thetaStat do_stat allo.mexicana.thetas.idx -win 5000 -step 1000 -outnames allo.mexicana.thetasWindow
+mex2/chr1_20487201-21009933$ realFst stats2 symp.maize-allo.mexicana.fst.idx -win 5000 -step 1000 -outnames symp.maize-allo.mexicana.fstWindow
+
+# making output files for all (can add to script later):
+module load bio # interactive session
+# theta all sites together
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*_*-*); do for j in symp.maize symp.mexicana allo.mexicana; do thetaStat do_stat "$i"/"$j".thetas.idx -outnames "$i"/"$j".thetasAll; done; done
+# theta windows
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*_*-*); do for j in symp.maize symp.mexicana allo.mexicana; do thetaStat do_stat "$i"/"$j".thetas.idx -win 5000 -step 1000 -outnames "$i"/"$j".thetasWindows; done; done
+# Fst all sites together (much slower than thetas)
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*_*-*); do for j in symp.maize-allo.mexicana symp.maize-symp.mexicana symp.mexicana-allo.mexicana; do realSFS fst stats2 "$i"/"$j".fst.idx > "$i"/"$j".fstAll; done; done
+# Fst windows (much slower than thetas)
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*_*-*); do for j in symp.maize-allo.mexicana symp.maize-symp.mexicana symp.mexicana-allo.mexicana; do realSFS fst stats2 "$i"/"$j".fst.idx -win 5000 -step 1000 > "$i"/"$j".fstWindows.stats; done; done
+# windows was fast
+
+# copy results over:
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*); do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/within_ancestry_diversity/results/piFst_outliers/mex2/"$i"/*.thetasAll.pestPG "$i"/.; done
+within_ancestry_diversity/results/piFst_outliers/mex2$ for i in $(ls -d chr*); do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/within_ancestry_diversity/results/piFst_outliers/mex2/"$i"/*.thetasWindows.pestPG "$i"/.; done
 
 
+# windows of Fst:
+realSFS fst stats2 symp.maize-allo.mexicana.fst.idx -win 5000 -step 1000 -outnames symp.maize-allo.mexicana.fstWindow.gz
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 
