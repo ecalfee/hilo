@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo/filtered_bams
 #SBATCH -J mergeBam
 #SBATCH -o /home/ecalfee/hilo/slurm-log/mergeBamsHILO_%A_%a.out
-#SBATCH -t 1-00:00:00
+#SBATCH -t 1:00:00
 #SBATCH --mem=32G
 #SBATCH -n 1
 #SBATCH --array=1-267
