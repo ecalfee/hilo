@@ -101,7 +101,7 @@ Submitted batch job 8754543 - RUNNING 2.12.19
 # deduplicating/BAQ ones that did map but didn't finish:
 filtered_bams$ sbatch --array=17,70,72,91,101,102,105,108 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 just_filter_reads.sh
 Submitted batch job 8754793 - COMPLETED 2.13.19 (note #17 had many 'large duplicate sets')
-# TO DO: CHECK ALL BAMS ARE GOOD (NONE EMPTY)
+# checking all bams are good:
 hilo/filtered_bams$ for i in $(awk '{print "results/"$2"/"$1".sort.dedup.baq.bam"}' ../data/HILO_raw_reads/Jan2019_all.list); do echo "$i"; samtools view "$i" | head | grep 'truncated'; done
 # none appear to be truncated. BUT two are missing:
 hilo/filtered_bams$ for i in $(awk '{print "results/"$2"/"$1".sort.dedup.baq.bam"}' ../data/HILO_raw_reads/Jan2019_all.list); do echo "$i"; samtools view "$i" | head | wc -l; done
@@ -113,8 +113,8 @@ Jan2019_8/HILO199.sort.dedup.baq.bam # job array 113
 error was: "slurmstepd: error: get_exit_code task 0 died by signal". I missed these two from my first attempt to restart failed jobs:
 filtered_bams$ grep 'died by signal' ../slurm-log/*8711515* | sort --version-sort # see all (and compared to list above, only 3 extra: 0,93,113). I'm not sure why the bam for 0 looks okay but I'm going to rerun it anyways from mapping.
 mv results/Jan2019_6/HILO201.sort.dedup.baq.bam* results/backup/. # save as backup
-filtered_bams$ sbatch --array=0,93,113 -p med2 --mem=54G --export=DIR_IN=../data/HILO_raw_reads/TEST,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
-Submitted batch job 9453731 - RUNNING 3.4.19
+hilo/filtered_bams$ sbatch --array=0,93,113 -p med2 --mem=54G --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
+Submitted batch job 9457315 - RUNNING 3.4.19
 
 
 # PARVIGLUMIS - PALMAR CHICO POPULATION:
@@ -135,7 +135,7 @@ actually getting better copies from here:
 /iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
 and subfolders iplant4/iplant4
 I used irsync to transfer to my own directory, then irsync to get them onto farm
-# TO DO:
+
 # rename all as symlinks to PARV1_1.fq.gz, PARV1_2.fq.gz etc.
 data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R1.fastq.gz PARV"$i"_1.fq.gz; done
 data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R2.fastq.gz PARV"$i"_2.fq.gz; done
