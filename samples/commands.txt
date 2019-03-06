@@ -11,4 +11,5 @@ hilo/samples$ ln -s /home/ecalfee/hilo/data/parviglumis/PalmarChico_IDs.list Pal
 samples$ for i in $(cat PalmarChico_IDs.list); do echo ../filtered_Bams/results/PalmarChico/"$i".sort.dedup.baq.bam; done > PalmarChico_bams.list
 
 # combinations:
+samples$ cat hilo_IDs.list alloMAIZE_IDs.list MAIZE4LOW_IDs.list > hilo_alloMAIZE_MAIZE4LOW_IDs.list
 samples$ cat hilo_bams.list alloMAIZE_bams.list MAIZE4LOW_bams.list > hilo_alloMAIZE_MAIZE4LOW_bams.list
