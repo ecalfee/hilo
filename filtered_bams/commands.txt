@@ -52,9 +52,9 @@ scripts$ sbatch --array=1-83,117-200 -p bigmemm dedupAndAddBAQ_hilo.sh
 Submitted batch job 8673528 - COMPLETED 2.11.19
 # made symlink to new folder and naming system
 # NOTE: better to use absolute paths for target (=actual file) of symbolic links
-filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam results/pass1/HILO$i.sort.dedup.baq.bam; done
-filtered_bams$ for i in {1..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam.bai results/pass1/HILO$i.sort.dedup.baq.bam.bai; done
-# oops 71 didn't actually work (empty bam). Will redo:
+~/hilo/filtered_bams$ for i in {1..70} {72..79} {81..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam results/March2018/HILO$i.sort.dedup.baq.bam; done
+~/hilo/filtered_bams$ for i in {1..70} {72..79} {81..200}; do ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_$i.sort.dedup.baq.bam.bai results/March2018/HILO$i.sort.dedup.baq.bam.bai; done
+# 80 has no data and oops 71 didn't actually work on remapping (empty bam). Will redo:
 # first making symlinks:
 data/HILO_raw_reads/March2018$ ln -s $(ls /group/jrigrp6/DanAlignments/HILO71/HILO71_*_1.fq.gz) HILO71_1.fq.gz
 data/HILO_raw_reads/March2018$ ln -s $(ls /group/jrigrp6/DanAlignments/HILO71/HILO71_*_2.fq.gz) HILO71_2.fq.gz
@@ -64,7 +64,10 @@ hilo/data/HILO_raw_reads$ echo HILO71 > March2018_IDs.list
 hilo/data/HILO_raw_reads$ echo March2018 > March2018_libraries.list
 # now running mapping script:
 filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads/March2018,PREFIX_LIST=March2018 map_and_filter_reads.sh
-Submitted batch job 9297991 - RUNNING 2.29.18
+Submitted batch job 9297991 - ERROR 2.29.18. Oops misspecified input directory, rerunning:
+filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=March2018 map_and_filter_reads.sh
+Submitted batch job 9404408 - COMPLETED 3.5.19 -- HILO80 doesn't exist (ok). HILO71 is the only one with empty bam (being re-done)
+
 
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)
@@ -98,6 +101,21 @@ Submitted batch job 8754543 - RUNNING 2.12.19
 # deduplicating/BAQ ones that did map but didn't finish:
 filtered_bams$ sbatch --array=17,70,72,91,101,102,105,108 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 just_filter_reads.sh
 Submitted batch job 8754793 - COMPLETED 2.13.19 (note #17 had many 'large duplicate sets')
+# checking all bams are good:
+hilo/filtered_bams$ for i in $(awk '{print "results/"$2"/"$1".sort.dedup.baq.bam"}' ../data/HILO_raw_reads/Jan2019_all.list); do echo "$i"; samtools view "$i" | head | grep 'truncated'; done
+# none appear to be truncated. BUT two are missing:
+hilo/filtered_bams$ for i in $(awk '{print "results/"$2"/"$1".sort.dedup.baq.bam"}' ../data/HILO_raw_reads/Jan2019_all.list); do echo "$i"; samtools view "$i" | head | wc -l; done
+# the following files do not exist:
+Jan2019_8/HILO157.sort.dedup.baq.bam # job array 93
+hilo/filtered_bams$ grep -n 'HILO157' ../data/HILO_raw_reads/Jan2019_IDs.list
+94:HILO157
+Jan2019_8/HILO199.sort.dedup.baq.bam # job array 113
+error was: "slurmstepd: error: get_exit_code task 0 died by signal". I missed these two from my first attempt to restart failed jobs:
+filtered_bams$ grep 'died by signal' ../slurm-log/*8711515* | sort --version-sort # see all (and compared to list above, only 3 extra: 0,93,113). I'm not sure why the bam for 0 looks okay but I'm going to rerun it anyways from mapping.
+mv results/Jan2019_6/HILO201.sort.dedup.baq.bam* results/backup/. # save as backup
+hilo/filtered_bams$ sbatch --array=0,93,113 -p med2 --mem=54G --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
+Submitted batch job 9457315 - COMPLETED 3.5.19
+
 
 # PARVIGLUMIS - PALMAR CHICO POPULATION:
 # getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
@@ -117,7 +135,7 @@ actually getting better copies from here:
 /iplant/home/rossibarra/rare_alleles_seq/teosinte_50/JRIAL8/JRIAL8_fastq
 and subfolders iplant4/iplant4
 I used irsync to transfer to my own directory, then irsync to get them onto farm
-# TO DO:
+
 # rename all as symlinks to PARV1_1.fq.gz, PARV1_2.fq.gz etc.
 data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R1.fastq.gz PARV"$i"_1.fq.gz; done
 data/parviglumis/PalmarChico$ for i in {1..24} 49 50; do ln -s /home/ecalfee/hilo/data/parviglumis/teosinte_50/Sample_JRIAL8_"$i"_R2.fastq.gz PARV"$i"_2.fq.gz; done
@@ -157,7 +175,9 @@ filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 -p med2 --exp
 Submitted batch job 9130041 - oops I wanted to specify med2 partition. scancel and rerunning:
 Submitted batch job 9130075 - 2.22.19. OUT-OF-MEMORY errors on all (even though I don't see that bams are truncated.). Also 'Broken pipe' errors in logs. Rerunning:
 filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 --mem=48G -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
-Submitted batch job 9144213 - RUNNING 2.25.19
+Submitted batch job 9144213 - DONE 2.25.19 BUT jobs 20 and 49 out of memory). Looks like #49 finished properly anyways, re-doing #20 (note: job #20 is PARV21):
+filtered_bams$ sbatch --array=20 --mem=56G -t 8-00:00:00 -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
+Submitted batch job 9404412 - RUNNING 3.4.19
 
 TRIPSACUM:
 Downloading Tripsacum reads from NCBI:
@@ -214,7 +234,7 @@ hilo$ grep 'failed: No space left on device' slurm-log/*8777664* # RERUNNING:
 filtered_bams$ sbatch -p med2 -t 15-00:00:00 --array=0 --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
 Submitted batch job 9130021 - 2.22.19. OUT-OF-MEMORY. Rerunning:
 filtered_bams$ sbatch -p med2 -t 15-00:00:00 --array=0 --mem=64G --export=DIR_IN=../data/tripsacum,PREFIX_LIST=SRR7758238 map_and_filter_reads.sh
-Submitted batch job 9143417
+Submitted batch job 9143417 - COMPLETE 3.4.19
 
 # MAIZE LANDRACES:
 # LANDRACES ACROSS AMERICAS FROM LI:
@@ -289,8 +309,29 @@ Submitted batch job 9144377 - IS NOT FINDING FASTQ FILES because of typo. Rerunn
 filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --dependency=afterok:9144377 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW,MAKEFASTQ=FALSE bam2fastq2v4_MAIZE4LOW.sh
 Submitted batch job 9148795 - out of memory 2.26.19. not sure why it's exceeding memory, but I reduce sorting threads, increase default memory, and re-run:
 filtered_bams$ sbatch --array=1-4,11-14,21-24,31-34 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW,MAKEFASTQ=FALSE bam2fastq2v4_MAIZE4LOW.sh
-Submitted batch job 9164203
+Submitted batch job 9164203 - COMPLETED 3.4.19, BUT #3 failed (even though it says 'completed'). See grep 'failed' ../slurm-log/*9164203*.out. I can just exclude that one.
+filtered_bams$ sbatch --array=3 --export=DIR_IN=../data/alloMaize4Low,LANE=MAIZE4LOW,MAKEFASTQ=FALSE bam2fastq2v4_MAIZE4LOW.sh
+Submitted batch job 9456174 - FAILED 3.4.19 (no header on sam)
+Error: Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+# I think I should just exclude this one sample.
 
-# TO DO: merge sets of reads from the same sample & dedup & index again
+# merging sets of reads from the same sample & dedup & index again
+# first make lists to merge:
+data/HILO_raw_reads$ paste -d$'\t' Jan2019_IDs.list Jan2019_lanes.list Jan2019_libraries.list > Jan2019_all.list
+data/HILO_raw_reads$ for i in {1..79} {81..200}; do echo HILO$i$'\t'March2018$'\t'March2018; done > March2018_all.list
+data/HILO_raw_reads$ cat March2018_all.list Jan2019_all.list > merged_all.list # get full list
+data/HILO_raw_reads$ mkdir ../../filtered_bams/results/to_merge
+data/HILO_raw_reads$ for i in $(cut -f1 merged_all.list | sort --version-sort | uniq); do awk -v i="$i" '$1 == i {print "/home/ecalfee/hilo/filtered_bams/results/"$2"/"$1".sort.dedup.baq.bam"}' merged_all.list > ../../filtered_bams/results/to_merge/"$i".list; done
+# make a script that merges as needed, or skips and just creates a symlink if no bams need to be merged
+filtered_bams$ sbatch merge_bams_HILO.sh
+Submitted batch job 9438264 # RAN (very fast) 3.4.19 
+# redo for HILO71,157,201,199 too (filtering hadn't completed yet).
+filtered_bams$ sbatch --array=71,157,201,199 merge_bams_HILO.sh
+Submitted batch job 9573823 - COMPLETED 3.5.19
+# oops I deleted HILO80. Will redo:
+filtered_bams$ sbatch --array=80 -t 1:00:00 merge_bams_HILO.sh
+Submitted batch job 9584598 - COMPLETED 3.6.19
 
+# TO DO: run flagstat on all bams
+# TO DO: make symlink to metrics for remapped hilo individuals
 # TO DO: confirm with Anne correct parviglumis

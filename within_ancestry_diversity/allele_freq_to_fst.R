@@ -29,8 +29,24 @@ for (pop in pops){
   colnames(freqs[[pop]]) <- c("chr", "pos", "p", "n")
   freqs[[pop]]$pi <- 2*freqs[[pop]]$p*(1 - freqs[[pop]]$p)
 }
+
+# meta data on populations
+meta <- unique(read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
+                          header = T, sep = "\t")[ , c("popN", "zea", "LOCALITY")])
+meta$pop <- paste0("pop",(meta$popN))
+
+
 pi_within <- data.frame(pop = pops, pi = sapply(pops, function(pop) mean(freqs[[pop]]$pi)))
+p_inv4m <- left_join(pi_within, meta, by = "pop") %>%
+  ggplot(., aes(x = popN, y = pi, color = LOCALITY)) +
+  geom_point()
+ggsave(filename = paste0("plots/pi_inv4m.png"), device = "png",
+       plot = p_inv4m, 
+       width = 10, height = 5, units = "in",
+       dpi = 300)
 #pi_between <- MAKE PAIRS HERE. CALCULATE FST FOR EACH PAIR OF POPS 
+
+
 
 pop30 <- do.call(rbind,
                  lapply(regions, function(r)
