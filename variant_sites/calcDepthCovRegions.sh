@@ -6,7 +6,7 @@
 #SBATCH -t 4:00:00
 #SBATCH --mem=8G
 
-# to run: sbatch --export=PREFIX=hilo,REGIONS_LIST=N1000.L100.regions calcDepthRegions.sh
+# to run: sbatch --export=PREFIX=hilo,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
 
 # set some variables
 OUT_DIR=results/depthCov/"$REGIONS_LIST"
