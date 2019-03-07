@@ -61,19 +61,36 @@ depthS20_nochr1 <- Reduce('+',
 
 # and calcDepthCovRegions.sh (regions used to calc Fst)
 # F for Fst
-depthF <- read.csv("../data/depthCov/pass1/N1000.L100.regions.depthSample",
+#depthF <- read.csv("../data/depthCov/pass1/N1000.L100.regions.depthSample",
+#                   header = F, sep = "\t")
+#depthF20 <- read.csv("../data/depthCov/pass1/N1000.L100.regions.Q20.depthSample",
+#                     header = F, sep = "\t")
+depthF <- read.csv("../variant_sites/results/depthCov/N1000.L100.regions/hilo_alloMAIZE_MAIZE4LOW.depthSample",
                    header = F, sep = "\t")
-depthF20 <- read.csv("../data/depthCov/pass1/N1000.L100.regions.Q20.depthSample",
+depthF20 <- read.csv("../variant_sites/results/depthCov/N1000.L100.regions/hilo_alloMAIZE_MAIZE4LOW.Q20.depthSample",
+                     header = F, sep = "\t")
+# global depth
+depthG <- read.csv("../variant_sites/results/depthCov/N1000.L100.regions/hilo_alloMAIZE_MAIZE4LOW.depthGlobal",
+                   header = F, sep = "\t")
+depthG20 <- read.csv("../variant_sites/results/depthCov/N1000.L100.regions/hilo_alloMAIZE_MAIZE4LOW.Q20.depthGlobal",
                      header = F, sep = "\t")
 
+
 # function to calculate mean depth from raw depth dataframe
-meanDepth = function(dep){
-  dep$V102 <- NULL
-  colnames(dep)<- paste0("n", 0:100)
-  meanDepth <- apply(dep[ , paste0("n", 0:100)], 1, 
-                         function(r) r %*% 0:100/sum(r))
+meanDepth = function(dep, max = 100){
+  dep[, ncol(dep)] <- NULL
+  colnames(dep)<- paste0("n", 0:max)
+  meanDepth <- apply(dep[ , paste0("n", 0:max)], 1, 
+                         function(r) r %*% (0:max)/sum(r))
   return(meanDepth)
 }
+# what is the mean global depth?
+meanDepth(depthG20, max = 10000)
+meanDepth(depthG, max = 10000)
+sum(meanDepth(depthF))
+sum(meanDepth(depthF20))
+
+
 # calculate and write to file mean depth across the Fst regions from depthF
 mean_depthF = meanDepth(depthF)
 plot(pass1$est_coverage, mean_depthF, main = "Depth est. regions vs. # reads") # perfectly correlated

@@ -1,10 +1,10 @@
 After read mapping, we use the whole sample (reference and admixed individuals) to identify variant sites using ANGSD.
 # PASS1 ANALYSIS LOG:
-1) Identified sites with >5% MAF in global sample based on reads meeting mapping and base quality cutoffs. 
+1) Identified sites with >5% MAF in global sample based on reads meeting mapping and base quality cutoffs.
 Filters out sites with too high coverage in global sample and sites with data for too few individuals.
 mafs.gz output files from angsd are divided into 5Mb regions across the genome, regions 0-425:
 allVarAngsdGL1.sh
-(note: high coverage cutoff was based on calculating total depth of coverage (from ANGSD) across some random regions: 
+(note: high coverage cutoff was based on calculating total depth of coverage (from ANGSD) across some random regions:
 R script plot_mapping_metrics.R was used to process the results of calcDepthCovRegions.sh)
 
 2) Created and indexed 'sites' file for each mafs.gz file, listing the chromosome and bp position of each variant site:
@@ -23,9 +23,11 @@ Submitted batch job 9585133 - NOT RUNNING (CHECK ON THIS!). Fixed angsd module i
 variant_sites$ sbatch --dependency=afterok:9593488 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
 Submitted batch job 9593538 - ERROR 3.6.19. Fixed typo in bam path:
 Submitted batch job 9593626 - fixed additional bam path issue
-Submitted batch job 9593643
-error: Failed to open file ../filtered_Bams/results/alloMAIZE/RIMMA0409.sort.dedup.baq.bam
+Submitted batch job 9593643 - COMPLETED 3.6.19
 
-# TO DO: call variant sites with cutoff based on < 3x mean
+# TO DO: call variant sites with cutoff based on < 2x mean
+# interactively using plot_mapping_metrics.R inferred mean coverage for random regions ~440x
+# So I'll use 880 as maximum allowed depth in ANGSD calling variant sites
+
 
 # TO DO: Call genotypes for tripsacum
