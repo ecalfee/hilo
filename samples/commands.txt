@@ -1,12 +1,12 @@
 # MAKING LISTS OF COMPLETED BAMS:
 # make lists of all HILO individuals, maize landraces, maize4low populations (skips individual 3 because of memory issues with mapping), parviglumis, and combinations of these:
 hilo/samples$ for i in {1..267}; do echo HILO"$i"; done > hilo_IDs.list
-samples$ for i in $(cat hilo_IDs.list); do echo ../filtered_Bams/results/merged/"$i".sort.dedup.baq.bam; done > hilo_bams.list
+samples$ for i in $(cat hilo_IDs.list); do echo ../filtered_bams/results/merged/"$i".sort.dedup.baq.bam; done > hilo_bams.list
 # note # 3 is excluded because it did not map (memory issues)
 hilo/samples$ for i in 1 2 4 {11..14} {21..24} {31..34}; do echo MAIZE4LOW"$i"; done > MAIZE4LOW_IDs.list
-samples$ for i in $(cat MAIZE4LOW_IDs.list); do echo ../filtered_Bams/results/MAIZE4LOW/"$i".sort.dedup.baq.bam; done > MAIZE4LOW_bams.list
+samples$ for i in $(cat MAIZE4LOW_IDs.list); do echo ../filtered_bams/results/MAIZE4LOW/"$i".sort.dedup.baq.bam; done > MAIZE4LOW_bams.list
 samples$ ln -s /home/ecalfee/hilo/data/landraces_fromLi/alloMAIZE_IDs.list alloMAIZE_IDs.list
-samples$ for i in $(cat alloMAIZE_IDs.list); do echo ../filtered_Bams/results/alloMAIZE/"$i".sort.dedup.baq.bam; done > alloMAIZE_bams.list
+samples$ for i in $(cat alloMAIZE_IDs.list); do echo ../filtered_bams/results/alloMAIZE/"$i".sort.dedup.baq.bam; done > alloMAIZE_bams.list
 hilo/samples$ ln -s /home/ecalfee/hilo/data/parviglumis/PalmarChico_IDs.list PalmarChico_IDs.list
 samples$ for i in $(cat PalmarChico_IDs.list); do echo ../filtered_Bams/results/PalmarChico/"$i".sort.dedup.baq.bam; done > PalmarChico_bams.list
 
