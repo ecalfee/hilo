@@ -331,6 +331,9 @@ Submitted batch job 9573823 - COMPLETED 3.5.19
 # oops I deleted HILO80. Will redo:
 filtered_bams$ sbatch --array=80 -t 1:00:00 merge_bams_HILO.sh
 Submitted batch job 9584598 - COMPLETED 3.6.19
+# number 85 was cancelleddue to time limit. rerunning:
+filtered_bams$ sbatch --array=85 -t 6:00:00 merge_bams_HILO.sh
+Submitted batch job 9593488 - COMPLETED (fast) 3.6.19
 
 # TO DO: run flagstat on all bams
 # TO DO: make symlink to metrics for remapped hilo individuals

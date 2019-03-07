@@ -18,7 +18,14 @@ Call new set of SNPs for combined sample with all hilo individuals plus new allo
 Goal is to create a PCA and check that the old and new allopatric maize look fine in PCA space.
 hilo_alloMAIZE_MAIZE4LOW_bams.list
 # first get mean coverage estimate:
-variant_sites$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,REGIONS_LIST=N1000.L100.regions calcDepthRegions.sh
+variant_sites$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
+Submitted batch job 9585133 - NOT RUNNING (CHECK ON THIS!). Fixed angsd module in calculating depth per region and waiting for new HILO85 file to be completed:
+variant_sites$ sbatch --dependency=afterok:9593488 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
+Submitted batch job 9593538 - ERROR 3.6.19. Fixed typo in bam path:
+Submitted batch job 9593626 - fixed additional bam path issue
+Submitted batch job 9593643
+error: Failed to open file ../filtered_Bams/results/alloMAIZE/RIMMA0409.sort.dedup.baq.bam
 
+# TO DO: call variant sites with cutoff based on < 3x mean
 
 # TO DO: Call genotypes for tripsacum
