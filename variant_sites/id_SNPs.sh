@@ -18,7 +18,7 @@ DIR_OUT=results/"$PREFIX"
 BAM_IN=../samples/"$PREFIX"_bams.list
 i="$SLURM_ARRAY_TASK_ID"
 DIR_REGIONS="../data/refMaize/divide_5Mb"
-REF=REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 DIR_SCRATCH="/scratch/ecalfee/id_SNPs_region_$i"
 
 # general bash script settings to make sure if any errors in the pipeline fail
