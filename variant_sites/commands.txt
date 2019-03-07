@@ -28,6 +28,8 @@ Submitted batch job 9593643 - COMPLETED 3.6.19
 # TO DO: call variant sites with cutoff based on < 2x mean
 # interactively using plot_mapping_metrics.R inferred mean coverage for random regions ~440x
 # So I'll use 880 as maximum allowed depth in ANGSD calling variant sites
-
+variant_sites$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,MAX_DEPTH=880 id_SNPs.sh
+Submitted batch job 9612676 - DIDN'T WORK. FIXED TYPO & RERUNNING:
+Submitted batch job 9613146 - RUNNING 3.6.19
 
 # TO DO: Call genotypes for tripsacum
