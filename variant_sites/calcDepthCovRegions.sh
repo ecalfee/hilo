@@ -2,7 +2,7 @@
 #SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/variant_sites
 #SBATCH -J calcDepthRegions
-#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/calcDepthRegions_%A.out
 #SBATCH -t 4:00:00
 #SBATCH --mem=8G
 
@@ -19,6 +19,9 @@ MAX_DEPTH=10000
 set –o pipefail
 set –o errexit
 set –o nounset
+
+# load modules
+module load bio #angsd
 
 # make directory to store output (if doesn't yet exist)
 mkdir -p ${OUT_DIR}
