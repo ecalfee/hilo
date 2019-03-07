@@ -117,9 +117,9 @@ within_ancestry_diversity$ for i in symp.maize symp.mexicana; do sbatch \
 calcAlleleFreqPopByCounts.sh; done
 Submitted batch job 9302206-7 - RUNNING 2.28.19. RERUNNING AFTER ACTUALLY EXCLUDING HILO71
 within_ancestry_diversity$ sbatch --export=POP=symp.mexicana,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
-Submitted batch job 9305854 - RUNNING 2.29.19
+Submitted batch job 9305854 - 2.29.19. Looks complete.
 within_ancestry_diversity$ sbatch --export=POP=pop31,PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL calcAlleleFreqPopByCounts.sh
-Submitted batch job 9305983 - RUNNING 2.29.19 # affected by HILO71
+Submitted batch job 9305983 - 2.29.19 # affected by HILO71. LOOKS COMPLETE
 
 # all populations homozygous maize tracts too (lower priority):
 within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
@@ -136,6 +136,8 @@ within_ancestry_diversity$ for i in symp.maize symp.mexicana; do sbatch \
 --export=POP="$i",PREFIX=maize2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
 Submitted batch job 9302554-5 - RUNNING 2.28.19
+
+
 
 # TO DO: FOR A SET OF RANDOM REGIONS, AS WELL AS SOME OUTLIERS with high mex ancestry, use angsd to calculate Fst
 # between homozygous mexicana tracts in sympatric mexicana, sympatric maize, and allopatric mexicana. Also calculate pi.
