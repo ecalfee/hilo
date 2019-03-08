@@ -12,7 +12,7 @@
 # this script prunes variant sites to ~unlinked fixed distance (.01cM~10kb)
 # for analysis with global ancestry and PCA
 i=$SLURM_ARRAY_TASK_ID #chromosome
-REGIONS_LIST=refMaize/divide_5Mb/ALL_regions.list
+REGIONS_LIST=../data/refMaize/divide_5Mb/ALL_regions.list
 MIN_cM=0.01
 DIR_SITES="../variant_sites/results/$PREFIX"
 DIR_OUT="results/thinnedSNPs/$PREFIX"
