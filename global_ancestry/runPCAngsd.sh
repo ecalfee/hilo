@@ -1,17 +1,16 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J PCAngsd
 #SBATCH -o /home/ecalfee/hilo/slurm-log/PCAngsd_%A_%a.out
 #SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH -n 2
-#SBATCH --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA",ALL
 
-# the suffix for the genotype likelihood file in GL_PREFIX is omitted .beagle.gz;
-PREFIX_GL="whole_genome"
-#DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
-DIR_OUT=${DIR_GL}"/PCA"
+# to run: sbatch --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
+
+GL_FILE="results/thinnedSNPs/$PREFIX/whole_genome.beagle.gz"
+DIR_OUT="results/PCA/$PREFIX"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -23,14 +22,14 @@ set –o nounset
 module load bio
 
 # run PCAngsd
-mkdir -p ${DIR_OUT}
+mkdir -p "$DIR_OUT"
 
 # assumes GL data is already filtered for a minimum MAF; doesn't re-filter
 python2 /home/ecalfee/bin/pcangsd/pcangsd.py \
--beagle ${DIR_GL}/${PREFIX_GL}.beagle.gz \
+-beagle "$GL_FILE" \
 -threads 2 -iter 100 \
 -minMaf 0 -admix \
--o ${DIR_OUT}/${PREFIX_GL}
+-o "$DIR_OUT/whole_genome"
 
 # -admix option calculates admixture proportions in addition to genotype covariance matrix for PCA
 # -iter specifies number of EM steps

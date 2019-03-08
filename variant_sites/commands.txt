@@ -25,11 +25,15 @@ Submitted batch job 9593538 - ERROR 3.6.19. Fixed typo in bam path:
 Submitted batch job 9593626 - fixed additional bam path issue
 Submitted batch job 9593643 - COMPLETED 3.6.19
 
-# TO DO: call variant sites with cutoff based on < 2x mean
-# interactively using plot_mapping_metrics.R inferred mean coverage for random regions ~440x
+# call variant sites with cutoff based on < 2x mean
+# interactively using plot_mapping_metrics.R I inferred the mean coverage for random regions is ~440x
 # So I'll use 880 as maximum allowed depth in ANGSD calling variant sites
 variant_sites$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,MAX_DEPTH=880 id_SNPs.sh
 Submitted batch job 9612676 - DIDN'T WORK. FIXED TYPO & RERUNNING:
-Submitted batch job 9613146 - RUNNING 3.6.19
+Submitted batch job 9613146 - RAN 3.6.19. Errors with 2 files (out-of-memory) - redoing:
+slurm-log/idSNPs_9613146_39.out: "slurmstepd: error: Detected 1 oom-kill event(s) in step 9613191.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler." And same problem with _361.
+variant_sites$ sbatch --array=39,361 --mem=24G --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,MAX_DEPTH=880 id_SNPs.sh
+Submitted batch job 9716699 - COMPLETED (fast) 3.8.19
+
 
 # TO DO: Call genotypes for tripsacum

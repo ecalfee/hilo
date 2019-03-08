@@ -1,14 +1,14 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J NGSadmix
 #SBATCH -o /home/ecalfee/hilo/slurm-log/NGSadmix_%A_%a.out
 #SBATCH -t 6:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=2-4
-#SBATCH --export=DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA",ALL
 
+# to run: sbatch --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
 
 # slurm array task id sets number of genetic clusters, e.g.
 # set an --array=2 for K = 2 or --array=2-4 to test K = 2, 3, 4 etc.
@@ -16,8 +16,8 @@
 # set VARIABLES
 k=$SLURM_ARRAY_TASK_ID
 #DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
-GL_FILE=${DIR_GL}"/whole_genome.beagle.gz"
-OUT_DIR=${DIR_GL}"/NGSAdmix"
+GL_FILE="results/thinnedSNPs/$PREFIX/whole_genome.beagle.gz"
+OUT_DIR="results/NGSAdmix/$PREFIX"
 
 # load module for NGSAdmix
 module load bio

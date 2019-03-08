@@ -1,6 +1,6 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J catThinGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/catThinGL4PCA_%A_%a.out
 #SBATCH -t 4:00:00
@@ -9,14 +9,17 @@
 # concatenates 0-425 regions of beagle genotype likelihood files,
 # skipping headers after first file (region 0)
 
+# to run: sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGL4PCA.sh
+
+
 # set variables
-DIR_OUT="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA"
+DIR_OUT="results/thinnedSNPs/$PREFIX"
 DIR_IN=${DIR_OUT}"/GL_by_region"
-DIR_SCRATCH="/scratch/ecalfee/catThinGL4PCA"
+DIR_SCRATCH="/scratch/ecalfee/catThinGL4PCA/$PREFIX"
 SCRATCH_OUT=${DIR_SCRATCH}"/whole_genome.beagle.gz"
 
 # make local scratch DIRECTORY
-mkdir -p ${DIR_SCRATCH}
+mkdir -p "$DIR_SCRATCH"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
