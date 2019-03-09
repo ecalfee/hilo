@@ -26,8 +26,9 @@ set –o nounset
 # load modules
 # using python3 for pandas
 # and bio for angsd v9.21 for angsd sites indexing
-module load python3
-module load bio
+#module load python3
+module load bio3
+# load module bio later in script to not conflict with python3 in bio3
 
 # make output directory
 mkdir -p ${DIR_OUT}
@@ -46,6 +47,8 @@ cp ${DIR_SCRATCH}/chr${i}.var.sites ${DIR_SCRATCH}/temp_chr${i}.var.sites
 cat ${DIR_SCRATCH}/temp_chr${i}.var.sites | tr -d '\r' > ${DIR_SCRATCH}/chr${i}.var.sites
 # remove temporary sites file
 rm ${DIR_SCRATCH}/temp_chr${i}.var.sites
+
+module load bio # for angsd
 
 echo "making ANGSD sites index"
 sleep 2s # wait 2 seconds before indexing so that index doesn't have same timestamp as sites file
