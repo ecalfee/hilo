@@ -1,12 +1,13 @@
 #!/bin/bash -l
 #SBATCH --partition=med
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH -D /home/ecalfee/hilo/variant_sites
 #SBATCH -J MAF2SitesFile
 #SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=2G
 #SBATCH --array=0-425
-#SBATCH --export="DIR=geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL"
+
+#to run: sbatch --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" mafsToSitesFile.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
