@@ -88,8 +88,13 @@ meanDepth = function(dep, max = 100){
 meanDepth(depthG20, max = 10000)
 meanDepth(depthG, max = 10000)
 sum(meanDepth(depthF))
-sum(meanDepth(depthF20))
-
+sum(meanDepth(depthF20)) # all individuals
+sum(meanDepth(depthF20)[1:(297-15)]) # excluding anne's 4 lowland maize
+plot(1:(297-15), meanDepth(depthF20)[1:(297-15)])
+sum(meanDepth(depthF20)[1:(297-15)]>5)
+ids <- read.table("../samples/hilo_alloMAIZE_MAIZE4LOW_IDs.list", stringsAsFactors = F, header = F)$V1
+ids[1:(297-15)]
+ids[meanDepth(depthF20)>5]
 
 # calculate and write to file mean depth across the Fst regions from depthF
 mean_depthF = meanDepth(depthF)

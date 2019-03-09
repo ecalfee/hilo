@@ -346,11 +346,11 @@ Submitted batch job 9584598 - COMPLETED 3.6.19
 filtered_bams$ sbatch --array=85 -t 6:00:00 merge_bams_HILO.sh
 Submitted batch job 9593488 - COMPLETED (fast) 3.6.19
 
-# TO DO: run flagstat on all bams
-sbatch --array=0-296 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
-Submitted batch job **
-sbatch --array=0 --export=PREFIX=RIMMA0625_small get_bam_metrics_flagstat.sh
-Submitted batch job **
+# running flagstat to get summary mapping statistics on all bams
+filtered_bams$ sbatch --array=0-296 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
+Submitted batch job 9719681 - RUNNING 3.8.19
+filtered_bams$ sbatch --array=0 --export=PREFIX=RIMMA0625_small get_bam_metrics_flagstat.sh
+Submitted batch job 9719772 - RUNNING 3.8.19
 
 
 # TO DO: make symlink to metrics for remapped hilo individuals
