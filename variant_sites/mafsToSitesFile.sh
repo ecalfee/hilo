@@ -1,9 +1,9 @@
 #!/bin/bash -l
-#SBATCH --partition=med
+#SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/variant_sites
 #SBATCH -J MAF2SitesFile
 #SBATCH -o /home/ecalfee/hilo/slurm-log/MAF2SitesFile_%A_%a.out
-#SBATCH -t 1:00:00
+#SBATCH -t 15:00
 #SBATCH --mem=2G
 #SBATCH --array=0-425
 

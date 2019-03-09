@@ -4,25 +4,27 @@ based on individual genotype likelihoods at a set of unlinked SNPs
 1) Thin SNPs to low LD (<.01cM ~ 10kb) -- output is by chromosome
 pruneFixedcM_PCA.sh (runs python script ../scripts/pruneFixedcM.py)
 (note: pass1 variant sites results were stored in /thinnedPCA/)
-sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PCA.sh
-Submitted batch job ****
+global_ancestry$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PCA.sh
+Submitted batch job 9722786 - RUNNING 3.8.19
 
 2) Thin existing GL file for all variant sites to only include these ~125K thinned sites using R
 thinGLFile4PCA.sh (runs R script thinGLFile.R)
-sbatch --dependency=afterok:**** --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
-Submitted batch job ***
+global_ancestry$ sbatch --dependency=afterok:9722786 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
+Submitted batch job 9722800 - WAITING 4 DEPENDENCY
 
 3) Concatenate GL across all thinned SNPs, regions, & all chromosomes for input to NGSadmix
-sbatch --dependency=afterok:*** --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGL4PCA.sh
-Submitted batch job **
+global_ancestry$ sbatch --dependency=afterok:9722800 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGLFile4PCA.sh
+Submitted batch job 9722807 - WAITING 4 DEPENDENCY
 
 4) Run NGSadmix for global ancestry using K=2,3,4 genetic clusters
 runNGSadmix.sh
-sbatch --dependency=afterok:** --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
+global_ancestry$ sbatch --dependency=afterok:9722807 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
+Submitted batch job 9722808 - WAITING 4 DEPENDENCY
 
 5) Create PCA using PCAngsd and GL from all thinned SNPs
 runPCAngsd.sh
-sbatch --dependency=afterok:** --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
+global_ancestry$ sbatch --dependency=afterok:9722807 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
+Submitted batch job 9722809 - WAITING 4 DEPENDENCY
 
 6) Visualize results in R
 

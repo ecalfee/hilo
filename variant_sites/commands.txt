@@ -36,8 +36,8 @@ variant_sites$ sbatch --array=39,361 --mem=24G --export=PREFIX=hilo_alloMAIZE_MA
 Submitted batch job 9716699 - COMPLETED (fast) 3.8.19
 
 # make var.sites files to complement the mafs.gz files:
-sbatch --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" mafsToSitesFile.sh
-Submitted batch job ****
+variant_sites$ sbatch --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" -p med2 mafsToSitesFile.sh
+Submitted batch job 9722339 - COMPLETED 3.8.19
 
 # I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when I don't think it should be (!)
 
