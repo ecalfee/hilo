@@ -11,5 +11,13 @@ hilo/samples$ ln -s /home/ecalfee/hilo/data/parviglumis/PalmarChico_IDs.list Pal
 samples$ for i in $(cat PalmarChico_IDs.list); do echo ../filtered_Bams/results/PalmarChico/"$i".sort.dedup.baq.bam; done > PalmarChico_bams.list
 
 # combinations:
+# all hilo individuals plus allopatric landraces from Li (alloMAIZE) and from 4 lowland mex pops (MAIZE4LOW)
 samples$ cat hilo_IDs.list alloMAIZE_IDs.list MAIZE4LOW_IDs.list > hilo_alloMAIZE_MAIZE4LOW_IDs.list
 samples$ cat hilo_bams.list alloMAIZE_bams.list MAIZE4LOW_bams.list > hilo_alloMAIZE_MAIZE4LOW_bams.list
+
+# all hilo individuals plus allopatric landraces from Li (alloMAIZE)
+samples$ cat hilo_IDs.list alloMAIZE_IDs.list > hilo_alloMAIZE_IDs.list
+samples$ cat hilo_bams.list alloMAIZE_bams.list > hilo_alloMAIZE_bams.list
+
+# backups:
+Made RIMMA0625_small_bams.list and _IDs.list just for RIMMA0625_small which I think is artificially truncated since it should be high coverage (?)

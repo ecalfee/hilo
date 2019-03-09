@@ -177,7 +177,7 @@ Submitted batch job 9130075 - 2.22.19. OUT-OF-MEMORY errors on all (even though 
 filtered_bams$ sbatch --array=1-7,10-17,19-22,24-30,32,34-38,40-49 --mem=48G -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
 Submitted batch job 9144213 - DONE 2.25.19 BUT jobs 20 and 49 out of memory). Looks like #49 finished properly anyways, re-doing #20 (note: job #20 is PARV21):
 filtered_bams$ sbatch --array=20 --mem=56G -t 8-00:00:00 -p med2 --export=DIR_IN=../data/parviglumis,PREFIX_LIST=PalmarChico map_and_filter_reads.sh
-Submitted batch job 9404412 - RUNNING 3.4.19
+Submitted batch job 9404412 - ran 3.4.19. COMPLETED 3.8.19
 
 TRIPSACUM:
 Downloading Tripsacum reads from NCBI:
@@ -275,6 +275,17 @@ filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_f
 Submitted batch job 8899475 - 2.15.19. KILLED (OUT OF MEMORY). Also problem with picard. RESTARTING (but won't have to realign paired 12 reads):
 filtered_bams$ sbatch --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
 Submitted batch job 9130024 - 2.22.19. COMPLETED.
+# BUT this should be a high coverage individual and I'm only seeing low coverage. So I am going to try remapping again just to check
+# first I save the small bams for backup:
+filtered_bams/results/alloMAIZE$ mv RIMMA0625.sort.dedup.baq.bam RIMMA0625_small.sort.dedup.baq.bam
+filtered_bams/results/alloMAIZE$ mv RIMMA0625.sort.dedup.baq.bam.bai RIMMA0625_small.sort.dedup.baq.bam.bai
+# and make a symlink to the original v3 bam:
+data/landraces_from_Li/original$ ln -s /group/jrigrp4/landraces_v4_fromLi2017/original/RIMMA0625_Andean.IndelRealigned.bam RIMMA0625_Andean.IndelRealigned.bam
+# then I remap:
+filtered_bams$ sbatch -p med2 --mem=64G --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+Submitted batch job 9719519 - RUNNING 3.8.19
+filtered_bams$ sbatch --dependency=afterok:9719519 --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
+Submitted batch job 9719522 - WAITING 4 DEPENDENCY
 
 # made ID files for allopatric maize from Li:
 data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
@@ -336,5 +347,11 @@ filtered_bams$ sbatch --array=85 -t 6:00:00 merge_bams_HILO.sh
 Submitted batch job 9593488 - COMPLETED (fast) 3.6.19
 
 # TO DO: run flagstat on all bams
+sbatch --array=0-296 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
+Submitted batch job **
+sbatch --array=0 --export=PREFIX=RIMMA0625_small get_bam_metrics_flagstat.sh
+Submitted batch job **
+
+
 # TO DO: make symlink to metrics for remapped hilo individuals
 # TO DO: confirm with Anne correct parviglumis
