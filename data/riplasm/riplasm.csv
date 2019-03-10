@@ -1,0 +1,2819 @@
+ RI_ACCESSION , GENUS        , SPECIES      , ACP          , ACNO         , ACCID        , GEOCTY       , GEOSTA       , LAT          , LON          , ACELLO       , LOCALITY     , PEDIGREE     , SAMPSTAT     , SOURCE       , KERNELS      , NOTES        , FLAG         ,,,,,,,,,
+
+RIAM0001,Apluda,mutica,PI,219568,,,,,,,,,,,,leaf tissu in the ,80C from Kellogg Elizabeth,,,,,,,,,
+
+RIAN0001,Arundinella,nepalensis,PI,384059,,,,,,,,,,,,,,,,,,,,,,
+
+RIBD0001,Brachypodium,distachyon,,,,,,,,,,,,,,W6 36678 'Bd21' 30 seeds 2012i\ 6 days @ 4C in dark\ ,,,,,,,,,,
+
+RICC0001,Chasmopodium,caudatum,kew,184054,,,,,,,,,,,,leaf tissu in the ,80C from Kellogg Elizabeth,,,,,,,,,
+
+RICK0001,Chionachne,koenigii ,SN,,,,,,,,,,,,,,,,,,,,,,,
+
+RICS0001,Chrysopogon,serrulatus,PI,219580,,,,,,,,,,,,,,,,,,,,,,
+
+RICZ0001,Chrysopogon,zizanioides,PI,271633,,,,,,,,,,USDA,,PI 271633 02 SD,,,,,,,,,,
+
+RICZ0002,Chrysopogon,zizanioides,PI,302300,,,,,,,,,,USDA,,PI 302300 01 SD,,,,,,,,,,
+
+RICZ0003,Chrysopogon,zizanioides,PI,538757,,,,,,,,,,USDA,,PI 538757 01 SD,,,,,,,,,,
+
+RID0001,Zea,diploperennis,Ames,21884,87281,Mexico,Jalisco,19.5875,,104.264,1925,Near houses at Zarza mora (Blackberry)  about 2 km east of Las Joyas  6 km west,southwest of Rincon de Manantlan  15 km south,southwest of El Chante  top of Sierra de Manantlan Occidental. Roadside and old fields.,,Wild,USDA,,,,,,,,,
+
+RID0002,Zea,diploperennis,Ames,21890,87289,Mexico,Jalisco,19.5833,,104.283,1950,"Just east of buildings forming Zarzamora (also called Estacion Biologica \Las Joyas\"")  2 km east-southeast of Las Joyas  7 km west-southwest of Rincon de Manantlan  and 11 km south-southeast of Ahuacapan  Sierra de Manantlan Occidental. Thickets along stream in abandoned peach orchard.""",,Wild,USDA,,,,,,,,,,,
+
+RID0003,Zea,diploperennis,PI,441931,336867,Mexico,Jalisco,19.6,,104.283,1900,Las Joyas  7.8 km west by west,southwest of Rincon de Manantlan  about 16 km southwest of El Chante. Thickets along stream and maize fields.,,Wild,USDA,,,,,,,,,,
+
+RID0004,Zea,diploperennis,PI,441932,336868,Mexico,Jalisco,19.5875,,104.264,1925,Near houses at Zarza mora (Blackberry)  about 2 km east of Las Joyas  6 km west,southwest of Rincon de Manantlan  15 km south,southwest of El Chante  top of Sierra de Manantlan Occidental. Open  grassy  ungrazed slopes and roadsides  pastures and grazed orchards.,,Wild,USDA,,,,,,,,,
+
+RIHA0001,Hemarthria,altissima,PI,299039,,,,,,,,,,,,,,,,,,,,,,
+
+RIHH0001,Hyparrhenia,hirta,PI,206889,,,,,,,,,,,,,,,,,,,,,,
+
+RIHY0001,Zea,mays subsp. mays,,,,,,,,,,,,,,RIMMA0758 x RIMMA0039 F1 (Chulpi x Costeno),,,,,,,,,,
+
+RIHY0004,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Doebley,0,6k from Doebley\ Packet 16609\ Seed Lot 06GH,94,4 x TIP,522\ Cross Notes: F1\ Stock Description: B73 x TIL1,S8\ 2k sent to R. Kelly Dawe\ No more seeds,,,,,,
+
+RIHY0005,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Doebley,0,6k from Doebley\ Packet 16613\ Seed Lot 06GH,101,4 x TIP,536\ Cross Notes: F1\ Stock Description: OH43 x TIL 11,S9\ 2k sent to R. Kelly Dawe,,,,,,
+
+RIHY0006,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Doebley,0,6k from Doebley\ Packet 16620\ Seed Lot: GH2006,96,5 x TIP,459,TIP,459\ Cross Notes: F1\ Stock Description: B73 x TIL5\ 2k sent to R. Kelly Dawe,,,,,
+
+RIHY0007,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Doebley,0,6k from Doebley\ Packet 16638\ Seed Lot: GH2006,102,5 x TIP,516,TIP,516\ Cross notes: F1\ Stock Description: OH43 x TIL15\ 2k sent to R. Kelly Dawe,,,,,
+
+RIHY0008,Zea,hybrid,,,,,,,,,,ssp mays x ssp mays,,Flint,Garcia,,MR23 , Zapalote chico  (RIMMA0053) X MR15 Palomero de Jalisco (RIMMA0046)\ 10WN1193\ 5 kernels,1,,,,,,,
+
+RIHY0009,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Flint,Garcia,,,,,,,,,,,
+
+RIHY0010,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Flint,Garcia,,,,,,,,,,,
+
+RIHY0011,Zea,hybrid,,,,,,,,,,ssp mays x ssp parviglumis,,Flint,Garcia,,,,,,,,,,,
+
+RIHY0012,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 75% of Z. dip. \ \ UMN \ 1997",,,,,,,,,,
+
+RIHY0012,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 75% Z. dip. \ \ UMN \ 1997",,,,,,,,,,
+
+RIHY0013,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 20 selfed \ [A632(A632 X Las Joyas C)]\ 2000\ ",,,,,,,,,,
+
+RIHY0014,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 21 selfed\ [A619(A619 X Las Joyas C)]\ \2 other ears flint kernels white cobs 2000",,,,,,,,,,
+
+RIHY0015,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 72 selfed\ 17LD\ MN hybrid x Z. dip. \ 1997",,,,,,,,,,
+
+RIHY0016,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 48 selfed\ 194 LD\ \B73\"" X \""...\"" \ 6 of 6 plants bloomed in MN 2002",,,,,,,,,,
+
+RIHY0017,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Carlson,,"For more info, see \ \ http://www.agron.missouri.edu/mnl/63/195carlson.html\ http://www.agron.missouri.edu/mnl/69/152carlson.html\ http://www.agron.missouri.edu/mnl/63/194carlson.html\ \ 22 selfed\ [Oh43(Oh43 X Las Joyas C)]\ 2000\ ",,,,,,,,,,
+
+RIHY0018,Zea,hybrid,,,,,,,,,,ssp. mays x ssp. parviglumis,,Doebley,,Packet 16612\ B73 x TIL11,S9\ Seed StockL D6GH,94,1XTIP,535,,,,,,
+
+RIHY0019,Zea,hybrid,,,,,,,,,,ssp. mays x Zea diploperennis,,Dawe,~30,"B73 x KD3595 diploperennis PI462368, received from K. Dawe on June 8, 2018",,,,,,,,,,
+
+RIHY0020,Zea,hybrid,,,,,,,,,,ssp. mays x ssp. mexicana,,Flint-Garcia,10,"B73 x PI566680, 07PR2041-06, received from S. Flint-Garcia on June 27, 2018",,,,,,,,,,
+
+RIHY0021,Zea,hybrid,,,,,,,,,,ssp. mays x ssp. mexicana,,Flint-Garcia,10,"B73 x PI566681, 07PR1001-03, received from S. Flint-Garcia on June 27, 2018",,,,,,,,,,
+
+RIHY0022,Zea,hybrid,,,,,,,,,,ssp. mays x ssp. mexicana,,Flint-Garcia,10,"B73 x PI566682, 07PR1001-08, received from S. Flint-Garcia on June 27, 2018",,,,,,,,,,
+
+RIIR,Ischaemum,rugosum,KEW,183574,,,,,,,,,,,,,,,,,,,,,,
+
+RIISB0014,Sorghum,bicolor subsp. bicolor,PI,,,,,,,,,,,,,,,,,,,,,,,
+
+RIL0001,Zea,luxurians,PI,441933,336869,Guatemala,Jutiapa,14.35,,89.85,1050,1.2 km north of El Progreso on road to Jalapa. Maize fields  gully  and hedgerows.,,Wild,USDA,,,,,,,,,,,
+
+RIL0002,Zea,luxurians,,,,Guatemala,,,,,,,,CIMMYT,,TL92B,,,,,,,,,,
+
+RIL0003,Zea,luxurians,PI,422162,494175,Mexico,,,,,Chapingo,,Wild,Dawe,,Generation 2S from Iowa PI 422162; single seed descent selfed 2008; selfed 2009,,,,,,,,,,
+
+RIMHU0001,Zea,mays subsp. huehuetenangensis,PI,441934,336870,Guatemala,Huehuetenango,15.65,,91.767,1350,,,,,,,,,,,,,,,
+
+RIMMA0001,Zea,mays subsp. mays,Ames,19288,82709,,,,,,,,Breeder's line,USDA,,Oh43,,,,,,,,,,
+
+RIMMA0002,Zea,mays subsp. mays,Ames,19323,82776,,,,,,,,Breeder's line,USDA,,Oh7B,,,,,,,,,,
+
+RIMMA0003,Zea,mays subsp. mays,Ames,19327,82780,,,,,,,,Breeder's line,USDA,,Tx303,,,,,,,,,,
+
+RIMMA0004,Zea,mays subsp. mays,Ames,27081,645471,,,,,,,Population 44: P 44C4HC101,3,#1,1,B,### .  Population 44 is also named (AED) Tuxpeno and its compnents are AED and Tuxpe?o components.  AED (American Early Dent) was Boone County White from North,Carolina  before it was brought to Egypt in 1920.  The other component is an early cycle of short plant selections from Tuxpeno,1,Breeder's line,USDA,,CML103,,,
+
+RIMMA0005,Zea,mays subsp. mays,Ames,27088,645477,,,,,,,EV88SUWAN1,SR(BC5),201,1,1,b,b,Breeder's line,USDA,,CML228,,,,
+
+RIMMA0006,Zea,mays subsp. mays,Ames,27096,645484,,,,,,,Recy W.: 89[L/LMBR]17,B,5,3,1,4,B*4,Breeder's line,USDA,,CML322,,,,
+
+RIMMA0007,Zea,mays subsp. mays,Ames,27101,645586,,,,,,,Population 590: P 590C3F373,1,1,7,B,#,5,2,B,#,B,Breeder's line,USDA,,CML333
+
+RIMMA0008,Zea,mays subsp. mays,Ames,27118,645502,,,,,,,,Breeder's line,USDA,,IL14H,,,,,,,,,,
+
+RIMMA0009,Zea,mays subsp. mays,Ames,27123,645580,,,,,,,Suwan 1(S)C4,S8,5,3 (2007),Breeder's line,USDA,,Ki3,,,,,,,
+
+RIMMA0010,Zea,mays subsp. mays,Ames,27124,645506,,,,,,,Suwan 1(S)C4,S8,18,7 (2025),Breeder's line,USDA,,Ki11,,,,,,,
+
+RIMMA0011,Zea,mays subsp. mays,Ames,27130,645512,,,,,,,,Breeder's line,USDA,,Ky21,,,,,,,,,,
+
+RIMMA0012,Zea,mays subsp. mays,Ames,27133,645514,,,,,,,,Breeder's line,USDA,,M37W,,,,,,,,,,
+
+RIMMA0013,Zea,mays subsp. mays,Ames,27134,645515,,,,,,,,Breeder's line,USDA,,M162W,,,,,,,,,,
+
+RIMMA0014,Zea,mays subsp. mays,Ames,27171,645548,,,,,,,Derived from an experimental line sharing the same pedigree of NC296 with an experimental line from the hybrid H101 from El Salvador,Breeder's line,USDA,,NC350,,,,,,,,,,
+
+RIMMA0015,Zea,mays subsp. mays,Ames,27175,645552,,,,,,,Recurrent selection from an all,tropical hybrid synthetic TROPHY,Breeder's line,USDA,,NC358,,,,,,,,,
+
+RIMMA0016,Zea,mays subsp. mays,Ames,28184,699966,,,,,,,Population 36: P 36C5F37,2,1,1,b1#b1,b1#b1,b1 .  Population 36 is also named Cogollero and it is a Caribbean composite involving 165 accessions from all the Caribbean islands. About 50 families from the Insect Disease Resistance Nursery (IDRN) population  20 families from Pool 22  and 26 families from Pool 26.,Breeder's line,USDA,,CML69,,,,
+
+RIMMA0017,Zea,mays subsp. mays,PI,506246,401182,,,,,,,TZB/TZSR,Breeder's line,USDA,,Tzi8,,,,,,,,,,
+
+RIMMA0018,Zea,mays subsp. mays,PI,550441,445377,,,,,,,WF9/Mo22,Breeder's line,USDA,,Mo18W,,,,,,,,,,
+
+RIMMA0019,Zea,mays subsp. mays,PI,550473,445409,,,,,,,Selected from advanced recurrent selection population (C5) of Iowa Stiff Stalk Synthetic (BSSS).,Breeder's line,USDA,,B73,,,,,,,,,,
+
+RIMMA0020,Zea,mays subsp. mays,PI,564682,459653,,,,,,,Iowa Corn Borer Synthetic No. 1 [BSCB1(R)C9],2,Breeder's line,USDA,,B97,,,,,,,,,
+
+RIMMA0021,Zea,mays subsp. mays,PI,587131,84096,,,,,,,,Breeder's line,USDA,,HP301\ ,,,,,,,,,,
+
+RIMMA0022,Zea,mays subsp. mays,PI,587137,82773,,,,,,,,Breeder's line,USDA,,MS71,,,,,,,,,,
+
+RIMMA0023,Zea,mays subsp. mays,PI,595541,525934,,,,,,,Pool 24: (Pool 24 FS119*FS54),6,4,1,1,BB,f .  Pool 24 is also named Tropical late white dent (TLWD) and its components are mainly Tuxpeno materials from Mexico and late maturity materials from Central America.,Breeder's line,USDA,,CML247,,,,
+
+RIMMA0024,Zea,mays subsp. mays,PI,595550,525948,,,,,,,Population 43: Ferke 8243,51,1,1,B,##,1,BB,# .  Population 43 is also named La Posta and its components is a Tuxpeno synthetic composed of 16 inbred lines.,Breeder's line,USDA,,CML277,,
+
+RIMMA0025,Zea,mays subsp. mays,PI,595561,525986,,,,,,,Population 79: Sta.Rosa 8079,22,2,2,##,Breeder's line,USDA,,CML52,,,,,,
+
+RIMMA0026,Zea,mays subsp. mays,PI,620781,42603,Mexico,Coahuila,28.5,,100.933,250,Zaragoza.,,Traditional cultivar/landrace,USDA,,Palomero,,,,,,,,,
+
+RIMMA0027,Zea,mays subsp. mays,PI,629124,73261,Mexico,Campeche,20.3167,,90.0167,30,Calkini.,,Traditional cultivar/landrace,USDA,,Dzit Bacal,,,,,,,,,
+
+RIMMA0028,Zea,mays subsp. mays,PI,645866,83081,Mexico,Mexico,19.8,,99.8667,2600,El Potrero  Atlacomulco.,,Traditional cultivar/landrace,USDA,,Palomero,,,,,,,,,
+
+RIMMA0029,Zea,mays subsp. mays,Ames,28186,699968,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0030,Zea,mays subsp. mays,Ames,19962,83844,Mexico,Mexico,19.2667,,100.183,2100,1 km northeast of St. Cuitlapaltepec  Santiago Cuitlapaltepec  Municipio of Donato Guerra.,,Traditional cultivar/landrace,USDA,,Palomero Toluquâo,,,,,,,,,
+
+RIMMA0030,Zea,mays subsp. mays,Ames,19962,83844,Mexico,Mexico,19.2667,,100.183,2100,1 km northeast of St. Cuitlapaltepec  Santiago Cuitlapaltepec  Municipio of Donato Guerra.,,Traditional cultivar/landrace,USDA,,Palomero Toluqu?o,,,,,,,,,
+
+RIMMA0031,Zea,mays subsp. mays,NSL,2824,22072,,,,,,,,Traditional cultivar/landrace,USDA,,Palomero Toluquâo,,,,,,,,,,
+
+RIMMA0031,Zea,mays subsp. mays,NSL,2824,22072,,,,,,,,Traditional cultivar/landrace,USDA,,Palomero Toluqu?o,,,,,,,,,,
+
+RIMMA0032,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,103,bulk self stock me MR01 (Araguito) S6 packet 27503,,,,,,,,
+
+RIMMA0033,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 08S,N001,bulk self stock me MR02 (Assiniboine) packet 26400,,,,,,,,
+
+RIMMA0034,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,105,bulk self stock me MR03 (Bolita) S6 packet 27504,,,,,,,,
+
+RIMMA0035,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,CONTAMINATED DURING INBREEDING. S5 HAD 10% HETEROZYGOSITY.  seed lot 09W,107,bulk self stock me MR04 (Canilla) S6 packet 27505,,,,,,,,
+
+RIMMA0036,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,109,bulk self stock me MR05 (Cateto) S6 packet 27506,,,,,,,,
+
+RIMMA0037,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,111,bulk self stock me MR06 (Chapalote) S6 packet 27507,,,,,,,,
+
+RIMMA0038,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,113,bulk self stock me MR07 (Comiteco) S6 packet 27508,,,,,,,,
+
+RIMMA0039,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,115,bulk self stock me MR08 (Costeno) S6 packet 27509,,,,,,,,
+
+RIMMA0040,Zea,mays subsp. mays,,,,Brazil,,,,,,,,Doebley,,seed lot 09W,116,bulk self stock me MR09 (Cravo Riogranense) S6 packet 27510,,,,,,,,
+
+RIMMA0041,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,118,bulk self stock me MR10 (Cristalino Norteno) S6 packet 27511,,,,,,,,
+
+RIMMA0042,Zea,mays subsp. mays,,,,Cuba,,,,,,,,Doebley,,seed lot 09W,120,bulk self stock me MR11 (Cuban Flint) S6 packet 27512,,,,,,,,
+
+RIMMA0043,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 08S,N002,bulk self stock me MR12 (Havasupai) packet 26401,,,,,,,,
+
+RIMMA0044,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 08S,N004,bulk self stock me MR13 (Hickory King) packet 26402,,,,,,,,
+
+RIMMA0045,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 08S,N005,bulk self stock me MR14 (Longfellow Flint) packet 26403,,,,,,,,
+
+RIMMA0046,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,CONTAMINATED DURING INBREEDING.  S5 was ~84% HOMOZYGOUS. seed lot 09W,122,bulk self stock me MR15 (Palomero de Jalisco) S6 packet 27513,,,,,,,,
+
+RIMMA0047,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,CONTAMINATED DURING INBREEDING. S6 HAD >10% HETEROZYGOSITY.  seed lot 09W,124,bulk self stock me MR16 (Pepetilla) S7 packet 27514.,,,,,,,,
+
+RIMMA0048,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,128,bulk self stock me MR18 (Reventador) S6 packet 27515,,,,,,,,
+
+RIMMA0049,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 08S,N006,bulk self stock me MR19 (Santo Domingo) packet 26404,,,,,,,,
+
+RIMMA0050,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,130,bulk self stock me MR20 (Shoe Peg) S7 packet 27516,,,,,,,,
+
+RIMMA0051,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,132,bulk self stock me MR21 (Tabloncillo) S6 packet 27517,,,,,,,,
+
+RIMMA0052,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,134,bulk self stock me MR22 (Tuxpeno) S6 packet 27518,,,,,,,,
+
+RIMMA0053,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,136,bulk self stock me MR23 (Zapalote Chico) S6 packet 27519,,,,,,,,
+
+RIMMA0054,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,140,bulk self stock me MR25 (Poropo) S5 packet 27521,,,,,,,,
+
+RIMMA0055,Zea,mays subsp. mays,,,,,,,,,,,,Doebley,,seed lot 09W,644,bulk self stock me MR26 (Pollo)  S5 packet 27526,,,,,,,,
+
+RIMMA0056,Zea,mays subsp. mays,PI,558532,453504,,,,,,,CI 187,2/C103,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0057,Zea,mays subsp. mays,MGS,25795,8288,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0058,Zea,mays subsp. mays,,,,,,,,,,,,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0059,Zea,mays subsp. mays,MGS,14780,8253,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0060,Zea,mays subsp. mays,MGS,14128,4606,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0061,Zea,mays subsp. mays,MGS,14646,8901,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0062,Zea,mays subsp. mays,MGS,96977,8913,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0063,Zea,mays subsp. mays,MGS,109599,511313,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0064,Zea,mays subsp. mays,MGS,142656,618015,,,,,,,,Breeder's line,Stock Center,,possible centromere variant?,,,,,,,,,,
+
+RIMMA0065,Zea,mays subsp. mays,Ames,3004,22863,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0066,Zea,mays subsp. mays,Ames,4327,27700,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0067,Zea,mays subsp. mays,Ames,4328,27703,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0068,Zea,mays subsp. mays,Ames,4329,27709,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0069,Zea,mays subsp. mays,Ames,19002,82222,,,,,,,WF9 x T8,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0070,Zea,mays subsp. mays,Ames,19016,82250,,,,,,,(C103 x T82)(K4 x C1032),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0071,Zea,mays subsp. mays,Ames,19284,82701,,,,,,,Lancaster Surecrop (from Noah Hershey),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0072,Zea,mays subsp. mays,Ames,19288,82709,,,,,,,,Breeder's line,USDA,,identical to RIMMA001,,,,,,,,,,
+
+RIMMA0073,Zea,mays subsp. mays,Ames,19293,82719,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0074,Zea,mays subsp. mays,Ames,19308,82753,,,,,,,[(Mt42 X B14) B14 self B14(2)],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0075,Zea,mays subsp. mays,Ames,19309,82757,,,,,,,[(ND302 X B14) B14(2)],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0076,Zea,mays subsp. mays,Ames,19311,82761,,,,,,,ND203 X B14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0077,Zea,mays subsp. mays,Ames,19313,82765,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0078,Zea,mays subsp. mays,Ames,19319,82771,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0079,Zea,mays subsp. mays,Ames,19321,82774,,,,,,,Stiff Stalk Synthetic 1,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0080,Zea,mays subsp. mays,Ames,20140,84249,,,,,,,Minnesota #13 (Owen's Strain),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0081,Zea,mays subsp. mays,Ames,20190,84398,,,,,,,KE 3,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0082,Zea,mays subsp. mays,Ames,21512,86562,,,,,,,Midland Yellow Dent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0083,Zea,mays subsp. mays,Ames,21970,87388,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0084,Zea,mays subsp. mays,Ames,22439,489083,,,,,,,G3 x AR9,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0085,Zea,mays subsp. mays,Ames,22443,489206,,,,,,,4,29(Silver King) x 46(N.W. Dent)4^4,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0086,Zea,mays subsp. mays,Ames,22748,517103,,,,,,,N28 X H91,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0087,Zea,mays subsp. mays,Ames,22754,517109,,,,,,,Pride of Saline,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0088,Zea,mays subsp. mays,Ames,22756,517121,,,,,,,OS 426,5,2,4,4,2,4,1,3,3,1.  Osterland Yellow Dent.,Breeder's line,USDA,,
+
+RIMMA0089,Zea,mays subsp. mays,Ames,23392,534889,,,,,,,64 X 15,28,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0090,Zea,mays subsp. mays,Ames,23423,535048,,,,,,,Golden King (McArthur),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0091,Zea,mays subsp. mays,Ames,23424,535049,,,,,,,4,29 X 64,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0092,Zea,mays subsp. mays,Ames,23427,535110,,,,,,,Reid Yellow Dent (selected from Holbert a line self ~S8),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0093,Zea,mays subsp. mays,Ames,23428,535124,,,,,,,Reid Yellow Dent (selected from Holbert a line self ~S8),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0094,Zea,mays subsp. mays,Ames,23447,535323,,,,,,,A78 X A109,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0095,Zea,mays subsp. mays,Ames,23450,535336,,,,,,,B164,886 X A237,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0096,Zea,mays subsp. mays,Ames,23476,535387,,,,,,,[(V3 X Wf9) S1 Wf9],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0097,Zea,mays subsp. mays,Ames,23488,535416,,,,,,,[(Mt42 X B14) S1 B14],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0098,Zea,mays subsp. mays,Ames,23508,535500,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0099,Zea,mays subsp. mays,Ames,23509,535501,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0100,Zea,mays subsp. mays,Ames,23518,535510,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0101,Zea,mays subsp. mays,Ames,23519,535511,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0102,Zea,mays subsp. mays,Ames,23922,547592,,,,,,,[(Oh51 X Oh17)Oh51],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0103,Zea,mays subsp. mays,Ames,24589,559778,,,,,,,Iodent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0104,Zea,mays subsp. mays,Ames,24590,559779,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0105,Zea,mays subsp. mays,Ames,24712,557010,,,,,,,A619 X R168,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0106,Zea,mays subsp. mays,Ames,24752,557043,,,,,,,[(Golden Glow X Maize Amargo) X Golden Glow],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0107,Zea,mays subsp. mays,Ames,26021,597264,,,,,,,Palin Reid,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0108,Zea,mays subsp. mays,Ames,26022,597265,,,,,,,Reid Yellow Dent (Troyer strain),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0109,Zea,mays subsp. mays,Ames,26604,631443,,,,,,,Outcross in line from 176A.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0110,Zea,mays subsp. mays,Ames,26769,633451,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0111,Zea,mays subsp. mays,Ames,26770,633452,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0112,Zea,mays subsp. mays,Ames,26771,633453,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0113,Zea,mays subsp. mays,Ames,26772,633454,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0114,Zea,mays subsp. mays,Ames,26796,633478,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0115,Zea,mays subsp. mays,Ames,26798,633480,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0116,Zea,mays subsp. mays,Ames,26808,633449,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0117,Zea,mays subsp. mays,Ames,27045,645414,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0118,Zea,mays subsp. mays,Ames,27066,645459,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0119,Zea,mays subsp. mays,Ames,27070,645462,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0120,Zea,mays subsp. mays,Ames,27105,645491,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0121,Zea,mays subsp. mays,Ames,27121,645505,,,,,,,Pride of Saline,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0122,Zea,mays subsp. mays,Ames,27122,645588,,,,,,,Yellow Selection No. 1 (Pride of Saline  yellow strain),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0123,Zea,mays subsp. mays,Ames,27136,645516,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0124,Zea,mays subsp. mays,Ames,27137,645517,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0125,Zea,mays subsp. mays,Ames,27139,645519,,,,,,,Weekley's Improved,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0126,Zea,mays subsp. mays,Ames,27184,645561,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0127,Zea,mays subsp. mays,Ames,27187,645564,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0128,Zea,mays subsp. mays,Ames,27193,645570,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0129,Zea,mays subsp. mays,Ames,28290,711288,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0130,Zea,mays subsp. mays,Ames,28336,711409,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0131,Zea,mays subsp. mays,Ames,28958,717734,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0132,Zea,mays subsp. mays,CIze,21,801,,,,,,,CI21 x Hy,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0133,Zea,mays subsp. mays,NSL,8581,44333,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0134,Zea,mays subsp. mays,NSL,22632,88096,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0135,Zea,mays subsp. mays,NSL,22634,88098,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0136,Zea,mays subsp. mays,NSL,22983,88471,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0137,Zea,mays subsp. mays,NSL,28965,97359,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0138,Zea,mays subsp. mays,NSL,28966,97362,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0139,Zea,mays subsp. mays,NSL,30038,98958,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0140,Zea,mays subsp. mays,NSL,30053,98978,,,,,,,,Breeder's line,USDA,7,w22,,,,,,,,,,
+
+RIMMA0141,Zea,mays subsp. mays,NSL,30059,98997,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0142,Zea,mays subsp. mays,NSL,30060,98998,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0143,Zea,mays subsp. mays,NSL,30065,99016,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0144,Zea,mays subsp. mays,NSL,30074,99040,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0145,Zea,mays subsp. mays,NSL,30861,100997,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0146,Zea,mays subsp. mays,NSL,30863,101002,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0147,Zea,mays subsp. mays,NSL,30865,101010,,,,,,,Reid Yellow Dent x Krug Yellow Dent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0148,Zea,mays subsp. mays,NSL,30867,101016,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0149,Zea,mays subsp. mays,NSL,30869,101023,,,,,,,(A375 x M13)CI187,2,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0150,Zea,mays subsp. mays,NSL,30891,101093,,,,,,,Illinois Synthetic,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0151,Zea,mays subsp. mays,NSL,30894,101103,,,,,,,Snelling Corn Borer Synthetic,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0152,Zea,mays subsp. mays,NSL,32722,103554,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0153,Zea,mays subsp. mays,NSL,32728,103566,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0154,Zea,mays subsp. mays,NSL,32732,103574,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0155,Zea,mays subsp. mays,NSL,42809,105366,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0156,Zea,mays subsp. mays,NSL,42872,105396,,,,,,,Minnesota No. 13 (same as C46),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0157,Zea,mays subsp. mays,NSL,42874,105398,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0158,Zea,mays subsp. mays,NSL,42875,105399,,,,,,,Funk Yellow Dent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0159,Zea,mays subsp. mays,NSL,42878,105402,,,,,,,Complex cross.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0160,Zea,mays subsp. mays,NSL,65864,112433,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0161,Zea,mays subsp. mays,NSL,65865,112434,,,,,,,Iowa Stiff Stalk Synthetic.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0162,Zea,mays subsp. mays,NSL,65866,112435,,,,,,,Iowa Stiff Stalk Synthetic,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0163,Zea,mays subsp. mays,NSL,65873,112442,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0164,Zea,mays subsp. mays,NSL,65874,112443,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0165,Zea,mays subsp. mays,NSL,81599,118605,,,,,,,Minnesota Synthetic 3,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0166,Zea,mays subsp. mays,PI,213696,175890,United States,Illinois,41.7175,,89.9258,,From  E. Fadden  Lyndon  Illinois.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0167,Zea,mays subsp. mays,PI,213697,175891,United States,Pennsylvania,,,,From Noah Hershey  Lancaster  Pennsylvania.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0168,Zea,mays subsp. mays,PI,213698,175892,United States,Indiana,,,,From Ben French  Springport  Indiana.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0169,Zea,mays subsp. mays,PI,213699,175893,United States,Iowa,42.4003,,93.0756,,From H.A. Schemed  Steamboat Rock  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0170,Zea,mays subsp. mays,PI,213700,175894,United States,Indiana,,,,From H.C. Lacton  New Castle  Indiana.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0171,Zea,mays subsp. mays,PI,213702,175896,United States,Iowa,41.6117,,93.885,,From Burl York  Waukee  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0172,Zea,mays subsp. mays,PI,213705,175899,United States,Illinois,39.8525,,89.4086,,From G. Nilhaus  Buffalo  Illinois.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0173,Zea,mays subsp. mays,PI,213706,175900,United States,Iowa,42.5225,,93.2511,,From W. Reinhardt  Iowa Falls  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0174,Zea,mays subsp. mays,PI,213708,175902,United States,Iowa,41.6731,,93.6975,,From J.J. Newlin  Johnston  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0175,Zea,mays subsp. mays,PI,213709,175903,United States,Iowa,43.1381,,93.3792,,From John Dieterlene  Clear Lake  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0176,Zea,mays subsp. mays,PI,213712,175906,United States,Kansas,37.4744,,97.2436,,From W.C. Lambke  Mulvane  Kansas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0177,Zea,mays subsp. mays,PI,213715,175909,United States,Texas,,,,Originally from Texas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0178,Zea,mays subsp. mays,PI,213716,175910,United States,Iowa,42.7317,,93.7328,,From C.H. Miller  Clarion  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0179,Zea,mays subsp. mays,PI,213717,175911,United States,Illinois,40.9044,,89.0344,,From George Krug Jr.  Minonk  Illinois.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0180,Zea,mays subsp. mays,PI,213718,175912,United States,Iowa,42.9528,,92.5361,,From W.B. Smith  Nashua  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0181,Zea,mays subsp. mays,PI,213719,175913,United States,Missouri,,,,From Elsberry  Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0182,Zea,mays subsp. mays,PI,213720,175914,United States,Nebraska,40.1464,,97.18,,From C.J. Galbraith  Fairbury  Nebraska.,Midland X Reid.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0183,Zea,mays subsp. mays,PI,213721,175915,United States,Iowa,42.4222,,94.9894,,From R. Wilson  Sac City  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0184,Zea,mays subsp. mays,PI,213722,175916,United States,Minnesota,,,,From N.P. Brepke  Emmons  Minnesota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0185,Zea,mays subsp. mays,PI,213723,175917,United States,South Dakota,,,,Originally from South Dakota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0186,Zea,mays subsp. mays,PI,213724,175918,United States,Iowa,42.0347,,90.4808,,From Dr. G.F. Sprague  Ames  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0187,Zea,mays subsp. mays,PI,213725,175919,United States,Kansas,37.8172,,96.8778,,From C.C. Cunningham  El Dorado  Kansas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0188,Zea,mays subsp. mays,PI,213727,175921,United States,Illinois,38.8922,,89.4131,500,From J. Wilderman  Greenville  Illinois.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0189,Zea,mays subsp. mays,PI,213728,175922,United States,Arizona,,,,Apache Tribe  Arizona.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0190,Zea,mays subsp. mays,PI,213744,175938,United States,Oklahoma,,,,Cherokee Tribe  Oklahoma.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0191,Zea,mays subsp. mays,PI,213748,175942,United States,Oklahoma,,,,Cheyenne Tribe  Oklahoma.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0192,Zea,mays subsp. mays,PI,213770,175963,United States,South Dakota,,,,Sioux Tribe  South Dakota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0193,Zea,mays subsp. mays,PI,213771,175964,United States,Nebraska,,,,Winnebago Tribe  Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0194,Zea,mays subsp. mays,PI,213780,175973,United States,South Dakota,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0195,Zea,mays subsp. mays,PI,213781,175974,United States,South Dakota,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0196,Zea,mays subsp. mays,PI,213793,175986,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0197,Zea,mays subsp. mays,PI,214197,176126,Canada,Ontario,,,,Ontario Agricultural College  Guelph  Ontario.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0198,Zea,mays subsp. mays,PI,214293,176159,United States,Pennsylvania,,,,From Charles Ricedorf  Lancaster  Pennsylvania.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0199,Zea,mays subsp. mays,PI,214294,176160,United States,Ohio,,,,From Hershel Long  Yellow Springs  Ohio.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0200,Zea,mays subsp. mays,PI,214295,176161,United States,Kansas,,,,From the collection at the Kansas State College Agronomy Farm.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0201,Zea,mays subsp. mays,PI,217405,177451,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0202,Zea,mays subsp. mays,PI,217407,177455,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0203,Zea,mays subsp. mays,PI,217408,177458,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0204,Zea,mays subsp. mays,PI,217412,177462,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0205,Zea,mays subsp. mays,PI,217472,177497,United States,New York,,,,From Rushville  New York.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0206,Zea,mays subsp. mays,PI,217473,177498,United States,Pennsylvania,,,,From Grand Valley  Pennsylvania.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0207,Zea,mays subsp. mays,PI,217475,177500,United States,New Jersey,,,,From Hackettston  New Jersey.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0208,Zea,mays subsp. mays,PI,218005,177740,United States,West Virginia,,,,From R.W. Loudermilk  Willow End  Monroe County  West Virginia.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0209,Zea,mays subsp. mays,PI,218195,177861,United States,West Virginia,,,,Originally developed by C.R. Rector in Wood Co.  West Virginia on a farm once owned by George Washington.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0210,Zea,mays subsp. mays,PI,219871,178146,United States,North Dakota,,,,Obtained from Canadian Assiniboine Indians by Oscar H. Will Seed Company  Bismarck  North Dakota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0211,Zea,mays subsp. mays,PI,219877,178158,United States,North Dakota,,,,From Oscar H. Will Seed Company  Bismarck  North Dakota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0212,Zea,mays subsp. mays,PI,219882,178167,United States,North Dakota,,,,From Oscar H. Will Seed Company  Bismarck  North Dakota.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0213,Zea,mays subsp. mays,PI,219883,178170,United States,North Dakota,,,,From J.G. Haney.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0214,Zea,mays subsp. mays,PI,219884,178171,United States,North Dakota,,,,From J.G. Haney.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0215,Zea,mays subsp. mays,PI,221866,179550,United States,Missouri,37.8986,,94.2319,260,From E. Grundy  Walker  Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0216,Zea,mays subsp. mays,PI,221870,179554,United States,Missouri,39.4489,,91.0514,450,From Louisiana  Missouri. Pike county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0217,Zea,mays subsp. mays,PI,221872,179556,United States,Arkansas,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0218,Zea,mays subsp. mays,PI,221873,179557,United States,Arkansas,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0219,Zea,mays subsp. mays,PI,221874,179558,United States,Texas,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0220,Zea,mays subsp. mays,PI,221876,179560,United States,Tennessee,,,,Grown near New Madrid  Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0221,Zea,mays subsp. mays,PI,221877,179561,United States,Missouri,36.5864,,89.5278,93,From Koehler  New Madrid  Missouri. New Madrid county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0222,Zea,mays subsp. mays,PI,221878,179562,United States,Missouri,36.5864,,89.5278,93,From Koehler  New Madrid  Missouri. New Madrid county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0223,Zea,mays subsp. mays,PI,221880,179564,United States,Missouri,36.2333,,89.8167,,From Gale  Pemiscot County  southeast Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0224,Zea,mays subsp. mays,PI,221882,179566,United States,Missouri,39.0725,,93.7169,255,From Meinershagen  Higginsville  Missouri. Lafayette county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0225,Zea,mays subsp. mays,PI,221885,179569,United States,Missouri,39.1231,,93.1967,238,From Marshall  Missouri. Saline county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0226,Zea,mays subsp. mays,PI,221889,179573,United States,Missouri,,,,From Ozark area of southern Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0227,Zea,mays subsp. mays,PI,222314,179812,United States,Nebraska,,,,North,central Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0228,Zea,mays subsp. mays,PI,222315,179813,United States,Nebraska,,,,From southwestern Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0229,Zea,mays subsp. mays,PI,222316,179814,United States,Nebraska,,,,From east,central Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0230,Zea,mays subsp. mays,PI,222317,179815,United States,Nebraska,,,,From central Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0231,Zea,mays subsp. mays,PI,222318,179816,United States,Nebraska,,,,From south,central Nebraska.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0232,Zea,mays subsp. mays,PI,222469,179847,United States,Michigan,,,,From Jacob Smithers  Marian  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0233,Zea,mays subsp. mays,PI,222470,179848,United States,Michigan,,,,From M.G. Dickerson  Bloomingdale  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0234,Zea,mays subsp. mays,PI,222473,179851,United States,Michigan,,,,From John Thurman  Mt. Clemens  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0235,Zea,mays subsp. mays,PI,222474,179852,United States,Michigan,,,,From Arthur Jewett  Mason  Michigan.,Duncan,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0236,Zea,mays subsp. mays,PI,222481,179859,United States,Michigan,,,,From Roscoe J. Carl and Son Seed Co.  Lansing  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0237,Zea,mays subsp. mays,PI,222483,179861,United States,Michigan,,,,From Albert Deidrich  Richmond  Michigan,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0238,Zea,mays subsp. mays,PI,222494,179872,United States,Michigan,,,,From Roscoe Carl and Son  Seed Co.  Lansing  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0239,Zea,mays subsp. mays,PI,222495,179873,United States,Michigan,,,,From D.A. McPherson  Lowell  Michigan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0240,Zea,mays subsp. mays,PI,222609,179911,United States,Kansas,37.1692,,94.8439,,From Oscar Rhoades  Columbus  Kansas. Grown in that area since about 1870.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0241,Zea,mays subsp. mays,PI,222613,179915,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0242,Zea,mays subsp. mays,PI,222614,179916,United States,Kansas,37.8172,,96.8619,,C.C. Cunningham  El Dorado  Kansas.,Midland (Oscar Rhoades version) and introduced germplasm.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0243,Zea,mays subsp. mays,PI,222615,179917,United States,Kansas,37.1675,,37.1694,,Certified Midland from Carl Hellwig  Oswego  Kansas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0244,Zea,mays subsp. mays,PI,222618,179920,United States,Kansas,,,,From Hays Branch Station in 1923 from Ness County and further selected at the Station.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0245,Zea,mays subsp. mays,PI,222621,179923,United States,Kansas,,,,From J.W. Kuhn  Belleville  Kansas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0246,Zea,mays subsp. mays,PI,222635,179937,United States,Kansas,,,,From Bowman Bros.  Lebo  Kansas. Grown there since 1874.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0247,Zea,mays subsp. mays,PI,222639,179941,United States,Kansas,,,,From Department of Agronomy  Kansas State College ,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0248,Zea,mays subsp. mays,PI,222640,179942,United States,Kansas,,,,From Potwin  Kansas. Grown in Butler County for 55 years.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0249,Zea,mays subsp. mays,PI,222641,179943,United States,Kansas,,,,From Ernest G. Classen  Route 1  Whitewater  Kansas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0250,Zea,mays subsp. mays,PI,224945,180973,United States,West Virginia,,,,Grown by Merritt Weakley  Williamsburg  West Virginia.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0251,Zea,mays subsp. mays,PI,233001,184581,United States,Missouri,37.8769,,94.0211,275,From Ralph Gundy  Eldorado Springs  Missouri. Cedar county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0252,Zea,mays subsp. mays,PI,233002,184582,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0253,Zea,mays subsp. mays,PI,233006,184586,United States,Missouri,37.8986,,94.2319,260,From Oran Gundy  Walker  Missouri. Vernon county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0254,Zea,mays subsp. mays,PI,233008,184588,United States,Missouri,37.8986,,94.2319,260,From Dixie Hightower  Walker  Missouri. Vernon county.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0255,Zea,mays subsp. mays,PI,233009,184589,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0256,Zea,mays subsp. mays,PI,237000,186108,United States,Missouri,,,,From George Wilkerson  Sedalia  Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0257,Zea,mays subsp. mays,PI,257506,196837,,,,,,,Open Pollinated Lacaune.,Other,USDA,,,,,,,,,,,,
+
+RIMMA0258,Zea,mays subsp. mays,PI,267179,201239,United States,Minnesota,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0259,Zea,mays subsp. mays,PI,269743,202909,United States,Missouri,,,,Obtained by a county agent who received from W.T. Reiger  Dora  Missouri.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0260,Zea,mays subsp. mays,PI,269744,202910,United States,Missouri,,,,From Perkins family in Adair County who have grown it for years.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0261,Zea,mays subsp. mays,PI,269757,202923,,,,,,,Bulk of Tom Thumb varieties.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0262,Zea,mays subsp. mays,PI,270297,203367,Argentina,,,,,,41:2504B Amargo Inbred Line,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0263,Zea,mays subsp. mays,PI,278713,208070,United States,Ohio,,,,From the J.B. Sayre's open pollinated corn collection.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0264,Zea,mays subsp. mays,PI,278716,208073,United States,Ohio,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0265,Zea,mays subsp. mays,PI,278717,208074,United States,Ohio,,,,From the J.B. Sayre's open pollinated corn collection.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0266,Zea,mays subsp. mays,PI,278719,208076,United States,Ohio,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0267,Zea,mays subsp. mays,PI,278720,208077,United States,Ohio,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0268,Zea,mays subsp. mays,PI,278721,208078,United States,Ohio,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0269,Zea,mays subsp. mays,PI,278724,208081,United States,Iowa,41.35,,93.3564,,From Walter Russell  Indianola  Iowa. Grown for many years.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0270,Zea,mays subsp. mays,PI,280061,208624,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0271,Zea,mays subsp. mays,PI,280852,208911,United States,Wisconsin,,,,Maintained in Madison  Wisconsin.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0272,Zea,mays subsp. mays,PI,280853,208912,United States,Wisconsin,,,,Maintained in Madison  Wisconsin.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0273,Zea,mays subsp. mays,PI,303922,228196,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0274,Zea,mays subsp. mays,PI,303923,228197,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0275,Zea,mays subsp. mays,PI,311232,232340,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0276,Zea,mays subsp. mays,PI,311235,232343,United States,Virginia,,,,Originally from Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0277,Zea,mays subsp. mays,PI,311236,232344,United States,Ohio,,,,Originally from Ohio.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0278,Zea,mays subsp. mays,PI,311237,232345,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0279,Zea,mays subsp. mays,PI,311241,232349,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0280,Zea,mays subsp. mays,PI,311243,232351,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0281,Zea,mays subsp. mays,PI,317675,236440,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0282,Zea,mays subsp. mays,PI,363067,271803,United States,Arkansas,,,,From Mr. Herb Mays  Walcott  Arkansas.,Mix of 'Neil's Paymaster'  'St. Charles White'  'Tennessee Red Cob'  and some 'Mexican June'.,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0283,Zea,mays subsp. mays,PI,401757,302513,United States,Illinois,,,,From R.I. Brawn  Canada.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0284,Zea,mays subsp. mays,PI,408705,308254,United States,Iowa,40.8194,,93.9622,,Grown by Nelson Shields  Grand River  Iowa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0285,Zea,mays subsp. mays,PI,414176,312390,United States,Illinois,37.7272,,89.2167,,From Nancy R. Funk  Carbondale  Illinois. Maintained by her family for nearly 100 years.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0286,Zea,mays subsp. mays,PI,414179,312393,United States,Texas,,,,From Ennis  Texas.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0287,Zea,mays subsp. mays,PI,414183,312397,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0288,Zea,mays subsp. mays,PI,452032,346968,United States,Pennsylvania,,,,Area of Butler  Pennsylvania,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0289,Zea,mays subsp. mays,PI,452037,346973,United States,Minnesota,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0290,Zea,mays subsp. mays,PI,452045,346981,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0291,Zea,mays subsp. mays,PI,452046,346982,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0292,Zea,mays subsp. mays,PI,452047,346983,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0293,Zea,mays subsp. mays,PI,452048,346984,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0294,Zea,mays subsp. mays,PI,452051,346987,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0295,Zea,mays subsp. mays,PI,452052,346988,United States,Tennessee,,,,Tennessee,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0296,Zea,mays subsp. mays,PI,452058,346994,United States,Illinois,41.8389,,89.4794,,Wilmer Gerdes farm  rural route 2  Dixon  Illinois.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0297,Zea,mays subsp. mays,PI,452059,346995,United States,Tennessee,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0298,Zea,mays subsp. mays,PI,483273,378209,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0299,Zea,mays subsp. mays,PI,483317,378253,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0300,Zea,mays subsp. mays,PI,520768,415704,United States,New York,,,,Obtained from Agway  Inc.  Syracuse  New York.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0301,Zea,mays subsp. mays,PI,520769,415705,United States,Pennsylvania,,,,Obtained from Hoffman Seed Co.  Landisville  Pennsylvania.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0302,Zea,mays subsp. mays,PI,540784,435720,United States,Georgia,,,,Atlanta,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0303,Zea,mays subsp. mays,PI,540785,435721,United States,Georgia,,,,Atlanta,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0304,Zea,mays subsp. mays,PI,543916,438852,,,,,,,T61 X Hill Yellow Dent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0305,Zea,mays subsp. mays,PI,548792,443728,,,,,,,GT112,NC33/GT112,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0306,Zea,mays subsp. mays,PI,550440,445376,,,,,,,41.2504B/3*B14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0307,Zea,mays subsp. mays,PI,550441,445377,,,,,,,WF9/Mo22,Breeder's line,USDA,,identical to RIMMA0018,,,,,,,,,,
+
+RIMMA0308,Zea,mays subsp. mays,PI,550454,445390,,,,,,,Inbred line of unknown origin  obtained from a private breeder.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0309,Zea,mays subsp. mays,PI,550461,445397,,,,,,,(Cuzco/Early Dent)Selection//8*B14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0310,Zea,mays subsp. mays,PI,550462,445398,,,,,,,N32/2*B14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0311,Zea,mays subsp. mays,PI,550465,445401,,,,,,,41.2504B/3*B14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0312,Zea,mays subsp. mays,PI,550466,445402,,,,,,,C103/M14,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0313,Zea,mays subsp. mays,PI,550467,445403,,,,,,,Selected from Iowa Stiff Stalk Synthetic.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0314,Zea,mays subsp. mays,PI,550469,445405,,,,,,,W22/B10,Breeder's line,USDA,7,,,,,,,,,,,
+
+RIMMA0315,Zea,mays subsp. mays,PI,550472,445408,,,,,,,Selected from open,pollinated 'Midland'.,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0316,Zea,mays subsp. mays,PI,550473,445409,,,,,,,Selected from advanced recurrent selection population (C5) of Iowa Stiff Stalk Synthetic (BSSS).,Breeder's line,USDA,,identical to RIMMA0019,,,,,,,,,,
+
+RIMMA0317,Zea,mays subsp. mays,PI,550483,445419,,,,,,,(CI31A/B37)F2//B37,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0318,Zea,mays subsp. mays,PI,550490,445426,,,,,,,W755/W771,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0319,Zea,mays subsp. mays,PI,550518,445454,,,,,,,Selfing and selection in Jarvis Golden Prolific since 1930.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0320,Zea,mays subsp. mays,PI,583896,62852,United States,Iowa,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0321,Zea,mays subsp. mays,PI,583897,62862,United States,Mississippi,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0322,Zea,mays subsp. mays,PI,583898,62865,United States,Mississippi,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0323,Zea,mays subsp. mays,PI,587124,82767,Canada,Manitoba,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0324,Zea,mays subsp. mays,PI,587125,82769,Canada,Ontario,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0325,Zea,mays subsp. mays,PI,587128,73894,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0326,Zea,mays subsp. mays,PI,587129,73895,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0327,Zea,mays subsp. mays,PI,587138,82747,,,,,,,[(WD X Wf9) WD(2)],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0328,Zea,mays subsp. mays,PI,587139,82749,,,,,,,[(A171 X Oh43) Oh43],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0329,Zea,mays subsp. mays,PI,587141,82762,,,,,,,A116 X Wf9,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0330,Zea,mays subsp. mays,PI,587147,82778,,,,,,,(Wf9 X Oh40B)S4 X [(38,11 X L317)38,11]S4,Breeder's line,USDA,,,,,,,,,,
+
+RIMMA0331,Zea,mays subsp. mays,PI,587148,84191,,,,,,,L97 X K55 (2),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0332,Zea,mays subsp. mays,PI,587149,82784,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0333,Zea,mays subsp. mays,PI,587150,84340,,,,,,,(C103 x T8)T8,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0334,Zea,mays subsp. mays,PI,587153,84341,,,,,,,(643 x Minn. 13),Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0335,Zea,mays subsp. mays,PI,601005,157406,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0336,Zea,mays subsp. mays,PI,607519,71169,,,,,,,Developed from (ND408 x ND230)x ND408.,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0337,Zea,mays subsp. mays,PI,607522,71541,,,,,,,Developed from AS,A  a population derived from 13 Corn Belt lines (A90  A498  A508  A509  A513  CMD5  MS1334  ND203  W33  W59M  W65  W79A  W103).,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0338,Zea,mays subsp. mays,PI,607593,45249,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0339,Zea,mays subsp. mays,PI,607599,45278,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0340,Zea,mays subsp. mays,PI,607602,45290,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0341,Zea,mays subsp. mays,PI,608465,117164,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0342,Zea,mays subsp. mays,PI,608502,117202,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0343,Zea,mays subsp. mays,PI,608519,117219,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0344,Zea,mays subsp. mays,PI,608539,119295,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0345,Zea,mays subsp. mays,PI,608599,26688,United States,Colorado,39.9611,,108.286,1524,Purdy Mesa (summit) on Kannah Creek  Mesa County. Farm.,Original source of variety was Bloody Butcher.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0346,Zea,mays subsp. mays,PI,608618,26799,United States,Colorado,39.3667,,103,1433,8 miles northeast of Flagler  Kit Carson County.,Original source of variety was Minnesota 13.  27 years of culture on the Brandenburg farm with good isolation.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0347,Zea,mays subsp. mays,PI,608619,26809,United States,Colorado,39.1667,,108.8,1372,5 miles west of Fruita  Mesa County.,Original source of variety was Minnesota 13.  3 years of culture on the Serve farm.  Fair isolation since Serve tried to maintain separation  but he also raised the variety Cedaredge Special.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0348,Zea,mays subsp. mays,PI,608621,26821,United States,Colorado,40.7,,102.633,1219,6 miles north of Haxtun  Phillips County.,Variety originated from a mixture of Minnesota 13 (for earliness) and Reids Yellow Dent (for kernel depth).  37 years of culture on the Meakins farm.  Good isolation since Meakins stopped growing it when hybrids came along.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0349,Zea,mays subsp. mays,PI,608643,26936,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0350,Zea,mays subsp. mays,PI,608646,29392,United States,Colorado,40.1139,,102.49,,Eckley  Yuma County.,Variety originated from Minnesota 13.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0351,Zea,mays subsp. mays,PI,608652,127906,United States,Colorado,39.0639,,108.55,,Western Slope near Grand Junction  Mesa County.,Original source of variety was Golden Glow.,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0352,Zea,mays subsp. mays,PI,608764,3216,,,,,,,B55 is a selection from the single cross Oh45 x W92 tested as (Oh45 x W92),1,1,2,Breeder's line,USDA,,,,,,,,,
+
+RIMMA0353,Zea,mays subsp. mays,PI,608765,82038,,,,,,,B77 is a selection from Pioneer Two,Ear Composite (PHPRC)  tested as BS11(FR)CO,Q51,3,2,1,2,1,Breeder's line,USDA,,,,,
+
+RIMMA0354,Zea,mays subsp. mays,PI,608766,82039,,,,,,,B79 is a selection from Iowa Two Ear Synthetic No. 1 (GP,12  PI 550446) tested as BS10(FR)CO,Q98,10,1,4,1,Breeder's line,USDA,,,,,,
+
+RIMMA0355,Zea,mays subsp. mays,PI,608767,82045,,,,,,,B84 is a selection from Iowa BSSS(HT)C7 [renamed BS13(S2)C0] that was tested as BS13(S2)CO,45,6,2,1,1,Breeder's line,USDA,,,,,,,
+
+RIMMA0356,Zea,mays subsp. mays,PI,608774,82037,,,,,,,B75 is a selection from Iowa Corn Borer Synthetic No. 3 [BSCB3 (PI 550450)].,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0357,Zea,mays subsp. mays,PI,608777,82040,,,,,,,B85 was developed from BSCB6(S)C3,77,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0358,Zea,mays subsp. mays,PI,648423,729918,,,,,,,Maize lines elevated in methionine were generated by crossing inbred lines A632  B73 and Mo17 to a high,methionine donor parent  BSSS53.  A632  B73 and Mo17  yellow endosperm corn,belt dent lines  were the recurrent parents in the backcross scheme.  The converted A632  B73 and Mo17 lines (3,5 backcrosses) have 11%  22% and 50% elevated methionine levels  respectively.  BSSS53 is a random line isolate from the Iowa Stiff Stalk Synthetic population.,Breeder's line,USDA,,,,,,,,,
+
+RIMMA0359,Zea,mays subsp. mays,PI,648430,729925,,,,,,,Maize lines elevated in methionine were generated by crossing inbred lines A632  B73 and Mo17 to a high,methionine donor parent  BSSS53.  A632  B73 and Mo17  yellow endosperm corn,belt dent lines  were the recurrent parents in the backcross scheme.  The converted A632  B73 and Mo17 lines (3,5 backcrosses) have 11%  22% and 50% elevated methionine levels  respectively.  BSSS53 is a random line isolate from the Iowa Stiff Stalk Synthetic population.,Breeder's line,USDA,,Mo17,,,,,,,
+
+RIMMA0360,Zea,mays subsp. mays,,,,Mexico,Chihuahua,26.2465,106.915,,Nabogame,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/22/08 Individuals: A,M (13) Notes: bag M contains three cobs,,,,,,,,,
+
+RIMMA0361,Zea,mays subsp. mays,,,,Mexico,Michoacan,20.1176,101.93,,Penjamillo,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/22/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0362,Zea,mays subsp. mays,,,,Mexico,Michoacan,19.4184,101.642,,Santa Clara,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/30/08 Individuals: A,I (9) Notes: Bag I contains three hybrid cobs,,,,,,,,,
+
+RIMMA0363,Zea,mays subsp. mays,,,,Mexico,Michoacan,19.6789,100.64,,El Porvenir,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/19/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0364,Zea,mays subsp. mays,,,,Mexico,Mexico,19.139,98.7733,,Amecameca,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/13/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0365,Zea,mays subsp. mays,,,,Mexico,Mexico,19.2351,98.8368,,Tlapala,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/14/08 Individuals: A,I (9) Notes: ,,,,,,,,,
+
+RIMMA0366,Zea,mays subsp. mays,,,,Mexico,Mexico,19.3764,99.6303,,Jicaltepec,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/1/08 Individuals: A,K (11) Notes: ,,,,,,,,,
+
+RIMMA0367,Zea,mays subsp. mays,,,,Mexico,Mexico,19.2244,98.8427,,Cocotilan,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/14/08 Individuals: A,H (8) Notes: ,,,,,,,,,
+
+RIMMA0368,Zea,mays subsp. mays,,,,Mexico,Michoacan,19.4181,101.613,,Opopeo,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/30/08 Individuals: A,I (9) Notes: ,,,,,,,,,
+
+RIMMA0369,Zea,mays subsp. mays,,,,Mexico,Morelos,18.9719,99.0551,,"Amatlan, Morelos",,Traditional cultivar/landrace,Lubinsky,,Collected: 11/1/08 Individuals: A,G (7) Notes: ,,,,,,,,,
+
+RIMMA0370,Zea,mays subsp. mays,,,,Mexico,Michoacan,20.1076,101.49,,Puruandiro(Victor),,Traditional cultivar/landrace,Lubinsky,,Collected: 10/29/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0371,Zea,mays subsp. mays,,,,Mexico,Michoacan,20.1683,102.373,,Ixtlan,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/28/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0372,Zea,mays subsp. mays,,,,Mexico,Puebla,19.0886,98.4935,,San Pedro,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/12/08 Individuals: A,G (7) Notes: ,,,,,,,,,
+
+RIMMA0373,Zea,mays subsp. mays,,,,Mexico,Mexico,19.1197,99.5896,,Tenango del Aire,,Traditional cultivar/landrace,Lubinsky,,Collected: 10/31/08 Individuals: A,H (8) Notes: ,,,,,,,,,
+
+RIMMA0374,Zea,mays subsp. mays,,,,Mexico,Distrito Federal,19.2861,99.0827,,Xochimilco,,Traditional cultivar/landrace,Lubinsky,,Collected: 11/4/08 Individuals: A,J (10) Notes: ,,,,,,,,,
+
+RIMMA0375,Zea,mays subsp. mays,,,,,,,,,,,,McMullen,,B73 x Mo17 F1,,,,,,,,,,
+
+RIMMA0378,Zea,mays subsp. mays,NSL,65871,112440,,,,,,,Iodent,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0379,Zea,mays subsp. mays,NSL,283507,210687,Cuba,,,,,,,Unknown,USDA,,,,,,,,,,,,
+
+RIMMA0381,Zea,mays subsp. mays,PI,213799,175992,,,,,,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0382,Zea,mays subsp. mays,PI,217410,177460,United States,Arizona,,,,Obtained from the Papago indians in the desert south of Tucson  Arizona.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0383,Zea,mays subsp. mays,PI,218140,177807,United States,New Mexico,,,2073,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0384,Zea,mays subsp. mays,PI,218142,177809,United States,New Mexico,,,2134,Penasco  New Mexico from Tom Martinez.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0385,Zea,mays subsp. mays,PI,218152,177819,United States,New Mexico,,,2134,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0386,Zea,mays subsp. mays,PI,218163,177830,United States,Arizona,,,1615,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0387,Zea,mays subsp. mays,PI,218173,177840,United States,New Mexico,,,1829,,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0388,Zea,mays subsp. mays,PI,443820,338756,Colombia,Antioquia,,,1500,Antioquia State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0389,Zea,mays subsp. mays,PI,444005,338941,Colombia,Atlantico,,,7,Atlantico State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0390,Zea,mays subsp. mays,PI,444254,339190,Colombia,Caldas,,,1500,Caldas State,,Traditional cultivar/landrace,USDA,,>100 seeds left,,,,,,,,,,
+
+RIMMA0391,Zea,mays subsp. mays,PI,444296,339232,Colombia,Caqueta,,,700,Caqueta State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0392,Zea,mays subsp. mays,PI,444309,339245,Colombia,Caqueta,,,500,Caqueta State,,Traditional cultivar/landrace,USDA,,<50 seeds left,,,,,,,,,,
+
+RIMMA0393,Zea,mays subsp. mays,PI,444473,339409,Colombia,Cordoba,,,100,Cordoba State,,Traditional cultivar/landrace,USDA,,>100 seeds left,,,,,,,,,,
+
+RIMMA0394,Zea,mays subsp. mays,PI,444621,339557,Colombia,Cundinamarca,,,1000,Cundinamarca State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0395,Zea,mays subsp. mays,PI,444731,339667,Colombia,Choco,,,30,Choco State,,Traditional cultivar/landrace,USDA,,"seed sent to double haploid facility in Ames, Iowa for highland/lowland\ >50 seeds left",,,,,,,,,,
+
+RIMMA0396,Zea,mays subsp. mays,PI,444834,339770,Colombia,Huila,,,1100,Huila State,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0397,Zea,mays subsp. mays,PI,444897,339833,Colombia,Magdalena,,,50,Magdalena State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0398,Zea,mays subsp. mays,PI,444923,339859,Colombia,Magdalena,,,27,Magdalena State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0399,Zea,mays subsp. mays,PI,444954,339890,Colombia,Magdalena,,,250,Magdalena State,,Traditional cultivar/landrace,USDA,,"seed sent to double haploid facility in Ames, Iowa for highland/lowland\ ",,,,,,,,,,
+
+RIMMA0400,Zea,mays subsp. mays,NSL,22629,88093,,,,,,,[(Oh07 x 38,11) Oh07],Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0401,Zea,mays subsp. mays,NSL,22633,88097,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0402,Zea,mays subsp. mays,NSL,30904,101133,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0403,Zea,mays subsp. mays,PI,445163,340099,Colombia,Narino,,,1900,Narino State,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0404,Zea,mays subsp. mays,PI,445322,340258,Colombia,Norte de Santander,,,500,Santander N. State,,Traditional cultivar/landrace,USDA,,12,,,,,,,,,,
+
+RIMMA0405,Zea,mays subsp. mays,PI,445355,340291,Colombia,Norte de Santander,,,1100,Santander N. State,,Traditional cultivar/landrace,USDA,,>100 seeds left,,,,,,,,,,
+
+RIMMA0406,Zea,mays subsp. mays,PI,445514,340450,Colombia,Tolima,,,450,Tolima State,,Traditional cultivar/landrace,USDA,,<50 seeds left,,,,,,,,,,
+
+RIMMA0407,Zea,mays subsp. mays,PI,445528,340464,Colombia,Tolima,,,450,Tolima State,,Traditional cultivar/landrace,USDA,,<50 seeds left,,,,,,,,,,
+
+RIMMA0408,Zea,mays subsp. mays,PI,478967,373903,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0409,Zea,mays subsp. mays,PI,478968,373904,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0410,Zea,mays subsp. mays,PI,478970,373906,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0411,Zea,mays subsp. mays,PI,479044,373980,Mexico,Nayarit,,,,Nayarit,,Other,USDA,,,,,,,,,,,,
+
+RIMMA0412,Zea,mays subsp. mays,PI,484406,379342,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0413,Zea,mays subsp. mays,PI,484413,379349,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0414,Zea,mays subsp. mays,PI,484421,379357,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0415,Zea,mays subsp. mays,PI,213733,175927,United States,Arizona,,,,Hotevilla village. Hopi Tribe  Arizona.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0416,Zea,mays subsp. mays,PI,484428,379364,Mexico,Chihuahua,,,,Chihuahua,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0417,Zea,mays subsp. mays,PI,484431,379367,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0418,Zea,mays subsp. mays,PI,484476,379412,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0419,Zea,mays subsp. mays,PI,484482,379418,Mexico,Chihuahua,,,,Chihuahua,,Other,USDA,,,,,,,,,,,,
+
+RIMMA0420,Zea,mays subsp. mays,PI,484506,379442,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0421,Zea,mays subsp. mays,PI,484595,379531,Mexico,Puebla,,,,Puebla,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0422,Zea,mays subsp. mays,PI,485071,380007,Mexico,Puebla,,,,Puebla,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0423,Zea,mays subsp. mays,PI,485116,380052,Mexico,Chihuahua,,,,Chihuahua,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0424,Zea,mays subsp. mays,PI,485120,380056,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0425,Zea,mays subsp. mays,PI,485128,380064,Mexico,Chihuahua,,,,Chihuahua,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0426,Zea,mays subsp. mays,PI,485151,380087,Peru,Ancash,,,,Ancash,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0427,Zea,mays subsp. mays,PI,485320,380256,Peru,Lambayeque,,,,Lambayeque,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0428,Zea,mays subsp. mays,PI,485354,380290,Peru,Huanuco,,,,Huanuco,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0429,Zea,mays subsp. mays,PI,485358,380294,Peru,La Libertad,,,,Libertad,,Other,USDA,,,,,,,,,,,,
+
+RIMMA0430,Zea,mays subsp. mays,PI,485362,380298,Peru,Ancash,,,,Ancash,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0431,Zea,mays subsp. mays,PI,485363,380299,Peru,Huanuco,,,,Huanuco,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0432,Zea,mays subsp. mays,PI,489126,384062,Mexico,Puebla,,,,Puebla,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0433,Zea,mays subsp. mays,PI,490825,385761,Guatemala,Chiquimula,14.7833,,89.55,457,Santa Elena. Farmer's field.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0434,Zea,mays subsp. mays,PI,490921,385857,Mexico,Nayarit,,,,Jalisco,,Traditional cultivar/landrace,USDA,,,,,,,,,,,,
+
+RIMMA0435,Zea,mays subsp. mays,PI,490973,385909,Mexico,Sonora,,,,Sonora,,Other,USDA,,,,,,,,,,,,
+
+RIMMA0436,Zea,mays subsp. mays,PI,514723,409659,Peru,Amazonas,,,,,,Other,USDA,,<50 seeds left\ ,,,,,,,,,,
+
+RIMMA0437,Zea,mays subsp. mays,PI,514752,409688,Peru,Ancash,,,,,,Other,USDA,,<50 seeds left,,,,,,,,,,
+
+RIMMA0438,Zea,mays subsp. mays,PI,514809,409745,Peru,Ancash,,,,,,Other,USDA,,"seed sent to double haploid facility in Ames, Iowa for highland/lowland\ >50 seeds left; in Wang et al. 2017 this number switched with 625 (so what is labeled as 625 in that paper is really this sample)",,,,,,,,,,
+
+RIMMA0439,Zea,mays subsp. mays,PI,514969,409905,Peru,La Libertad,,,,,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0440,Zea,mays subsp. mays,PI,515053,409989,Peru,Loreto,,5.9,,76.0833,150,Yurimaguas  Amazonas  Loreto.,,Traditional cultivar/landrace,USDA,,,,,,,,,,
+
+RIMMA0441,Zea,mays subsp. mays,PI,515538,410474,Mexico,Veracruz,,,,,,Other,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0442,Zea,mays subsp. mays,PI,537097,432033,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0443,Zea,mays subsp. mays,PI,537099,432035,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0444,Zea,mays subsp. mays,PI,538009,432945,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0445,Zea,mays subsp. mays,PI,538011,432947,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0446,Zea,mays subsp. mays,PI,539920,434856,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0447,Zea,mays subsp. mays,PI,539921,434857,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0448,Zea,mays subsp. mays,PI,539922,434858,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0449,Zea,mays subsp. mays,PI,539923,434859,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0450,Zea,mays subsp. mays,PI,539924,434860,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0451,Zea,mays subsp. mays,PI,539926,434862,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0452,Zea,mays subsp. mays,PI,539927,434863,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0453,Zea,mays subsp. mays,PI,543843,438779,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0454,Zea,mays subsp. mays,PI,543846,438782,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0455,Zea,mays subsp. mays,PI,543847,438783,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0456,Zea,mays subsp. mays,PI,543849,438785,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0457,Zea,mays subsp. mays,PI,543850,438786,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0458,Zea,mays subsp. mays,PI,547086,442022,,,,,,,,exPVP,USDA,,LH128,,,,,,,,,,
+
+RIMMA0459,Zea,mays subsp. mays,PI,547088,442024,,,,,,,,exPVP,USDA,,LH208,,,,,,,,,,
+
+RIMMA0460,Zea,mays subsp. mays,PI,558520,453492,,,,,,,Mo22/2*WF9,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0461,Zea,mays subsp. mays,PI,558532,453504,,,,,,,CI 187,2/C103,Breeder's line,USDA,,,,,,,,,,,
+
+RIMMA0462,Zea,mays subsp. mays,PI,445073,340009,Colombia,Narino,,,1700,Narino State,,Traditional cultivar/landrace,USDA,,>100 seeds left,,,,,,,,,,
+
+RIMMA0463,Zea,mays subsp. mays,PI,559918,454890,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0464,Zea,mays subsp. mays,PI,571438,466409,Peru,Huancavelica,,12,,75,1800,,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,
+
+RIMMA0465,Zea,mays subsp. mays,PI,571457,466428,Peru,Piura,,5.23333,,79.4667,2300,,,Traditional cultivar/landrace,USDA,,,,,,,,,,
+
+RIMMA0466,Zea,mays subsp. mays,PI,571577,466548,Peru,Apurimac,,14.3167,,72.9167,3600,,,Traditional cultivar/landrace,USDA,,,,,,,,,,
+
+RIMMA0467,Zea,mays subsp. mays,PI,571871,466842,Peru,Apurimac,,13.5833,,72.9167,2800,,,Traditional cultivar/landrace,USDA,,,,,,,,,,
+
+RIMMA0468,Zea,mays subsp. mays,PI,571960,466931,Peru,Ancash,,9.33333,,77.2333,3150,,,Traditional cultivar/landrace,USDA,,,,,,,,,,
+
+RIMMA0469,Zea,mays subsp. mays,PI,583774,478745,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0470,Zea,mays subsp. mays,PI,587136,84234,,,,,,,Pride of Saline,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0471,Zea,mays subsp. mays,PI,587137,82773,,,,,,,,Breeder's line,USDA,,identical to RIMMA0022,,,,,,,,,,
+
+RIMMA0472,Zea,mays subsp. mays,PI,587140,82752,,,,,,,[(Mt42 X B14) B14(3)],Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0473,Zea,mays subsp. mays,PI,445114,340050,Colombia,Narino,,,3104,Narino State,,Traditional cultivar/landrace,USDA,,>100 seeds left\ ,,,,,,,,,,
+
+RIMMA0475,Zea,mays subsp. mays,PI,587146,84229,,,,,,,CI.540 x Ill. L,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0476,Zea,mays subsp. mays,PI,587152,82714,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0477,Zea,mays subsp. mays,PI,587154,84221,,,,,,,Rec. I.153,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0478,Zea,mays subsp. mays,PI,593460,516184,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0479,Zea,mays subsp. mays,PI,600751,129750,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0480,Zea,mays subsp. mays,PI,600772,130201,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0481,Zea,mays subsp. mays,PI,600791,131311,,,,,,,A619 x L120,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0482,Zea,mays subsp. mays,PI,600944,152908,,,,,,,Oh43 x L120,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0483,Zea,mays subsp. mays,PI,600954,156006,,,,,,,B73 ^2 x H93,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0484,Zea,mays subsp. mays,PI,600955,156007,,,,,,,Mo17 HI,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0485,Zea,mays subsp. mays,PI,600956,156008,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0486,Zea,mays subsp. mays,PI,600957,156009,,,,,,,A632 X B73,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0487,Zea,mays subsp. mays,PI,600958,156010,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0488,Zea,mays subsp. mays,PI,600959,156011,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0489,Zea,mays subsp. mays,PI,600981,156603,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0490,Zea,mays subsp. mays,PI,601003,157404,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0491,Zea,mays subsp. mays,PI,601004,157405,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0492,Zea,mays subsp. mays,PI,601005,157406,,,,,,,,Advanced cultivar,USDA,,identical to RIMMA0335,,,,,,,,,,
+
+RIMMA0493,Zea,mays subsp. mays,PI,601006,157407,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0494,Zea,mays subsp. mays,PI,601007,157408,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0495,Zea,mays subsp. mays,PI,601008,157409,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0496,Zea,mays subsp. mays,PI,601009,157410,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0497,Zea,mays subsp. mays,PI,601026,157465,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0498,Zea,mays subsp. mays,PI,601037,157676,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0499,Zea,mays subsp. mays,PI,601079,161234,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0500,Zea,mays subsp. mays,PI,601080,161235,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0501,Zea,mays subsp. mays,PI,601150,162354,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0502,Zea,mays subsp. mays,PI,601159,162377,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0503,Zea,mays subsp. mays,PI,601170,165596,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0504,Zea,mays subsp. mays,PI,601171,165597,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0505,Zea,mays subsp. mays,PI,601172,165598,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0506,Zea,mays subsp. mays,PI,601190,165733,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0507,Zea,mays subsp. mays,PI,601191,165734,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0508,Zea,mays subsp. mays,PI,601208,167898,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0509,Zea,mays subsp. mays,PI,601209,167899,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0510,Zea,mays subsp. mays,PI,601210,167900,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0511,Zea,mays subsp. mays,PI,601211,167901,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0512,Zea,mays subsp. mays,PI,601229,167980,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0513,Zea,mays subsp. mays,PI,601230,167983,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0514,Zea,mays subsp. mays,PI,601269,169860,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0515,Zea,mays subsp. mays,PI,601270,169865,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0516,Zea,mays subsp. mays,PI,601300,169989,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0517,Zea,mays subsp. mays,PI,601301,169991,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0518,Zea,mays subsp. mays,PI,601316,170375,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0519,Zea,mays subsp. mays,PI,601317,170376,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0520,Zea,mays subsp. mays,PI,601318,170379,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0521,Zea,mays subsp. mays,PI,601319,170380,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0522,Zea,mays subsp. mays,PI,601320,170381,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0523,Zea,mays subsp. mays,PI,601321,170382,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0524,Zea,mays subsp. mays,PI,601322,170383,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0525,Zea,mays subsp. mays,PI,601360,173148,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0526,Zea,mays subsp. mays,PI,601361,173151,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0527,Zea,mays subsp. mays,PI,601362,173152,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0528,Zea,mays subsp. mays,PI,601374,173959,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0529,Zea,mays subsp. mays,PI,601375,173960,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0530,Zea,mays subsp. mays,PI,601376,173961,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0531,Zea,mays subsp. mays,PI,601377,173962,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0532,Zea,mays subsp. mays,PI,601378,173963,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0533,Zea,mays subsp. mays,PI,601402,174399,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0534,Zea,mays subsp. mays,PI,601403,174400,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0535,Zea,mays subsp. mays,PI,601404,174401,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0536,Zea,mays subsp. mays,PI,601405,174402,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0537,Zea,mays subsp. mays,PI,601416,176272,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0538,Zea,mays subsp. mays,PI,601417,176273,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0539,Zea,mays subsp. mays,PI,601430,176839,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0540,Zea,mays subsp. mays,PI,601438,177597,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0541,Zea,mays subsp. mays,PI,601439,177598,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0542,Zea,mays subsp. mays,PI,601440,177599,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0543,Zea,mays subsp. mays,PI,601441,177601,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0544,Zea,mays subsp. mays,PI,601442,177602,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0545,Zea,mays subsp. mays,PI,601457,177899,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0546,Zea,mays subsp. mays,PI,601458,177900,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0547,Zea,mays subsp. mays,PI,601459,177901,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0548,Zea,mays subsp. mays,PI,601466,177910,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0549,Zea,mays subsp. mays,PI,601467,177911,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0550,Zea,mays subsp. mays,PI,601468,177912,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0551,Zea,mays subsp. mays,PI,601469,177913,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0552,Zea,mays subsp. mays,PI,601470,177914,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0553,Zea,mays subsp. mays,PI,601489,178772,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0554,Zea,mays subsp. mays,PI,601490,178773,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0555,Zea,mays subsp. mays,PI,601491,178776,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0556,Zea,mays subsp. mays,PI,601492,178777,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0557,Zea,mays subsp. mays,PI,601493,178783,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0558,Zea,mays subsp. mays,PI,601494,178784,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0559,Zea,mays subsp. mays,PI,601495,178786,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0560,Zea,mays subsp. mays,PI,601496,178787,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0561,Zea,mays subsp. mays,PI,601497,178790,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0562,Zea,mays subsp. mays,PI,601498,178791,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0563,Zea,mays subsp. mays,PI,601499,178792,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0564,Zea,mays subsp. mays,PI,601500,178795,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0565,Zea,mays subsp. mays,PI,601501,178796,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0566,Zea,mays subsp. mays,PI,601502,178797,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0567,Zea,mays subsp. mays,PI,601558,185636,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0568,Zea,mays subsp. mays,PI,601559,185637,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0569,Zea,mays subsp. mays,PI,601560,185638,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0570,Zea,mays subsp. mays,PI,601561,185639,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0571,Zea,mays subsp. mays,PI,601562,185640,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0572,Zea,mays subsp. mays,PI,601563,185641,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0573,Zea,mays subsp. mays,PI,601564,185642,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0574,Zea,mays subsp. mays,PI,601565,185643,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0575,Zea,mays subsp. mays,PI,601566,185644,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0576,Zea,mays subsp. mays,PI,601567,185645,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0577,Zea,mays subsp. mays,PI,601568,185646,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0578,Zea,mays subsp. mays,PI,601569,185647,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0579,Zea,mays subsp. mays,PI,601570,185648,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0580,Zea,mays subsp. mays,PI,601571,185649,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0581,Zea,mays subsp. mays,PI,601572,185650,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0582,Zea,mays subsp. mays,PI,601573,185651,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0583,Zea,mays subsp. mays,PI,601574,185652,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0584,Zea,mays subsp. mays,PI,601575,185653,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0585,Zea,mays subsp. mays,PI,601576,185654,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0586,Zea,mays subsp. mays,PI,601583,185875,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0587,Zea,mays subsp. mays,PI,601610,186557,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0588,Zea,mays subsp. mays,PI,601611,186558,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0589,Zea,mays subsp. mays,PI,601612,186559,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0590,Zea,mays subsp. mays,PI,601724,188095,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0591,Zea,mays subsp. mays,PI,601725,188096,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0592,Zea,mays subsp. mays,PI,601729,188100,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0593,Zea,mays subsp. mays,PI,601773,189902,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0594,Zea,mays subsp. mays,PI,601774,189903,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0595,Zea,mays subsp. mays,PI,601775,189905,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0596,Zea,mays subsp. mays,PI,601776,189906,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0597,Zea,mays subsp. mays,PI,601777,189908,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0598,Zea,mays subsp. mays,PI,601778,189909,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0599,Zea,mays subsp. mays,PI,601779,189910,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0600,Zea,mays subsp. mays,PI,601780,189911,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0601,Zea,mays subsp. mays,PI,601781,189912,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0602,Zea,mays subsp. mays,PI,601782,189913,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0603,Zea,mays subsp. mays,PI,601783,189914,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0604,Zea,mays subsp. mays,PI,601784,189915,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0605,Zea,mays subsp. mays,PI,601785,189916,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0606,Zea,mays subsp. mays,PI,601786,189917,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0607,Zea,mays subsp. mays,PI,601787,189918,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0608,Zea,mays subsp. mays,PI,601788,189919,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0609,Zea,mays subsp. mays,PI,601789,189920,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0610,Zea,mays subsp. mays,PI,601790,189921,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0611,Zea,mays subsp. mays,PI,601791,189922,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0612,Zea,mays subsp. mays,PI,601792,189923,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0613,Zea,mays subsp. mays,PI,601808,190167,,,,,,,,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0614,Zea,mays subsp. mays,PI,628445,61845,Mexico,Jalisco,19.9333,,103.733,1800,Tapalpa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0615,Zea,mays subsp. mays,PI,628480,61934,Mexico,Puebla,20.1333,,97.2,152,San Jose Acateno.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0616,Zea,mays subsp. mays,PI,629202,73608,Mexico,Jalisco,20.8167,,102.733,2000,Campo Agricultura Experimental Altiplano de Jalisco  Tepatitlan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0617,Zea,mays subsp. mays,PI,644101,127095,,,,,,,(B37 x 644) B37.  The line was produced by crossing B37 X 644 then backcrossing to B37 followed by seven generations of selfing and selection for plant type and yield.,Advanced cultivar,USDA,,,,,,,,,,,,
+
+RIMMA0618,Zea,mays subsp. mays,PI,645729,82901,Mexico,Chiapas,15.4667,,92.15,2240,Bejucal De Ocampo.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0619,Zea,mays subsp. mays,PI,645772,82963,Mexico,Guerrero,18.3667,,99.55,731,Iguala.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0620,Zea,mays subsp. mays,PI,645786,82981,Mexico,Guanajuato,20.2167,,100.883,1800,Zona Federal  Salvatierra.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0621,Zea,mays subsp. mays,PI,645804,83000,Mexico,Guanajuato,21.1333,,101.667,1870,Ejido Albarradones  Leon.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0622,Zea,mays subsp. mays,PI,645837,83041,Mexico,Jalisco,19.9333,,103.733,1800,Tapalpa.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0623,Zea,mays subsp. mays,PI,645841,83049,Mexico,Jalisco,20.5,,103.15,2200,Juanacatlan.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0624,Zea,mays subsp. mays,PI,645930,83163,Mexico,Oaxaca,17.1667,,96.7833,1640,Etla.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0625,Zea,mays subsp. mays,PI,645984,83249,Mexico,Puebla,18.9667,,97.45,2580,San Martin Ojo de Agua  Chalchicomula Sesma.,,Traditional cultivar/landrace,USDA,,in Wang et al. 2017 this number switched with 438 (so what is labeled as 438 in that paper is really this sample),,,,,,,,,
+
+RIMMA0626,Zea,mays subsp. mays,PI,645993,83262,Mexico,Puebla,19.8667,,97.5833,2260,Plan de Guadalupe  Zacapoaxtla.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0628,Zea,mays subsp. mays,PI,646017,83312,Mexico,Tamaulipas,23.3,,99.0167,213,Llera de Canales.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0629,Zea,mays subsp. mays,PI,646057,83393,Mexico,Tlaxcala,19.1333,,98.2,2281,Tenancingo.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0630,Zea,mays subsp. mays,PI,646069,83418,Mexico,Veracruz,,,2220,Tepichulco  Cofre de Perote.,,Traditional cultivar/landrace,USDA,,>50 seeds left,,,,,,,,,,
+
+RIMMA0631,Zea,mays subsp. mays,PI,646072,83427,Mexico,Veracruz,19.7667,,97.25,2200,Estanzuela  Altotonga.,,Traditional cultivar/landrace,USDA,,,,,,,,,,,
+
+RIMMA0632,Zea,mays subsp. mays,Ames,15929,73887,,,,,,,,Breeder's line,USDA,,was RIMMA0361,,,,,,,,,,
+
+RIMMA0633,Zea,mays subsp. mays,Ames,19326,82779,,,,,,,Illinois Synthetic,Breeder's line,USDA,,was RIMMA0362\ \ ,,,,,,,,,,
+
+RIMMA0634,Zea,mays subsp. mays,Ames,19330,82786,,,,,,,,Breeder's line,USDA,,was RIMMA0363,,,,,,,,,,
+
+RIMMA0635,Zea,mays subsp. mays,Ames,24734,557027,,,,,,,Iowa Stiff Stalk Synthetic,Breeder's line,USDA,,was RIMMA0364,,,,,,,,,,
+
+RIMMA0636,Zea,mays subsp. mays,Ames,26116,606091,,,,,,,(CI3 X related inbred) CI3 ^2,Breeder's line,USDA,,was RIMMA0365,,,,,,,,,,
+
+RIMMA0637,Zea,mays subsp. mays,Ames,26138,606113,,,,,,,Krug , Nebraska Reid strain x Iowa Gold Mine,Breeder's line,USDA,,was RIMMA0366,,,,,,,,,
+
+RIMMA0638,Zea,mays subsp. mays,Ames,27062,645456,,,,,,,,Breeder's line,USDA,,was RIMMA0367,,,,,,,,,,
+
+RIMMA0639,Zea,mays subsp. mays,Ames,27067,645460,,,,,,,,Breeder's line,USDA,,was RIMMA0368,,,,,,,,,,
+
+RIMMA0640,Zea,mays subsp. mays,Ames,27130,645512,,,,,,,,Breeder's line,USDA,,identical to RIMMA0011; packet previously labelled RIMMA0369?,,,,,,,,,,
+
+RIMMA0641,Zea,mays subsp. mays,Ames,27131,645513,,,,,,,,Breeder's line,USDA,,was RIMMA0370,,,,,,,,,,
+
+RIMMA0642,Zea,mays subsp. mays,Ames,28367,713409,,,,,,,(L317 x 33,16) 33,16 ^2,Breeder's line,USDA,,was RIMMA0371,,,,,,,,
+
+RIMMA0644,Zea,mays subsp. mays,Ames,28771,715318,Chile,,,,,,,Traditional cultivar/landrace,USDA,,was RIMMA0373,,,,,,,,,,
+
+RIMMA0645,Zea,mays subsp. mays,CIze,28,993,,,,,,,Recovered blight resistant strain of B2,Breeder's line,USDA,,was RIMMA0374,,,,,,,,,,
+
+RIMMA0646,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x PI384066,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0647,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x PI384065,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0648,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21785,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0649,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x PI384071,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0650,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21889,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0651,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21786,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0652,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21809,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0653,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21789,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0654,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21812,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0655,Zea,mays subsp mays x mays subsp. parviglumis,,,,,,,,,,B73 x Ames21814,,McMullen,,DNA only no seed,,,,,,,,,,
+
+RIMMA0656,Zea,mays subsp. mays,Ames,28799,715346,Argentina,Jujuy,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Bolivian race: Culli 2008ID: ARG_471\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0657,Zea,mays subsp. mays,NSL,286594,215361,Bolivia,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Bolivian race: Chake_Sara 2008ID: BOV_389\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0658,Zea,mays subsp. mays,NSL,286812,215667,Bolivia,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Bolivian race: Uchuquilla 2008ID: BOV_954\ 2 seeds left,,,,,,,,,,
+
+RIMMA0659,Zea,mays subsp. mays,NSL,286729,215561,Bolivia,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Coroico race: Pojoso_Chico 2008ID: BOV_750,,,,,,,,,,
+
+RIMMA0660,Zea,mays subsp. mays,PI,485451,380387,Bolivia,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Coroico race: Coroico 2008ID: BOV_992,,,,,,,,,,
+
+RIMMA0661,Zea,mays subsp. mays,PI,488066,383002,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: Chillo 2008ID: ECU_458\ 7 seeds left,,,,,,,,,,
+
+RIMMA0662,Zea,mays subsp. mays,NSL,287008,215999,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: Cuzco 2008ID: ECU_485\ 7 seeds left,,,,,,,,,,
+
+RIMMA0663,Zea,mays subsp. mays,PI,488102,383038,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: Mishca 2008ID: ECU_505\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0664,Zea,mays subsp. mays,PI,488113,383049,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: Blanco_Blandito 2008ID: ECU_523\ 3 seeds left (all have holes in them),,,,,,,,,,
+
+RIMMA0665,Zea,mays subsp. mays,PI,489324,384260,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: Racimo_de_Uva 2008ID: ECU_968\ 7 seeds left,,,,,,,,,,
+
+RIMMA0666,Zea,mays subsp. mays,Ames,28674,715221,Peru,Huancavelicano,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Andean subcluster: Ecuadorian/Peruvian race: HUANCAVELICANO 2008ID: HVC_112,,,,,,,,,,
+
+RIMMA0667,Zea,mays subsp. mays,AMES,28737,715284,Bolivia,Chuquisaca,,,,,,Other,Goodman,,cluster: Andean subcluster: Peruvian race: Patillo 2008ID: BOV_502\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0668,Zea,mays subsp. mays,Ames,28668,715215,Peru,Puno,,,,,,Traditional cultivar/landrace,Goodman,0,cluster: Andean subcluster: Peruvian race: Granada 2008ID: PUN_25\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0669,Zea,mays subsp. mays,Ames,28530,715077,Guatemala,Totonicapan,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Negro_de_Tierra_Fria 2008ID: GUA_524,,,,,,,,,,
+
+RIMMA0670,Zea,mays subsp. mays,Ames,28508,715055,Guatemala,San Marcos,,,,,,Traditional cultivar/landrace,Goodman,0,cluster: Highland Mexican subcluster: Central race: San_Marceno 2008ID: GUA_534\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0671,Zea,mays subsp. mays,Ames,28538,715085,Guatemala,Solola,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Salpor_Tardio 2008ID: GUA_577\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0672,Zea,mays subsp. mays,PI,483613,378549,Mexico,Mexico,,,,,,Traditional cultivar/landrace,Goodman,0,cluster: Highland Mexican subcluster: Central race: Chalqueno 2008ID: MEX_48\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0673,Zea,mays subsp. mays,PI,483606,378542,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Cacahuacintle 2008ID: MEX_7,,,,,,,,,,
+
+RIMMA0674,Zea,mays subsp. mays,PI,483617,378553,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Conico 2008ID: MEX_72\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0675,Zea,mays subsp. mays,NSL,287621,217120,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Conico 2008ID: PUE_109\ ,,,,,,,,,,
+
+RIMMA0676,Zea,mays subsp. mays,PI,487867,382803,Mexico,Zacatecas,,,,Zacatecas,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Central race: Chalqueno 2008ID: ZAC_4,,,,,,,,,,
+
+RIMMA0677,Zea,mays subsp. mays,Ames,28476,715023,Mexico,Zacatecas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: Northwest race: Conico_Norteno 2008ID: ZAC_12\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0678,Zea,mays subsp. mays,NSL,285833,214306,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Conico_Norteno 2008ID: GTO_23,,,,,,,,,,
+
+RIMMA0679,Zea,mays subsp. mays,Ames,28536,715083,Guatemala,Quezaltenango,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Salpor 2008ID: GUA_476,,,,,,,,,,
+
+RIMMA0680,Zea,mays subsp. mays,Ames,28448,714995,Mexico,Jalisco,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Tabloncillo 2008ID: JAL_100\ 7 seeds left,,,,,,,,,,
+
+RIMMA0681,Zea,mays subsp. mays,PI,628446,61848,Mexico,Jalisco,19.9333,,103.733,1800,Tapalpa.,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Serrano_de_Jalisco 2008ID: JAL_133,,,,,,,,,
+
+RIMMA0682,Zea,mays subsp. mays,PI,484571,379507,Mexico,Jalisco,,,,Jalisco,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Tablilla_de_Ocho 2008ID: JAL_301\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0683,Zea,mays subsp. mays,PI,483568,378504,Mexico,Jalisco,,,,Jalisco,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Dulce_de_Jalisco 2008ID: JAL_78,,,,,,,,,,
+
+RIMMA0684,Zea,mays subsp. mays,Ames,28482,715029,Mexico,Nayarit,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: West race: Bofo 2008ID: NAY_203,,,,,,,,,,
+
+RIMMA0685,Zea,mays subsp. mays,NSL,287623,217124,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: xHighMex_mixed race: Conico_Norteno 2008ID: AGS_7,,,,,,,,,,
+
+RIMMA0686,Zea,mays subsp. mays,PI,484599,379535,Mexico,Puebla,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Highland Mexican subcluster: xHighMex_mixed race: Arrocillo_Amarillo 2008ID: PUE_91,,,,,,,,,,
+
+RIMMA0687,Zea,mays subsp. mays,Ames,28473,715020,Mexico,Queretaro,,,,,,Traditional cultivar/landrace,Goodman,,"cluster: Highland Mexican subcluster: xHighMex_mixed race: Conico_Norteno 2008ID: QRO_2, accession has been exhausted, seed sent to double haploid facility in Ames, Iowa for highland/lowland",,,,,,,,,,
+
+RIMMA0688,Zea,mays subsp. mays,PI,449483,344419,Brazil,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Brazilian race: Cateto 2008ID: CE_I,,,,,,,,,,
+
+RIMMA0689,Zea,mays subsp. mays,PI,298523,683206,Brazil,,,,,,,Breeder's line,Goodman,,cluster: Tropical Lowland subcluster: Brazilian race: Dente_Riograndense_Rugoso 2008ID: RGS_IV,,,,,,,,,,
+
+RIMMA0690,Zea,mays subsp. mays,PI,444946,339882,Colombia,Magdalena,,,250,Magdalena State,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Colombian 1 race: Puya 2008ID: MAG_390\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0691,Zea,mays subsp. mays,PI,445391,340327,Colombia,Santander,,,1098,Santander S. State,,Other,Goodman,,cluster: Tropical Lowland subcluster: Colombian 2 race: Cacao 2008ID: SAS_342\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0692,Zea,mays subsp. mays,Ames,28598,715145,Venezuela,Anzoategui,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Colombian 2 race: Guaribero 2008ID: VEN_653,,,,,,,,,,
+
+RIMMA0693,Zea,mays subsp. mays,PI,487959,382895,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Cuban race: Cubano_Amarillo_Duro 2008ID: ECU_770,,,,,,,,,,
+
+RIMMA0694,Zea,mays subsp. mays,Ames,28487,715034,Guatemala,Chiquimula,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Haitian/Guatemalan race: Nal_Tel_ATB 2008ID: GUA_220,,,,,,,,,,
+
+RIMMA0695,Zea,mays subsp. mays,Ames,28567,715114,Guatemala,El Progreso,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Haitian/Guatemalan race: Tuxpeno 2008ID: GUA_456,,,,,,,,,,
+
+RIMMA0696,Zea,mays subsp. mays,Ames,28568,715115,Guatemala,El Progreso,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Haitian/Guatemalan race: Tuxpeno 2008ID: GUA_460\ 7 seeds left,,,,,,,,,,
+
+RIMMA0697,Zea,mays subsp. mays,PI,483890,378826,Haiti,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Haitian/Guatemalan race: Chandelle 2008ID: HTI_1,,,,,,,,,,
+
+RIMMA0698,Zea,mays subsp. mays,PI,490982,385918,Mexico,Tamaulipas,,,,Tamaulipas,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Haitian/Guatemalan race: Raton 2008ID: TAM_25\ 2 seeds left,,,,,,,,,,
+
+RIMMA0699,Zea,mays subsp. mays,Ames,28465,715012,Mexico,Chiapas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Mexican Lowlands race: Vandeno 2008ID: CHS_112,,,,,,,,,,
+
+RIMMA0700,Zea,mays subsp. mays,NSL,291626,220930,,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Mexican Lowlands race: Olotillo 2008ID: CHS_53\ EXHAUSTED,,,,,,,,,,
+
+RIMMA0701,Zea,mays subsp. mays,PI,484808,379744,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Mexican Lowlands race: Olotillo 2008ID: CHS_81\ 7 seeds left,,,,,,,,,,
+
+RIMMA0702,Zea,mays subsp. mays,Ames,28534,715081,Guatemala,Sacatepequez,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Mexican Lowlands race: Negro_de_Tierra_Caliente 2008ID: GUA_359\ 7 seeds left,,,,,,,,,,
+
+RIMMA0703,Zea,mays subsp. mays,NSL,283390,210473,,,,,,"Mexico, Federal District\ ",,Traditional cultivar/landrace,Goodman,,"cluster: Tropical Lowland subcluster: Mexican Lowlands race: Nal_Tel 2008ID: YUC_7, seed sent to double haploid facility in Ames, Iowa for highland/lowland\ EXHAUSTED\ \ 20 ct ",,,,,,,,,,
+
+RIMMA0704,Zea,mays subsp. mays,Ames,28623,715170,Venezuela,Portuguesa,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Venezuelan race: Tuxpeno 2008ID: VEN_598,,,,,,,,,,
+
+RIMMA0705,Zea,mays subsp. mays,Ames,28631,715178,Venezuela,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Venezuelan race: Negrito 2008ID: VEN_673,,,,,,,,,,
+
+RIMMA0706,Zea,mays subsp. mays,Ames,28615,715162,Venezuela,Yaracuy,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: Venezuelan race: Costeno 2008ID: VEN_843,,,,,,,,,,
+
+RIMMA0707,Zea,mays subsp. mays,PI,487930,382866,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLow_mixed race: Tuxpeno 2008ID: ECU_604\ 7 seeds left,,,,,,,,,,
+
+RIMMA0708,Zea,mays subsp. mays,PI,488376,383312,Ecuador,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLow_mixed race: YUNQUILLANO_F_ANDAQUI 2008ID: ECU_892\ 7 seeds left,,,,,,,,,,
+
+RIMMA0709,Zea,mays subsp. mays,Ames,28452,714999,Mexico,Chiapas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLowMixed race: Tehua 2008ID: CHS_159\ 7 seeds left,,,,,,,,,,
+
+RIMMA0710,Zea,mays subsp. mays,PI,478988,373924,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLowMixed race: Tepecintle 2008ID: CHS_225\ 7 seeds left,,,,,,,,,,
+
+RIMMA0711,Zea,mays subsp. mays,Ames,29075,37297,Mexico,Chiapas,,,1000,Finca Prusia.,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLowMixed race: Tehua 2008ID: CHS_29,,,,,,,,,,
+
+RIMMA0712,Zea,mays subsp. mays,NSL,291696,221051,Guatemala,Baja Verapaz,,,,,,Other,Goodman,,cluster: Tropical Lowland subcluster: xTropLowMixed race: Oloton 2008ID: GUA_27\ 7 seeds left,,,,,,,,,,
+
+RIMMA0713,Zea,mays subsp. mays,PI,489399,384335,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: Tropical Lowland subcluster: xTropLowMixed race: Dzit_Bacal 2008ID: GUA_322,,,,,,,,,,
+
+RIMMA0714,Zea,mays subsp. mays,Ames,28458,715005,Mexico,Chiapas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Zapalote_Grande 2008ID: CHS_104,,,,,,,,,,
+
+RIMMA0715,Zea,mays subsp. mays,Ames,28454,715001,Mexico,Chiapas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Tehua 2008ID: CHS_204,,,,,,,,,,
+
+RIMMA0716,Zea,mays subsp. mays,Ames,28459,715006,Mexico,Chiapas,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Zapalote_Grande 2008ID: CHS_224\ 8 seeds left,,,,,,,,,,
+
+RIMMA0717,Zea,mays subsp. mays,PI,483926,378862,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Olotillo 2008ID: CHS_52,,,,,,,,,,
+
+RIMMA0718,Zea,mays subsp. mays,PI,484805,379741,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Olotillo 2008ID: CHS_56,,,,,,,,,,
+
+RIMMA0719,Zea,mays subsp. mays,PI,478974,373910,Mexico,Chiapas,,,,Chiapas,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Tepecintle 2008ID: CHS_76,,,,,,,,,,
+
+RIMMA0720,Zea,mays subsp. mays,PI,489372,384308,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Negro_de_Tierra_Caliente 2008ID: GUA_101\ 7 seeds left,,,,,,,,,,
+
+RIMMA0721,Zea,mays subsp. mays,Ames,28485,715032,Guatemala,Chiquimula,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Nal_Tel_ATB 2008ID: GUA_111\ 7 seeds left,,,,,,,,,,
+
+RIMMA0722,Zea,mays subsp. mays,Ames,28564,715111,Guatemala,Jutiapa,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Dzit_Bacal 2008ID: GUA_131\ 7 seeds left,,,,,,,,,,
+
+RIMMA0723,Zea,mays subsp. mays,Ames,28565,715112,Guatemala,Jutiapa,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Dzit_Bacal 2008ID: GUA_134,,,,,,,,,,
+
+RIMMA0724,Zea,mays subsp. mays,PI,490826,385762,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Nal_Tel_BTB 2008ID: GUA_145,,,,,,,,,,
+
+RIMMA0725,Zea,mays subsp. mays,PI,490827,385763,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Negro_de_Tierra_Caliente 2008ID: GUA_146,,,,,,,,,,
+
+RIMMA0726,Zea,mays subsp. mays,PI,504073,399009,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Negro_de_Tierra_Caliente 2008ID: GUA_159,,,,,,,,,,
+
+RIMMA0727,Zea,mays subsp. mays,Ames,28555,715102,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Comiteco 2008ID: GUA_241\ 7 seeds left,,,,,,,,,,
+
+RIMMA0728,Zea,mays subsp. mays,PI,484969,379905,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Nal_Tel_BTB 2008ID: GUA_280,,,,,,,,,,
+
+RIMMA0729,Zea,mays subsp. mays,PI,504090,399026,Guatemala,,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Tepecintle 2008ID: GUA_651\ 7 seeds left,,,,,,,,,,
+
+RIMMA0730,Zea,mays subsp. mays,Ames,28517,715064,Guatemala,Sacatepequez,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Quicheno_Late 2008ID: GUA_871\ 7 seeds left,,,,,,,,,,
+
+RIMMA0731,Zea,mays subsp. mays,PI,484137,379073,Mexico,Oaxaca,,,,Oaxaca,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Bolita 2008ID: OAX_40\ 7 seeds left,,,,,,,,,,
+
+RIMMA0732,Zea,mays subsp. mays,Ames,28456,715003,Mexico,Oaxaca,,,,,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Zapalote_Chico 2008ID: OAX_48,,,,,,,,,,
+
+RIMMA0733,Zea,mays subsp. mays,PI,479054,373990,Mexico,Oaxaca,,,,Oaxaca,,Traditional cultivar/landrace,Goodman,,cluster: xMixed subcluster: xMixed race: Zapalote_Chico 2008ID: OAX_50\ 7 seeds left,,,,,,,,,,
+
+RIMMA0734,Zea,mays subsp. mays,Ames,26028,597271,,,,,,,Ill. Two,ear (from H.A. Wallace  Pioneer TEA54),Breeder's line,Edwards,,BSSS parent,,,,,,,,,
+
+RIMMA0735,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; A3G,3,3,1,313),1,,,,,
+
+RIMMA0736,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; Ill. 12E,,,,,,,,,,
+
+RIMMA0737,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; I224,,,,,,,,,,
+
+RIMMA0738,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; AH83,,,,,,,,,,
+
+RIMMA0739,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; WD456,,,,,,,,,,
+
+RIMMA0740,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; Oh3167B,,,,,,,,,,
+
+RIMMA0741,Zea,mays subsp. mays,,,,United States,,,,,,CB parent,Breeder's Line,Edwards,,CB parents; BL345,,,,,,,,,,
+
+RIMMA0742,Zea,mays subsp. mays,,,,United States,,,,,,BSSS parent,Breeder's Line,Edwards,,BSSS parents; Tr9,1,1,6,,,,,,,
+
+RIMMA0743,Zea,mays subsp. mays,,,,United States,,,,,,CB parent,Breeder's Line,Edwards,,CB parents; CC5,,,,,,,,,,
+
+RIMMA0744,Zea,mays subsp. mays,,,,United States,,,,,,Minn.13,Breeder's Line,Goodman,,C11; 10204,Feb-95,,,,,,,,,
+
+RIMMA0745,Zea,mays subsp. mays,,,,United States,,,,,,N28 x B73,Breeder's Line,Goodman,,N196; 2842,3-Feb,,,,,,,,,
+
+RIMMA0746,Zea,mays subsp. mays,,,,United States,,,,,,Iowa Stiff Stalk Synthetic,Breeder's Line,Goodman,,B69; 3091,Feb-00,,,,,,,,,
+
+RIMMA0747,Zea,mays subsp. mays,,,,United States,,,,,,Funk 176A,Breeder's Line,Goodman,,AR4; 2737,3-Feb,,,,,,,,,
+
+RIMMA0748,Zea,mays subsp. mays,,,,United States,,,,,,Lancaster Surecrop,Breeder's Line,Goodman,,L289; 275,4-May,,,,,,,,,
+
+RIMMA0749,Zea,mays subsp. mays,,,,United States,,,,,,,Breeder's Line,Goodman,,FE2; 1441,5-Feb,,,,,,,,,
+
+RIMMA0750,Zea,mays subsp. mays,,,,United States,,,,,,,Breeder's Line,Goodman,,LE773; 279,4-Apr,,,,,,,,,
+
+RIMMA0751,Zea,mays subsp. mays,,,,United States,,,,,,K155_x_A321,Breeder's Line,Goodman,,PA884P; 2858,3-May,,,,,,,,,
+
+RIMMA0752,Zea,mays subsp. mays,,,,United States,,,,,,,Breeder's Line,Goodman,,C13; 163,4-Feb,,,,,,,,,
+
+RIMMA0753,Zea,mays subsp. mays,,,,United States,,,,,, (M14 x CI187,2)Oh45 x (Oh45A x Oh45T)Oh45,Breeder's Line,Goodman,,Oh545; 2854,3-Feb,,,,,,,,
+
+RIMMA0754,Zea,mays subsp. mays,,,,United States,,,,,,Wisconsin #25,Breeder's Line,Goodman,,WD; 1573,4-Feb,,,,,,,,,
+
+RIMMA0755,Zea,mays subsp. mays,,,,United States,,,,,,Iodent,Breeder's Line,Goodman,,IDT; 2803,3-Jan,,,,,,,,,
+
+RIMMA0756,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,"MR17 (Pisankalla), 60 total kernels; 4 packets, including unknown and inbred generations S4 and S6",,,,,,,,,,
+
+RIMMA0757,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,"MR29 (Conico Norteâo); 2 packets, inbred generation S3",,,,,,,,,,
+
+RIMMA0757,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,"MR29 (Conico Norte?o); 2 packets, inbred generation S3",,,,,,,,,,
+
+RIMMA0758,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,MR24 (Chullpi),,,,,,,,,,
+
+RIMMA0759,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,MR30 (Conico),,,,,,,,,,
+
+RIMMA076,Zea,mays subsp. mays,,,,,,,,,,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0760,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,MR31 (Dzit Bacal),,,,,,,,,,
+
+RIMMA0761,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,MR32 (Morado),,,,,,,,,,
+
+RIMMA0762,Zea,mays subsp. mays,,,,,,,,,,,Traditional cultivar/landrace,Doebley,,MR33 (Mountain Yellow); 1 packet inbred S3,,,,,,,,,,
+
+RIMMA0763,Zea,mays subsp. mays,,,,,,17.2566,96.029,1877,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0764,Zea,mays subsp. mays,,,,,,17.2547,96.032,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0765,Zea,mays subsp. mays,,,,,,17.2585,96.0283,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0766,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0767,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0768,Zea,mays subsp. mays,,,,,,17.2566,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0769,Zea,mays subsp. mays,,,,,,17.2547,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0770,Zea,mays subsp. mays,,,,,,17.2585,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0771,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0772,Zea,mays subsp. mays,,,,,,17.2626,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0773,Zea,mays subsp. mays,,,,,,17.2547,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0774,Zea,mays subsp. mays,,,,,,17.2585,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0775,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0776,Zea,mays subsp. mays,,,,,,17.2618,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0777,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0778,Zea,mays subsp. mays,,,,,,17.2603,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0779,Zea,mays subsp. mays,,,,,,17.2626,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0780,Zea,mays subsp. mays,,,,,,17.2626,,,Totontepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0782,Zea,mays subsp. mays,,,,,,,,,Oloton Reference,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0783,Zea,mays subsp. mays,,,,,,52.6847,,,Santiago Choapan,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0784,Zea,mays subsp. mays,,,,,,52.6072,,,Jalctepec de Candayoc ,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0785,Zea,mays subsp. mays,,,,,,50.5448,,,San Juan Comaltepec ,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0786,Zea,mays subsp. mays,,,,,,,,,Corn Project Reference,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0787,Zea,mays subsp. mays,,,,,,,,,Comercial Reference,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0788,Zea,mays subsp. mays,,,,,,17.3392,,,San Idelfenso Villa alta ,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0789,Zea,mays subsp. mays,,,,,,17.3812,,,Sta. Maria Temaxcalapa,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0790,Zea,mays subsp. mays,,,,,,17.3367,,,San Cristobal Lachirioag,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0791,Zea,mays subsp. mays,,,,,,17.31,,,San Francisco YateÃ©,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0792,Zea,mays subsp. mays,,,,,,17.2938,,,San Andres YaÃ¡,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0793,Zea,mays subsp. mays,,,,,,17.2939,,,San miguel de Metepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0794,Zea,mays subsp. mays,,,,,,17.2248,,,Santa Maria Tiltepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0795,Zea,mays subsp. mays,,,,,,17.2305,,,San Jose Chinantequilla,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0796,Zea,mays subsp. mays,,,,,,17.2803,,,Amatepec,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0797,Zea,mays subsp. mays,,,,,,17.3007,,,Tepitongo,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0798,Zea,mays subsp. mays,,,,,,17.2472,,,Moctum,,,Bennett,,Oaxacan landraces for study of Oloton; obtained under a Material Transfer Agreement with the community that does not allow distribution outside of UC collaborators.,,,,,,,,,,
+
+RIMMA0799,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHG39         Pioneer Hi,Bred International     Maize Amargo/Stiff Stalk Synthetic; B37/B14 type \ ,,,,,,,,,
+
+RIMMA0800,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,LH82            Holden Foundation Seeds          Pioneer Hybrid 3358\ ,,,,,,,,,,
+
+RIMMA0801,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHG35         Pioneer Hi,Bred International     Oh07,Midland/Iodent\ ,,,,,,,,
+
+RIMMA0802,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,LH123          Holden Foundation Seeds          Pioneer Hybrid 3535\ ,,,,,,,,,,
+
+RIMMA0803,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHJ40          Pioneer Hi,Bred International     Stiff Stalk Synthetic\ ,,,,,,,,,
+
+RIMMA0804,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHG84         Pioneer Hi,Bred International     Oh07,Midland/PH848\ ,,,,,,,,
+
+RIMMA0805,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHG47         Pioneer Hi,Bred International     Oh43\ ,,,,,,,,,
+
+RIMMA0806,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,LH1              Holden Foundation Seeds          Stiff Stalk Synthetic; B37 type\ ,,,,,,,,,,
+
+RIMMA0807,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PHZ51         Pioneer Hi,Bred International      Oh07,Midland/PH848  \ ,,,,,,,,
+
+RIMMA0808,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,B73              None (Public)                              Stiff Stalk Synthetic\ ,,,,,,,,,,
+
+RIMMA0809,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,Mo17            None (Public)                              Lancaster\ ,,,,,,,,,,
+
+RIMMA0810,Zea,mays subsp. mays,,,,United States,,,,,,,,Mumm,,PH207          Pioneer Hi,Bred International     Iodent,,,,,,,,,
+
+RIMMA0811,Zea,mays subsp. mays,,,,United States,,,,,,,Mutant,Velasco,,Tunicate mutant from Plant Sciences field day.  Red glumes.,,,,,,,,,,
+
+RIMMA0812,Zea,mays subsp. mays,Ames,8399,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0813,Zea,mays subsp. mays,Ames,10248,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0814,Zea,mays subsp. mays,Ames,12729,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0815,Zea,mays subsp. mays,Ames,12731,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0816,Zea,mays subsp. mays,Ames,12732,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0817,Zea,mays subsp. mays,Ames,12734,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0818,Zea,mays subsp. mays,Ames,12735,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0819,Zea,mays subsp. mays,Ames,18999,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0820,Zea,mays subsp. mays,Ames,19000,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0821,Zea,mays subsp. mays,Ames,19314,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0822,Zea,mays subsp. mays,Ames,19316,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0823,Zea,mays subsp. mays,Ames ,19328,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0824,Zea,mays subsp. mays,Ames,22440,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0825,Zea,mays subsp. mays,Ames,22763,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0826,Zea,mays subsp. mays,Ames,23405,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0827,Zea,mays subsp. mays,Ames ,23503,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0828,Zea,mays subsp. mays,Ames,24575,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0829,Zea,mays subsp. mays,Ames,24576,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0830,Zea,mays subsp. mays,Ames,24577,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0831,Zea,mays subsp. mays,Ames,24989,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0832,Zea,mays subsp. mays,Ames,27038,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0833,Zea,mays subsp. mays,Ames,27050,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0834,Zea,mays subsp. mays,Ames,27064,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0835,Zea,mays subsp. mays,Ames,27065,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0836,Zea,mays subsp. mays,Ames,27068,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0837,Zea,mays subsp. mays,Ames,27069,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0838,Zea,mays subsp. mays,Ames,27071,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0839,Zea,mays subsp. mays,Ames,27072,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0840,Zea,mays subsp. mays,Ames,27074,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0841,Zea,mays subsp. mays,Ames,27076,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0842,Zea,mays subsp. mays,Ames,27078,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0843,Zea,mays subsp. mays,Ames,27079,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0844,Zea,mays subsp. mays,Ames,27080,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0845,Zea,mays subsp. mays,Ames,27082,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0846,Zea,mays subsp. mays,Ames,27083,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0847,Zea,mays subsp. mays,Ames,27084,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0848,Zea,mays subsp. mays,Ames,27085,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0849,Zea,mays subsp. mays,Ames,27086,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0850,Zea,mays subsp. mays,Ames,27087,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0851,Zea,mays subsp. mays,Ames,27089,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0852,Zea,mays subsp. mays,Ames,27090,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0853,Zea,mays subsp. mays,Ames,27091,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0854,Zea,mays subsp. mays,Ames ,27092,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0855,Zea,mays subsp. mays,Ames,27093,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0856,Zea,mays subsp. mays,Ames,27094,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0857,Zea,mays subsp. mays,Ames,27095,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0858,Zea,mays subsp. mays,Ames,27097,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0859,Zea,mays subsp. mays,Ames,27098,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0860,Zea,mays subsp. mays,Ames,27099,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0861,Zea,mays subsp. mays,Ames,27100,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0862,Zea,mays subsp. mays,Ames,27102,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0863,Zea,mays subsp. mays,Ames,27106,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0864,Zea,mays subsp. mays,Ames,27107,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0865,Zea,mays subsp. mays,Ames,27108,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0866,Zea,mays subsp. mays,Ames,27110,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0867,Zea,mays subsp. mays,Ames,27111,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0868,Zea,mays subsp. mays,Ames,27112,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0869,Zea,mays subsp. mays,Ames,27113,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0870,Zea,mays subsp. mays,Ames,27114,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0871,Zea,mays subsp. mays,Ames,27115,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0872,Zea,mays subsp. mays,Ames,27116,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0873,Zea,mays subsp. mays,Ames,27117,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0874,Zea,mays subsp. mays,Ames,27119,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0875,Zea,mays subsp. mays,Ames,27120,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0876,Zea,mays subsp. mays,Ames,27125,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0877,Zea,mays subsp. mays,Ames,27126,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0878,Zea,mays subsp. mays,Ames,27129,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0879,Zea,mays subsp. mays,Ames,27132,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0880,Zea,mays subsp. mays,Ames,27135,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0881,Zea,mays subsp. mays,Ames,27138,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0882,Zea,mays subsp. mays,Ames,27140,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0883,Zea,mays subsp. mays,Ames,27141,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0884,Zea,mays subsp. mays,Ames,27143,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0885,Zea,mays subsp. mays,Ames,27144,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0886,Zea,mays subsp. mays,Ames,27145,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0887,Zea,mays subsp. mays,Ames,27146,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0888,Zea,mays subsp. mays,Ames,27147,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0889,Zea,mays subsp. mays,Ames,27148,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0890,Zea,mays subsp. mays,Ames,27149,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0891,Zea,mays subsp. mays,Ames,27151,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0892,Zea,mays subsp. mays,Ames,27153,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0893,Zea,mays subsp. mays,Ames,27155,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0894,Zea,mays subsp. mays,Ames,27156,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0895,Zea,mays subsp. mays,Ames,27158,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0896,Zea,mays subsp. mays,Ames,27159,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0897,Zea,mays subsp. mays,Ames,27160,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0898,Zea,mays subsp. mays,Ames,27164,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0899,Zea,mays subsp. mays,Ames,27165,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0900,Zea,mays subsp. mays,Ames,27166,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0901,Zea,mays subsp. mays,Ames,27167,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0902,Zea,mays subsp. mays,Ames,27168,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0903,Zea,mays subsp. mays,Ames,27169,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0904,Zea,mays subsp. mays,Ames,27170,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0905,Zea,mays subsp. mays,Ames,27172,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0906,Zea,mays subsp. mays,Ames,27173,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0907,Zea,mays subsp. mays,Ames,27174,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0908,Zea,mays subsp. mays,Ames,27176,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0909,Zea,mays subsp. mays,Ames,27177,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0910,Zea,mays subsp. mays,Ames,27178,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0911,Zea,mays subsp. mays,Ames,27179,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0912,Zea,mays subsp. mays,Ames,27180,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0913,Zea,mays subsp. mays,Ames,27183,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0914,Zea,mays subsp. mays,Ames,27185,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0915,Zea,mays subsp. mays,Ames,27188,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0916,Zea,mays subsp. mays,Ames,27189,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0917,Zea,mays subsp. mays,Ames,27190,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0918,Zea,mays subsp. mays,Ames,27191,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0919,Zea,mays subsp. mays,Ames,27192,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0920,Zea,mays subsp. mays,Ames,27196,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0921,Zea,mays subsp. mays,Ames,27258,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0922,Zea,mays subsp. mays,Ames,27259,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0923,Zea,mays subsp. mays,Ames,27260,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0924,Zea,mays subsp. mays,Ames,27261,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0925,Zea,mays subsp. mays,Ames,28185,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0926,Zea,mays subsp. mays,Ames,28291,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0927,Zea,mays subsp. mays,Ames,28364,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0928,Zea,mays subsp. mays,Ames,28365,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0929,Zea,mays subsp. mays,Ames,28366,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0930,Zea,mays subsp. mays,Ames,28939,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0931,Zea,mays subsp. mays,Ames,31534,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0932,Zea,mays subsp. mays,NSL,22893,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0933,Zea,mays subsp. mays,NSL,22894,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0934,Zea,mays subsp. mays,NSL,53083,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0935,Zea,mays subsp. mays,NSL,53094,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0936,Zea,mays subsp. mays,NSL,75979,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0937,Zea,mays subsp. mays,NSL,242484,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0938,Zea,mays subsp. mays,PI,257507,,,,,,,,,Breeder's line,USDA,,F7,,,,,,,,,,
+
+RIMMA0939,Zea,mays subsp. mays,PI,506247,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0940,Zea,mays subsp. mays,PI,506248,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0941,Zea,mays subsp. mays,PI,506253,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0942,Zea,mays subsp. mays,PI,506255,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0943,Zea,mays subsp. mays,PI,517974,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0944,Zea,mays subsp. mays,PI,520774,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0945,Zea,mays subsp. mays,PI,524969,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0946,Zea,mays subsp. mays,PI,531084,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0947,Zea,mays subsp. mays,PI,531085,,,,,,,,,Breeder's line,USDA,,NC262,,,,,,,,,,
+
+RIMMA0948,Zea,mays subsp. mays,PI,540745,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0949,Zea,mays subsp. mays,PI,540747,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0950,Zea,mays subsp. mays,PI,550522,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0951,Zea,mays subsp. mays,PI,550555,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0952,Zea,mays subsp. mays,PI,550558,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0953,Zea,mays subsp. mays,PI,550566,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0954,Zea,mays subsp. mays,PI,573098,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0955,Zea,mays subsp. mays,PI,583350,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0956,Zea,mays subsp. mays,PI,583351,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0957,Zea,mays subsp. mays,PI,583352,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0958,Zea,mays subsp. mays,PI,587127,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0959,Zea,mays subsp. mays,PI,587130,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0960,Zea,mays subsp. mays,PI,587132,,,,,,,,,Breeder's line,USDA,,Sg 1533,,,,,,,,,,
+
+RIMMA0961,Zea,mays subsp. mays,PI,587135,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0962,Zea,mays subsp. mays,PI,587142,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0963,Zea,mays subsp. mays,PI,587143,,,,,,,,,Breeder's line,USDA,,A682,,,,,,,,,,
+
+RIMMA0964,Zea,mays subsp. mays,PI,587144,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0965,Zea,mays subsp. mays,PI,587151,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0966,Zea,mays subsp. mays,PI,592734,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0967,Zea,mays subsp. mays,PI,594046,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0968,Zea,mays subsp. mays,PI,594047,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0969,Zea,mays subsp. mays,PI,594048,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0970,Zea,mays subsp. mays,PI,595534,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0971,Zea,mays subsp. mays,PI,595542,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0972,Zea,mays subsp. mays,PI,595544,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0973,Zea,mays subsp. mays,PI,595565,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0974,Zea,mays subsp. mays,PI,597927,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0975,Zea,mays subsp. mays,PI,606329,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0976,Zea,mays subsp. mays,PI,606330,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0977,Zea,mays subsp. mays,PI,606768,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0978,Zea,mays subsp. mays,PI,607521,,,,,,,,,Breeder's line,USDA,,,,,,,,,,,,
+
+RIMMA0979,Zea,mays subsp. mays,,,,,,,,,,,Mutant,Stock Center,,15K;  CENPC mutant: UFMu,1447,>insertion 5' of CENPC2; see http://www.maizegdb.org/documentation/uniformmu/ for information on UFmu lines,,,,,,,,
+
+RIMMA0980,Zea,mays subsp. mays,,,,,,,,,,,Mutant,Stock Center,,15K; CENPC mutant: UFMu,1433,>insertion 5' of CENPC2 (unclear if different insertion from UFMu,01447?); see http://www.maizegdb.org/documentation/uniformmu/ for information on UFmu lines,,,,,,,
+
+RIMMA0981,Zea,mays subsp. mays,,,,,,,,,,,Mutant,Stock Center,,15K; CENH3 mutant: UFMu,1386,> insertion 5' of CENH3; see http://www.maizegdb.org/documentation/uniformmu/ for information on UFmu lines,,,,,,,,
+
+RIMMA0982,Zea,mays subsp. mays,,,,,,,,,,,Mutant,Stock Center,,15K; CENPC mutant: UFMu,1150,> insertion 5' of CENPC1 (appears to be same insertion as UFMu,00457); see http://www.maizegdb.org/documentation/uniformmu/ for information on UFmu lines,,,,,,,
+
+RIMMA0983,Zea,mays subsp. mays,,,,,,,,,,,Mutant,Stock Center,,CENPC mutant: \ \ see http://www.maizegdb.org/documentation/uniformmu/ for information on UFmu lines,,,,,,,,,,
+
+RIMMA0984,Zea,mays subsp. mays,,,,,,,,,,,Mutant,U. Oregon,,"NOTE: MAY BE LABELLED 983\ \ CENPC mutant: mu insertion in intron of CENPC2\ \ ear #R110-8 selfed, 15K\ \ mu-illumina_55988.2\ \ see http://teosinte.uoregon.edu/mu-illumina/index.php?mu=mu-illumina_55988.2 for information ",,,,,,,,,,
+
+RIMMA0985,zea,mays subsp. mays,PI,60138,,,,,,,United States,,Breeder's line,USDA,,"200 ct, tetraploid",,,,,,,,,,
+
+RIMMA0986,Zea,mays subsp. mays,PI,601329,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0987 ,Zea,mays subsp. mays,PI,601330,,,,,,,United States,,Breeder's line,USDA,,"100ct, tetraploid",,,,,,,,,,
+
+RIMMA0988,Zea,mays subsp. mays,PI,601332,,,,,,,United States,,Breeder's line,USDA,,"100ct, tetraploid",,,,,,,,,,
+
+RIMMA0989,Zea,mays subsp. mays,PI,601271,,,,,,,United States,,Breeder's line,USDA,,"100ct, tetraploid",,,,,,,,,,
+
+RIMMA0990,Zea,mays subsp. mays,PI,601272,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0991,Zea,mays subsp. mays,PI,601273,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0992,Zea,mays subsp. mays,PI,601274,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0993,Zea,mays subsp. mays,PI,601275,,,,,,,United States,,Breeder's line,USDA,,"100ct, tetraploid",,,,,,,,,,
+
+RIMMA0994,Zea ,mays subsp. mays,PI,601276,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0995,Zea,mays subsp. mays,PI,601323,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0996,Zea,mays subsp. mays,PI,601324,,,,,,,United States,,Breeder's line,USDA,,"100ct, tetraploid",,,,,,,,,,
+
+RIMMA0997,Zea,mays subsp. mays,PI,601325,,,,,,,United States,,Breeder's line,USDA,,"200ct, tetraploid",,,,,,,,,,
+
+RIMMA0998,Zea,mays subsp. mays,,,,,,,,,United States,,,Birchler,,fast maze. presumably Gaspe Flint background.  5k total. 60 days seed,to,seed,,,,,,,,
+
+RIMMA0999,Zea,mays subsp. mays,,,,,,,,,,,,flint,garcia,,MRI (Aragnito)\ IOWN 1199,,,,,,,,,
+
+RIMMA1000,Zea,mays subsp. mays,,,,,,,,,,,,flint,garcia,,MR8(Costeno) \ IOWN 1213\ ,,,,,,,,,
+
+RIMMA1001,Zea,mays subsp. mays,,,,,,,,,,,,flint,garcia,,MR25(Poropo)\ IOWN 1242,,,,,,,,,
+
+RIMMA1002,Zea,mays subsp. mays,,,,,,,,,,,,Birchler,,Fast,Flowering Mini,Maize\ 0 seeds,,,,,,,,
+
+RIMMA1003,Zea,mays subsp. mays,PI,357127,,,,,,,,PI 357127,1,1,1,1 \ ,,Murray,,L: UCD t: JRI plot: 4\ CS12,BMS,9,1\ 50 seeds,,,
+
+RIMMA1004,Zea,mays subsp. mays,PI,357127,,,,,,,,PI 357127,1,1,1,B15,,Murrary,,L: UCD t: JRI plot: 3\ CS12,BMS,9,B15\ 50 seeds,,,
+
+RIMMA1005,Zea,mays subsp. mays,PI,390554,,,,,,,,PI 390554,1,1,B,B2,1\ \ ,,,,L: UCD t: JRI plot: 2\ CS12,BMS,11,1\ 50 seeds,,
+
+RIMMA1006,Zea,mays subsp. mays,PI,390554,,,,,,,,PI 390554,1,1,B,B2,B2,,Murray,,CS12,BMS,11,BL\ L: UCD t: JRI plot: 1\ 50 seeds,,
+
+RIMMA1007,Zea ,mays subsp. mays,Ames,28502,,,,,,,"San Marcos, Guatemala",,Serrano,Holland/Goodman,,"Gua_Highland5k, elevation: 3049. Vig_ID: GUA_940. Lat N15:02, Long: w91:47",,,,,,,,,,
+
+RIMMA1008,Zea,mays subsp. mays,Ames,28530,,,,,,,Totonicapan,,Negro_de_Tierra_Fria,Holland/Goodman,,"Gua_Highland 10K Lat: N14:55, Long: W91:20, Elevation:2774 Vig ID: GUA_524",,,,,,,,,,
+
+RIMMA1009,Zea,mays subsp. mays,Ames ,28536,,,,,,,"Quezaltenango, Guatemala",,Salpor,Holland/Goodman,,"Gua_Highland 10K, Lat:N14:51, long: W91:32, Elevation: 2317, Vig_ID: GUA_476",,,,,,,,,,
+
+RIMMA1010,Zea,mays subsp. mays,,,,,,16.85,,99.067,,"La Concordia, Guerrero",,Pepitilla,Holland/Goodman,,"Mex_Lowland 5K, elevation:201, ID: 2376-GRO-297 (INIFAP), 25265 (CIMMYT),  from list of maize sympatric to parviglumis",,,,,,,,,
+
+RIMMA1011,Zea,mays subsp. mays,Ames,28491,,,,,,,"Quezaltenango, Guatemala",,Imbricado,Holland/Goodman,,"Gua_highland 10k, Lat: N14:49, Long: W91:38, Elevation2317, Vig_ID: Gua_493",,,,,,,,,,
+
+RIMMA1012,Zea ,mays subsp. mays,PI,218136,,,,,,,United states New Mexico,,Tesuque Pueblo,,200,,,,,,,,,,,
+
+RIMMA1013,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL1 ,,,,,,,,,
+
+RIMMA1014 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL2,,,,,,,,,
+
+RIMMA1015 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL3,,,,,,,,,
+
+RIMMA1016 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL4,,,,,,,,,
+
+RIMMA1017 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL5,,,,,,,,,
+
+RIMMA1018 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL6,,,,,,,,,
+
+RIMMA1019 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL7,,,,,,,,,
+
+RIMMA1020 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL8,,,,,,,,,
+
+RIMMA1021 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL9,,,,,,,,,
+
+RIMMA1022 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL10,,,,,,,,,
+
+RIMMA1023 ,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL11,,,,,,,,,
+
+RIMMA1024,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL12,,,,,,,,,
+
+RIMMA1025,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL13,,,,,,,,,
+
+RIMMA1026,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL14,,,,,,,,,
+
+RIMMA1027,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL15,,,,,,,,,
+
+RIMMA1028,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL16,,,,,,,,,
+
+RIMMA1029,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL17,,,,,,,,,
+
+RIMMA1030,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL18,,,,,,,,,
+
+RIMMA1031,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL19,,,,,,,,,
+
+RIMMA1032,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL20,,,,,,,,,
+
+RIMMA1033,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL21,,,,,,,,,
+
+RIMMA1034,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL22,,,,,,,,,
+
+RIMMA1035,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL23,,,,,,,,,
+
+RIMMA1036,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL24,,,,,,,,,
+
+RIMMA1037,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL25,,,,,,,,,
+
+RIMMA1038,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL26,,,,,,,,,
+
+RIMMA1039,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL27,,,,,,,,,
+
+RIMMA1040,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL28,,,,,,,,,
+
+RIMMA1041,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL29,,,,,,,,,
+
+RIMMA1042,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL30,,,,,,,,,
+
+RIMMA1043,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL31,,,,,,,,,
+
+RIMMA1044,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL32,,,,,,,,,
+
+RIMMA1045,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL33,,,,,,,,,
+
+RIMMA1046,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL34,,,,,,,,,
+
+RIMMA1047,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL35,,,,,,,,,
+
+RIMMA1048,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL36,,,,,,,,,
+
+RIMMA1049,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL37,,,,,,,,,
+
+RIMMA1050,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL38,,,,,,,,,
+
+RIMMA1051,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL39,,,,,,,,,
+
+RIMMA1052,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL40,,,,,,,,,
+
+RIMMA1053,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL41,,,,,,,,,
+
+RIMMA1054,Zea,mays subsp. mays,,,,,,,,,,,,Flint,Garcia,50,NIL42,,,,,,,,,
+
+RIMMA1055,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,915,,,,,,,,
+
+RIMMA1056,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,1535,,,,,,,,
+
+RIMMA1057,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,2896,,,,,,,,
+
+RIMMA1058,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,3053,,,,,,,,
+
+RIMMA1059,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,3509,,,,,,,,
+
+RIMMA1060,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,3723,,,,,,,,
+
+RIMMA1061,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,6435,,,,,,,,
+
+RIMMA1062,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,6452,,,,,,,,
+
+RIMMA1063,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,6505,,,,,,,,
+
+RIMMA1064,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,6571,,,,,,,,
+
+RIMMA1065,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,7607,,,,,,,,
+
+RIMMA1066,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,8039,,,,,,,,
+
+RIMMA1067,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,8184,,,,,,,,
+
+RIMMA1068,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,9561,,,,,,,,
+
+RIMMA1069,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,9993,,,,,,,,
+
+RIMMA1070,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,11009,,,,,,,,
+
+RIMMA1071,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,11221,,,,,,,,
+
+RIMMA1072,Zea,mays subsp. mays,,,,,,,,,,,inbred line,Maize Genetics Co,op,10,UFMu,13897,,,,,,,,
+
+RIMMA1073,Zea,mays subsp. mays,,,,,,,,,,,,,,,,,,,,,,,,
+
+RIMMA1074,Zea,mays subsp. mays,,,,,,,,,,,,Dawe,,B73-Ab10; individual 25¥1; sequenced inbred from NAM PGRP project,11FG270,,,,,,,,,
+
+RIMMA1075,Zea,mays subsp. mays,,,,,,,,,,,,commercial,,"ornamental ""striped japonica""",,,,,,,,,,
+
+RIMMA1076,Zea,mays subsp. Mays,,,,,,,,,,,inbred line,Flint-Garcia,,,,,,,,,,,,
+
+RIMMA1077,Zea,mays subsp. Mays,,,,,,,,,,,inbred line,Flint-Garcia,,W22 Rr Standard 13 FG 1652,,,,,,,,,,
+
+RIMMA1078,Zea,mays subsp. Mays,,,,,,,,,,,,Birchler,13313 sib B73 recurrent parent,,,,,,,,,,,
+
+RIMMA1079,Zea,mays subsp. Mays,,,,,,,,,,,,Birchler,13261 sib W22 R-scm2 recurrent parent,,,,,,,,,,,
+
+RIMMA1080,Zea,mays subsp. Mays,,,,,,,,,,,,Birchler,17447/445 B73 + B; BC8 B73; ear cytologically verified. Some individuals might be lacking B,,,,,,,,,,,
+
+RIMMA1081,Zea,mays subsp. Mays,,,,,,,,,,,,Birchler,Greenhouse Spring 14; W22 R-scm2 + B chromosomes; BC7 W22 R-scm2; 3-4 B so most individuals will have B,,,,,,,,,,,
+
+RIMME0001,Zea,mays subsp. mexicana,,,,,,,,,,,,Dawe,,3,2 x 2,3,,,,,,,,
+
+RIMME0002,Zea,mays subsp. mexicana,,,,,,,,,,,,Dawe,,2,3 self,,,,,,,,,
+
+RIMME0003,Zea,mays subsp. mexicana,,,,,,,,,,,,Dawe,,2,3 self,,,,,,,,,
+
+RIMME0004,Zea,mays subsp. mexicana,Ames,21843,87233,Mexico,Chihuahua,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMME0005,Zea,mays subsp. mexicana,PI,566677,461648,Mexico,Michoacan,20.1667,,101.867,1750,Heavy black soil  in unweeded sorghum field  Penjamillo,,Wild,USDA,,,,,,,,,,,
+
+RIMME0006,Zea,mays subsp. mexicana,PI,566673,461644,Mexico,Durango,24.1833,,104.4,1950,Wet areas along canals and dikes  Hacienda Alcalde near Francisco Villa  3km off Durango,Zacatecas Road between Puente Gavilanes and Fuente Dalilia  about 15km S of Durango,,Wild,USDA,,,,,,,,,,
+
+RIMME0007,Zea,mays subsp. mexicana,PI,566680,461651,Mexico,Guanajuato,20.1333,,101.1,1775,Maize field on south facing slope of hill above Uriangato  road Morelia to Celaya,,Wild,USDA,,,,,,,,,,,
+
+RIMME0008,Zea,mays subsp. mexicana,PI,566681,461652,Mexico,Michoacan,19.7,,100.567,2090,Ten km W of Ciudad Hidalgo on R side of Morelia,Toluca road  by stream for 10km,,Wild,USDA,,,,,,,,,,
+
+RIMME0009,Zea,mays subsp. mexicana,PI,566682,461653,Mexico,Federal District,19.5167,,98.8,2250,Abundant in fields of maize  San Felipe  along cut off road across lake Texcoco to Mexico City  Edo de Mexico,,Wild,USDA,,,,,,,,,,,
+
+RIMME0010,Zea,mays subsp. mexicana,PI,566683,461654,Mexico,Mexico,19.25,,98.85,2250,In field at split of the Chalco,Miraflores Road  La Pala  Chalco  Edo de Mexico,,Wild,USDA,,,,,,,,,,
+
+RIMME0011,Zea,mays subsp. mexicana,PI,566685,461656,Mexico,Mexico,19.3667,,98.9667,2200,Los Reyes  in Y formed by Texcoco and Puebla road into Mexico City near the terminal of a subway line  Edo de Mexico,,Wild,USDA,,,,,,,,,,,
+
+RIMME0012,Zea,mays subsp. mexicana,PI,384060,288182,Mexico,Oaxaca,17.05,,96.7167,,Fabrico San Jose  near Oaxaca.,,Other,USDA,,,,,,,,,,,
+
+RIMME0013,Zea,mays subsp. mexicana,Ames,21846,87236,Mexico,Chihuahua,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMME0014,Zea,mays subsp. mexicana,Ames,28398,714151,,,,,,,Puga: 11066,Breeder's line,Doebley,,generation S6; seed lot TIP,491 stock me TIL25 packet 16673,,,,,,,,,
+
+RIMME0015,Zea,mays subsp. mexicana,PI,566674,461645,Mexico,Durango,24.0167,,104.483,1950,Along cement lined irrigation canals over railroad bridge  about 20km from Durango on road to Zacatecas  Puente Gavilanes,,Wild,USDA,,Central Plateau; generation S1; Hufford line M2B,,,,,,,,,
+
+RIMME0015,Zea,mays subsp. mexicana,PI,566674,461645,Mexico,Durango,24.0167,,104.483,1950,Along cement lined irrigation canals over railroad bridge  about 20km from Durango on road to Zacatecas  Puente Gavilanes,,Wild,USDA,,Central Plateau,,,,,,,,,
+
+RIMME0016,Zea,mays subsp. mexicana,Ames,8083,42246,Mexico,Federal District,,,,,,Wild,USDA,,Chalco; generations S1; Hufford line M3E; all seeds used,,,,,,,,,,
+
+RIMME0016,Zea,mays subsp. mexicana,Ames,8083,42246,Mexico,Federal District,,,,,,Wild,USDA,,Chalco,,,,,,,,,,
+
+RIMME0017,Zea,mays subsp. mexicana,Ames,28079,699874,Mexico,Jalisco,20.4206,,102.347,1597,Ayotlan. Population: San Jeronimo (Cerro Grande).,,Wild,USDA,,,,,,,,,,,
+
+RIMME0018,Zea,mays subsp. mexicana,,,,Mexico,Chihuahua,26.2465,106.915,,Nabogame,,Wild,Lubinsky,,Collected: 10/22/08 Individuals: A1,O1 and A2,O2 (30) Notes: Each sample has two inflorescences,,,,,,,,
+
+RIMME0019,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,20.1176,101.93,,Penjamillo,,Wild,Lubinsky,,Collected: 10/29/08 Individuals: A,O (15) Notes: Plastic bag has two seeds not in a paper bag,,,,,,,,,
+
+RIMME0020,Zea,mays subsp. mexicana,,,,Mexico,Mexico,18.9531,99.503,,Malinalco,,Wild,Lubinsky,,Collected: 11/2/08 Individuals: A,Q (17) Notes:,,,,,,,,,
+
+RIMME0021,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,19.6789,100.64,,El Porvenir,,Wild,Lubinsky,,"Collected: 11/19/08 Individuals: A-R (18) Notes: Includes 3 hybrids (P,Q,R)",,,,,,,,,,
+
+RIMME0022,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.139,98.7733,,Amecameca,,Wild,Lubinsky,,Collected: 11/13/08 Individuals: A,P (16) Notes:,,,,,,,,,
+
+RIMME0023,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.2351,98.8368,,Tlapala,,Wild,Lubinsky,,Collected: 11/14/08 Individuals: A,L (12) Notes: In wheat field,,,,,,,,,
+
+RIMME0024,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.3764,99.6303,,Jicaltepec (San Pablo Autopan),,Wild,Lubinsky,,Collected: 11/1/08 Individuals: A,O (15) Notes:,,,,,,,,,
+
+RIMME0025,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.2244,98.8427,,Cocotilan,,Wild,Lubinsky,,"Collected: 11/14/08 Individuals: A-O (15) Notes: 2nd \Chalo\""\"" site w/ maiz hibrido (short) + 2 Crillo\""""",,,,,,,,,,
+
+RIMME0026,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,19.4181,101.613,,Opopeo,,Wild,Lubinsky,,"Collected: 10/30/08 Individuals: A-Q (17) Notes: Includes 2 hybrids  (P,Q) with seeds out in the plastic bag",,,,,,,,,,
+
+RIMME0027,Zea,mays subsp. mexicana,,,,Mexico,Morelos,18.9719,99.0551,,Amatlan,,Wild,Lubinsky,,Collected: 11/1/08 Individuals: A,P (16) Notes: Soccer Field and in Jicaltepec bag (RIMME0024),,,,,,,,,
+
+RIMME0028,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,20.1076,101.49,,Puruandiro(Victor),,Wild,Lubinsky,,Collected: 10/29/08 Individuals: A,O (15) Notes: Bag A no seeds and X duplicated (?),,,,,,,,,
+
+RIMME0029,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,20.1683,102.373,,Ixtlan,,Wild,Lubinsky,,Collected: 10/28/08 Individuals: A,T(20) Notes: 10 Milo + 10 Pioneer(?); Â¥ Volunteers inside/surrounding sorghum field,,,,,,,,,
+
+RIMME0030,Zea,mays subsp. mexicana,,,,Mexico,Puebla,19.0886,98.4935,,San Pedro,,Wild,Lubinsky,,Collected: 11/12/08 Individuals: A,S (19) Notes:,,,,,,,,,
+
+RIMME0031,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.1197,99.5896,,Tenango del Aire,,Wild,Lubinsky,,Collected: 10/31/08 Individuals: A,O (14) Notes: Paper bag E (#5) missing,,,,,,,,,
+
+RIMME0032,Zea,mays subsp. mexicana,,,,Mexico,Chihuahua,26.2465,106.915,,Nabogame,,Wild,Lubinsky,,Collected: 10/22/08 Individuals: A,K (11) Notes: All 11 are hybrids with cultivated maize,,,,,,,,,
+
+RIMME0033,Zea,mays subsp. mexicana,,,,Mexico,Morelos,18.9725,99.0298,,Puerta Encantada (Amatlan),,Wild,Lubinsky,,"Collected: 11/16/08 Individuals: A-Q (17) Notes: \La Puerta\""\"" Control and Bag C (#3) no seeds\""""",,,,,,,,,,
+
+RIMME0034,Zea,mays subsp. mexicana,,,,Mexico,Michoacan,19.4184,101.642,,Santa Clara,,Wild,Lubinsky,,Collected: 10/30/08 Individuals: A,O (15) Notes: Bag A (#1) seeds are white and not stable,,,,,,,,,
+
+RIMME0035,Zea,mays subsp. mexicana,,,,Mexico,Distrito Federal,19.2861,99.0827,,Xochimilco,,Wild,Lubinsky,,Collected: 11/4/08 Individuals: A,O (15) Notes:,,,,,,,,,
+
+RIMME0036,Zea,mays subsp. mexicana,,,,Mexico,Mexico,19.35,,98.8833,2200,"San Francisco Acuautla, Ixtapaluca",,,,,,,,,,,,,,
+
+RIMME0037,Zea,mays subsp. mexicana,,,,Mexico\ ,,,,,San Jose Fabrica; Chalco,,Wild,Beadle,,Chalco teosinte colllected by Beadle in the 1972 Galinat teosinte Hunt; sent by Beadle to Giles Waines at UCR. Date says 2/3/72; probably Ames 21840.,,,,,,,,,,
+
+RIMME0038,Zea,mays subsp. mexicana,,,,,,,,,,,,,0,Packet 16666\ line:TIL18\ ,,,,,,,,,,
+
+RIMME0040,Zea,mays subsp. mexicana,,,,Mexico\ ,,,,,San Jose Fabrica; Chalco,,Wild,Beadle,,Chalco teosinte colllected by Beadle in the 1972 Galinat teosinte Hunt; sent by Beadle to Giles Waines at UCR. Date says 2/1/73 but 2/1/72 (or 2/3/72) more likely; probabl same as Ames 21840.,,,,,,,,,,
+
+RIMME0041,Zea,mays subsp. mexicana,,,,,,,,,,,,,,bulk seed from growout of Lubinsky pops; Gates 2017,,,,,,,,,,
+
+RIMPA0001,Zea,mays subsp. parviglumis,Ames,21786,87168,Mexico,Guerrero,,,,El Salada.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0002,Zea,mays subsp. parviglumis,Ames,21787,87169,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0003,Zea,mays subsp. parviglumis,Ames,21789,87171,Mexico,Guerrero,,,,Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0004,Zea,mays subsp. parviglumis,Ames,21790,87172,Mexico,Guerrero,,,,Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0005,Zea,mays subsp. parviglumis,Ames,21793,87175,Mexico,Guerrero,,,,Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0006,Zea,mays subsp. parviglumis,Ames,21796,87179,Mexico,Guerrero,,,,El Salada/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0007,Zea,mays subsp. parviglumis,Ames,21797,87180,Mexico,Guerrero,,,,Mazatlan/El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0008,Zea,mays subsp. parviglumis,Ames,21798,87181,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0009,Zea,mays subsp. parviglumis,Ames,21799,87182,Mexico,Guerrero,,,,El Salado/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0010,Zea,mays subsp. parviglumis,Ames,21800,87184,Mexico,Guerrero,,,,El Salado/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0011,Zea,mays subsp. parviglumis,Ames,21801,87185,Mexico,Guerrero,,,,El Salada/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0012,Zea,mays subsp. parviglumis,Ames,21802,87186,Mexico,Guerrero,,,,El Salado/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0013,Zea,mays subsp. parviglumis,Ames,21803,87187,Mexico,Guerrero,,,,El Salado/Mazatlan.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0014,Zea,mays subsp. parviglumis,Ames,21808,87194,Mexico,Guerrero,17.55,,99.5,,30 km south of Chilpancingo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0015,Zea,mays subsp. parviglumis,Ames,21809,87195,Mexico,Guerrero,17.4333,,99.4667,,1 mile south of Palo Blanco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0016,Zea,mays subsp. parviglumis,Ames,21812,87198,Mexico,Guerrero,18.35,,99.85,,2 west of Teloloapan.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0017,Zea,mays subsp. parviglumis,Ames,21814,87200,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0018,Zea,mays subsp. parviglumis,Ames,21816,87202,Mexico,Guerrero,,,,,,Wild,USDA,,missing,,,,,,,,,,
+
+RIMPA0019,Zea,mays subsp. parviglumis,Ames,21826,87213,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0020,Zea,mays subsp. parviglumis,Ames,21828,87215,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0021,Zea,mays subsp. parviglumis,Ames,21829,87216,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0022,Zea,mays subsp. parviglumis,Ames,21830,87217,Mexico,Guerrero,,,,El Salado.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0023,Zea,mays subsp. parviglumis,Ames,21847,87237,Unknown,,,,,56th Street & Ellis.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0024,Zea,mays subsp. parviglumis,Ames,21848,87238,Unknown,,,,,56th & Ellis Avenue.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0025,Zea,mays subsp. parviglumis,Ames,21849,87240,Unknown,,,,,56th & Ellis Avenue.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0026,Zea,mays subsp. parviglumis,Ames,21850,87241,Unknown,,,,,56th Street.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0027,Zea,mays subsp. parviglumis,Ames,21851,87242,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0028,Zea,mays subsp. parviglumis,Ames,21852,87243,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0029,Zea,mays subsp. parviglumis,Ames,21853,87244,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0030,Zea,mays subsp. parviglumis,Ames,21855,87246,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0031,Zea,mays subsp. parviglumis,Ames,21856,87249,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0032,Zea,mays subsp. parviglumis,Ames,21857,87250,Unknown,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0033,Zea,mays subsp. parviglumis,Ames,21860,87255,,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0034,Zea,mays subsp. parviglumis,Ames,21861,87257,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0035,Zea,mays subsp. parviglumis,Ames,21889,87288,Mexico,Jalisco,,,,Vicinity of El Rodeo.,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0036,Zea,mays subsp. parviglumis,Ames,21894,87293,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0037,Zea,mays subsp. parviglumis,PI,331785,246864,Mexico,Michoacan,18.8167,,100.967,800,Quenchendio (Km. 24 Huetamo,Morelia  Michoacan State. Huetamo,Tiquicheo region.,,Wild,USDA,,,,,,,,,
+
+RIMPA0038,Zea,mays subsp. parviglumis,PI,384061,288183,Mexico,Guerrero,17.5,,99.5,1100,East 4.5 km of Mazatlan  Guerrero on road to El Salado.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0039,Zea,mays subsp. parviglumis,PI,384062,288184,Mexico,Guerrero,17.4167,,99.5,1350,East side of highway  1 km. south of Palo Blanco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0040,Zea,mays subsp. parviglumis,PI,384063,288185,Mexico,Mexico,18.8333,,100.167,1300,West side of road  41 km. south of Valle de Bravo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0041,Zea,mays subsp. parviglumis,PI,384064,288186,Mexico,Guerrero,18.35,,99.85,1550,10 km past Teloloapan  2 km to El Pochote. Limestone soil.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0042,Zea,mays subsp. parviglumis,PI,384065,288187,Mexico,Guerrero,18.35,,99.85,1600,10 km past Teloloapan  2 km to El Pochote. Limestone soil.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0043,Zea,mays subsp. parviglumis,PI,384066,288188,Mexico,Guerrero,18.35,,99.85,1700,15 km past Teloloapan  3 km beyond El Pochote.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0044,Zea,mays subsp. parviglumis,PI,384069,288191,Mexico,Guerrero,18.35,,99.85,1550,10 km past Teloloapan  2 km to El Pochote. Limestone soil.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0045,Zea,mays subsp. parviglumis,PI,384071,288193,Mexico,Guerrero,18.3333,,100.317,1100,Iguala,Arcelia road  103 km. from Iguala.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0046,Zea,mays subsp. parviglumis,PI,566686,461657,Mexico,Guerrero,18.2167,,99.2333,1225,Dry hillside  along fences of ejido bottom land  Plan de Timbres  16km beyond Huitzuco and 4km before Paso de Morelos,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0047,Zea,mays subsp. parviglumis,PI,566687,461658,Mexico,Mexico,18.35,,100.2,1135,Roadside  km 100 of Teloloapan,Arcelia road at junction of cross road to Amates Grandes,,Wild,USDA,,,,,,,,,,
+
+RIMPA0048,Zea,mays subsp. parviglumis,PI,566688,461659,Mexico,Guerrero,18.4167,,99.9667,1700,Steep slope  fallow fields of Alberto Alvarez  Zacatlancillo  road Teloloapan to Arcelia,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0049,Zea,mays subsp. parviglumis,PI,566689,461660,Mexico,Mexico,18.5,,100.433,970,Hillside and fields  El Aqucatito  5 to 7km S of Palmar Chico  Amatepec  Edo de Mexico,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0050,Zea,mays subsp. parviglumis,PI,566690,461661,Mexico,Mexico,19.1833,,100.283,1380,Grazed hillside above Nuevo Santo Thomas de Los Plantanos in very steep arroyo  Santo Thomas  Edo de Mexico,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0051,Zea,mays subsp. parviglumis,PI,566691,461662,Mexico,Michoacan,19.45,,100.9,1100,In and around maize and fallow fields  hot dirt road to Temascal , km 70  Paso Ancho road Huetamo to Morelia  Tzitzio,,Wild,USDA,,,,,,,,,,
+
+RIMPA0052,Zea,mays subsp. parviglumis,PI,566692,461663,Mexico,Michoacan,19.0667,,100.417,850,Fallow field  under margin of trees  Km 43 road Zitacuraro to Tuzantla  Tuzantla,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0053,Zea,mays subsp. parviglumis,Ames,21886,87283,Mexico,Mexico,19.1667,,100.217,1600,Colorines  N.V. Rastrojo. Roadside fencerow adjacent to dooryard garden containing maize  squash  and quelites.,,Wild,USDA,,wrong #,,,,,,,,,
+
+RIMPA0054,Zea,mays subsp. parviglumis,Ames,21810,87196,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIMPA0055,Zea,mays subsp. parviglumis,Ames,28399,714152,,,,,,,JSGyLOS: 130,Breeder's line,Doebley,8,generation S9; seed lot TIP,521 stock me TIL1 packet 16694,,,,,,,,,
+
+RIMPA0055,Zea,mays subsp. parviglumis,Ames,28399,714152,,,,,,,JSGyLOS: 130,Breeder's line,Doebley,,generation S9; seed lot TIP,521 stock me TIL1 packet 16694,,,,,,,,,
+
+RIMPA0056,Zea,mays subsp. parviglumis,Ames,28400,714153,,,,,,,JSGyMAS 401,Breeder's line,Doebley,7,generation S9; seed lot TIP,523 stock me TIL3 packet 16696,,,,,,,,,
+
+RIMPA0056,Zea,mays subsp. parviglumis,Ames,28400,714153,,,,,,,JSGyMAS 401,Breeder's line,Doebley,,generation S9; seed lot TIP,523 stock me TIL3 packet 16696,,,,,,,,,
+
+RIMPA0057,Zea,mays subsp. parviglumis,Ames,28401,714154,,,,,,,JSGyLOS 109,Breeder's line,Doebley,9,generation S7; seed lot TIP,494 stock me TIL6 packet 16676,,,,,,,,,
+
+RIMPA0057,Zea,mays subsp. parviglumis,Ames,28401,714154,,,,,,,JSGyLOS 109,Breeder's line,Doebley,,generation S7; seed lot TIP,494 stock me TIL6 packet 16676,,,,,,,,,
+
+RIMPA0058,Zea,mays subsp. parviglumis,,,,,,,,,,,,Doebley,5,generation S7; similar to Ames 28402; seed lot 06GC,TIP,593 self stock me TIL7 packet 24858,,,,,,,,
+
+RIMPA0058,Zea,mays subsp. parviglumis,,,,,,,,,,,,Doebley,,generation S7; similar to Ames 28402; seed lot 06GC,TIP,593 self stock me TIL7 packet 24858,,,,,,,,
+
+RIMPA0059,Zea,mays subsp. parviglumis,,,,,,,,,,,,Doebley,8,generation S8; similar to Ames 28403; seed lot TIP,506 stock me TIL9 packet 16685,,,,,,,,,
+
+RIMPA0059,Zea,mays subsp. parviglumis,,,,,,,,,,,,Doebley,,generation S8; similar to Ames 28403; seed lot TIP,506 stock me TIL9 packet 16685,,,,,,,,,
+
+RIMPA0060,Zea,mays subsp. parviglumis,Ames,28404,714157,,,,,,,CIMMYT: 11355,Breeder's line,Doebley,7,generation S7; seed lot TIP,486 stock me TIL10 packet 16669,,,,,,,,,
+
+RIMPA0060,Zea,mays subsp. parviglumis,Ames,28404,714157,,,,,,,CIMMYT: 11355,Breeder's line,Doebley,,generation S7; seed lot TIP,486 stock me TIL10 packet 16669,,,,,,,,,
+
+RIMPA0061,Zea,mays subsp. parviglumis,Ames,28405,714158,,,,,,,USDA: PI566686,Breeder's line,Doebley,10,generation S10; seed lot TIP,535 stock me TIL11 packet 16706,,,,,,,,,
+
+RIMPA0061,Zea,mays subsp. parviglumis,Ames,28405,714158,,,,,,,USDA: PI566686,Breeder's line,Doebley,,generation S10; seed lot TIP,535 stock me TIL11 packet 16706,,,,,,,,,
+
+RIMPA0062,Zea,mays subsp. parviglumis,Ames,28406,714159,,,,,,,Benz 967,Breeder's line,Doebley,9,generation S7; seed lot TIP,500 stock me TIL14 packet 16680,,,,,,,,,
+
+RIMPA0062,Zea,mays subsp. parviglumis,Ames,28406,714159,,,,,,,Benz 967,Breeder's line,Doebley,,generation S7; seed lot TIP,500 stock me TIL14 packet 16680,,,,,,,,,
+
+RIMPA0063,Zea,mays subsp. parviglumis,Ames,28407,714160,,,,,,,Kato: Site 4,Breeder's line,Doebley,5,generation S8; seed lot TIP,516 stock me TIL15 packet 16692,,,,,,,,,
+
+RIMPA0063,Zea,mays subsp. parviglumis,Ames,28407,714160,,,,,,,Kato: Site 4,Breeder's line,Doebley,,generation S8; seed lot TIP,516 stock me TIL15 packet 16692,,,,,,,,,
+
+RIMPA0064,Zea,mays subsp. parviglumis,Ames,28408,714161,,,,,,,Beadle & Kato: Site 4,Breeder's line,Doebley,3,generation S6; seed lot TIP,470 stock me TIL16 packet 16662,,,,,,,,,
+
+RIMPA0064,Zea,mays subsp. parviglumis,Ames,28408,714161,,,,,,,Beadle & Kato: Site 4,Breeder's line,Doebley,,generation S6; seed lot TIP,470 stock me TIL16 packet 16662,,,,,,,,,
+
+RIMPA0065,Zea,mays subsp. parviglumis,Ames,28409,714162,,,,,,,Wilkes: Site 6,Breeder's line,Doebley,6,generation S8; seed lot TIP,509 stock me TIL17 packet 16687,,,,,,,,,
+
+RIMPA0065,Zea,mays subsp. parviglumis,Ames,28409,714162,,,,,,,Wilkes: Site 6,Breeder's line,Doebley,,generation S8; seed lot TIP,509 stock me TIL17 packet 16687,,,,,,,,,
+
+RIMPA0066,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,,,,,,,Hufford,,"collected Mar 2008; EjuA 12 dense patch on north side of population, slight slope lat 19.89857, lon -104.17574, 1331 masl ; EjuA 22   Teosinte patch on steep slope near dump heap lat 19.90074, lon -104.17123, 1307 masl; collectors Hufford, M.B. &  Garcia-Medi, J.",,,,,,,,,,
+
+RIMPA0067,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,,,,,,,Hufford,,"collected. Sept. 2007; MSA 38 Thick patch of teosinte near maize field margin lat 19.97113, lon -104.05806 1234 masl; MSA 39 Dense area of teosinte and other grasses at the edge of a big tree, somewhat shaded lat 19.97119, lon -104.05726 1234 masl; Collectors: Hufford, M.B.  & Garcia-Medi, J.",,,,,,,,,,
+
+RIMPA0068,Zea,mays subsp. parviglumis,Ames,28066,699861,Mexico,Jalisco,20.6286,,104.42,1400,Guachinango. Population: K10 Guachinango,La Cienega.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0069,Zea,mays subsp. parviglumis,Ames,28067,699862,Mexico,Michoacan,20.1533,,102.364,1574,Ixtlan. Population: El Salitre.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0070,Zea,mays subsp. parviglumis,Ames,28068,699863,Mexico,Michoacan,19.2811,,100.434,1332,Benito Juarez. Population: 1 Km Norte de Santa Ana.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0071,Zea,mays subsp. parviglumis,Ames,28069,699864,Mexico,Michoacan,19.2308,,100.491,985,Tuzantla. Population: Los Guajes (km 43 Zitacuaro,Huetamo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0072,Zea,mays subsp. parviglumis,Ames,28070,699865,Mexico,Michoacan,18.8619,,100.844,555,Tiquicheo. Population: El Guayabo (km 132.5 Zitacuaro,Huetamo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0073,Zea,mays subsp. parviglumis,Ames,28071,699866,Mexico,Michoacan,18.8583,,100.857,609,Tiquicheo. Population: La Crucita (km 135 Zitacuaro,Huetamo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0074,Zea,mays subsp. parviglumis,Ames,28072,699867,Mexico,Michoacan,18.82,,100.916,654,Huetamo. Population: El Potrero (km 145.5 Zitacuaro,Huetamo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0075,Zea,mays subsp. parviglumis,Ames,28073,699868,Mexico,Michoacan,18.8047,,100.946,635,Huetamo. Population: Quenchendio (km 151.5 Zitacuaro,Huetamo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0076,Zea,mays subsp. parviglumis,Ames,28074,699869,Mexico,Michoacan,18.7939,,100.946,653,Huetamo. Population: Crucero Puertas de Chiripio.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0077,Zea,mays subsp. parviglumis,Ames,28075,699870,Mexico,Michoacan,18.8828,,100.957,697,Caracuaro. Population: Cuirindalillo (km 142 Huetamo,Caracuaro).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0078,Zea,mays subsp. parviglumis,Ames,28076,699871,Mexico,Michoacan,18.9375,,101.048,915,Caracuaro. Population: El Zapote (km 122 Huetamo,Caracuaro).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0079,Zea,mays subsp. parviglumis,Ames,28077,699872,Mexico,Michoacan,19.1611,,101.329,1268,Villa Madero. Population: Casa Blanca (km 62 Huetamo,Villa Madero).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0080,Zea,mays subsp. parviglumis,Ames,28078,699873,Mexico,Jalisco,20.675,,104.509,1305,Guachinango. Population: La Cienega (La Fortuna).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0081,Zea,mays subsp. parviglumis,Ames,28080,699875,Mexico,Jalisco,20.6108,,104.226,1139,Ameca. Population: Quexpan,Las Raices.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0082,Zea,mays subsp. parviglumis,Ames,28081,699876,Mexico,Mexico,18.9533,,99.5028,1901,Malinalco. Population: Ruinas de Malinalco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0083,Zea,mays subsp. parviglumis,Ames,28082,699877,Mexico,Morelos,18.975,,99.0303,1654,Tepoztlan. Population: Amatlan (La Puerta).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0084,Zea,mays subsp. parviglumis,Ames,28083,699878,Mexico,Morelos,18.9706,,99.0536,1696,Tepoztlan. Population: Camino Amatlan,Huilotepec.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0085,Zea,mays subsp. parviglumis,Ames,28084,699879,Mexico,Oaxaca,16.3239,,97.0325,1272,Miahuatlan. Population: San Cristobal Honduras.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0086,Zea,mays subsp. parviglumis,Ames,28085,699880,Mexico,Oaxaca,16.3492,,97.0208,982,Miahuatlan. Population: El Rodeo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0087,Zea,mays subsp. parviglumis,Ames,28086,699881,Mexico,Guerrero,16.9822,,99.2831,590,Tecoanapa. Population: Crucero Lagunitas.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0088,Zea,mays subsp. parviglumis,Ames,28087,699882,Mexico,Guerrero,17.1806,,99.5164,378,Tierra Colorada. Population: Tierra Colorada (Km 60 Chilpancingo,Acapulco).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0089,Zea,mays subsp. parviglumis,Ames,28088,699883,Mexico,Guerrero,17.2867,,99.4831,744,Mochitlan. Population: El Rincon.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0090,Zea,mays subsp. parviglumis,Ames,28089,699884,Mexico,Guerrero,17.2958,,99.4731,827,Mochitlan. Population: El Ricon,Acahuizotla.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0091,Zea,mays subsp. parviglumis,Ames,28090,699885,Mexico,Guerrero,17.3653,,99.4817,1016,Mochitlan. Population: Acahuizotla,Palo Blanco.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0092,Zea,mays subsp. parviglumis,Ames,28091,699886,Mexico,Guerrero,17.3864,,99.4767,1167,Chilpancingo. Population: Km 2 Palo Blanco,Acapulco.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0093,Zea,mays subsp. parviglumis,Ames,28092,699887,Mexico,Guerrero,17.4067,,99.4431,1132,Mochitlan. Population: El Salado.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0094,Zea,mays subsp. parviglumis,Ames,28093,699888,Mexico,Guerrero,18.5047,,99.7844,1890,Ixcateopan. Population: Ixcateopan.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0095,Zea,mays subsp. parviglumis,Ames,28094,699889,Mexico,Guerrero,18.4856,,99.7917,1735,Ixcateopan. Population: Km 3,4 Ixcateopan,Pachivia.,,Wild,USDA,,,,,,,,,
+
+RIMPA0096,Zea,mays subsp. parviglumis,Ames,28095,699890,Mexico,Guerrero,18.3564,,99.8139,1528,Ixcateopan. Population: Ahuacatitlan (km 1.5 del entronque).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0097,Zea,mays subsp. parviglumis,Ames,28096,699891,Mexico,Guerrero,18.4139,,99.9094,1506,Teloloapan. Population: Km 72 Iguala,Arcelia (Km Alcholoa,Arcelia).,,Wild,USDA,,,,,,,,,
+
+RIMPA0098,Zea,mays subsp. parviglumis,Ames,28097,699892,Mexico,Guerrero,18.4167,,99.9675,1740,Ixcapuzalco. Population: Zacatlancillo (cerro de los Chivos).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0099,Zea,mays subsp. parviglumis,Ames,28098,699893,Mexico,Guerrero,18.4508,,99.9261,1797,Ixcapuzalco. Population: Km 7 Carr. Ixcapuzalco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0100,Zea,mays subsp. parviglumis,Ames,28099,699894,Mexico,Guerrero,18.4339,,99.9456,1652,Ixcapuzalco. Population: Km 3.5 Carr. Ixcapuzalco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0101,Zea,mays subsp. parviglumis,Ames,28100,699895,Mexico,Guerrero,18.2506,,99.2328,1215,Huitzuco. Population: Plan de los Timbres.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0102,Zea,mays subsp. parviglumis,Ames,28101,699896,Mexico,Guerrero,18.2594,,99.2067,1173,Huitzuco. Population: San Miguel Palmas.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0103,Zea,mays subsp. parviglumis,Ames,28102,699897,Mexico,Guerrero,18.2583,,99.2158,1160,Huitzuco. Population: Llano de Villegas.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0104,Zea,mays subsp. parviglumis,Ames,28103,699898,Mexico,Guerrero,18.2256,,99.2125,1092,Huitzuco. Population: Paso Morelos.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0105,Zea,mays subsp. parviglumis,Ames,28104,699899,Mexico,Guerrero,18.3503,,99.8414,1624,Teloloapan. Population: Rincon del Sauce.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0106,Zea,mays subsp. parviglumis,Ames,28105,699900,Mexico,Guerrero,18.3878,,100.128,1110,Acapetlahuaya. Population: Amates Grandes.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0107,Zea,mays subsp. parviglumis,Ames,28106,699901,Mexico,Guerrero,18.3939,,100.108,1210,Acapetlahuaya. Population: Km 3 Amates Grandes,Teloloapan.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0108,Zea,mays subsp. parviglumis,Ames,28107,699902,Mexico,Guerrero,18.3828,,100.145,985,Acapetlahuaya. Population: Km 1 El Crustel,Teloloapan.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0109,Zea,mays subsp. parviglumis,Ames,28108,699903,Mexico,Michoacan,19.0631,,101.283,832,Nocupetaro. Population: Km 80 Huetamo,Villa Madero.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0110,Zea,mays subsp. parviglumis,Ames,28109,699904,Mexico,Michoacan,19.0589,,101.214,759,Nocupetaro. Population: La Cadena (Km 93 Huetamo,Villa Madero).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0111,Zea,mays subsp. parviglumis,Ames,28110,699905,Mexico,Michoacan,19.0631,,101.193,672,Nocupetaro. Population: Puente Petembo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0112,Zea,mays subsp. parviglumis,Ames,28111,699906,Mexico,Michoacan,18.9631,,101.058,870,Caracuaro. Population: Puerto de la Cruz (Km 119 Huetamo,V.Madero).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0113,Zea,mays subsp. parviglumis,Ames,28112,699907,Mexico,Michoacan,18.9281,,101.043,834,Caracuaro. Population: El Zapote.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0114,Zea,mays subsp. parviglumis,Ames,28113,699908,Mexico,Michoacan,18.9158,,101,727,Caracuaro. Population: Puerto El Coyote.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0115,Zea,mays subsp. parviglumis,Ames,28114,699909,Mexico,Michoacan,18.9,,100.979,677,Caracuaro. Population: Km 135,136 Huetamo,Villa Madero.,,Wild,USDA,,,,,,,,,
+
+RIMPA0116,Zea,mays subsp. parviglumis,Ames,28115,699910,Mexico,Mexico,18.7917,,100.344,808,Tejupilco de Hidalgo. Population: Crucero San Juan Tizapan (cerca Las Anonas).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0117,Zea,mays subsp. parviglumis,Ames,28116,699911,Mexico,Mexico,18.8419,,100.238,958,Tejupilco de Hidalgo. Population: Salitre,Monte de Dios.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0118,Zea,mays subsp. parviglumis,Ames,28117,699912,Mexico,Mexico,18.8992,,100.181,1422,Tejupilco de Hidalgo. Population: Km 107,108 Toluca,Altamirano.,,Wild,USDA,,,,,,,,,
+
+RIMPA0119,Zea,mays subsp. parviglumis,Ames,28118,699913,Mexico,Mexico,18.8947,,100.209,1355,Tejupilco de Hidalgo. Population: Km 112 Toluca,Altamirano.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0120,Zea,mays subsp. parviglumis,Ames,28119,699914,Mexico,Mexico,18.8539,,100.239,1015,Tejupilco de Hidalgo. Population: Km 119 Toluca,Altamirano.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0121,Zea,mays subsp. parviglumis,Ames,28120,699915,Mexico,Mexico,18.8114,,100.298,849,Amatepec. Population: Km 132 Toluca,Altamirano.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0122,Zea,mays subsp. parviglumis,Ames,28121,699916,Mexico,Mexico,18.64,,100.356,1008,Amatepec. Population: Km 8 Sur de Palmar Chico.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0123,Zea,mays subsp. parviglumis,Ames,28122,699917,Mexico,Mexico,18.7614,,100.31,739,Amatepec. Population: Pueblo Nuevo,El Sitio.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0124,Zea,mays subsp. parviglumis,Ames,28123,699918,Mexico,Mexico,19.0286,,100.296,1075,Tejupilco de Hidalgo. Population: Acatitlan,El Puente.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0125,Zea,mays subsp. parviglumis,Ames,28124,699919,Mexico,Mexico,19.0389,,100.295,1085,Tejupilco de Hidalgo. Population: K22 Zacazonapan,Luvianos (EL Puente).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0126,Zea,mays subsp. parviglumis,Ames,28125,699920,Mexico,Mexico,19.0786,,100.266,1468,Zacazonapan. Population: K2 Zacazonapan,Otzoloapan.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0127,Zea,mays subsp. parviglumis,Ames,28126,699921,Mexico,Mexico,19.1478,,100.355,1178,Otzoloapan. Population: Km 8 Zuluapan,Tingambato.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0128,Zea,mays subsp. parviglumis,Ames,28127,699922,Mexico,Mexico,19.1464,,100.329,1346,Otzoloapan. Population: Km 4 Zuluapan,Tingambato.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0129,Zea,mays subsp. parviglumis,Ames,28128,699923,Mexico,Michoacan,19.4636,,100.912,1030,Tzitzio. Population: Km 37 Temascal,Huetamo.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0130,Zea,mays subsp. parviglumis,Ames,28129,699924,Mexico,Michoacan,19.4831,,100.921,1100,Tzitzio. Population: Km 33.5 Temascal,Huetamo.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0131,Zea,mays subsp. parviglumis,Ames,28130,699925,Mexico,Michoacan,19.5506,,100.918,1342,Tzitzio. Population: Queretanillo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0132,Zea,mays subsp. parviglumis,Ames,28131,699926,Mexico,Jalisco,20.7744,,104.25,1519,San Marcos. Population: Carr. San Marcos,Amatlan de Ca?as.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0133,Zea,mays subsp. parviglumis,Ames,28132,699927,Mexico,Nayarit,20.7736,,104.383,797,Amatlan de Ca?as. Population: Puerta del Limon (Pie de la Cuesta,Amatlan).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0134,Zea,mays subsp. parviglumis,Ames,28133,699928,Mexico,Nayarit,20.7872,,104.385,856,Amatlan de Ca?as. Population: 3 km E de Amatlan de Ca?as.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0135,Zea,mays subsp. parviglumis,Ames,28134,699929,Mexico,Nayarit,20.8194,,104.414,880,Amatlan de Ca?as. Population: Amatlan de Ca?as (Junto al Panteon).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0136,Zea,mays subsp. parviglumis,Ames,28135,699930,Mexico,Jalisco,20.8364,,104.556,888,Guachinango. Population: El Rodeo (Km 7 Tepuzhuacan,El Tablillo).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0137,Zea,mays subsp. parviglumis,Ames,28136,699931,Mexico,Jalisco,20.8044,,104.541,1123,Guachinango. Population: El Tablillo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0138,Zea,mays subsp. parviglumis,Ames,28137,699932,Mexico,Jalisco,19.7042,,104.819,552,Villa Purificacion. Population: Los Cimientos.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0139,Zea,mays subsp. parviglumis,Ames,28138,699933,Mexico,Jalisco,19.7586,,104.85,683,Villa Purificacion. Population: El Tepopote (Huista,La Cofradia).,,Wild,USDA,,,,,,,,,,
+
+RIMPA0140,Zea,mays subsp. parviglumis,Ames,28139,699934,Mexico,Jalisco,19.7717,,104.843,635,Villa Purificacion. Population: La Cofradia (2km al E).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0141,Zea,mays subsp. parviglumis,Ames,28140,699935,Mexico,Jalisco,19.8961,,104.177,1325,Ejutla. Population: Km 14 El Grullo,Ejutla.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0142,Zea,mays subsp. parviglumis,Ames,28141,699936,Mexico,Colima,19.4408,,103.984,1103,Minatitlan. Population: El Sauz.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0143,Zea,mays subsp. parviglumis,Ames,28142,699937,Mexico,Jalisco,19.7153,,104.803,526,Villa Purificacion. Population: 1 Km N Talpitita (Potrero La Higuerita).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0144,Zea,mays subsp. parviglumis,Ames,28143,699938,Mexico,Jalisco,19.9122,,104.11,1004,Ejutla. Population: Camino El Estanco,Amacuitlanejo.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0145,Zea,mays subsp. parviglumis,Ames,28144,699939,Mexico,Michoacan,19.3714,,101.931,1256,Taretan. Population: Km 100 Autopista Uruapan,L. Cardenas.,,Wild,USDA,,,,,,,,,,
+
+RIMPA0146,Zea,mays subsp. parviglumis,Ames,28145,699940,Mexico,Michoacan,19.3442,,101.944,1170,Taretan. Population: Taretan (La Perimera).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0147,Zea,mays subsp. parviglumis,Ames,28146,699941,Mexico,Jalisco,19.9117,,104.11,1003,Ejutla. Population: Los Naranjos.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0148,Zea,mays subsp. parviglumis,Ames,28147,699942,Mexico,Jalisco,19.9339,,104.065,945,Ejutla. Population: El Estanco.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0149,Zea,mays subsp. parviglumis,Ames,28148,699943,Mexico,Jalisco,19.5361,,104.058,1364,Toliman. Population: El Rodeo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0150,Zea,mays subsp. parviglumis,Ames,28149,699944,Mexico,Jalisco,19.9675,,104.061,1288,Juchitlan. Population: El Coyotomate.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0151,Zea,mays subsp. parviglumis,Ames,28150,699945,Mexico,Jalisco,19.8994,,104.172,1311,Ejutla. Population: Crucero Ejutla,Union de Tula,El Grullo.,,Wild,USDA,,,,,,,,,
+
+RIMPA0152,Zea,mays subsp. parviglumis,Ames,28151,699946,Mexico,Jalisco,19.5283,,104.059,1450,Toliman. Population: La Lima.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0153,Zea,mays subsp. parviglumis,Ames,28152,699947,Mexico,Jalisco,19.9433,,103.995,982,Ejutla. Population: San Lorenzo.,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0154,Zea,mays subsp. parviglumis,Ames,28153,699948,Mexico,Jalisco,19.7636,,104.707,426,Villa Purificacion. Population: Jirosto (Las Carboneras).,,Wild,USDA,,,,,,,,,,,
+
+RIMPA0155,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,19.8959,,104.18,1246,EjutlaA,,Wild,Hufford,,"includes leaf, seed from a single maternal individual, pooled seed from 52 sampling sites",,,,,,,,,
+
+RIMPA0156,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,19.9118,,104.113,,EjutlaB,,Wild,Hufford,,includes leaf and pooled seed samples from 44 sampling sites,,,,,,,,,
+
+RIMPA0157,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,19.9577,,104.05,,La Mesa,,Wild,Hufford,,includes leaf and pooled seed samples from 53 sampling sites,,,,,,,,,
+
+RIMPA0158,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,19.9472,,103.995,,San Lorenzo,,Wild,Hufford,,includes leaf and pooled seed samples from 50 sampling sites,,,,,,,,,
+
+RIMPA0159,Zea,mays subsp. parviglumis,,,,Mexico,Jalisco,19.8679,,104.05,1225,El Grullo,,Wild,Hufford,,"includes leaf and seed samples from a small roadside population, no individual sampling sites within the population",,,,,,,,,
+
+RIMPA0160,Zea,mays subsp. parviglumis,,,,Mexico\ ,,,,,Mazatlan,,Wild,Iltis,,colllected by Beadle in the 1972 Galinat teosinte Hunt; sent by Beadle to Giles Waines at UCR; probably same as Ames 21785 or PI 384061 .,,,,,,,,,,
+
+RIMPA0161,Zea,mays subsp. parviglumis,,,,Mexico\ ,,,,,El Salado,,Wild,Iltis,,"colllected by Beadle in the 1972 Galinat teosinte Hunt; sent by Beadle to Giles Waines at UCR; likely  likely  PI 384061,  Ames 21785 ,  Ames 21787, or Ames 21788.\ \ Unknown mom(s)\ ",,,,,,,,,,
+
+RIMPA0162,Zea,mays subsp. parviglumis,Ames,21785,,,,,,,,,,Flint,Garcia,,"tissue only, no seed",,,,,,,,,
+
+RIN0001,Zea,nicaraguensis,PI,615697,87292,Nicaragua,Chinandega,12.8958,,86.9833,9,Near seasonal camp occupied by cattle herders known as El Rodeo  ~100 m east of Estero Palo Blanco  ~3 km northwest of Hacienda Apacunca  19,20 km west,southwest of Villa Nueva  plains between Estero Paimaica and Estero Palo Blanco. Pacific coastal plain near Golfo de Fonseca. Sunny margin of open  mature  weedy  heavily grazed floodplain gallery forest (dry forest  seasonally green  25 m tall  under 3,5 dm of water in Oct.) between savanna and seasonal river (estero).,,Wild,USDA,,,,,,,,
+
+RIP0001,Zea,perennis,Ames,21869,87265,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0002,Zea,perennis,Ames,21871,87267,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0003,Zea,perennis,Ames,21872,87268,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0004,Zea,perennis,Ames,21873,87269,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0005,Zea,perennis,Ames,21874,87270,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0006,Zea,perennis,Ames,21875,87271,Mexico,,,,,,,Wild,USDA,,,,,,,,,,,,
+
+RIP0007,Zea,perennis,Ames,21882,87279,Mexico,Jalisco,19.6333,,103.583,2150,Piedra Ancha  15 km west,southwest of Ciudad Guzman. Within orchard and upper quebrada (ravine)  gentle flat slopes  very loose soil (fluffy volcanic ash?)  continually and thoroughly stirred by a large rabbit,size burrowing rodent.,,Wild,USDA,,,,,,,,,
+
+RIPC0001,Panicum,capillare,PI,220025,,,,,,,,,,USDA,,,,,,,,,,,,
+
+RIPD0001,Zea,Perennis,Ames,21872,,,,,,,,,,,,leaf tissu in the ,80C from Kellogg Elizabeth,,,,,,,,,
+
+RIPG0001,Pennisetum,glaucum,PI,564586,,,,,,,,,,USDA,,PI564586 01 SD,,,,,,,,,,
+
+RIPG0002,Pennisetum,glaucum,PI,586660,,,,,,,,,,USDA,,PI 586660 01 SD\ ,,,,,,,,,,
+
+RIPG0003,Pennisetum,glaucum,PI,591068,,,,,,,,,,USDA,,PI 591068 01 SD,,,,,,,,,,
+
+RIPS0001,Pennisetum,sieberianum,PI,532675,,,,,,,,,,USDA,,PI 532675 01 SD,,,,,,,,,,
+
+RIPV0001,Panicum,virgatum,PI,422006,,,,,,,Texas,,Alamo,USDA,200,,,,,,,,,,,
+
+RISB0001,Sorghum,bicolor subsp. bicolor,PI,659985,,,,,,,,,,USDA,,MAP1 SD\ 50 seed Wt ,1.46\ ,,,,,,,,,
+
+RISB0002,Sorghum,bicolor subsp. bicolor,PI,533794,,,,,,,,,,USDA,,PI 533794 02 SD,,,,,,,,,,
+
+RISB0003,Sorghum,bicolor subsp. bicolor,PI,533962,,,,,,,,,,USDA,,PI 533962 02 SD,,,,,,,,,,
+
+RISB0004,Sorghum,bicolor subsp. bicolor,PI,533964,,,,,,,,,,USDA,,PI 533964 01 SD,,,,,,,,,,
+
+RISB0005,Sorghum,bicolor subsp. bicolor,PI,534124,,,,,,,,,,USDA,,PI 534124 01 SD,,,,,,,,,,
+
+RISB0006,Sorghum ,bicolor subsp. bicolor,PI,534163,,,,,,,,,,USDA,,PI 534163 01 SD,,,,,,,,,,
+
+RISB0007,Sorghum,bicolor subsp. bicolor,PI,564163,,,,,,,,,,usda,,PI 564163 02 SD,,,,,,,,,,
+
+RISB0008,Sorghum,bicolor subsp. bicolor,PI,565121,,,,,,,,,,USDA,,PI 565121 02 SD,,,,,,,,,,
+
+RISB0009,Sorghum ,bicolor subsp. bicolor,PI,576364,,,,,,,,,,USDA,,PI 576364 03 SD,,,,,,,,,,
+
+RISB0010,Sorghum,bicolor subsp. bicolor,PI,576380,,,,,,,,,,USDA,,PI 576380 03 SD\ ,,,,,,,,,,
+
+RISB0011,Sorghum,bicolor subsp. bicolor,PI,597960,,,,,,,,,,USDA,,PI 597960 02 SD,,,,,,,,,,
+
+RISB0012,Sorghum,bicolor subsp. bicolor,PI,597980,,,,,,,,,,USDA,,PI 597980 02 SD,,,,,,,,,,
+
+RISB0013,Sorghum,bicolor subsp. bicolor,PI,656072,,,,,,,,,,USDA,,PI 656072 02 SD,,,,,,,,,,
+
+RISB0014,Sorghum,bicolor subsp. bicolor,PI,656073,,,,,,,,,,USDA,,PI 656073 01 SD,,,,,,,,,,
+
+RISB0015,Sorghum,bicolor subsp.bicolor,PI,656081,,,,,,,,,,USDA,,PI 656081 01 SD,,,,,,,,,,
+
+RISB0016,Sorghum ,bicolor subsp. bicolor,PI,656092,,,,,,,,,,USDA,,PI 656092 02 SD,,,,,,,,,,
+
+RISP1,Zea,sp.,,,,,,,,,,,,UCD,,"perennial plant growing in ecology garden near Orchard Park, UCD.  leaves collected",,,,,,,,,,
+
+RITA0001,Tripsacum,australe v.hisutum,MIA,34491,,,,,,,,,,,,,,,,,,,,,,
+
+RITD0001,Tripsacum,dactyloides,,,,,,,,,,,,Flint,Garcia,,"Growing behind Curtis Hall, U. Missouri.  Probably apomictic or first generation self. Donated Feb. 2010",,,,,,,,,
+
+RITF0001,Tripsacum,floridanum,MIA,34719,,,,,,,,,,,,,,,,,,,,,,
+
+RITL,Tripsacum,laxum,,,,,,,,,,,,,,,,,,,,,,,,
+
+RITL0001,Tripsacum,laxum,MIA,34792,,,,,,,,,,,,,,,,,,,,,,
+
+RITN0001,Tripsacum,andersonii,MIA,34430,,,,,,,,,,,,leaf tissu in the ,80C from Kellogg Elizabeth,,,,,,,,,
+
+RITU0001,Triticum,urartu,PI,428198,,,,,,,,,,,,crop: wheat\ Name G1812\ Order: 246265,,,,,,,,,,
+
+RIUD0001,Urelystrum ,digitatum,SM,3109,,,,,,,,,,,,,,,,,,,,,,
+
+RIMMA1073,Zea,mays subsp. mays,,,,Peru,,,,,,,,Gabriela Vazquez,100,"""Cusco giant corn"" from Kuski company (www.kuski.pe)",,,,,,,,,,
+
+RIMMA1074,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12J; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1075,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12H; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1076,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,20,X16B; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1077,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12G; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1078,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X16F; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1079,Zea,mays subsp. mays,,,,Peru,,,,,,,,Gabriela Vazquez,100,"Pescorunto corn"" from Kuski company (www.kuski.pe)",,,,,,,,,,
+
+RIMMA1080,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,10,K'uyu Chuspi Dark,,,,,,,,,,
+
+RIMMA1081,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,10,Yuruckluhua Candy Stripe,,,,,,,,,,
+
+RIMMA1082,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,12,K'uyu Chuspi,,,,,,,,,,
+
+RIMMA1083,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,10,Peskorunto Yellow,,,,,,,,,,
+
+RIMMA1084,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,10,Cheqche Peskorunto,,,,,,,,,,
+
+RIMMA1085,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,10,Chuspi Puka,,,,,,,,,,
+
+RIMMA1086,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,20,Peruvian Chullpi,,,,,,,,,,
+
+RIMMA1087,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,8,Puka Chullpi,,,,,,,,,,
+
+RIMMA1088,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,8,Yurackallhua Incan Giant,,,,,,,,,,
+
+RIMMA1089,Zea,mays subsp. mays,,,,,,,,,,,,Baker Creek Heirloom Seed Company,8,Kara Kay Suni,,,,,,,,,,
+
+RIMMA1090,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12K; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1091,Zea,mays subsp. mays,,,,,,,,,,,,Jim Birchler,5,y1 BC7 sefl2 fast,flowering mini maize,,,,,,,,,
+
+RIMMA1092,Zea,mays subsp. Mays,,,,,,,,,,,,Jim Birchler,5,R,scm2 BC7 self2 fast,flowering mini maize,,,,,,,,
+
+RIMMA1093,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12JA; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1094,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12I; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1095,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12M; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1096,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X16E; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1097,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,20,T33060; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1098,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X37B; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIMMA1099,Zea,mays subsp. mays,,,,,,,,,,,,Maize Genetics Co,op,15,X12L; Rhoades Ab10 request from stock center,,,,,,,,,
+
+RIHY0002,Zea,mays subsp. Mays,Ames,19097,,,,,,,,,,USDA,100,RIMMA0019 x RIMMA0056 F1 (B73 x Mo17),,,,,,,,,,
+
+RITD0002,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,11,"Pete2, lab growout",,,,,,,,,,
+
+RITD0003,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,2,"IL-6, lab growout, maize pollen in greenhouse before bagging",,,,,,,,,,
+
+RITD0004,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,1,"IA-83237-2, lab growout, sweet corn pollen in greenhouse before bagging",,,,,,,,,,
+
+RITD0005,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,,"810, lab growout",,,,,,,,,,
+
+RITD0006,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,,"IL-9, lab growout",,,,,,,,,,
+
+RITD0007,Tripsacum,dactyloides,,,,,,,,,,,,RILAB,,"803, lab growout",,,,,,,,,,

@@ -1,0 +1,16 @@
+ID	zea	allo_symp	GEOCTY	n	LOCALITY
+RIMMA0409	maize	allopatric	Mexico	409	MexLow
+RIMMA0703	maize	allopatric	Mexico	703	MexLow
+RIMMA0720	maize	allopatric	Guatemala	720	MexLow
+RIMMA0733	maize	allopatric	Mexico	733	MexLow
+RIMMA0390	maize	allopatric	Colombia	390	SALow
+RIMMA0392	maize	allopatric	Colombia	392	SALow
+RIMMA0393	maize	allopatric	Colombia	393	SALow
+RIMMA0395	maize	allopatric	Colombia	395	SALow
+RIMMA0398	maize	allopatric	Colombia	398	SALow
+RIMMA0399	maize	allopatric	Colombia	399	SALow
+RIMMA0466	maize	allopatric	Peru	466	Andes
+RIMMA0468	maize	allopatric	Peru	468	Andes
+RIMMA0662	maize	allopatric	Ecuador	662	Andes
+RIMMA0665	maize	allopatric	Ecuador	665	Andes
+RIMMA0625	maize	allopatric	Peru	625	Andes
