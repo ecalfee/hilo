@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --partition=med
+#SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J thinGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/thinGLFile4PCA_%A_%a.out
@@ -7,7 +7,7 @@
 #SBATCH --mem=8G
 #SBATCH --array=0-425
 
-# to run: 
+# to run:
 
 # array contains all the region #'s'
 REGION=$SLURM_ARRAY_TASK_ID

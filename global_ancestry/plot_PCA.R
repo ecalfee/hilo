@@ -11,8 +11,38 @@ yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
 colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
+PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
+colnames(metrics) <- c("ID", "total_reads_pass")
+hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
+maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
+landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
+seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
+
+# a rough coverage estimate is number of reads passing filtering * 150bp/read
+# divided by total area they could map to in maize reference genome v4
+
+# size of reference genome reads are mapped to
+ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai", 
+                                  stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
+# including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
+metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
+
+# combine sample meta data
+meta <- bind_rows(hilo, maize4low, landraces) %>%
+  left_join(., metrics, by = "ID") %>%
+  mutate(., group = paste(symp_allo, zea, sep = "_"))
+meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
+sum(meta$est_coverage < .025)
+meta %>%
+  filter(., est_coverage < 0.25) %>%
+  ggplot(aes(color = group)) +
+  geom_boxplot(stat = count)
+sum(meta$est_coverage)
+
 # get PCA data
-cov_dir <- "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/PCA"
+cov_dir <- file.path("results/PCA", PREFIX)
 cov_data <- read.table(file.path(cov_dir, "whole_genome.cov"),
                        header = F, stringsAsFactors = F)
 # PC's are each column of dataframe pca:
@@ -21,7 +51,50 @@ pca <- eigen(cov_data) # take PCA of covariance matrix
 n = 4 # make small dataframe w/ only first n eigenvectors
 pca_small <- data.frame(pca$vectors[ , 1:n])
 colnames(pca_small) = paste0("PC", 1:n)
+# rounded eigen values
+PC_var_explained = round(pca$values, 2)
   
+# quick plot of new data:
+d <- bind_cols(IDs, pca_small) %>%
+  left_join(., meta, by = "ID")
+d %>%
+  filter(., ID %in% seq_Jan2019 | (symp_allo == "allopatric" & zea == "maize")) %>%
+  ggplot(., aes(x = -PC1, y = PC2, color = group, 
+                size = est_coverage)) + 
+  geom_point(alpha = .5) + 
+  #scale_colour_manual(values = colors_alphabetical) +
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ggtitle("newly seq. HILO Jan19 only; SNPs spaced >.01cM")
+
+ggsave("plots/PC_new_HILO_seq_Jan19_only.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+d %>%
+  filter(., !(ID %in% seq_Jan2019)) %>%
+  ggplot(., aes(x = -PC1, y = PC2, color = paste(zea, symp_allo, sep = "_"), 
+                size = est_coverage)) + 
+  geom_point(alpha = .75) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ggtitle("old seq. HILO only; SNPs spaced >.01cM")
+ggsave("plots/PC_old_HILO_seq_before_Jan19_only.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+d %>%
+  #filter(., (ID %in% seq_Jan2019 & n <= 200) | (symp_allo == "allopatric" & zea == "maize")) %>%
+  filter(., (ID %in% seq_Jan2019 & n <= 200)) %>%
+  ggplot(., aes(x = -PC1, y = PC2, color = paste(zea, symp_allo, sep = "_"), 
+                size = est_coverage)) + 
+  geom_point(alpha = .75) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ggtitle("overlap old-new seq. HILO; SNPs spaced >.01cM")
+
+
 # get metadata for individuals included in NGSadmix analysis
 pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
                              header = T, sep = "\t")
@@ -31,9 +104,6 @@ d <- bind_cols(pass1_allo4Low, pca_small)  %>%
   #arrange(., zea) %>%
   #arrange(., symp_allo) %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
-
-# rounded eigen values
-PC_var_explained = round(pca$values, 2)
 
 # plot first PC's
 # PC1 and 2, all no filter

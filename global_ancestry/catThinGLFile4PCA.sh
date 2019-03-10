@@ -2,7 +2,7 @@
 #SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J catThinGL
-#SBATCH -o /home/ecalfee/hilo/slurm-log/catThinGL4PCA_%A_%a.out
+#SBATCH -o /home/ecalfee/hilo/slurm-log/catThinGL4PCA_%A.out
 #SBATCH -t 4:00:00
 #SBATCH --mem=8G
 

@@ -5,28 +5,31 @@ based on individual genotype likelihoods at a set of unlinked SNPs
 pruneFixedcM_PCA.sh (runs python script ../scripts/pruneFixedcM.py)
 (note: pass1 variant sites results were stored in /thinnedPCA/)
 global_ancestry$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PCA.sh
-Submitted batch job 9722786 - RUNNING 3.8.19
+Submitted batch job 9722786 - COMPLETED 3.8.19 - MOVED TO b
 
 2) Thin existing GL file for all variant sites to only include these ~125K thinned sites using R
 thinGLFile4PCA.sh (runs R script thinGLFile.R)
 global_ancestry$ sbatch --dependency=afterok:9722786 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
-Submitted batch job 9722800 - WAITING 4 DEPENDENCY
+Submitted batch job 9722800 - LIMITED JOBS ON MED. CANCELLED. - rerunning:
+global_ancestry$ sbatch -p med2 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
+Submitted batch job 9730182 - COMPLETED 3.9.19
 
 3) Concatenate GL across all thinned SNPs, regions, & all chromosomes for input to NGSadmix
-global_ancestry$ sbatch --dependency=afterok:9722800 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGLFile4PCA.sh
-Submitted batch job 9722807 - WAITING 4 DEPENDENCY
+global_ancestry$ sbatch --dependency=afterok:9730182 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGLFile4PCA.sh
+Submitted batch job 9730323 - COMPLETED 3.9.19
 
 4) Run NGSadmix for global ancestry using K=2,3,4 genetic clusters
 runNGSadmix.sh
-global_ancestry$ sbatch --dependency=afterok:9722807 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
-Submitted batch job 9722808 - WAITING 4 DEPENDENCY
+global_ancestry$ sbatch --dependency=afterok:9730323 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
+Submitted batch job 9730355  - COMPLETED 3.9.19
 
 5) Create PCA using PCAngsd and GL from all thinned SNPs
 runPCAngsd.sh
-global_ancestry$ sbatch --dependency=afterok:9722807 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
-Submitted batch job 9722809 - WAITING 4 DEPENDENCY
+global_ancestry$ sbatch --dependency=afterok:9730323 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
+Submitted batch job 9730388 - COMPLETED 3.9.19
 
 6) Visualize results in R
+plot_PCA.R
 
 7) Summarize population mean global ancestry for use in local ancestry calling,
 omitting individuals with less than 0.05x mean coverage

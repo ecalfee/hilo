@@ -6,7 +6,7 @@
 #SBATCH -t 1:00:00
 #SBATCH --mem=32G
 #SBATCH -n 1
-#SBATCH --array=1-267
+#SBATCH --array=1-276
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -50,13 +50,13 @@ if [ $(wc -l results/to_merge/"$ID".list | cut -f1 -d" ") = 1 ]; then
 else
 	echo "merging files:"
 	cat results/to_merge/"$ID".list
-	
+
 	# merging
 	samtools merge -b results/to_merge/"$ID".list "$DIR_OUT"/"$ID".sort.baq.bam
 
 	# need to deduplicate again because even though sequenced on diff. lanes they are the same libraries,
 	# so share PCR duplicates. I don't need to redo sorting or BAQ scores however.
-	
+
 	echo "marking duplicates with PICARD"
 	java -Xmx6g -jar ${PICARD}/picard.jar MarkDuplicates \
 	INPUT="${DIR_OUT}/${ID}.sort.baq.bam" OUTPUT=/dev/stdout QUIET=true \

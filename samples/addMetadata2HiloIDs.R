@@ -12,20 +12,40 @@ meta1 <- read.csv("../data/pre_label_fix/HILO_samples.csv", stringsAsFactors = F
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   rename(., ID = Library.name) %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-  filter(., (n <= 142 | n > 200)) # accurate pop data for ID's 142-200 comes from a second and third file
+  filter(., n < 143 | n > 200)
+  #filter(., (n <= 142)) # accurate pop data for ID's 142 and below comes from a second and third file
 # fix population-level swap documented by Dan between HILO66 and HILO61
 meta1_fixed = meta1
 # separate population identifiers from incorrect ID
 meta1_fixed[meta1_fixed$ID == "HILO66", c("popN", "family")] <- meta1[meta1$ID == "HILO61", c("popN", "family")]
 meta1_fixed[meta1_fixed$ID == "HILO61", c("popN", "family")] <- meta1[meta1$ID == "HILO66", c("popN", "family")]
-
+# fixed 143-160
 meta2 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.8.18.txt", stringsAsFactors = F, sep = "\t",
                   header = F) %>%
   rename(., ID = V1) %>%
   rename(., sample_name = V2)
+# fixed 161-200
 meta3 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.7.18.txt", stringsAsFactors = F, sep = "\t") %>%
-  rename(., ID = Library.name) %>%
-  bind_rows(meta2, .) %>% # add in samples 143-160 to these samples >160
+  rename(., ID = Library.name) 
+# new HILO IDs >200
+meta4 <- read.csv("../data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt", header = F, stringsAsFactors = F, sep = "\t") %>%
+  rename(ID = V1) %>%
+  rename(sample_name = V3) %>%
+  rename(novogene_label = V2) %>%
+  dplyr::select(., c("ID", "sample_name")) %>%
+  filter(., !duplicated(.))
+# This can't be correct - HILO80 is listed twice (ok) but with different popN_family labels (no ok)
+
+#meta <- bind_rows(meta2, meta3, meta4) %>%
+#  separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
+#  mutate(., n = as.integer(substr(ID, 5, 100))) %>%
+#  full_join(meta1_fixed, ., by = "ID") %>%
+#  dplyr::select(., c("n", "ID", "popN", "family")) %>% # put in desired order
+#  mutate(., popN = as.numeric(popN)) %>%
+#  mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
+#  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
+
+meta <- bind_rows(meta2, meta3) %>%
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
   bind_rows(meta1_fixed, .) %>%
@@ -33,6 +53,7 @@ meta3 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.7.18.txt", 
   mutate(., popN = as.numeric(popN)) %>%
   mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
   mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
+
 # add in germplasm data from JRI for all projects ("riplasm").
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
 riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
@@ -41,8 +62,8 @@ riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header 
   dplyr::filter(., prefix %in% c("RIMMA", "RIMME"))
 
 # sticking it all together
-hilo <- cbind(meta3, do.call(rbind,
-                             apply(meta3, 1, function(row) riplasm[riplasm$RI_ACCESSION ==  paste0(
+hilo <- cbind(meta, do.call(rbind,
+                             apply(meta, 1, function(row) riplasm[riplasm$RI_ACCESSION ==  paste0(
                                ifelse(row["zea"] == "mexicana", "RIMME", "RIMMA"),
                                sprintf("%04d", as.integer(row["popN"]))),
                                c("RI_ACCESSION", "GEOCTY", "LOCALITY")]))) %>%
@@ -71,9 +92,10 @@ write.table(maize4low, "MAIZE4LOW_meta.txt", row.names = F, quote = F, col.names
 # make metadata file for allopatric maize landraces:
 landraces <- data.frame(ID = read.table("alloMAIZE_IDs.list", header = F, stringsAsFactors = F)$V1,
                         zea = "maize",
-                        allo_symp = "allopatric") %>%
-  left_join(., dplyr::select(riplasm, c(GEOCTY, RI_ACCESSION)) %>% rename(ID = RI_ACCESSION), by = "ID") %>%
-  mutate(., n = as.integer(substr(ID, 6, 9)))
+                        symp_allo = "allopatric",
+                        n = 1:15) %>%
+  left_join(., dplyr::select(riplasm, c(GEOCTY, RI_ACCESSION)) %>% mutate(ID = RI_ACCESSION), by = "ID") %>%
+  mutate(., popN = as.integer(substr(ID, 6, 9)))
 # filling in missing/corrections for the landrace IDs
 landraces$GEOCTY[landraces$ID == "RIMMA0703"] <- "Mexico" # clear from listed locality, Mexico Federal District
 landraces$GEOCTY[landraces$ID == "RIMMA0625"] <- riplasm[riplasm$RI_ACCESSION=="RIMMA0438", "GEOCTY"] # label switch ID-ed by Li

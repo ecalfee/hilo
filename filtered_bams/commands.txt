@@ -283,9 +283,9 @@ filtered_bams/results/alloMAIZE$ mv RIMMA0625.sort.dedup.baq.bam.bai RIMMA0625_s
 data/landraces_from_Li/original$ ln -s /group/jrigrp4/landraces_v4_fromLi2017/original/RIMMA0625_Andean.IndelRealigned.bam RIMMA0625_Andean.IndelRealigned.bam
 # then I remap:
 filtered_bams$ sbatch -p med2 --mem=64G --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
-Submitted batch job 9719519 - RUNNING 3.8.19
+Submitted batch job COMPLETED - started on 3.8.19
 filtered_bams$ sbatch --dependency=afterok:9719519 --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
-Submitted batch job 9719522 - WAITING 4 DEPENDENCY
+Submitted batch job 9719522 - RUNNING 3.9.19
 
 # made ID files for allopatric maize from Li:
 data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
@@ -335,22 +335,35 @@ data/HILO_raw_reads$ mkdir ../../filtered_bams/results/to_merge
 data/HILO_raw_reads$ for i in $(cut -f1 merged_all.list | sort --version-sort | uniq); do awk -v i="$i" '$1 == i {print "/home/ecalfee/hilo/filtered_bams/results/"$2"/"$1".sort.dedup.baq.bam"}' merged_all.list > ../../filtered_bams/results/to_merge/"$i".list; done
 # make a script that merges as needed, or skips and just creates a symlink if no bams need to be merged
 filtered_bams$ sbatch merge_bams_HILO.sh
-Submitted batch job 9438264 # RAN (very fast) 3.4.19 
+Submitted batch job 9438264 # RAN (very fast) 3.4.19
 # redo for HILO71,157,201,199 too (filtering hadn't completed yet).
 filtered_bams$ sbatch --array=71,157,201,199 merge_bams_HILO.sh
 Submitted batch job 9573823 - COMPLETED 3.5.19
 # oops I deleted HILO80. Will redo:
 filtered_bams$ sbatch --array=80 -t 1:00:00 merge_bams_HILO.sh
 Submitted batch job 9584598 - COMPLETED 3.6.19
-# number 85 was cancelleddue to time limit. rerunning:
+# number 85 was cancelled due to time limit. rerunning:
 filtered_bams$ sbatch --array=85 -t 6:00:00 merge_bams_HILO.sh
 Submitted batch job 9593488 - COMPLETED (fast) 3.6.19
+# left out highest HILO IDs. Should be all just links (fast). Running now:
+filtered_bams$ sbatch --array=268-276 -t 10:00 merge_bams_HILO.sh
+Submitted batch job 9735004 - COMPLETED 3.9.19
 
 # running flagstat to get summary mapping statistics on all bams
 filtered_bams$ sbatch --array=0-296 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
-Submitted batch job 9719681 - RUNNING 3.8.19
+Submitted batch job 9719681 - COMPLETED 3.8.19. (!) Some bams have very few reads,
+# e.g. HILO220-235 all < 2000 reads & (though to a lesser degree) HILO240-256
+# I think these libraries just failed.
+# left out HILO268-276, so running these:
+filtered_bams$ sbatch --array=267-275 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
+Submitted batch job 9735082 - RUNNING 3.9.19
 filtered_bams$ sbatch --array=0 --export=PREFIX=RIMMA0625_small get_bam_metrics_flagstat.sh
-Submitted batch job 9719772 - RUNNING 3.8.19
+Submitted batch job 9719772 - COMPLETED 3.8.19
+# summarize all the total # reads in one file:
+hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_IDs.list); do echo "$i"$'\t'$(grep 'total' "metrics/$i.flagstat" | cut -f1 -d" "); done > metrics/hilo_alloMAIZE_MAIZE4LOW.flagstat.total
+# note: for now I manually added total reads for RIMMA0625 (small file -- redoing) b/c I renamed file to _small 'total' RIMMA0625_small.flagstat
+# TO DO: summarize again including HILO268-276
+hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_IDs.list); do echo "$i"$'\t'$(grep 'total' "metrics/$i.flagstat" | cut -f1 -d" "); done > metrics/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small.flagstat.total
 
 
 # TO DO: make symlink to metrics for remapped hilo individuals

@@ -23,7 +23,10 @@ Submitted batch job 9585133 - NOT RUNNING (CHECK ON THIS!). Fixed angsd module i
 variant_sites$ sbatch --dependency=afterok:9593488 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
 Submitted batch job 9593538 - ERROR 3.6.19. Fixed typo in bam path:
 Submitted batch job 9593626 - fixed additional bam path issue
-Submitted batch job 9593643 - COMPLETED 3.6.19
+Submitted batch job 9593643 - COMPLETED 3.6.19. Re-do including HILO268-276:
+variant_sites$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small,REGIONS_LIST=N1000.L100.regions calcDepthCovRegions.sh
+Submitted batch job 9735142 - CANCELLED -- incomplete sample list.
+Submitted batch job 9735212 - RUNNING 3.9.19
 
 # call variant sites with cutoff based on < 2x mean
 # interactively using plot_mapping_metrics.R I inferred the mean coverage for random regions is ~440x
@@ -34,12 +37,17 @@ Submitted batch job 9613146 - RAN 3.6.19. Errors with 2 files (out-of-memory) - 
 slurm-log/idSNPs_9613146_39.out: "slurmstepd: error: Detected 1 oom-kill event(s) in step 9613191.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler." And same problem with _361.
 variant_sites$ sbatch --array=39,361 --mem=24G --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW,MAX_DEPTH=880 id_SNPs.sh
 Submitted batch job 9716699 - COMPLETED (fast) 3.8.19
+# estimated coverage in plot_PCA.R using flagstat total # mapped reads (>Q30) results
+variant_sites$ sbatch --array=0-425 --mem=24G --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small,MAX_DEPTH=1130 id_SNPs.sh
+Submitted batch job 9735284 - RUNNING 3.9.19
 
 # make var.sites files to complement the mafs.gz files:
 variant_sites$ sbatch --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" -p med2 mafsToSitesFile.sh
 Submitted batch job 9722339 - COMPLETED 3.8.19
+variant_sites$ sbatch --dependency=afterok:9735284 --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" -p med2 mafsToSitesFile.sh
+Submitted batch job 9735358 - WAITING 4 DEPENDENCY
 
-# I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when I don't think it should be (!)
+# I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260 based on coverage over random regions, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when I don't think it should be (!)
 
 
 # TO DO: Call genotypes for tripsacum

@@ -1,6 +1,6 @@
 # MAKING LISTS OF COMPLETED BAMS:
 # make lists of all HILO individuals, maize landraces, maize4low populations (skips individual 3 because of memory issues with mapping), parviglumis, and combinations of these:
-hilo/samples$ for i in {1..267}; do echo HILO"$i"; done > hilo_IDs.list
+hilo/samples$ for i in {1..276}; do echo HILO"$i"; done > hilo_IDs.list
 samples$ for i in $(cat hilo_IDs.list); do echo ../filtered_bams/results/merged/"$i".sort.dedup.baq.bam; done > hilo_bams.list
 # note # 3 is excluded because it did not map (memory issues)
 hilo/samples$ for i in 1 2 4 {11..14} {21..24} {31..34}; do echo MAIZE4LOW"$i"; done > MAIZE4LOW_IDs.list
@@ -24,5 +24,7 @@ samples$ cat hilo_bams.list alloMAIZE_bams.list > hilo_alloMAIZE_bams.list
 
 # backups:
 Made RIMMA0625_small_bams.list and _IDs.list just for RIMMA0625_small which I think is artificially truncated since it should be high coverage (?)
+samples$ cp hilo_alloMAIZE_MAIZE4LOW_IDs.list missing268-276_hilo_alloMAIZE_MAIZE4LOW_IDs.list # oops I forgot to include highest HILO IDs
+samples$ cp hilo_alloMAIZE_MAIZE4LOW_bams.list missing268-276_hilo_alloMAIZE_MAIZE4LOW_bams.list
 # older files from pass1 were removed from addMetadata2HiloIDs.R because they are no longer relevant with updated newly sequenced individuals:
 # allo4Low_ids.txt, resequence_allopatric_mex_for_Anne.txt, pass1_ids.txt
