@@ -1,0 +1,32 @@
+popN	zea	symp_allo	RI_ACCESSION	GEOCTY	LOCALITY	LAT	LON	ELEVATION
+366	maize	sympatric	RIMMA0366	Mexico	Jicaltepec	19.3764	-99.6303	2587
+370	maize	sympatric	RIMMA0370	Mexico	Puruandiro	20.1076	-101.49	1915
+360	maize	sympatric	RIMMA0360	Mexico	Nabogame	26.2465	-106.915	2020
+361	maize	sympatric	RIMMA0361	Mexico	Penjamillo	20.1176	-101.93	1705
+365	maize	sympatric	RIMMA0365	Mexico	Tlapala	19.2351	-98.8368	2272
+25	mexicana	sympatric	RIMME0025	Mexico	Cocotilan	19.2244	-98.8427	2269
+30	mexicana	sympatric	RIMME0030	Mexico	San Pedro	19.0886	-98.4935	2459
+368	maize	sympatric	RIMMA0368	Mexico	Opopeo	19.4181	-101.613	2213
+372	maize	sympatric	RIMMA0372	Mexico	San Pedro	19.0886	-98.4935	2459
+27	mexicana	sympatric	RIMME0027	Mexico	Amatlan	18.9719	-99.0551	1658
+18	mexicana	sympatric	RIMME0018	Mexico	Nabogame	26.2465	-106.915	2020
+28	mexicana	sympatric	RIMME0028	Mexico	Puruandiro	20.1076	-101.49	1915
+374	maize	sympatric	RIMMA0374	Mexico	Xochimilco	19.2861	-99.0827	2237
+19	mexicana	sympatric	RIMME0019	Mexico	Penjamillo	20.1176	-101.93	1705
+369	maize	sympatric	RIMMA0369	Mexico	Amatlan	18.9719	-99.0551	1658
+367	maize	sympatric	RIMMA0367	Mexico	Cocotilan	19.2244	-98.8427	2269
+24	mexicana	sympatric	RIMME0024	Mexico	Jicaltepec	19.3764	-99.6303	2587
+35	mexicana	sympatric	RIMME0035	Mexico	Xochimilco	19.2861	-99.0827	2237
+26	mexicana	sympatric	RIMME0026	Mexico	Opopeo	19.4181	-101.613	2213
+31	mexicana	sympatric	RIMME0031	Mexico	Tenango del Aire	19.1197	-99.5896	2609
+23	mexicana	sympatric	RIMME0023	Mexico	Tlapala	19.2351	-98.8368	2272
+373	maize	sympatric	RIMMA0373	Mexico	Tenango del Aire	19.1197	-99.5896	2609
+33	mexicana	allopatric	RIMME0033	Mexico	Puerta Encantada	18.9725	-99.0298	1658
+362	maize	sympatric	RIMMA0362	Mexico	Santa Clara	19.4184	-101.642	2173
+22	mexicana	allopatric	RIMME0022	Mexico	Amecameca	19.139	-98.7733	2467
+20	mexicana	allopatric	RIMME0020	Mexico	Malinalco	18.9531	-99.503	1887
+29	mexicana	sympatric	RIMME0029	Mexico	Ixtlan	20.1683	-102.373	1547
+21	mexicana	sympatric	RIMME0021	Mexico	El Porvenir	19.6789	-100.64	2094
+371	maize	sympatric	RIMMA0371	Mexico	Ixtlan	20.1683	-102.373	1547
+363	maize	sympatric	RIMMA0363	Mexico	El Porvenir	19.6789	-100.64	2094
+34	mexicana	sympatric	RIMME0034	Mexico	Santa Clara	19.4184	-101.642	2173

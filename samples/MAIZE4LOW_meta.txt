@@ -1,0 +1,16 @@
+ID	popN	GEOCTY	zea	symp_allo	LOCALITY	n
+MAIZE4LOW1	0	Mexico	maize	allopatric	mex4low_0	1
+MAIZE4LOW2	0	Mexico	maize	allopatric	mex4low_0	2
+MAIZE4LOW4	0	Mexico	maize	allopatric	mex4low_0	4
+MAIZE4LOW11	1	Mexico	maize	allopatric	mex4low_1	11
+MAIZE4LOW12	1	Mexico	maize	allopatric	mex4low_1	12
+MAIZE4LOW13	1	Mexico	maize	allopatric	mex4low_1	13
+MAIZE4LOW14	1	Mexico	maize	allopatric	mex4low_1	14
+MAIZE4LOW21	2	Mexico	maize	allopatric	mex4low_2	21
+MAIZE4LOW22	2	Mexico	maize	allopatric	mex4low_2	22
+MAIZE4LOW23	2	Mexico	maize	allopatric	mex4low_2	23
+MAIZE4LOW24	2	Mexico	maize	allopatric	mex4low_2	24
+MAIZE4LOW31	3	Mexico	maize	allopatric	mex4low_3	31
+MAIZE4LOW32	3	Mexico	maize	allopatric	mex4low_3	32
+MAIZE4LOW33	3	Mexico	maize	allopatric	mex4low_3	33
+MAIZE4LOW34	3	Mexico	maize	allopatric	mex4low_3	34
