@@ -39,13 +39,13 @@ variant_sites$ sbatch --array=39,361 --mem=24G --export=PREFIX=hilo_alloMAIZE_MA
 Submitted batch job 9716699 - COMPLETED (fast) 3.8.19
 # estimated coverage in plot_PCA.R using flagstat total # mapped reads (>Q30) results
 variant_sites$ sbatch --array=0-425 --mem=24G --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small,MAX_DEPTH=1130 id_SNPs.sh
-Submitted batch job 9735284 - RUNNING 3.9.19
+Submitted batch job 9735284 - COMPLETE 3.9.19
 
 # make var.sites files to complement the mafs.gz files:
 variant_sites$ sbatch --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" -p med2 mafsToSitesFile.sh
 Submitted batch job 9722339 - COMPLETED 3.8.19
-variant_sites$ sbatch --dependency=afterok:9735284 --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW,ALL" -p med2 mafsToSitesFile.sh
-Submitted batch job 9735358 - WAITING 4 DEPENDENCY
+variant_sites$ sbatch --dependency=afterok:9735284 --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small,ALL" -p med2 mafsToSitesFile.sh
+Submitted batch job 9737769 - COMPLETED 3.9.19
 
 # I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260 based on coverage over random regions, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when I don't think it should be (!)
 

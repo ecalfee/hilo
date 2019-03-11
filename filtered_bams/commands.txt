@@ -356,15 +356,15 @@ Submitted batch job 9719681 - COMPLETED 3.8.19. (!) Some bams have very few read
 # I think these libraries just failed.
 # left out HILO268-276, so running these:
 filtered_bams$ sbatch --array=267-275 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW get_bam_metrics_flagstat.sh
-Submitted batch job 9735082 - RUNNING 3.9.19
+Submitted batch job 9735082 - COMPLETED 3.9.19
 filtered_bams$ sbatch --array=0 --export=PREFIX=RIMMA0625_small get_bam_metrics_flagstat.sh
 Submitted batch job 9719772 - COMPLETED 3.8.19
 # summarize all the total # reads in one file:
 hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_IDs.list); do echo "$i"$'\t'$(grep 'total' "metrics/$i.flagstat" | cut -f1 -d" "); done > metrics/hilo_alloMAIZE_MAIZE4LOW.flagstat.total
 # note: for now I manually added total reads for RIMMA0625 (small file -- redoing) b/c I renamed file to _small 'total' RIMMA0625_small.flagstat
-# TO DO: summarize again including HILO268-276
+# summarized again including HILO268-276
 hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_IDs.list); do echo "$i"$'\t'$(grep 'total' "metrics/$i.flagstat" | cut -f1 -d" "); done > metrics/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small.flagstat.total
-
+# TO DO: get new count once RIMMA0625 finishes mapping
 
 # TO DO: make symlink to metrics for remapped hilo individuals
 # TO DO: confirm with Anne correct parviglumis

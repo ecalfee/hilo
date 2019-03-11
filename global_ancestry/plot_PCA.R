@@ -12,6 +12,7 @@ colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
 PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
@@ -93,6 +94,24 @@ d %>%
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
   ggtitle("overlap old-new seq. HILO; SNPs spaced >.01cM")
+
+# just look at allopatric maize
+d %>%
+  #filter(., (symp_allo == "allopatric" & zea == "maize")) %>%
+  ggplot(., aes(x = -PC1, y = PC2, 
+                color = ifelse((symp_allo == "allopatric" & zea == "maize"), 
+                               LOCALITY, "hilo_samples"),
+                size = est_coverage)) + 
+  geom_point(alpha = .5) + 
+  #scale_colour_manual(values = colors_alphabetical) +
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ggtitle("structure within allopatric maize; SNPs spaced >.01cM")
+ggsave("plots/PC_allopatric_maize_landraces.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
 
 
 # get metadata for individuals included in NGSadmix analysis

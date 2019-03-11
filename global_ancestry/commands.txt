@@ -5,28 +5,38 @@ based on individual genotype likelihoods at a set of unlinked SNPs
 pruneFixedcM_PCA.sh (runs python script ../scripts/pruneFixedcM.py)
 (note: pass1 variant sites results were stored in /thinnedPCA/)
 global_ancestry$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PCA.sh
-Submitted batch job 9722786 - COMPLETED 3.8.19 - MOVED TO b
+Submitted batch job 9722786 - COMPLETED 3.8.19 - MOVED TO missing268-276. RERUNNING
+global_ancestry$ sbatch --dependency=afterok:9737769 -p med2 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small pruneFixedcM_PCA.sh
+Submitted batch job 9738221 - RUNNING 3.9.19
 
 2) Thin existing GL file for all variant sites to only include these ~125K thinned sites using R
 thinGLFile4PCA.sh (runs R script thinGLFile.R)
 global_ancestry$ sbatch --dependency=afterok:9722786 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
 Submitted batch job 9722800 - LIMITED JOBS ON MED. CANCELLED. - rerunning:
 global_ancestry$ sbatch -p med2 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLFile4PCA.sh
-Submitted batch job 9730182 - COMPLETED 3.9.19
+Submitted batch job 9730182 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
+global_ancestry$ sbatch -p med2 --dependency=afterok:9738221 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small thinGLFile4PCA.sh
+Submitted batch job 9738235 - WAITING 4 DEPENDENCY
 
 3) Concatenate GL across all thinned SNPs, regions, & all chromosomes for input to NGSadmix
 global_ancestry$ sbatch --dependency=afterok:9730182 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGLFile4PCA.sh
-Submitted batch job 9730323 - COMPLETED 3.9.19
+Submitted batch job 9730323 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
+global_ancestry$ sbatch -p med2 --dependency=afterok:9738235 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small catThinGLFile4PCA.sh
+Submitted batch job 9738240 - WAITING 4 DEPENDENCY
 
 4) Run NGSadmix for global ancestry using K=2,3,4 genetic clusters
 runNGSadmix.sh
 global_ancestry$ sbatch --dependency=afterok:9730323 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runNGSadmix.sh
-Submitted batch job 9730355  - COMPLETED 3.9.19
+Submitted batch job 9730355  - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
+global_ancestry$ sbatch -p med2 --dependency=afterok:9738240 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small" runNGSadmix.sh
+Submitted batch job 9738244 - WAITING 4 DEPENDENCY
 
 5) Create PCA using PCAngsd and GL from all thinned SNPs
 runPCAngsd.sh
 global_ancestry$ sbatch --dependency=afterok:9730323 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW" runPCAngsd.sh
-Submitted batch job 9730388 - COMPLETED 3.9.19
+Submitted batch job 9730388 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
+global_ancestry$ sbatch -p med2 --dependency=afterok:9738240 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small" runPCAngsd.sh
+Submitted batch job 9738245 - WAITING 4 DEPENDENCY
 
 6) Visualize results in R
 plot_PCA.R
