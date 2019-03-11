@@ -15,20 +15,47 @@ K = 2 # K = number of genetic clusters/groups
 K = 3
 K = 4
 # starting with pass1 analysis from 1st round of sequencing
-file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
-
+#file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
+PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+file_prefix <- paste0("results/NGSAdmix/", PREFIX, "/K", K)
 admix <- read.table(paste0(file_prefix, ".qopt"))
 colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
 
 # get metadata for individuals included in NGSadmix analysis
-pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
-                             header = T, sep = "\t")
+#pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
+#                             header = T, sep = "\t")
+
+IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
+colnames(metrics) <- c("ID", "total_reads_pass")
+hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
+maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
+landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
+seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
+
+# only for using RIMMA0625_small
+landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
+
+# a rough coverage estimate is number of reads passing filtering * 150bp/read
+# divided by total area they could map to in maize reference genome v4
+
+# size of reference genome reads are mapped to
+ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai", 
+                                  stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
+# including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
+metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
+
+# combine sample meta data
+meta <- bind_rows(hilo, maize4low, landraces) %>%
+  left_join(., metrics, by = "ID") %>%
+  mutate(., group = paste(symp_allo, zea, sep = "_"))
+
 # join bams and admix by position (CAUTION - bam list order and admix results MUST MATCH!)
-d <- bind_cols(pass1_allo4Low, admix)  %>%
+d <- bind_cols(IDs, admix)  %>%
+  left_join(., meta, by = "ID") %>%
   arrange(., popN) %>%
   arrange(., zea) %>%
-  arrange(., symp_allo) %>%
-  mutate(., group = paste(symp_allo, zea, sep = "_"))
+  arrange(., symp_allo)
 
 # make anc_hmm input file with population #, avg. maize proportion, avg. mex proportion ancestry
 # first make directory
@@ -66,6 +93,38 @@ hetTot <- mean(2 * mean_allele_freq * (1 - mean_allele_freq))
 # differentiation is fairly low between the two identified genetic clusters
 Fst <- (hetTot - mean(hetSubpops))/hetTot
 Fst
+
+# make STRUCTURE-like ancestry plots:
+p1 <- d %>% 
+  filter(est_coverage > 0.05) %>%
+  tidyr::gather(., "ancestry", "p", colnames(admix)) %>%
+  ggplot(., aes(fill=ancestry, y=p, x=ID)) +
+  geom_bar(stat = "identity", position = "fill") + 
+  facet_wrap(~group) +
+  ggtitle("pass 2 K=2 NGSAdmix results. ind's with depth > 0.05")
+plot(p1)
+ggsave(paste0("plots/NGS_admix_K", K, "_", PREFIX, ".png"), 
+       plot = p1, 
+       device = "png", 
+       width = 15, height = 8, units = "in",
+       dpi = 200)
+# plot just allopatric maize
+p1_allomaize <- d %>% 
+  filter(est_coverage > 0.05) %>%
+  filter(group == "allopatric_maize") %>%
+  tidyr::gather(., "ancestry", "p", colnames(admix)) %>%
+  ggplot(., aes(fill=ancestry, y=p, x=ID)) +
+  geom_bar(stat = "identity", position = "fill") + 
+  facet_wrap(~LOCALITY) +
+  ggtitle("pass 2 K=2 NGSAdmix results. ind's with depth > 0.05")
+plot(p1_allomaize)
+ggsave(paste0("plots/NGS_admix_allo_maize_only_K", K, "_", PREFIX, ".png"), 
+       plot = p1_allomaize, 
+       device = "png", 
+       width = 15, height = 8, units = "in",
+       dpi = 200)
+
+
 
 # plot 'STRUCTURE-like' ancestry plots
 png(paste0("../plots/NGSadmix_K", K, ".png"), # saves plot as pin in ../plots/

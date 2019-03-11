@@ -12,7 +12,7 @@ colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
 PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
-PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
+#PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
@@ -20,6 +20,9 @@ hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T,
 maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
 landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
 seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
+
+# only for using RIMMA0625_small
+landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
 
 # a rough coverage estimate is number of reads passing filtering * 150bp/read
 # divided by total area they could map to in maize reference genome v4
@@ -34,7 +37,7 @@ metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
 meta <- bind_rows(hilo, maize4low, landraces) %>%
   left_join(., metrics, by = "ID") %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
-meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
+#meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
 sum(meta$est_coverage < .025)
 meta %>%
   filter(., est_coverage < 0.25) %>%
@@ -65,7 +68,7 @@ d %>%
   geom_point(alpha = .5) + 
   #scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
-  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("newly seq. HILO Jan19 only; SNPs spaced >.01cM")
 
 ggsave("plots/PC_new_HILO_seq_Jan19_only.png", 
@@ -78,7 +81,7 @@ d %>%
                 size = est_coverage)) + 
   geom_point(alpha = .75) + 
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
-  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("old seq. HILO only; SNPs spaced >.01cM")
 ggsave("plots/PC_old_HILO_seq_before_Jan19_only.png", 
        device = "png", 
@@ -105,9 +108,47 @@ d %>%
   geom_point(alpha = .5) + 
   #scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
-  ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("structure within allopatric maize; SNPs spaced >.01cM")
 ggsave("plots/PC_allopatric_maize_landraces.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# allopatric maize PC3 & 4
+d %>%
+  ggplot(., aes(x = PC3, y = PC4, 
+                color = ifelse((symp_allo == "allopatric" & zea == "maize"), 
+                               LOCALITY, "hilo_samples"),
+                size = est_coverage)) + 
+  geom_point(alpha = .5) + 
+  #scale_colour_manual(values = colors_alphabetical) +
+  xlab(paste0("PC3 (", PC_var_explained[3], "%)")) +
+  ylab(paste0("PC4 (", PC_var_explained[4], "%)")) +
+  ggtitle("PC3 & 4 within allopatric maize; SNPs spaced >.01cM")
+ggsave("plots/PC34_allopatric_maize_landraces.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+# exclude Anne's allopatric 4 lowland populations:
+pca2 <- eigen(cov_data[1:276,1:276]) # take PCA of covariance matrix
+n = 4 # make small dataframe w/ only first n eigenvectors
+pca_small2 <- data.frame(pca2$vectors[ , 1:n])
+colnames(pca_small2) = paste0("PC", 1:n)
+# rounded eigen values
+PC_var_explained2 = round(pca2$values, 2)
+#1:291
+d2 <- data.frame(ID = IDs[1:276,], pca_small2, stringsAsFactors = F) %>%
+  left_join(., meta, by = "ID")
+d2 %>%
+  ggplot(., aes(x = PC1, y = PC2, color = group, 
+                size = est_coverage)) + 
+  geom_point(alpha = .5) + 
+  #scale_colour_manual(values = colors_alphabetical) +
+  xlab(paste0("PC1 (", PC_var_explained2[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained2[2], "%)")) +
+  ggtitle("Li's landraces and all hilo samples; SNPs spaced >.01cM")
+ggsave("plots/PCA_Lis_landraces_plus_hilo.png", 
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
