@@ -9,7 +9,7 @@
 
 # this script calculate pi and fst for outlier regions from a file
 # to run:
-# within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2 piFstAngsd_outliers.sh
+# within_ancestry_diversity$ sbatch --array=0-25 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers.bed,PREFIX=mex2,SUBDIR_OUT=piFst_outliers piFstAngsd_outliers.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -29,8 +29,9 @@ LIST_START=($(cut -f2 $OUTLIERS))
 START="${LIST_START["$i"]}"
 LIST_END=($(cut -f3 $OUTLIERS))
 END="${LIST_END["$i"]}"
+POPS=(symp.mexicana symp.maize allo.mexicana pop18 pop19 pop20 pop21 pop22 pop23 pop24 pop25 pop26 pop27 pop28 pop29 pop30 pop31 pop33 pop34 pop35 pop360 pop361 pop362 pop363 pop365 pop366 pop367 pop368 pop369 pop370 pop371 pop372 pop373 pop374)
 
-DIR_OUT="results/piFst_outliers/$PREFIX/chr${CHR}_${START}-${END}"
+DIR_OUT="results/$SUBDIR_OUT/$PREFIX/chr${CHR}_${START}-${END}"
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 
 echo "outlier region: $CHR:$START-$END"
@@ -39,7 +40,7 @@ echo "outlier region: $CHR:$START-$END"
 mkdir -p "$DIR_OUT"
 
 echo "finding site allele frequencies per pop"
-for POP in symp.mexicana symp.maize allo.mexicana
+for POP in ${POPS[@]}
 do echo $POP
 # steps:
 # (0) Start with filtered BAM files and reference genome
@@ -71,6 +72,10 @@ angsd -out "$DIR_OUT/$POP" \
 -GL 1 \
 -P 2
 
+echo "summarizing thetas for region and windows"
+thetaStat do_stat "$DIR_OUT"/"$POP".thetas.idx -outnames "$DIR_OUT"/"$POP".thetasAll
+thetaStat do_stat "$DIR_OUT"/"$POP".thetas.idx -win 5000 -step 1000 -outnames "$DIR_OUT"/"$POP".thetasWindows
+
 done
 
 # calculate pairwise 2D SFS
@@ -88,6 +93,10 @@ realSFS fst index "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/symp.mexicana.saf.idx"
 -fstout "$DIR_OUT/symp.maize-symp.mexicana"
 # future analyses should rely on 'weighted' Fst (i.e. the ratio of expectations across loci).
 realSFS fst stats "$DIR_OUT/symp.maize-symp.mexicana.fst.idx" > "$DIR_OUT/symp.maize-symp.mexicana.fst.stats"
+# summary fst
+realSFS fst stats2 "$DIR_OUT/symp.maize-symp.mexicana.fst.idx" > "$DIR_OUT/symp.maize-symp.mexicana.fstAll"
+# windows fst
+realSFS fst stats2 "$DIR_OUT/symp.maize-symp.mexicana.fst.idx" -win 5000 -step 1000 > "$DIR_OUT/symp.maize-symp.mexicana.fstWindows.stats"
 
 # sympatric and allopatric mexicana
 realSFS fst index "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" \
@@ -96,6 +105,10 @@ realSFS fst index "$DIR_OUT/symp.mexicana.saf.idx" "$DIR_OUT/allo.mexicana.saf.i
 -fstout "$DIR_OUT/symp.mexicana-allo.mexicana"
 # future analyses should rely on 'weighted' Fst (i.e. the ratio of expectations across loci).
 realSFS fst stats "$DIR_OUT/symp.mexicana-allo.mexicana.fst.idx" > "$DIR_OUT/symp.mexicana-allo.mexicana.fst.stats"
+# summary fst
+realSFS fst stats2 "$DIR_OUT/symp.mexicana-allo.mexicana.fst.idx" > "$DIR_OUT/symp.mexicana-allo.mexicana.fstAll"
+# windows fst
+realSFS fst stats2 "$DIR_OUT/symp.mexicana-allo.mexicana.fst.idx" -win 5000 -step 1000 > "$DIR_OUT/symp.mexicana-allo.mexicana.fstWindows.stats"
 
 # sympatric maize and allopatric mexicana
 realSFS fst index "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx" \
@@ -104,9 +117,12 @@ realSFS fst index "$DIR_OUT/symp.maize.saf.idx" "$DIR_OUT/allo.mexicana.saf.idx"
 -fstout "$DIR_OUT/symp.maize-allo.mexicana"
 # future analyses should rely on 'weighted' Fst (i.e. the ratio of expectations across loci).
 realSFS fst stats "$DIR_OUT/symp.maize-allo.mexicana.fst.idx" > "$DIR_OUT/symp.maize-allo.mexicana.fst.stats"
+# summary fst
+realSFS fst stats2 "$DIR_OUT/symp.maize-allo.mexicana.fst.idx" > "$DIR_OUT/symp.maize-allo.mexicana.fstAll"
+# windows fst
+realSFS fst stats2 "$DIR_OUT/symp.maize-allo.mexicana.fst.idx" -win 5000 -step 1000 > "$DIR_OUT/symp.maize-allo.mexicana.fstWindows.stats"
 
 echo "all done!"
-
 
 # options
 # basic quality filtering for reads
