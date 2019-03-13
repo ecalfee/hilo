@@ -197,8 +197,7 @@ realSFS fst stats2 symp.maize-allo.mexicana.fst.idx -win 5000 -step 1000 -outnam
 # Extended each outlier region by 100 kb to either side to view context:
 hilo/ZAnc/results/pass1_maize$ bedtools slop -i outliers.bed -g ../../../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.dict -b 100000 > outliers_100kb_flanking.bed
 within_ancestry_diversity$ sbatch --array=0-25 -p med2 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers_100kb_flanking.bed,SUBDIR_OUT=piFst_outliers_100kb_flanking,PREFIX=mex2 piFstAngsd_outliers.sh
-Submitted batch job 9767346 - RUNNING 3.13.19
-# rerunning some that failed due to low memory:
+Submitted batch job 9767346 - started 3.13.19 COMPLETED, BUT rerunning some that failed due to low memory:
 "Some of your processes may have been killed by the cgroup out-of-memory handler"
 within_ancestry_diversity$ sbatch --array=0,24 --mem=16G -t 12:00:00 -p med2 --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers_100kb_flanking.bed,SUBDIR_OUT=piFst_outliers_100kb_flanking,PREFIX=mex2 piFstAngsd_outliers.sh
 Submitted batch job 9768108 - RUNNING 3.13.19
@@ -208,7 +207,7 @@ Submitted batch job 9768108 - RUNNING 3.13.19
 hilo/data/refMaize$ bedtools random -l 10000 -n 1000 -seed 123 -g Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai | bedtools shuffle -noOverlapping -seed 123 -g Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai | bedtools sort -faidx Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai | awk '{print $1":"$2"-"$3}' > random_regions/N1000L10kb.regions
 # script to calculate pi for each population and metapopulation at a set of random regions.
 within_ancestry_diversity$ sbatch --export=REGIONS=N1000L10kb,PREFIX=mex2 piFstAngsd_background.sh
-Submitted batch job ***
+Submitted batch job 9768115 - RUNNING 3.13.19
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 

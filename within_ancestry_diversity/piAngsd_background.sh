@@ -10,7 +10,7 @@
 
 # this script calculates within-ancestry pi for a set of regions from a file
 # to run:
-# within_ancestry_diversity$ sbatch --export=REGIONS=N1000L10kb,PREFIX=mex2 piFstAngsd_background.sh
+# within_ancestry_diversity$ sbatch --export=REGIONS=N1000L10kb,PREFIX=mex2 piAngsd_background.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
