@@ -209,6 +209,19 @@ hilo/data/refMaize$ bedtools random -l 10000 -n 1000 -seed 123 -g Zea_mays.B73_R
 within_ancestry_diversity$ sbatch --export=REGIONS=N1000L10kb,PREFIX=mex2 piFstAngsd_background.sh
 Submitted batch job 9768115 - RUNNING 3.13.19
 
+# running within-ancestry pi analysis for new outliers defined by high mean ancestry across populations
+results/pass1_maize/outliers_mean_anc0.6.bed
+ZAnc/results$ bedtools slop -i pass1_maize/outliers_mean_anc0.6.bed -g ../../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.dict -b 100000 > pass1_maize/outliers_mean_anc0.6_100kb_flanking.bed
+within_ancestry_diversity$ sbatch --array=0-21 -p med2 --mem=16G --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers_mean_anc0.6.bed,SUBDIR_OUT=piFst_outliers_mean_anc0.6,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9785033 - RUNNING 3.14.19
+within_ancestry_diversity$ sbatch --array=0-21 -p med2 --mem=16G --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers_mean_anc0.6_100kb_flanking.bed,SUBDIR_OUT=piFst_outliers_mean_anc0.6_100kb_flanking,PREFIX=mex2 piFstAngsd_outliers.sh
+Submitted batch job 9785060 - RUNNING 3.14.19
+# TO DO: (1) Plot results for pi for these outlier regions defined by high mex ancestry
+# (2) Is there evidence of single-pop selection?
+# (3) plot of print out ZAnc covariance matrix (and number per pop).
+# (4) what is going on at very neg. ZAnc but pretty avg. mean_ancestry loci?!
+# (4) look up the estimated dates for very high maize ancestry prior run of maize local anc. inference
+
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
 
 # Step 3: Calcuate pi (and SAF) per population

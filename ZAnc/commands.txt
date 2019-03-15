@@ -19,3 +19,6 @@ COMPLETED - very fast.
 # note this doesn't include the putative inversion which I will run separately and added to the end
 ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.bed <(tail -n +2 results/pass1_maize/pop.ZAnc) | awk '$4 > 8 {print $0}' | bedtools merge -sorted -d 1 -c 4,6 -o max | awk '$4 > 15 {print $0}' > results/pass1_maize/outliers.bed
 inv4m (approx location): 4       171771502       185951149
+# identify outliers based on mean mex ancestry across populations (avg within, then across pops):
+# where .55 is the empirical 99% cutoff and .65 is the 99.9% cutoff 
+hilo/ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.bed <(tail -n +2 results/pass1_maize/pop.ZAnc) | awk '$6 > 0.55 {print $0}' | bedtools merge -sorted -d 1 -c 4,6 -o max | awk '$5 > 0.6 {print $0}' > results/pass1_maize/outliers_mean_anc0.6.bed
