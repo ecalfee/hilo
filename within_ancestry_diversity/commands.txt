@@ -99,7 +99,7 @@ Submitted batch job 9189903 - typo, fixing 2.27.19:
 Submitted batch job 9191743 - RUNNING 2.27.19
 
 # then for all populations (homozygous mexicana tracts):
-within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
+within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}pi; do sbatch \
 --export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
 Submitted batch job 9190332-9190362 - 2.27.19. Error only for population 23. And allopatric pops not really run (20,22,33,35). RERUNNING:
@@ -216,13 +216,24 @@ within_ancestry_diversity$ sbatch --array=0-21 -p med2 --mem=16G --export=OUTLIE
 Submitted batch job 9785033 - RUNNING 3.14.19
 within_ancestry_diversity$ sbatch --array=0-21 -p med2 --mem=16G --export=OUTLIERS=../ZAnc/results/pass1_maize/outliers_mean_anc0.6_100kb_flanking.bed,SUBDIR_OUT=piFst_outliers_mean_anc0.6_100kb_flanking,PREFIX=mex2 piFstAngsd_outliers.sh
 Submitted batch job 9785060 - RUNNING 3.14.19
+# copying over results, e.g.:
+hilo/within_ancestry_diversity/results$ for i in $(awk '{print "chr"$1"_"$2"-"$3}' ../../ZAnc/results/pass1_maize
+/outliers_mean_anc0.6_100kb_flanking.bed); do mkdir -p piFst_outliers_mean_anc0.6_100kb_flanking/mex2/$i; scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/within_ancestry_diversity/results/piFst_outliers_mean_anc0.6_100kb_flanking/mex2/$i/*.pestPG piFst_outliers_mean_anc0.6_100kb_flanking/mex2/$i/.; done
+# TO DO: check that the ones with empty or no files actually have no high-confidence mexicana ancestry for that region, e.g. piFst_outliers_mean_anc0.6_100kb_flanking/mex2/chr4_179066701-179636563/pop371
+# e.g. results/piFst_outliers_mean_anc0.6_100kb_flanking/mex2/chr1_0-132525$ head pop365.thetasWindows.pestPG has zero sites in thetaWindows but does have a mean thetasAll -- why?
+
+
 # TO DO: (1) Plot results for pi for these outlier regions defined by high mex ancestry
-# (2) Is there evidence of single-pop selection?
+# Get pi and Fst estimates for the chr4 inversion.
+# (2) Is there evidence of single-pop selection? - maybe, look into this more.
 # (3) plot of print out ZAnc covariance matrix (and number per pop).
 # (4) what is going on at very neg. ZAnc but pretty avg. mean_ancestry loci?!
 # (4) look up the estimated dates for very high maize ancestry prior run of maize local anc. inference
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
+
+# Get Fst (or pi between) for mexicana ancestry genomewide (be sure to include a comparison to allopatric maize). Compare this to Fst ignoring ancestry and Fst looking at homozygous maize ancestry genomewide. This grounds the ancestry calls. Specifically test for fst between sympatric vs. allopatric populations. Later I can separate out selected vs. just introgressed at low frequency pieces and see if they differ (but maybe I won't have enough homozygotes to truly test that).
+# TO DO: test if a pi_between or fst scan for mexicana ancestry in maize is going to work by leaving one of my populations out (or individuals) with homozygous mexicana ancestry and testing it that way.
 
 # Step 3: Calcuate pi (and SAF) per population
 

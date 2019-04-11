@@ -40,9 +40,24 @@ meta <- bind_rows(hilo, maize4low, landraces) %>%
 #meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
 sum(meta$est_coverage < .025)
 meta %>%
-  filter(., est_coverage < 0.25) %>%
-  ggplot(aes(color = group)) +
-  geom_boxplot(stat = count)
+  filter(., group != "allopatric_maize") %>%
+  filter(., est_coverage >= 0.25) %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("# individuals with coverage > 0.25x")
+ggsave("plots/Counts_excl_low_cov_with_new_HILO_seq_Jan19.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+meta %>%
+  filter(., group != "allopatric_maize") %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("# individuals all (incl. low coverage)")
+ggsave("plots/Counts_all_with_new_HILO_seq_Jan19.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
 sum(meta$est_coverage)
 
 # get PCA data

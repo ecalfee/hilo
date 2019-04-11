@@ -285,7 +285,7 @@ data/landraces_from_Li/original$ ln -s /group/jrigrp4/landraces_v4_fromLi2017/or
 filtered_bams$ sbatch -p med2 --mem=64G --export=ID=RIMMA0625,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
 Submitted batch job COMPLETED - started on 3.8.19
 filtered_bams$ sbatch --dependency=afterok:9719519 --export=ID=RIMMA0625,DIR_IN=/group/jrigrp4/landraces_v4_fromLi2017/original/fastq,LANE=alloMAIZE threefastq2v4.sh
-Submitted batch job 9719522 - RUNNING 3.9.19
+Submitted batch job 9719522 - ran 3.9.19. COMPLETED.
 
 # made ID files for allopatric maize from Li:
 data/landraces_fromLi/original$ cat MexLow2.txt SA_Low2.txt Andes2.txt | cut -f1 > ../alloMAIZE_IDs.list
@@ -364,6 +364,12 @@ hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_IDs.list)
 # note: for now I manually added total reads for RIMMA0625 (small file -- redoing) b/c I renamed file to _small 'total' RIMMA0625_small.flagstat
 # summarized again including HILO268-276
 hilo/filtered_bams$ for i in $(cat ../samples/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_IDs.list); do echo "$i"$'\t'$(grep 'total' "metrics/$i.flagstat" | cut -f1 -d" "); done > metrics/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small.flagstat.total
+# get new fully mapped RIMMA0625 flagstat summary statistics:
+filtered_bams$ sbatch --array=14 --export=PREFIX=alloMAIZE get_bam_metrics_flagstat.sh
+Submitted batch job 9977601 - RUNNING 4.1.19
+# TO DO: add the flagstat result for RIMMA0625 to the full list of summary stats:
+
+
 # TO DO: get new count once RIMMA0625 finishes mapping
 
 # TO DO: make symlink to metrics for remapped hilo individuals
