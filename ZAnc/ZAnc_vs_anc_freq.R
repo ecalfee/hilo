@@ -5,6 +5,10 @@ library(ggplot2)
 library(reshape2)
 library(MASS)
 library(crch) # for censored normal dist.
+
+source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
+
+
 d <- read.table("results/pass1_maize/pop.ZAnc", stringsAsFactors = F,
                 header = T)
 summary(d)
@@ -14,11 +18,12 @@ png(file = "plots/corr_ZAnc_and_mean_ancestry.png",
     width = 10, height = 10, units = "in", res = 300)
 with(d, plot(mean_anc, ZAnc, 
              cex = 1,
-             col = alpha(ifelse(mean_anc > 0.55 & ZAnc > 13, "red", "blue"), .005),
+             col = alpha(ifelse(mean_anc > 0.55 & ZAnc > 13, "red", "blue"), .05),
              pch = 18,
              main = "99% ZAnc and Mean Ancestry across pops"))
 abline(h = mean(d$ZAnc), v = mean(d$mean_anc))
 dev.off()
+
 
 mean(d$mean_anc)
 sd(d$mean_anc)
@@ -83,11 +88,130 @@ ggplot(a2.pops, aes(x = ELEVATION, y = alpha, color = LOCALITY)) +
 ggsave("plots/mean_anc_from_hmm_by_elevation.png",
        height = 8, width = 10, device = "png", units = "in")
 
-apply(a2, 2, mean) # mean per pop
+# what is the theoretical minimum of ZAnc based on the ancestry variance-covariance matrix?
+# calculate variance-covariance matrix
+a2.alpha <- apply(a2, 2, mean) # mean per pop
+a2.cov <- cov(a2)
+# calc min ZAnc assuming all pops have zero ancestry
+ZAnc(ancFreq = rep(0, length(a2.alpha)), invL = calcInvL(a2.cov), alpha = a2.alpha)
+a2.K <- calcK(t(a2), alpha = a2.alpha)
+ZAnc(ancFreq = rep(0, length(a2.alpha)), invL = calcInvL(a2.K), alpha = a2.alpha)
+# ok why do I get ZAnc's that are lower than the theoretical min?
+a2.ZAnc <- apply(a2, 1, function(x) 
+  ZAnc(ancFreq = x, invL = calcInvL(a2.K), alpha = a2.alpha))
+summary(a2.ZAnc) # how am I getting ZAnc below what I should theoretically get for zero ancestry?
+length(which(a2.ZAnc < -3.6))/length(a2.ZAnc) # nearly 10% ZAnc stats are too low
+a2[(which(a2.ZAnc == min(a2.ZAnc))),]
+a2[(which(a2.ZAnc == min(a2.ZAnc))),] - a2.alpha
+
+calcInvL(a2.K) %*% t(a2[(which(a2.ZAnc == min(a2.ZAnc))), ] - a2.alpha)
+sum(calcInvL(a2.K) %*% t(a2[(which(a2.ZAnc == min(a2.ZAnc))), ] - a2.alpha))
+ZAnc(ancFreq = t(a2[(which(a2.ZAnc == min(a2.ZAnc))), ]), invL = calcInvL(a2.K), alpha = a2.alpha)
+zAnc(ancFreq = t(a2[(which(a2.ZAnc == min(a2.ZAnc))), ]), invL = calcInvL(a2.K), alpha = a2.alpha)
+
+# look at zAnc, i.e. before summing
+a2.zAnc <- do.call(cbind,
+                   lapply(1:nrow(a2), function(i) 
+  zAnc(ancFreq = t(a2[i, ]), invL = calcInvL(a2.K), alpha = a2.alpha)))
+# did the rotation work as we'd expect? Looks like yes
+a2.zAnc.cov <- cov(t(a2.zAnc))
+# plot variances and covariances:
+melt(a2.zAnc.cov) %>%
+  ggplot(data = ., aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("var-cov of maize pop ancestries after zAnc transformation")
+ggsave("plots/variance_covariance_matrix_zAnc_transformed_maize.png", 
+       width = 8, height = 8, units = "in",
+       device = "png")
+png("plots/ZAnc_maize_hist.png")
+hist(apply(a2.zAnc, 2, sum), main = "histogram of ZAnc score - maize", freq = F)
+curve(expr = dnorm(x, 0, sqrt(14)), from = -25, to = 25, add = T, col = "darkblue")
+dev.off()
+
+# what do these very low ZAnc score loci look like?
+a2.lowZ <- a2[which(a2.ZAnc < -9), ]
+a2.lowZ %>%
+  tidyr::gather(., "pop", "anc", 1:14) %>%
+  ggplot(., aes(x = pop, y = anc)) +
+  geom_boxplot()
+a2[which(a2.ZAnc < 0 & a2.ZAnc > -3.5), ] %>%
+  tidyr::gather(., "pop", "anc", 1:14) %>%
+  ggplot(., aes(x = pop, y = anc)) +
+  geom_boxplot()
+a2 %>%
+  mutate(category_ZAnc = ifelse(a2.ZAnc < -3.5, "very low", 
+                                ifelse(a2.ZAnc < 3.5 & a2.ZAnc >= -3.5, "middle", 
+                                       ifelse(a2.ZAnc >=3.5 & a2.ZAnc < 10, "high", 
+                                              "very  high")))) %>%
+  tidyr::gather(., "pop", "anc", 1:14) %>%
+  ggplot(., aes(x = pop, y = anc, color = category_ZAnc)) +
+  geom_boxplot() +
+  ggtitle("pop ancestries for very low to very high ZAnc scores")
+# looks like in general pops have low ancestry freq (good) for very low ZAnc scores,
+# BUT any population could still be a high outlier for the very lowest ZAnc scores
+ggsave("plots/pop_anc_by_ZAnc_score.png", 
+       width = 16, height = 8, units = "in",
+       device = "png")
+
+# ok can I replicated getting a ZAnc score < -3.5, or 0 mex anc for all pops?
+# what do I get if I just set one population to freq 1 and all others to 0?
+apply(diag(14), 2, function(x) ZAnc(ancFreq = x, invL = calcInvL(a2.cov), alpha = a2.alpha))
+# yes I can get extreme negative values in this case..lower than all zeros
+zAnc010 <- do.call(cbind,
+                   lapply(1:14, function(i) 
+                     zAnc(ancFreq = diag(14)[, i], invL = calcInvL(a2.cov), alpha = a2.alpha)))
+apply(zAnc010, 2, sum)
+zAnc(ancFreq = rep(0,14), invL = calcInvL(a2.cov), alpha = a2.alpha)
+# or 0.5?
+0.5*diag(14)
+apply(0.5*diag(14), 2, function(x) ZAnc(ancFreq = x, invL = calcInvL(a2.cov), alpha = a2.alpha))
+
+# what is the theoretical max if all pops have freq = 1? ~29; we're not hitting it
+ZAnc(ancFreq = rep(1, length(a2.alpha)), invL = calcInvL(a2.cov), alpha = a2.alpha)
+# what about if you have all but one population at very high freq, can we exceed ZAnc >29? Also, yes.
+matrix101<- matrix(1,14,14)
+diag(matrix101)<-0
+zAnc101 <- do.call(cbind,
+                   lapply(1:14, function(i) 
+                     zAnc(ancFreq = matrix101[, i], invL = calcInvL(a2.cov), alpha = a2.alpha)))
+apply(zAnc101, 2, sum)
+
+# can I plot the cholesky matrix to look at what's going on?
+melt(t(chol(a2.cov))) %>%
+  ggplot(data = ., aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "blue") +
+  ggtitle("cholesky L - maize")
+ggsave("plots/maize_chol_L.png", 
+       width = 8, height = 8, units = "in",
+       device = "png")
+
+# and the inverse cholesky?
+melt(solve(t(chol(a2.cov)))) %>%
+  ggplot(data = ., aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_fill_gradient2(low = "red", mid = "white", high = "blue") +
+  ggtitle("inverse cholesky - maize")
+ggsave("plots/maize_inverse_chol_L.png", 
+       width = 8, height = 8, units = "in",
+       device = "png")
+
+    
+#solve(t(chol(K)))  
+ZAnc(ancFreq = rep(0, length(a2.alpha)), invL = solve(t(chol(a2.K))), alpha = a2.alpha)
+ZAnc(ancFreq = rep(0, length(a2.alpha)), invL = solve((chol(a2.K))), alpha = a2.alpha)
+a2.BAD.ZAnc <- apply(a2, 1, function(x) 
+  ZAnc(ancFreq = x, invL = solve(chol(a2.K)), alpha = a2.alpha))
+summary(a2.BAD.ZAnc)
+plot(a2.BAD.ZAnc, apply(a2, 1, mean))
+
 hist(apply(a2, 1, mean)) # mean across pops
 pairs(a2[500:1000,7:14])
 apply(a2, 2, var)
-a2.cov <- round(cov(a2), 3)
+
 a2.cor <- round(cor(a2), 3)
 # plot population-by-population 
 # ancestry covariance matrix
