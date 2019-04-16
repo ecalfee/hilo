@@ -536,5 +536,26 @@ hist(z_mvn[1,])# ~ N(0,1)
 
 # TO DO: I could look at totals across all pops
 # rather than averaging within pop and then across pops
+a <- a2[1,]
+a2.alt <- apply(a2, 1, function(a) 
+  t(calcInvL(cov(a2)) %*% (a - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14))
 
+
+t(calcInvL(cov(a2)) %*% (rep(1,14) - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14)
+t(calcInvL(cov(a2)) %*% (rep(0,14) - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14)
+t(calcInvL(cov(a2)) %*% (a2.alpha - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14)
+
+a2.invL <- calcInvL(cov(a2))
+a2.alt <- t(apply(a2, 1, function(a) 
+  t(a2.invL %*% (a - a2.alpha)) %*% (a2.invL%*%rep(1,14))))
+plot(apply(a2, 1, mean), a2.alt, col = "blue")
+abline(h = t(calcInvL(cov(a2)) %*% (rep(1,14) - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14)
+, col = "green")
+abline(h = t(calcInvL(cov(a2)) %*% (rep(0,14) - a2.alpha)) %*% calcInvL(cov(a2))%*%rep(1,14)
+       , col = "orange")
+
+t(apply(diag(14), 1, function(x) 
+  t(a2.invL %*% (x - a2.alpha)) %*% (a2.invL%*%rep(1,14))))
+t(apply(diag(14), 1, function(x) 
+  t(a2.invL %*% (x - a2.alpha)) %*% (a2.invL%*%rep(-1,14))))
 
