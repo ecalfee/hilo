@@ -19,6 +19,7 @@ BAM_IN=../samples/"$PREFIX"_bams.list
 i="$SLURM_ARRAY_TASK_ID"
 REF="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 DIR_SCRATCH="/scratch/ecalfee/GL4_var_sites_chr_$i"
+DIR_SITES=results/thinnedSNPs/"$SNPs"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -45,7 +46,7 @@ angsd -out $DIR_SCRATCH/GL_chr$i \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
--sites ${DIR_SITES}/region_${REGION_I}.var.sites \
+-sites ${DIR_SITES}/chr${i}.var.sites \
 -GL 1 -doGlf 2 \
 -P 1
 
