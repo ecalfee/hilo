@@ -44,3 +44,21 @@ plot_PCA.R
 
 7) Summarize population mean global ancestry for use in local ancestry calling,
 omitting individuals with less than 0.05x mean coverage
+
+# now I want to add into my PCA some bams pre-merging. List of these bams:
+hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then echo $i; fi; done > ../../../samples/duplicates_IDs.list
+hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then cat $i.list; fi; done > ../../../samples/duplicates_bams.list
+ 
+# I will just get their genotype likelihoods for the thinned set of ~127k SNPs, subdivided into chromosomes, 
+# SNPs: global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/chr1.var.sites
+
+global_ancestry$ sbatch --export=PREFIX=duplicates,SNPs=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small GL_for_variant_sites.sh
+
+
+# Then I’ll concatenate together the result and paste it with the others in
+global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz
+# (I’ll have to change the header #s Ind0 Ind0 Ind0 etc.)
+# and run PCAngsd
+
+hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_with_duplicates
+
