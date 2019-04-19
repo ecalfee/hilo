@@ -1,5 +1,5 @@
 # identifying close relatives in the dataset
 # first I confirm that the same samples, sequenced on different lanes, are identified as the same sample by kinship
 # there are 74 such duplicates, mostly in allopatric maize thus far.
-relatives$ sbatch --export="PREFIX=duplicates,REGIONS=N1000.L100.regions,N_IND=74,ALL" find_relatives.sh
-
+relatives$ sbatch -p med2 --export="PREFIX=duplicates,REGIONS=N1000.L100,N_IND=74,ALL" find_relatives.sh
+Submitted batch job 10428707 - can't find path. fixed:

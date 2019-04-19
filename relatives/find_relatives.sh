@@ -10,7 +10,7 @@
 
 
 # to run
-# sbatch --export="PREFIX=duplicates,REGIONS=N1000.L100.regions,N_IND=74,ALL" find_relatives.sh
+# sbatch --export="PREFIX=duplicates,REGIONS=N1000.L100,N_IND=74,ALL" find_relatives.sh
 
 
 # general bash script settings to make sure if any errors in the pipeline fail
@@ -42,11 +42,11 @@ angsd -out ${DIR_OUT}/${PREFIX} \
 -P 1
 
 echo "all done calculating genotype likelihoods; now getting genotype fractions for each individual"
-misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -o all
+../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -o all
 # The output file is all.ibs
 
 echo "now estimating the 10x10 genotype fraction matrix for all pairs (very slow)"
-misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -allpairs 1 -o all
+../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -allpairs 1 -o all
 # The output file is all.ibspair
 
 # settings:
