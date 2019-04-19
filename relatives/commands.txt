@@ -8,7 +8,7 @@ Submitted batch job 10428797 - running 4.19.19
 # running very fast, so I'll also try with more regions:
 relatives$ sbatch -p med2 --export="PREFIX=duplicates,REGIONS=N1000L10kb,N_IND=74,ALL" find_relatives.sh
 Submitted batch job 10428892 - running 4.19.19. Oops! cancelled before it wrote over other files & rerunning:
-Submitted batch job ***
+Submitted batch job 10428963 - running 4.19.19
 
 # angsd website has r code to interpret IBS from the output files:
 http://popgen.dk/angsd/index.php/Relatedness

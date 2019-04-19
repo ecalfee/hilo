@@ -48,17 +48,25 @@ omitting individuals with less than 0.05x mean coverage
 # now I want to add into my PCA some bams pre-merging. List of these bams:
 hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then echo $i; fi; done > ../../../samples/duplicates_IDs.list
 hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then cat $i.list; fi; done > ../../../samples/duplicates_bams.list
- 
-# I will just get their genotype likelihoods for the thinned set of ~127k SNPs, subdivided into chromosomes, 
+
+# I will just get their genotype likelihoods for the thinned set of ~127k SNPs, subdivided into chromosomes,
 # SNPs: global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/chr1.var.sites
 
 global_ancestry$ sbatch --export=PREFIX=duplicates,SNPs=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small GL_for_variant_sites.sh
-Submitted batch job 10428498 - completed
+Submitted batch job 10428498 - completed (about half an hour)
 
+# just running these on their own PCA (first concat together):
+hilo/global_ancestry/results/thinnedSNPs/duplicates$ (zcat GL_chr1.beagle.gz | head -n 1; for i in {1..10}; do zcat GL_chr$i.beagle.gz | tail -n +2; done) | gzip > whole_genome.beagle.gz
+global/ancestry$ sbatch --export="PREFIX=duplicates,ALL" runPCAngsd.sh
+Submitted batch job 10429017 - running 4.19.19
+Submitted batch job 10429038 - trying again. But I'm not sure why this would fail with a divide by zero error
+# when I can still run hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small (saved as global_ancestry/test.cov)
+# but this time the above produced a file, just with warnings/errors at runtime about dividing by zero..will have to plot to see why.
+
+# TO DO:
 # Then I’ll concatenate together the result and paste it with the others in
 global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz
 # (I’ll have to change the header #s Ind0 Ind0 Ind0 etc.)
 # and run PCAngsd
 
 hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_with_duplicates
-

@@ -12,6 +12,7 @@ colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
 PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+PREFIX <- "duplicates"
 #PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
@@ -72,7 +73,8 @@ pca_small <- data.frame(pca$vectors[ , 1:n])
 colnames(pca_small) = paste0("PC", 1:n)
 # rounded eigen values
 PC_var_explained = round(pca$values, 2)
-  
+
+#IDs <- data.frame(ID = sapply(IDs, function(x) rep(x, 2)))
 # quick plot of new data:
 d <- bind_cols(IDs, pca_small) %>%
   left_join(., meta, by = "ID")
@@ -544,6 +546,20 @@ ggsave("plots/jan2019_samples_wrong_side_of_PC1.png",
 # a lot higher % of libraries failed for lanes 6 & 7:
 table(d_updated$lane, d_updated$est_coverage <= .05)
 
+# plot duplicates:
+# ok I don't understand why HILO16 is the only one driving the PCA at all
+d %>%
+  filter(ID != "HILO16") %>%
+  ggplot(., aes(x = PC1, y = PC2, color = ID)) + 
+  geom_point(alpha = .5) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  ggtitle("duplicates") #+
+  #geom_text(aes(label=ID), hjust=0, vjust=0)
+
+# this is pointless - I need to include a broader range of samples in my PCA and then see what's happening with these.
+pca_no16 <- eigen(cov_data[IDs$ID != "HILO16", IDs$ID != "HILO16"])
+#identify(pca_no16$vectors[,1], pca_no16$vectors[,2])
 
 # TO DO: possibly rerun PCAngsd with separate entries for bams of the same individual,
 # but before merging across sequencing pools to confirm it's the same sample
