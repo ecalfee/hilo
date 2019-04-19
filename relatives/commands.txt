@@ -3,3 +3,13 @@
 # there are 74 such duplicates, mostly in allopatric maize thus far.
 relatives$ sbatch -p med2 --export="PREFIX=duplicates,REGIONS=N1000.L100,N_IND=74,ALL" find_relatives.sh
 Submitted batch job 10428707 - can't find path. fixed:
+Submitted batch job 10428797 - running 4.19.19
+
+# running very fast, so I'll also try with more regions:
+relatives$ sbatch -p med2 --export="PREFIX=duplicates,REGIONS=N1000L10kb,N_IND=74,ALL" find_relatives.sh
+Submitted batch job 10428892 - running 4.19.19. Oops! cancelled before it wrote over other files & rerunning:
+Submitted batch job ***
+
+# angsd website has r code to interpret IBS from the output files:
+http://popgen.dk/angsd/index.php/Relatedness
+# alternatively, and perhaps better, I can use NGSrelate if I plug in population allele frequencies

@@ -42,11 +42,11 @@ angsd -out ${DIR_OUT}/${PREFIX} \
 -P 1
 
 echo "all done calculating genotype likelihoods; now getting genotype fractions for each individual"
-../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -o all
+../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -o ${DIR_OUT}/${PREFIX}
 # The output file is all.ibs
 
 echo "now estimating the 10x10 genotype fraction matrix for all pairs (very slow)"
-../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -allpairs 1 -o all
+../../software/angsd/misc/ibs -f ${DIR_OUT}/${PREFIX}.glf.gz -nInd $N_IND -allpairs 1 -o ${DIR_OUT}/${PREFIX}
 # The output file is all.ibspair
 
 # settings:

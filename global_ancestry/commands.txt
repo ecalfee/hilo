@@ -53,7 +53,7 @@ hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.li
 # SNPs: global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/chr1.var.sites
 
 global_ancestry$ sbatch --export=PREFIX=duplicates,SNPs=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small GL_for_variant_sites.sh
-Submitted batch job 10428498
+Submitted batch job 10428498 - completed
 
 # Then I’ll concatenate together the result and paste it with the others in
 global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz
