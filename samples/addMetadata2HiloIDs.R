@@ -4,55 +4,29 @@ library(tidyr)
 library(rgbif) # for elevation data
 
 # ID and population labels:
-
-# meta 1 gives accurate metadata for the first 142 samples and samples > 200 and came from Anne
-# over slack with the hiloID-to-popN link
-meta1 <- read.csv("../data/pre_label_fix/HILO_samples.csv", stringsAsFactors = F, sep = ",") %>%
-  dplyr::select(., c("Library.name", "sample_name")) %>%
+pools <- do.call(rbind,
+                 lapply(1:8, function(p) read.csv(paste0("../samples/pool", p, ".csv"), 
+                                                  stringsAsFactors = F)[,1:7] %>%
+                          mutate(., lane = p) %>%
+                          filter(!(Library.name=="")))) %>%
+  rename(ID = Library.name) %>%
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
-  rename(., ID = Library.name) %>%
-  mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-  filter(., n < 143 | n > 200)
-  #filter(., (n <= 142)) # accurate pop data for ID's 142 and below comes from a second and third file
-# fix population-level swap documented by Dan between HILO66 and HILO61
-meta1_fixed = meta1
-# separate population identifiers from incorrect ID
-meta1_fixed[meta1_fixed$ID == "HILO66", c("popN", "family")] <- meta1[meta1$ID == "HILO61", c("popN", "family")]
-meta1_fixed[meta1_fixed$ID == "HILO61", c("popN", "family")] <- meta1[meta1$ID == "HILO66", c("popN", "family")]
-# fixed 143-160
-meta2 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.8.18.txt", stringsAsFactors = F, sep = "\t",
-                  header = F) %>%
-  rename(., ID = V1) %>%
-  rename(., sample_name = V2)
-# fixed 161-200
-meta3 <- read.csv("../data/pre_label_fix/new_hiloID_link_from_Anne_8.7.18.txt", stringsAsFactors = F, sep = "\t") %>%
-  rename(., ID = Library.name) 
-# new HILO IDs >200
-meta4 <- read.csv("../data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt", header = F, stringsAsFactors = F, sep = "\t") %>%
-  rename(ID = V1) %>%
-  rename(sample_name = V3) %>%
-  rename(novogene_label = V2) %>%
-  dplyr::select(., c("ID", "sample_name")) %>%
-  filter(., !duplicated(.))
-# This can't be correct - HILO80 is listed twice (ok) but with different popN_family labels (no ok)
+  mutate(popN = as.integer(popN)) %>%
+  dplyr::select(c("ID", "Adapter", "lane", "plate_number", "popN", "family"))
+pools$plate_number[pools$plate_number=="plate 3+4"] <- "plate3+4" # plate label inconsistency
+# fix 61-66 label switch:
+old61 <- pools$popN[pools$ID=="HILO61"]
+old66 <- pools$popN[pools$ID=="HILO66"]
+pools$popN[pools$ID=="HILO61"] <- old66
+pools$popN[pools$ID=="HILO66"] <- old61
 
-#meta <- bind_rows(meta2, meta3, meta4) %>%
-#  separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
-#  mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-#  full_join(meta1_fixed, ., by = "ID") %>%
-#  dplyr::select(., c("n", "ID", "popN", "family")) %>% # put in desired order
-#  mutate(., popN = as.numeric(popN)) %>%
-#  mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
-#  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
-
-meta <- bind_rows(meta2, meta3) %>%
-  separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
+meta <- pools %>%
   mutate(., n = as.integer(substr(ID, 5, 100))) %>%
-  bind_rows(meta1_fixed, .) %>%
-  dplyr::select(., c("n", "ID", "popN", "family")) %>% # put in desired order
+  dplyr::select(., c("ID", "n", "Adapter", "lane", "plate_number", "popN", "family")) %>%
   mutate(., popN = as.numeric(popN)) %>%
   mutate(., zea = ifelse(popN >= 100, "maize", "mexicana")) %>%
-  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric"))
+  mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric")) %>%
+  dplyr::arrange(ID)
 
 # add in germplasm data from JRI for all projects ("riplasm").
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
@@ -76,7 +50,17 @@ hilo$LOCALITY[hilo$LOCALITY == "Amatlan, Morelos"] <- "Amatlan"
 hilo$LOCALITY[hilo$LOCALITY == "Puruandiro(Victor)"] <- "Puruandiro"
 
 # write file with all hilo individuals
-write.table(hilo, "hilo_meta.txt", row.names = F, quote = F, col.names = T, sep = "\t")
+dplyr::select(hilo, c("ID", "n", "popN", "family", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  unique(.) %>%
+  write.table(., "hilo_meta.txt", row.names = F, quote = F, col.names = T, sep = "\t")
+
+dplyr::select(hilo, c("ID", "Adapter", "lane", "plate_number")) %>%
+                write.table(., "hilo_plates.txt", row.names = F, quote = F, col.names = T, sep = "\t")
+
+# write ID file for samples included in 'pass2'
+# pass2 excludes PCR plate #2 for label switch/permutation and HILO80 based on lab note of mixup or contamination of that well
+hilo$pass2 <- !(hilo$ID == "HILO80" | hilo$plate_number == "plate2")
+write.table(unique(hilo$ID[hilo$pass2 == T]), "pass2_IDs.list", row.names = F, col.names = F, quote = F)
 
 # make metadata file for 4 lowland maize populations from mexico populations:
 maize4low <- data.frame(ID = read.table("MAIZE4LOW_IDs.list", header = F, stringsAsFactors = F)$V1,

@@ -40,6 +40,10 @@ meta <- bind_rows(hilo, maize4low, landraces) %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
 #meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
 sum(meta$est_coverage < .025)
+
+# which individuals are included in 'pass2'?
+pass2 <- read.table("../samples/pass2_IDs.list", stringsAsFactors = F, header = F)$V1
+
 meta %>%
   filter(., group != "allopatric_maize") %>%
   filter(., est_coverage >= 0.25) %>%
@@ -60,6 +64,28 @@ ggsave("plots/Counts_all_with_new_HILO_seq_Jan19.png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 sum(meta$est_coverage)
+
+# just plot numbers for pass2:
+meta %>%
+  filter(., ID %in% pass2) %>%
+  filter(., est_coverage >= 0.25) %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("# individuals with coverage > 0.25x")
+ggsave("plots/Counts_excl_low_cov_with_new_HILO_seq_Jan19.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+meta %>%
+  filter(., group != "allopatric_maize") %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("# individuals all (incl. low coverage)")
+ggsave("plots/Counts_all_with_new_HILO_seq_Jan19.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
 
 # get PCA data
 cov_dir <- file.path("results/PCA", PREFIX)
@@ -460,33 +486,13 @@ metrics_old <- read.table(paste0("../data/filtered_bam/pass1.all.metrics.raw.Nre
 
 
 # read in adapter and plate data
-pools <- do.call(rbind,
-        lapply(1:8, function(p) read.csv(paste0("../samples/pool", p, ".csv"), 
-                                 stringsAsFactors = F)[,1:7] %>%
-                 mutate(., lane = p) %>%
-                 filter(!(Library.name=="")))) %>%
-  rename(ID = Library.name) %>%
-  separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
-  mutate(popN = as.integer(popN))
-pools$plate_number[pools$plate_number=="plate 3+4"] <- "plate3+4"
-table(pools$lane) #37-40 pooled per sequencing lane (note: there are repeats)
-table(pools$plate_number)
-# what changes? Looks like just HILO202-217 are affected
-# also 61-66 switch isn't reflected in 'pools'
-left_join(pools, d, by = "ID") %>% 
-  filter(., popN.x != popN.y) %>% 
-  select(ID, popN.x, popN.y)
-# fix 61-66 label switch:
-old61 <- pools$popN[pools$ID=="HILO61"]
-old66 <- pools$popN[pools$ID=="HILO66"]
-pools$popN[pools$ID=="HILO61"] <- old66
-pools$popN[pools$ID=="HILO66"] <- old61
+pools <- read.table("../samples/hilo_plates.txt", header = T, stringsAsFactors = F)
 
 
 # plot updated PCA now with diff. shapes for diff. pcr plates
 d_updated <- bind_cols(IDs, pca_small) %>%
   left_join(., metrics, by = "ID") %>%
-  left_join(., select(pools, c("ID", "popN", "lane", "plate_number")), by = "ID") %>%
+  left_join(., select(pools, c("ID", "lane", "plate_number")), by = "ID") %>%
   left_join(., unique(select(meta, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY", "group"))), by = "popN") %>%
   filter(., group != "allopatric_maize") %>% # do separately
   mutate(., n = as.integer(substr(ID, 5, 8))) %>%
@@ -560,6 +566,27 @@ d %>%
 # this is pointless - I need to include a broader range of samples in my PCA and then see what's happening with these.
 pca_no16 <- eigen(cov_data[IDs$ID != "HILO16", IDs$ID != "HILO16"])
 #identify(pca_no16$vectors[,1], pca_no16$vectors[,2])
+
+# combine GL files to look at duplicates of the same samples along with their merged files on a PCA:
+d1 <- read.table(gzfile("results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz"), header = T, stringsAsFactors = F)
+d2 <- read.table(gzfile("results/thinnedSNPs/duplicates/whole_genome.beagle.gz"), header = T, stringsAsFactors = F)
+# I'm ignoring SNPs where my duplicates had no data (i.e. not in d2)
+d3 <- right_join(d1, d2, by = c("marker", "allele1", "allele2"))
+colnames(d3) <- d3_header
+d3_header <- c("marker", "allele1", "allele2", paste0("Ind", sapply(0:(dim(d3)[2]/3-2), function(x) rep(x, 3))))
+d3_IDs <- data.frame(ID = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1, 
+                            sapply(read.table(paste0("../samples/", "duplicates", "_IDs.list"), header = F, stringsAsFactors = F)$V1,
+                                   function(x) rep(x, 2))),
+                     source = c(rep("merged", 306), rep(c("dup1", "dup2"), 37)),
+                     bam = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_bams.list"), header = F, stringsAsFactors = F)$V1, 
+                             read.table(paste0("../samples/", "duplicates", "_bams.list"), header = F, stringsAsFactors = F)$V1))
+gz1 <- gzfile("results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates/whole_genome.beagle.gz", "w")
+write.table(as.data.frame(d3, col.names = d3_header, check.names = F), # slow
+            gz1, 
+            sep = "\t", quote = F, 
+            row.names = F, col.names = T)
+close(gz1)
+
 
 # TO DO: possibly rerun PCAngsd with separate entries for bams of the same individual,
 # but before merging across sequencing pools to confirm it's the same sample
