@@ -13,8 +13,13 @@ colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp 
 
 PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
 PREFIX <- "duplicates"
+PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
+ids_dup = unlist(lapply(data.frame(ID = read.table(paste0("../samples/duplicates_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F),
+                        function(x) rep(x, 2)))
+ids_merged = read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
+IDs = data.frame(ID = c(ids_merged, ids_dup))
 #PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
-IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+#IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
@@ -608,6 +613,14 @@ write.table(as.data.frame(d3, col.names = d3_header, check.names = F), # slow
             sep = "\t", quote = F, 
             row.names = F, col.names = T)
 close(gz1)
+
+# need to fix merge:
+d %>%
+  ggplot(., aes(x = PC1, y = PC2, color = ID)) + 
+  geom_point(alpha = .5) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  ggtitle("duplicates")
 
 
 # TO DO: possibly rerun PCAngsd with separate entries for bams of the same individual,
