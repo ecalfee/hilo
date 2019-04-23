@@ -71,11 +71,33 @@ meta %>%
   filter(., est_coverage >= 0.25) %>%
   ggplot(aes(fill = group, x = LOCALITY)) +
   geom_histogram(stat = "count") +
-  ggtitle("# individuals with coverage > 0.25x")
-ggsave("plots/Counts_excl_low_cov_with_new_HILO_seq_Jan19.png", 
+  ggtitle("pass2; # individuals with coverage > 0.25x")
+ggsave("plots/counts_pass2_morethan0.25cov.png", 
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
+meta %>%
+  filter(., ID %in% pass2) %>%
+  filter(., est_coverage >= 0.5) %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("pass2; # individuals with coverage > 1x")
+ggsave("plots/counts_pass2_morethan0.5x.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+meta %>%
+  filter(., ID %in% pass2) %>%
+  filter(., est_coverage >= 1) %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  geom_histogram(stat = "count") +
+  ggtitle("pass2; # individuals with coverage > 1x")
+ggsave("plots/counts_pass2_morethan1x.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# what is total depth per population?
+
 meta %>%
   filter(., group != "allopatric_maize") %>%
   ggplot(aes(fill = group, x = LOCALITY)) +
