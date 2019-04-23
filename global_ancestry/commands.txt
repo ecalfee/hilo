@@ -57,16 +57,19 @@ Submitted batch job 10428498 - completed (about half an hour)
 
 # just running these on their own PCA (first concat together):
 hilo/global_ancestry/results/thinnedSNPs/duplicates$ (zcat GL_chr1.beagle.gz | head -n 1; for i in {1..10}; do zcat GL_chr$i.beagle.gz | tail -n +2; done) | gzip > whole_genome.beagle.gz
-global/ancestry$ sbatch --export="PREFIX=duplicates,ALL" runPCAngsd.sh
+global_ancestry$ sbatch --export="PREFIX=duplicates,ALL" runPCAngsd.sh
 Submitted batch job 10429017 - running 4.19.19
 Submitted batch job 10429038 - trying again. But I'm not sure why this would fail with a divide by zero error
 # when I can still run hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small (saved as global_ancestry/test.cov)
 # but this time the above produced a file, just with warnings/errors at runtime about dividing by zero..will have to plot to see why.
 
 # TO DO:
-# Then I’ll concatenate together the result and paste it with the others in
-global_ancestry/results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz
-# (I’ll have to change the header #s Ind0 Ind0 Ind0 etc.)
+# Then I’ll concatenate together the result and paste it with the others (made this file in R, drops SNPs with no data for duplicates):
+results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates/whole_genome.beagle.gz
 # and run PCAngsd
+global_ancestry$ sbatch --export="PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates,ALL" runPCAngsd.sh
+Submitted batch job 10430201. oops fixing error in input beagle gl file.
+Submitted batch job 10430203 - running 4.19.19
+
 
 hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_with_duplicates
