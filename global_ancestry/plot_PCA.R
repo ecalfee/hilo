@@ -12,8 +12,8 @@ colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
 PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
-PREFIX <- "duplicates"
-PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
+#PREFIX <- "duplicates"
+#PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
 ids_dup = unlist(lapply(data.frame(ID = read.table(paste0("../samples/duplicates_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F),
                         function(x) rep(x, 2)))
 ids_merged = read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
@@ -49,66 +49,64 @@ sum(meta$est_coverage < .025)
 # which individuals are included in 'pass2'?
 pass2 <- read.table("../samples/pass2_IDs.list", stringsAsFactors = F, header = F)$V1
 
-meta %>%
-  filter(., group != "allopatric_maize") %>%
-  filter(., est_coverage >= 0.25) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
-  geom_histogram(stat = "count") +
-  ggtitle("# individuals with coverage > 0.25x")
-ggsave("plots/Counts_excl_low_cov_with_new_HILO_seq_Jan19.png", 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-meta %>%
-  filter(., group != "allopatric_maize") %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
-  geom_histogram(stat = "count") +
-  ggtitle("# individuals all (incl. low coverage)")
-ggsave("plots/Counts_all_with_new_HILO_seq_Jan19.png", 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-sum(meta$est_coverage)
 
 # just plot numbers for pass2:
-meta %>%
-  filter(., ID %in% pass2) %>%
-  filter(., est_coverage >= 0.25) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
-  geom_histogram(stat = "count") +
-  ggtitle("pass2; # individuals with coverage > 0.25x")
-ggsave("plots/counts_pass2_morethan0.25cov.png", 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-meta %>%
-  filter(., ID %in% pass2) %>%
-  filter(., est_coverage >= 0.5) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
-  geom_histogram(stat = "count") +
-  ggtitle("pass2; # individuals with coverage > 1x")
-ggsave("plots/counts_pass2_morethan0.5x.png", 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-meta %>%
-  filter(., ID %in% pass2) %>%
-  filter(., est_coverage >= 1) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
-  geom_histogram(stat = "count") +
-  ggtitle("pass2; # individuals with coverage > 1x")
-ggsave("plots/counts_pass2_morethan1x.png", 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-# what is total depth per population?
+for (i in c(0, 0.25, 0.5, 1)) {
+  p_counts <- meta %>%
+    filter(., ID %in% pass2) %>%
+    filter(., est_coverage >= i) %>%
+    ggplot(aes(fill = group, x = LOCALITY)) +
+    geom_histogram(stat = "count") +
+    ggtitle(paste0("pass2; # individuals with coverage > ", i, "x")) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  ggsave(paste0("plots/counts_pass2_morethan", i, "x_coverage.png"), 
+         plot = p_counts,
+         device = "png", 
+         width = 12, height = 8, units = "in",
+         dpi = 200)
+} 
 
+# what is the total depth per population?
+sum(meta$est_coverage) # total coverage
+meta %>% # per pop/group
+  filter(., ID %in% pass2) %>%
+  group_by(., group, LOCALITY) %>%
+  summarize(total_x = sum(est_coverage))
+# plotted coverage per population:
+meta %>%
+  filter(., ID %in% pass2) %>%
+  ggplot(aes(fill = group, x = LOCALITY, y = est_coverage)) +
+  geom_bar(stat = "sum") +
+  ggtitle(paste0("pass2; total x coverage per group")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/total_x_coverage_pass2.png"), 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# how evenly is that coverage distributed across individuals?
+meta %>%
+  filter(., ID %in% pass2) %>%
+  ggplot(aes(color = group, x = LOCALITY, y = est_coverage)) +
+  geom_point() +
+  ggtitle(paste0("pass2; individual x coverage")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/ind_x_coverage_pass2_scatter_by_pop.png"), 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+
+# how many individuals did we lose due to excluding HILO80 and PCR plate #2?
 meta %>%
   filter(., group != "allopatric_maize") %>%
+  filter(., est_coverage >= 0.25) %>%
+  filter(., !(ID %in% pass2)) %>%
   ggplot(aes(fill = group, x = LOCALITY)) +
+  xlab("LOCALITY - (!) group/pop may not be accurate") +
   geom_histogram(stat = "count") +
-  ggtitle("# individuals all (incl. low coverage)")
-ggsave("plots/Counts_all_with_new_HILO_seq_Jan19.png", 
+  ggtitle("# individuals excluded with > 0.25x coverage") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave("plots/counts_excluded_samples_with_morethan0.25x_coverage.png", 
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
@@ -442,25 +440,6 @@ ggsave("plots/jan2019_new_PCA_overlap.png",
        dpi = 200)
 
 # testing with new population labels
-l8 <- read.table("../samples/HILO_test_lane8.csv", 
-                 sep = ",", header = F, stringsAsFactors = F)
-colnames(l8) <- c("ID", "popN_fam")
-l8 <- l8 %>%
-  separate(data = ., col = popN_fam, sep = "_", c("popN", "family"), extra = "merge") %>%
-  mutate(popN = as.integer(popN))
-d8 <- d %>%
-  select(ID, PC1, PC2, n) %>%
-  left_join(., l8, by = "ID") %>%
-  left_join(., meta, by = "popN")
-d8 %>%
-  filter(!is.na(popN)) %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
-  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
-  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
-  ggtitle("PC1 & PC2 - pool 8 only; new fam. ids") +
-  geom_point(aes(color = group, size = est_coverage))
-
-# 
 l678_raw <- read.table("../samples/HILO_test_lane6_7_8.csv", 
                  sep = ",", header = F, stringsAsFactors = F)
 colnames(l678_raw) <- c("ID", "popN_fam")

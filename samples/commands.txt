@@ -21,6 +21,15 @@ samples$ cat hilo_bams.list alloMAIZE_bams.list > hilo_alloMAIZE_bams.list
 
 # create metadata files interactively using addMetadata2HiloIDs.R 3.9.19:
 # hilo_meta.txt MAIZE4LOW_meta.txt alloMAIZE_meta.txt gps_and_elevation_for_sample_sites.txt
+# hilo_meta.txt was updated 4.22.19
+
+# pass2 4.22.19 (all March 2018 and Jan 2019 sequencing, but excludes HILO80 and PCR plate 2):
+# pass2_IDs.list was made in addMetadata2HiloIDs.R and has 218 individuals
+samples$ for i in $(cat pass2_IDs.list); do echo ../filtered_bams/results/merged/$i.sort.dedup.baq.bam; done > pass2_bams.list
+
+# make a list of pass2 hilo individuals plus landraces I'll use for allopatric maize:
+samples$ cat pass2_IDs.list alloMAIZE_IDs.list > pass2_alloMAIZE_IDs.list
+samples$ cat pass2_bams.list alloMAIZE_bams.list > pass2_alloMAIZE_bams.list
 
 # backups:
 Made RIMMA0625_small_bams.list and _IDs.list just for RIMMA0625_small which I think is artificially truncated since it should be high coverage (?)
