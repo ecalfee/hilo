@@ -47,7 +47,19 @@ Submitted batch job 9722339 - COMPLETED 3.8.19
 variant_sites$ sbatch --dependency=afterok:9735284 --export="DIR=results/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small,ALL" -p med2 mafsToSitesFile.sh
 Submitted batch job 9737769 - COMPLETED 3.9.19
 
-# I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260 based on coverage over random regions, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when I don't think it should be (!)
+# I also look at just hilo_alloMAIZE and mean coverage for random regions is ~260 based on coverage over random regions, so I could filter to ~ <550 depth for this subset, but currently RIMMA0625 looks low coverage when it shouldn't be (!)
+
+# I remapped RIMMA0625 and it's now (correctly) high coverage.
+# Now calling variant sites for pass2 + landraces:
+# interactively in plot_PCA.R I find that total estimated coverage 
+# for reads that map is 401x (of which ~121x is from hilo samples), 
+# so I use 803x as an upper bound filter to exclude SNPs > 2x mean coverage
+variant_sites$ sbatch --mem=24G --export=PREFIX=hilo_alloMAIZE,MAX_DEPTH=803 id_SNPs.sh
+Submitted batch job 10451669 - RUNNING 4.23.19
+# create sites file from SNPs:
+variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE,ALL" --dependency=afterok:10451669 -p med2 mafsToSitesFile.sh
+Submitted batch job 10451779 - WAITING 4 DEPENDENCY 
 
 
 # TO DO: Call genotypes for tripsacum
+# TO DO: Get allele frequencies for parviglumis
