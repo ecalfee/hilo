@@ -1,0 +1,3 @@
+# I need to calculate f4 statistics for each potential admixed population
+# I'll use the script ../within_ancestry_diversity/calcAlleleFreqPopByCounts.sh to get population allele frequencies for each site, split into files by region. (PREFIX=all)
+# I will use these to calculate global Fst, and genomewide f4, in addition to a windowed f4.

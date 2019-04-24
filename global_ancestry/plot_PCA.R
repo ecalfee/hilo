@@ -17,9 +17,9 @@ PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
 ids_dup = unlist(lapply(data.frame(ID = read.table(paste0("../samples/duplicates_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F),
                         function(x) rep(x, 2)))
 ids_merged = read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
-IDs = data.frame(ID = c(ids_merged, ids_dup))
+#IDs = data.frame(ID = c(ids_merged, ids_dup))
 #PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
-#IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
@@ -383,15 +383,6 @@ ggsave("plots/PCA_facet_by_population_pruned1000.png",
 # trouble shooting new vs old sequencing:
 # re-plot PCA, but by facet_wrap(~lane)
 
-# get lane data
-jan19_lanes <- read.table("../data/HILO_raw_reads/Jan2019_lanes.list", stringsAsFactors = F)$V1
-jan19_IDs <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F)$V1
-jan19 <- read.table("../data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt", stringsAsFactors = F)
-colnames(jan19) <- c("ID", "novogene_ID", "Pop_Fam")
-table(jan19$ID == jan19_IDs) # matches, great, same order
-jan19$lane <- jan19_lanes
-table(jan19$lane, substr(jan19$novogene_ID, 1, 5)) # also matches, good
-
 d %>% 
   left_join(., jan19, by = "ID") %>%
   mutate(., lane2 = ifelse(is.na(novogene_ID), "pass1_only", lane)) %>%
@@ -490,16 +481,25 @@ ggsave("plots/jan2019_new_family_Ids_PCA_facet_by_seq_lane.png",
 # to compare they are the same individual?
 metrics_old <- read.table(paste0("../data/filtered_bam/pass1.all.metrics.raw.Nreads"), header = T, stringsAsFactors = F)
 
+# get lane data
+jan19_lanes <- read.table("../data/HILO_raw_reads/Jan2019_lanes.list", stringsAsFactors = F)$V1
+jan19_IDs <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F)$V1
+jan19 <- read.table("../data/HILO_raw_reads/Jan2019_id_link_HILO_novogene.txt", stringsAsFactors = F)
+colnames(jan19) <- c("ID", "novogene_ID", "Pop_Fam")
+#table(jan19$ID == jan19_IDs) # matches, great, same order
+jan19$lane <- jan19_lanes
+#table(jan19$lane, substr(jan19$novogene_ID, 1, 5)) # also matches, good
 
 # read in adapter and plate data
 pools <- read.table("../samples/hilo_plates.txt", header = T, stringsAsFactors = F)
 
 
+
 # plot updated PCA now with diff. shapes for diff. pcr plates
 d_updated <- bind_cols(IDs, pca_small) %>%
   left_join(., metrics, by = "ID") %>%
-  left_join(., select(pools, c("ID", "lane", "plate_number")), by = "ID") %>%
-  left_join(., unique(select(meta, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY", "group"))), by = "popN") %>%
+  left_join(., dplyr::select(pools, c("ID", "popN", "lane", "plate_number")), by = "ID") %>%
+  left_join(., unique(dplyr::select(meta, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY", "group"))), by = "popN") %>%
   filter(., group != "allopatric_maize") %>% # do separately
   mutate(., n = as.integer(substr(ID, 5, 8))) %>%
   bind_rows(., filter(d, group == "allopatric_maize")) %>% # add in metadata for allopatric maize
@@ -553,11 +553,22 @@ ggsave("plots/jan2019_samples_wrong_side_of_PC1.png",
        device = "png", 
        width = 8, height = 6, units = "in",
        dpi = 200)
+# looks at data frame for these samples:
+d_updated %>%
+  filter(., ((zea == "maize" & PC1 < 0) | (zea == "mexicana" & PC1 > 0))) %>%
+  dplyr::select(ID, PC1, PC2, est_coverage, lane, plate_number, group, LOCALITY, popN) %>%
+  mutate(label_switch = ifelse(abs(PC1) > 0.01, "likely", "possible")) %>%
+  write.table(., "../samples/possible_label_switches_2019_hilo.txt",
+              quote = F, col.names = T, row.names = F, sep = "\t")
   
+
 # coverage looks particularly poor for lane 7;
 # a lot higher % of libraries failed for lanes 6 & 7:
 table(d_updated$lane, d_updated$est_coverage <= .05)
 
+
+# rerun PCAngsd with separate entries for bams of the same individual,
+# but before merging across sequencing pools to confirm it's the same sample
 # plot duplicates:
 # ok I don't understand why HILO16 is the only one driving the PCA at all
 d %>%
@@ -573,6 +584,7 @@ d %>%
 pca_no16 <- eigen(cov_data[IDs$ID != "HILO16", IDs$ID != "HILO16"])
 #identify(pca_no16$vectors[,1], pca_no16$vectors[,2])
 
+# big picture with duplicates
 # combine GL files to look at duplicates of the same samples along with their merged files on a PCA:
 d1 <- read.table(gzfile("results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/whole_genome.beagle.gz"), header = T, stringsAsFactors = F)
 d2 <- read.table(gzfile("results/thinnedSNPs/duplicates/whole_genome.beagle.gz"), header = T, stringsAsFactors = F)
@@ -595,11 +607,43 @@ close(gz1)
 
 # need to fix merge:
 d %>%
-  ggplot(., aes(x = PC1, y = PC2, color = ID)) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group, size = est_coverage, shape = (ID %in% ids_dup))) + 
+  geom_point(alpha = .5) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  ggtitle("duplicates, merged data, and hilo")
+ggsave("plots/resequenced_duplicates_PCA_perspective_with_other_hilo.png", 
+       device = "png", 
+       width = 8, height = 8, units = "in",
+       dpi = 200)
+
+# zoomed in on just the duplicates
+d %>%
+  filter(ID %in% ids_dup) %>%
+  filter(duplicated(ID)) %>% # only look at original (unmerged)
+  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group, size = est_coverage)) + 
   geom_point(alpha = .5) + 
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("duplicates")
+ggsave("plots/resequenced_duplicates_PCA.png", 
+       device = "png", 
+       width = 8, height = 8, units = "in",
+       dpi = 200)
+d %>%
+  filter(ID %in% ids_dup) %>%
+  filter(duplicated(ID)) %>% # only look at original (unmerged)
+  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group)) + 
+  geom_point(alpha = .5) + 
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  ggtitle("duplicates") + 
+  facet_wrap(~ID)
+ggsave("plots/resequenced_duplicates_PCA_facet_ID.png", 
+       device = "png", 
+       width = 15, height = 15, units = "in",
+       dpi = 200)
+
 
 
 # TO DO: possibly rerun PCAngsd with separate entries for bams of the same individual,
