@@ -256,3 +256,7 @@ hilo/within_ancestry_diversity/results$ for i in $(awk '{print "chr"$1"_"$2"-"$3
 # large outlier regions individually
 
 # TO DO:
+# Calculate allele frequencies genomewide using a counts-based method for each population:
+
+
+
