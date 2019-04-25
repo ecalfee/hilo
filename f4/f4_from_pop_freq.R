@@ -23,29 +23,21 @@ library(bootstrap)
 # (6) sum of (x3 - x1)*(x3 - x4) #F3(pop3; pop1, pop4)
 
 # to run:
-# Rscript f4_from_pop_freq.R maize.allo.4Low16 maize.symp mexicana.symp mexicana.allo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs
+# Rscript f4_from_pop_freq.R maize.allo.4Low16 maize.symp mexicana.symp mexicana.allo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs/f4
 
 ## NOTE (!) not sure why but I'm getting many values 
 # 1.001002 > freq greater than 1 (rounding error in angsd?)
 
 # arguments
 regions <- 0:425 # regions to analyze (5Mb each)
-#regions <- 20:21
 
 args = commandArgs(trailingOnly=TRUE)
-#args = c("maize.allo.4Low16", "maize.symp", 
-#         "mexicana.symp", "mexicana.allo", 
-#         "../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs")
+
 # population number
 pops = args[1:4]
 dir = args[5]
-dir_output = paste0(dir, "/f4")
-if (file.exists(dir) & !file.exists(dir_output)){ # make sure output directory exists first (or create)!
-  dir.create(file.path(dir_output), recursive = T)
-}
+dir_output = args[6]
 
-file_out = paste0(dir_output, "/", pops[1], "_", 
-                  pops[2], "_", pops[3], "_", pops[4])
 
 # helper function to calculate f4 for genomic region i
 calc_f4_by_region <- function(i){ 
@@ -93,6 +85,9 @@ calc_f4_by_region <- function(i){
   f3_sum2 <- sum(freqs_f3_2$f3)
   f3_sum3 <- sum(freqs_f3_3$f3)
   
+  # write f4 output for each locus:
+  read.table(gzfile(paste0(dir_output, "/region_", i, ".f4.gz")), header = T, stringsAsFactors = F)
+  
   return(data.frame(region = i, n, f4_sum, D_denom_sum,
                     f3_sum2, f3_sum3))
 }
@@ -104,7 +99,7 @@ d <- do.call(rbind,
 
 # write output file for regions:
 write.table(d, 
-            paste0(file_out, ".regions"), 
+            paste0(dir_output, "/all.regions"), 
             col.names = T, row.names = F, quote = F, sep = "\t")
 
 # read in from file because farm couldn't load package 'bootstrap'
@@ -161,6 +156,6 @@ summary <- data.frame(stat = c("f4", "D",
 
 # write output file for summary of jackknife
 write.table(summary,
-            paste0(file_out, ".summary"), 
+            paste0(dir_output, "/all.summary"), 
             col.names = T, row.names = F, quote = F, sep = "\t")
 

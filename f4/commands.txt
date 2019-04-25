@@ -1,0 +1,4 @@
+# calculating f4 for f4-stats
+# denominator: parviglumis, allopatric maize, allopatric mexicana, tripsacum (all regions)
+# I'll want to get this statistic ultimately in 1cM windows, but for now every SNP and a genomewide summary is fine
+f4$ sbatch --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
