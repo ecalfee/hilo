@@ -86,7 +86,7 @@ calc_f4_by_region <- function(i){
   f3_sum3 <- sum(freqs_f3_3$f3)
   
   # write f4 output for each locus:
-  read.table(gzfile(paste0(dir_output, "/region_", i, ".f4.gz")), header = T, stringsAsFactors = F)
+  write.table(freqs[ , c("chromo", "position", "f4")], gzfile(paste0(dir_output, "/region_", i, ".f4.gz")), col.names = T, row.names = F, quote = F)
   
   return(data.frame(region = i, n, f4_sum, D_denom_sum,
                     f3_sum2, f3_sum3))

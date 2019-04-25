@@ -1,4 +1,23 @@
 # calculating f4 for f4-stats
 # denominator: parviglumis, allopatric maize, allopatric mexicana, tripsacum (all regions)
+f4$ sbatch --export="POP1=parv,POP2=allo.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480897 - RUNNING 4.25.19
+
 # I'll want to get this statistic ultimately in 1cM windows, but for now every SNP and a genomewide summary is fine
+# admixture into sympatric maize
+# numerator: parviglumis, sympatric maize, allopatric mexicana, tripsacum
 f4$ sbatch --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480892 - RUNNING 4.25.19
+# oops I reran:
+f4$ sbatch --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480902
+
+# admixture into sympatric mexicana
+# numerator: parviglumis, sympatric mexicana, allopatric mexicana, tripsacum
+f4$ sbatch -p med2 --export="POP1=parv,POP2=symp.mexicana,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480966 - RUNNING 4.25.19
+
+# now calculating f4 for all individual maize and mexicana sympatric populations:
+# numerator: parviglumis, X, allopatric mexicana, tripsacum
+f4$ for i in $(tail -n 31 ../samples/pass2_pops/pop_labels.list); do sbatch -p med2 --export="POP1=parv,POP2=$i,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh; done
+Submitted batch jobs 10480934-64 - RUNNING 4.25.19
