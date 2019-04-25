@@ -60,7 +60,46 @@ dplyr::select(hilo, c("ID", "Adapter", "lane", "plate_number")) %>%
 # write ID file for samples included in 'pass2'
 # pass2 excludes PCR plate #2 for label switch/permutation and HILO80 based on lab note of mixup or contamination of that well
 hilo$pass2 <- !(hilo$ID == "HILO80" | hilo$plate_number == "plate2")
+# write pass2 file
 write.table(unique(hilo$ID[hilo$pass2 == T]), "pass2_IDs.list", row.names = F, col.names = F, quote = F)
+
+# make population files for pass2 included samples
+pass2.ind <- hilo %>% # only include individuals once, even if sequenced twice
+  filter(., pass2 == T) %>%
+  dplyr::select(., c("ID", "popN", "family", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  unique(.)
+sum(duplicated(pass2.ind$ID)) # good no repeat IDs
+# make population files - sympatric maize and mexicana
+for (z in c("maize", "mexicana")){
+  pass2.ind %>%
+    filter(., zea == z) %>%
+    filter(., symp_allo == "sympatric") %>%
+    dplyr::select(., "ID") %>%
+    write.table(., 
+                paste0("pass2_pops/symp.", z, "_IDs.list"), 
+                row.names = F, col.names = F, quote = F)
+  
+}
+# allopatric mexicana
+pass2.ind %>%
+  filter(., zea == "mexicana") %>%
+  filter(., symp_allo == "allopatric") %>%
+  dplyr::select(., "ID") %>%
+  write.table(., 
+              paste0("pass2_pops/allo.mexicana_IDs.list"), 
+              row.names = F, col.names = F, quote = F)
+
+# all other populations
+for (N in unique(pass2.ind$popN)){
+  pass2.ind %>%
+    filter(., popN == N) %>%
+    dplyr::select(., "ID") %>%
+    write.table(., 
+                paste0("pass2_pops/pop", N, "_IDs.list"), 
+                row.names = F, col.names = F, quote = F)
+  
+}
+
 
 # make metadata file for 4 lowland maize populations from mexico populations:
 maize4low <- data.frame(ID = read.table("MAIZE4LOW_IDs.list", header = F, stringsAsFactors = F)$V1,

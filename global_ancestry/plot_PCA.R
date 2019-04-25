@@ -110,6 +110,20 @@ ggsave("plots/counts_excluded_samples_with_morethan0.25x_coverage.png",
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
+meta %>%
+  filter(., group != "allopatric_maize") %>%
+  filter(., est_coverage >= 0.5) %>%
+  filter(., !(ID %in% pass2)) %>%
+  ggplot(aes(fill = group, x = LOCALITY)) +
+  xlab("LOCALITY - (!) group/pop may not be accurate") +
+  geom_histogram(stat = "count") +
+  ggtitle("# individuals excluded with > 0.5x coverage") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave("plots/counts_excluded_samples_with_morethan0.5x_coverage.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
 
 
 # get PCA data

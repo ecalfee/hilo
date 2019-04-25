@@ -58,10 +58,10 @@ variant_sites$ sbatch --mem=24G --export=PREFIX=hilo_alloMAIZE,MAX_DEPTH=803 id_
 Submitted batch job 10451669 - COMPLETED 4.23.19
 # oops! I ran hilo_alloMAIZE when I meant pass2_alloMAIZE. Try again:
 variant_sites$ sbatch --mem=24G --export=PREFIX=pass2_alloMAIZE,MAX_DEPTH=803 id_SNPs.sh
-Submitted batch job 10453141 - RUNNING 4.23.19
+Submitted batch job 10453141 - COMPLETED 4.23.19
 # create sites file from SNPs:
 variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE,ALL" --dependency=afterok:10453141 -p med2 mafsToSitesFile.sh
-Submitted batch job 10453205 - WAITING 4 DEPENDENCY 
+Submitted batch job 10453205 - COMPLETED 4.23.19 
 
 
 # TO DO: Call genotypes for tripsacum

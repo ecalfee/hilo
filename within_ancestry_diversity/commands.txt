@@ -99,7 +99,7 @@ Submitted batch job 9189903 - typo, fixing 2.27.19:
 Submitted batch job 9191743 - RUNNING 2.27.19
 
 # then for all populations (homozygous mexicana tracts):
-within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}pi; do sbatch \
+within_ancestry_diversity$ for i in {18..31} {33..35} {360..363} {365..374}; do sbatch \
 --export=POP=pop"$i",PREFIX=mex2,DIR_SITES=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt,ALL \
 calcAlleleFreqPopByCounts.sh; done
 Submitted batch job 9190332-9190362 - 2.27.19. Error only for population 23. And allopatric pops not really run (20,22,33,35). RERUNNING:
@@ -223,6 +223,45 @@ hilo/within_ancestry_diversity/results$ for i in $(awk '{print "chr"$1"_"$2"-"$3
 # e.g. results/piFst_outliers_mean_anc0.6_100kb_flanking/mex2/chr1_0-132525$ head pop365.thetasWindows.pestPG has zero sites in thetaWindows but does have a mean thetasAll -- why?
 
 
+# calculating genomewide allele frequencies for all populations (for background Fst and f4 etc)
+# I also calc frequencies for outgroups like parviglumis but only at SNPs segregating in pass2 & alloMAIZE landraces
+# Calculate allele frequencies genomewide using a counts-based method for each population:
+# allopatric maize, allopatric mexicana, sympatric maize, sympatric mexicana, parviglumis, individual hilo pops, tripsacum:
+# parviglumis has much higher total depth (so I increase memory):
+# make symlink:
+within_ancestry_diversity$ mkdir -p results/input/parv/pops
+within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/PalmarChico_bams.list results/input/parv/pops/PalmarChico.list
+# run allele freq calc:
+within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=PalmarChico,PREFIX=parv,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 10460546 - RUNNING 4.23.19
+# moved into folder with other files:
+within_ancestry_diversity/results/allele_freq$ mv parv/PalmarChico/ all/parv
+
+# allopatric maize also has high total depth (so I increase memory):
+# make symlink:
+within_ancestry_diversity$ mkdir -p results/input/all/pops
+within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/alloMAIZE_bams.list results/input/all/pops/alloMAIZE.list
+# run allele freq calc:
+within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=alloMAIZE,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 10460993 - COMPLETED 4.24.19 (actually very fast)
+# renamed allo.maize to match other naming convention
+
+# allele freqs for all hilo populations and groups:  
+# make symlinks:
+within_ancestry_diversity$ for i in $(cat ../samples/pass2_pops/pop_labels.list); do ln -s /home/ecalfee/hilo/samples/pass2_pops/"$i"_bams.list results/input/all/pops/"$i".list; done
+# run allele freq calc:
+within_ancestry_diversity$ for i in $(cat ../samples/pass2_pops/pop_labels.list); do sbatch -p bigmemm --mem=16G --export="POP=$i,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh; done
+Submitted batch job 10461517-36; 10461636-49 - COMPLETED 4.24.19 (many jobs). Need to redo job 10461519 because accidentally called allo.maize not allo.mexicana:
+within_ancestry_diversity$ sbatch -p bigmemm --mem=16G --export="POP=allo.mexicana,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 10478019 - COMPLETED 4.24.19
+
+# tripsacum (likely I should be running this as genotype calling instead, but for now I can calc freqs):
+within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/trip_bams.list results/input/all/pops/trip.list
+# run allele freq calc:
+within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=trip,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 10461997 - COMPLETED 4.24.19
+
+
 # TO DO: (1) Plot results for pi for these outlier regions defined by high mex ancestry
 # Get pi and Fst estimates for the chr4 inversion.
 # (2) Is there evidence of single-pop selection? - maybe, look into this more.
@@ -255,8 +294,9 @@ hilo/within_ancestry_diversity/results$ for i in $(awk '{print "chr"$1"_"$2"-"$3
 # Step 5: Summarize statistics to characterize genomewide patterns but also
 # large outlier regions individually
 
-# TO DO:
-# Calculate allele frequencies genomewide using a counts-based method for each population:
+
+
+
 
 
 
