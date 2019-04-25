@@ -21,3 +21,6 @@ Submitted batch job 10480966 - RUNNING 4.25.19
 # numerator: parviglumis, X, allopatric mexicana, tripsacum
 f4$ for i in $(tail -n 31 ../samples/pass2_pops/pop_labels.list); do sbatch -p med2 --export="POP1=parv,POP2=$i,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh; done
 Submitted batch jobs 10480934-64 - RUNNING 4.25.19
+
+
+# RERAN ALL BECAUSE calc of f4 was messed up

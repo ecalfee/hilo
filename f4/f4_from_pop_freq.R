@@ -14,13 +14,14 @@ library(bootstrap)
 # As well as D (normalized F4) calculated as in doAbbaBaba2 in Angsd
 # And both F3 statistics, testing for admixture in pop2 and pop3
 
-# A regions file with 3 columns: 
+# A regions file with these columns: 
 # (1) region number
 # (3) # variable sites across 4 pops in region
-# (2) sum of (x1-x2)(x3-x4)
-# (4) sum of (x1+x2-2*x1*x2)(x3+x4-2*x3*x4)
-# (5) sum of (x2 - x1)*(x2 - x4) #F3(pop2; pop1, pop4)
-# (6) sum of (x3 - x1)*(x3 - x4) #F3(pop3; pop1, pop4)
+# (2) f4: sum of (x1-x4)(x2-x3)
+# (4) sum of (x1-x2)(x3-x4)
+# (5) sum of (x1+x2-2*x1*x2)(x3+x4-2*x3*x4)
+# (6) sum of (x2 - x1)*(x2 - x4) #F3(pop2; pop1, pop4)
+# (7) sum of (x3 - x1)*(x3 - x4) #F3(pop3; pop1, pop4)
 
 # to run:
 # Rscript f4_from_pop_freq.R maize.allo.4Low16 maize.symp mexicana.symp mexicana.allo ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt/popFreqs/f4
@@ -65,11 +66,13 @@ calc_f4_by_region <- function(i){
                by = c("chromo", "position", "major", "minor")) %>%
     filter(., x1 + x2 + x3 + x4 > 0 &
              x1 + x2 + x3 + x4 < 4) %>% # filter out invariant sites
-    mutate(., f4 = (x1 - x2)*(x3 - x4)) %>%
+    # f4(pop1, pop2, pop3, pop4)
+    mutate(., f4 = (x1 - x4)*(x2 - x3)) %>% 
+    mutate(., D_num = (x1 - x2)*(x3 - x4)) %>% # I need to check D statistic calc, I'm not sure pop labels are in correct order
     mutate(., D_denom = (x1 + x2 - 2*x1*x2)*(x3 + x4 - 2*x3*x4)) # denominator to normalize D statistic
   
   #F3(pop2; pop1, pop4) -- testing for admixture in pop2
-  freqs_f3_2 <- freqs %>%
+  freqs_f3_2 <- freqs %>% # need to check
     filter(., x1 + x2 + x4 > 0 & x1 + x2 + x4 < 3) %>%
     mutate(., f3 = (x2 - x1)*(x2 - x4))
   
@@ -81,6 +84,7 @@ calc_f4_by_region <- function(i){
   # calculate statistics
   n <- nrow(freqs) # number of loci included
   f4_sum <- sum(freqs$f4)
+  D_num_sum <- sum(freqs$D_num)
   D_denom_sum <- sum(freqs$D_denom)
   f3_sum2 <- sum(freqs_f3_2$f3)
   f3_sum3 <- sum(freqs_f3_3$f3)
@@ -88,7 +92,7 @@ calc_f4_by_region <- function(i){
   # write f4 output for each locus:
   write.table(freqs[ , c("chromo", "position", "f4")], gzfile(paste0(dir_output, "/region_", i, ".f4.gz")), col.names = T, row.names = F, quote = F)
   
-  return(data.frame(region = i, n, f4_sum, D_denom_sum,
+  return(data.frame(region = i, n, f4_sum, D_num_sum, D_denom_sum,
                     f3_sum2, f3_sum3))
 }
 
@@ -117,7 +121,7 @@ jack_f4$mean <- f4
 # function to calculate normalized f4
 # equivalent to D from doAbbaBaba2 in angsd
 calc_D <- function(x, df){
-  sum(df[x, "f4_sum"])/sum(df[x, "D_denom_sum"])
+  sum(df[x, "D_num_sum"])/sum(df[x, "D_denom_sum"])
 }
 jack_D <- jackknife(1:nrow(d), calc_D, d)
 D <- calc_D(1:nrow(d), d)
