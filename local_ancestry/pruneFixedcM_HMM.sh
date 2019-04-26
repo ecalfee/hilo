@@ -14,8 +14,8 @@
 i=$SLURM_ARRAY_TASK_ID #chromosome
 REGIONS_LIST=../data/refMaize/divide_5Mb/ALL_regions.list
 MIN_cM=0.001
-DIR_SITES="results/ancestryInformativeSNPs/$PREFIX"
-DIR_OUT="results/thinnedSNPs/$PREFIX"
+DIR_SITES="../local_ancestry/results/ancestryInformativeSNPs/$PREFIX"
+DIR_OUT="../local_ancestry/results/thinnedSNPs/$PREFIX"
 DIR_SCRATCH="/scratch/ecalfee/thinSNPs4HMM_chr"${i}
 
 # general bash script settings to make sure if any errors in the pipeline fail
