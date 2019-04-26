@@ -39,6 +39,7 @@ d %>%
   dplyr::select(., c("f4_maize", "f4_nonadmix")) %>%
   .[complete.cases(.),] %>%
   summarise(mean(f4_maize)/mean(f4_nonadmix))
+summary(as.numeric(f4_nonadmix$f4_nonadmix))
 d %>%
   dplyr::select(., c("f4_mexicana", "f4_nonadmix")) %>%
   .[complete.cases(.),] %>%
