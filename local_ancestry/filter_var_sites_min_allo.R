@@ -44,15 +44,15 @@ getSNPs = function(region, dir_maf, dir_sites, allo_maize, allo_mex, D, minInd_m
   # get allopatric MAF data for some region
   maize = read.table(gzfile(paste0(dir_maf, "/", allo_maize, "/",
                                    "region_", region, ".mafs.gz")), header=T, stringsAsFactors = F) %>%
-    rename(.,  MAF_maize = knownEM) %>%
+    rename(.,  MAF_maize = phat) %>%
     rename(., nInd_maize = nInd) %>%
-    select(., -ref) # remove reference
+    dplyr::select(., -ref) # remove reference
 
   mex = read.table(gzfile(paste0(dir_maf, "/", allo_mex, "/",
                                  "region_", region, ".mafs.gz")), header=T, stringsAsFactors = F) %>%
-    rename(.,  MAF_mex = knownEM) %>%
+    rename(.,  MAF_mex = phat) %>%
     rename(., nInd_mex = nInd) %>%
-    select(., -ref) # remove reference
+    dplyr::select(., -ref) # remove reference
 
   #d2 = read.table(gzfile("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/allVar/whole_genome_pruned_every_1000.beagle.gz"), header=T, stringsAsFactors = F)
   #sum(duplicated(d2[ , 1:4])) # no duplicated sites by chance in the every 1000 SNPs file
