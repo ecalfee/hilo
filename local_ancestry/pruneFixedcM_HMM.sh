@@ -1,22 +1,22 @@
 #!/bin/bash -l
 #SBATCH --partition=med2
-#SBATCH -D /home/ecalfee/hilo/global_ancestry
-#SBATCH -J prune4PCA
-#SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixcM4PCA_%A_%a.out
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
+#SBATCH -J prune4HMM
+#SBATCH -o /home/ecalfee/hilo/slurm-log/pruneFixcM4HMM_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 #SBATCH --array=1-10
 
-# to run: sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PCA.sh
+# to run: sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_HMM.sh
 
-# this script prunes variant sites to ~unlinked fixed distance (.01cM~10kb)
+# this script prunes variant sites to ~unlinked fixed distance (.001cM~1kb)
 # for analysis with global ancestry and PCA
 i=$SLURM_ARRAY_TASK_ID #chromosome
 REGIONS_LIST=../data/refMaize/divide_5Mb/ALL_regions.list
-MIN_cM=0.01
-DIR_SITES="../variant_sites/results/$PREFIX"
+MIN_cM=0.001
+DIR_SITES="results/ancestryInformativeSNPs/$PREFIX"
 DIR_OUT="results/thinnedSNPs/$PREFIX"
-DIR_SCRATCH="/scratch/ecalfee/thinSNPs4PCA_chr"${i}
+DIR_SCRATCH="/scratch/ecalfee/thinSNPs4HMM_chr"${i}
 
 # general bash script settings to make sure if any errors in the pipeline fail
 set –o pipefail

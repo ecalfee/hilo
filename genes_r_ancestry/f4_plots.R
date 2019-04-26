@@ -2,11 +2,11 @@ library(dplyr)
 library(ggplot2)
 # what does f4 look like across the genome?
 # distribution with recombination rate and gene density?
-f4_nonadmix <- read.table("results/f4/all/parv_allo.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
+f4_nonadmix <- read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
 colnames(f4_nonadmix) <- c("chr", "start", "end", "10kb_region", "f4_nonadmix")
-f4_maize <- read.table("results/f4/all/parv_symp.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
+f4_maize <- read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
 colnames(f4_maize) <- c("chr", "start", "end", "10kb_region", "f4_maize")
-f4_mexicana <- read.table("results/f4/all/parv_symp.mexicana_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
+f4_mexicana <- read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F)
 colnames(f4_mexicana) <- c("chr", "start", "end", "10kb_region", "f4_mexicana")
 
 

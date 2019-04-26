@@ -27,6 +27,7 @@ f4$ for i in $(tail -n 31 ../samples/pass2_pops/pop_labels.list); do sbatch -p m
 Submitted batch jobs 10480934-64 - BUT RERUNNING b/c f4 wrong pop order:
 Submitted batch job 10480999-1029 - COMPLETED 4.29.19
 
+# NOTE: I changed the output folders from 'all' to 'pass2_alloMAIZE' to be more specific
 
 
 # (1) Divide genome into 5 bins by recombination. check that f4 increases with recombination.

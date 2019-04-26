@@ -246,7 +246,8 @@ within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=alloMAIZE,PREF
 Submitted batch job 10460993 - COMPLETED 4.24.19 (actually very fast)
 # renamed allo.maize to match other naming convention
 
-# allele freqs for all hilo populations and groups:  
+# allele freqs for all hilo populations and groups: 
+# NOTE: I changed the output folders from 'all' to 'pass2_alloMAIZE' to be more specific 
 # make symlinks:
 within_ancestry_diversity$ for i in $(cat ../samples/pass2_pops/pop_labels.list); do ln -s /home/ecalfee/hilo/samples/pass2_pops/"$i"_bams.list results/input/all/pops/"$i".list; done
 # run allele freq calc:

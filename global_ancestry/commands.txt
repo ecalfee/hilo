@@ -8,6 +8,10 @@ global_ancestry$ sbatch --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW pruneFixedcM_PC
 Submitted batch job 9722786 - COMPLETED 3.8.19 - MOVED TO missing268-276. RERUNNING
 global_ancestry$ sbatch --dependency=afterok:9737769 -p med2 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small pruneFixedcM_PCA.sh
 Submitted batch job 9738221 - COMPLETED. started 3.9.19
+# PASS2 4.26.19:
+global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE pruneFixedcM_PCA.sh
+Submitted batch job 10488570 - COMPLETED 4.26.19 
+
 
 2) Thin existing GL file for all variant sites to only include these ~125K thinned sites using R
 thinGLFile4PCA.sh (runs R script thinGLFile.R)
@@ -17,12 +21,19 @@ global_ancestry$ sbatch -p med2 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW thinGLF
 Submitted batch job 9730182 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
 global_ancestry$ sbatch -p med2 --dependency=afterok:9738221 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small thinGLFile4PCA.sh
 Submitted batch job 9738235 - COMPLETED. 3.10.19
+# PASS2 4.26.19:
+global_ancestry$ sbatch -p med2 --dependency=afterok:10488570 --export=PREFIX=pass2_alloMAIZE thinGLFile4PCA.sh
+Submitted batch job 10488612 - COMPLETED 4.26.19
 
 3) Concatenate GL across all thinned SNPs, regions, & all chromosomes for input to NGSadmix
 global_ancestry$ sbatch --dependency=afterok:9730182 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW catThinGLFile4PCA.sh
 Submitted batch job 9730323 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
 global_ancestry$ sbatch -p med2 --dependency=afterok:9738235 --export=PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small catThinGLFile4PCA.sh
 Submitted batch job 9738240 - COMPLETED. 3.10.19
+# PASS2 4.26.19:
+global_ancestry$ sbatch -p med2 --dependency=afterok:10488612 --export=PREFIX=pass2_alloMAIZE catThinGLFile4PCA.sh
+Submitted batch job 10488625 - COMPLETED 4.26.19
+
 
 4) Run NGSadmix for global ancestry using K=2,3,4 genetic clusters
 runNGSadmix.sh
@@ -30,6 +41,10 @@ global_ancestry$ sbatch --dependency=afterok:9730323 --export=PREFIX="hilo_alloM
 Submitted batch job 9730355  - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNING
 global_ancestry$ sbatch -p med2 --dependency=afterok:9738240 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small" runNGSadmix.sh
 Submitted batch job 9738244 - COMPLETED 3.10.19
+# PASS2 4.26.19:
+global_ancestry$ sbatch -p med2 --dependency=afterok:10488625 --export=PREFIX=pass2_alloMAIZE runNGSadmix.sh
+Submitted batch job 10488651 - COMPLETED 4.26.19
+
 
 5) Create PCA using PCAngsd and GL from all thinned SNPs
 runPCAngsd.sh
@@ -38,13 +53,20 @@ Submitted batch job 9730388 - COMPLETED 3.9.19. MOVED TO missing268-276. RERUNNI
 global_ancestry$ sbatch -p med2 --dependency=afterok:9738240 --export=PREFIX="hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small" runPCAngsd.sh
 Submitted batch job 9738245 - COMPLETED 3.10.19
 results/PCA/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small/
+# PASS2 4.26.19:
+global_ancestry$ sbatch -p med2 --dependency=afterok:10488625 --export=PREFIX="pass2_alloMAIZE" runPCAngsd.sh
+Submitted batch job 10488671 - COMPLETED 4.26.19
+
 
 6) Visualize results in R
 plot_PCA.R
 
+
 7) Summarize population mean global ancestry for use in local ancestry calling,
 omitting individuals with less than 0.05x mean coverage
 
+
+8) Check that samples re-sequenced occupy similar PCA space (a better test is IBS, which I implement in 'relative/')
 # now I want to add into my PCA some bams pre-merging. List of these bams:
 hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then echo $i; fi; done > ../../../samples/duplicates_IDs.list
 hilo/filtered_bams/results/to_merge$ for i in $(cat ../../../samples/hilo_IDs.list); do if [ $(wc -l $i.list | cut -f1 -d" ") = 2 ]; then cat $i.list; fi; done > ../../../samples/duplicates_bams.list
@@ -63,13 +85,13 @@ Submitted batch job 10429038 - trying again. But I'm not sure why this would fai
 # when I can still run hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small (saved as global_ancestry/test.cov)
 # but this time the above produced a file, just with warnings/errors at runtime about dividing by zero..will have to plot to see why.
 
-# TO DO:
-# Then I’ll concatenate together the result and paste it with the others (made this file in R, drops SNPs with no data for duplicates):
+# I concatenate together the result and paste it with the others (made this file in R, drops SNPs with no data for duplicates):
 results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates/whole_genome.beagle.gz
 # and run PCAngsd
 global_ancestry$ sbatch --export="PREFIX=hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates,ALL" runPCAngsd.sh
 Submitted batch job 10430201. oops fixing error in input beagle gl file.
 Submitted batch job 10430203 - running 4.19.19
-
-
 hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_with_duplicates
+
+
+# TO DO:
