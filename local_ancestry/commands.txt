@@ -8,7 +8,16 @@ Calculate allele frequencies & # included individuals for allopatric maize and m
 1) Filter SNPs for 'informative' sites with > .3 alelle freq diff between allopatric maize and mexicana and minimum 10 individuals with data from each group
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,D=0.3,MIN_MAIZE=10,MIN_MEX=10 filterAlloMAFnInd.sh
 Submitted batch job 10490296 - redoing:
-
+Submitted batch job 10490726 - RUNNING
 
 2) Reduce LD by filter SNPs to minimum >.001 cM spacing
-local_ancestry$ sbatch --dependency=afterok:*** pruneFixedcM.sh
+local_ancestry$ sbatch --dependency=afterok:10490726 pruneFixedcM_HMM.sh
+Submitted batch job 10491135 - WAITING 4 DEPENDENCY 4.26.19
+
+3) Get allele and read counts
+
+4) Make input files; including global ancestry per pop including individuals >.1x coverage
+
+5) Run ancestry_mm for each population. Set priors for non admixed populations very low, e.g. .001 admixture
+
+6) Test robustness by filtering counts down to a lower different x coverage
