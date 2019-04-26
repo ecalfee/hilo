@@ -1,6 +1,6 @@
 #!/bin/bash -l
 #SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/f4
+#SBATCH -D /home/ecalfee/hilo/genes_r_ancestry
 #SBATCH -J f4
 #SBATCH -o /home/ecalfee/hilo/slurm-log/f4fromPopFreq_%A.out
 #SBATCH -t 6:00:00

@@ -1,0 +1,50 @@
+# calculating f4 for f4-stats
+# denominator: parviglumis, allopatric maize, allopatric mexicana, tripsacum (all regions)
+genes_r_ancestry$ sbatch --export="POP1=parv,POP2=allo.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480897 - RUNNING 4.25.19. BUT RERUNNING b/c f4 wrong pop order:
+Submitted batch job 10480980 - COMPLETED 4.25.19
+
+# I'll want to get this statistic ultimately in 1cM windows, but for now every SNP and a genomewide summary is fine
+# admixture into sympatric maize
+# numerator: parviglumis, sympatric maize, allopatric mexicana, tripsacum
+genes_r_ancestry$ sbatch --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480892 - RUNNING 4.25.19
+# oops I reran:
+genes_r_ancestry$ sbatch --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480902- RERUNNING b/c f4 wrong pop order:
+genes_r_ancestry$ sbatch -p med2 --export="POP1=parv,POP2=symp.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480995 - COMPLETED 4.25.19
+
+# admixture into sympatric mexicana
+# numerator: parviglumis, sympatric mexicana, allopatric mexicana, tripsacum
+genes_r_ancestry$ sbatch -p med2 --export="POP1=parv,POP2=symp.mexicana,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
+Submitted batch job 10480966 - BUT RERUNNING b/c f4 wrong pop order:
+Submitted batch job 10480996 - COMPLETED 4.25.19
+
+# now calculating f4 for all individual maize and mexicana sympatric populations:
+# numerator: parviglumis, X, allopatric mexicana, tripsacum
+f4$ for i in $(tail -n 31 ../samples/pass2_pops/pop_labels.list); do sbatch -p med2 --export="POP1=parv,POP2=$i,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh; done
+Submitted batch jobs 10480934-64 - BUT RERUNNING b/c f4 wrong pop order:
+Submitted batch job 10480999-1029 - COMPLETED 4.29.19
+
+
+
+# (1) Divide genome into 5 bins by recombination. check that f4 increases with recombination.
+# I can use the 10kb fixed windows created with geneOverlapWindows10KB.sh:
+
+# combine my f4 regions files into bed files (note bed files are 0 indexed, while angsd files are 1 indexed, and it only left-inclusive (start_pos, end_pos]: chr start_pos end_pos, so 1:3-3 in angsd woud be 1:2-3 in a bed file:
+hilo/f4/results/f4/all/parv_symp.maize_allo.mexicana_trip$ for i in {0..425}; do zcat region_$i.f4.gz | tail -n +2 | awk '{print $1"\t"$2-1"\t"$2"\t"$3}'; done > f4.bed
+# I also make an f4.bed file the same way for the denominator (parv_allo.maize_allo.mexicana_trip$ same command
+# now I can use bedtools to summarise values for different genomic regions, 
+# starting with 10kb windows:
+# denominator:
+~/hilo/genes_r_ancestry/results/f4/all/parv_allo.maize_allo.mexicana_trip$ bedtools map -a ~/hilo/data/refMaize/windows_10kb/whole_genome.bed -b f4.bed -c 4 -o mean -g ~/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths > f4_10kb.bed
+# numerator:
+~/hilo/genes_r_ancestry/results/f4/all/parv_symp.maize_allo.mexicana_trip$ same bedtools command
+# also made f4.bed and f4_10kb.bed for sympatric mexicana as admixed pop
+# note that windows with no estimates (presumably no segregating snps) have . as NA value
+
+
+# TO DO: 
+# (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population. 
+# (3) Divide genome into .01cM fixed windows. summarise mean f4 for each window.
