@@ -14,11 +14,29 @@ Submitted batch job 10490726 - RUNNING
 local_ancestry$ sbatch --dependency=afterok:10490726 pruneFixedcM_HMM.sh
 Submitted batch job 10491135 - DIDN;T WORK - FORGOT PREFIX 4.26.19:
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE pruneFixedcM_HMM.sh
+Submitted batch job 10495041
 
-3) Get allele and read counts
+3a) Get allele counts for allopatric maize
+# making VCF for allopatric maize
+local_ancestry$ sbatch --export=PREFIX=pas2_alloMAIZE --dependency=afterok:10495041 getVCFforAllo.sh
+Submitted batch job *****
+# turning VCF into an allele counts file
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:***** alloVCF2AlleleCounts.sh
 
-4) Make input files; including global ancestry per pop including individuals >.1x coverage
+3b) Get read counts for all hilo individuals
+countReadsACGT.sh
+countReadsMajorMinor.sh
+
+3c) Sample one read per allopatric mexicana as an 'allele' count & put together with allopatric maize allele counts
+makeAlloCountsAncHMMInput.sh
+
+4a) Get lists of included individuals per sympatric pop meeting some minimum coverage threshold, e.g. >.1x mean.
+
+4b) Make input files; including global ancestry per pop. Only include sympatric individuals > threshold coverage
+makeAncHMMInput.sh
 
 5) Run ancestry_mm for each population. Set priors for non admixed populations very low, e.g. .001 admixture
+runAncHMM.sh
+runAncHMM_noboot.sh
 
 6) Test robustness by filtering counts down to a lower different x coverage

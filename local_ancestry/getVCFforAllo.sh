@@ -1,25 +1,28 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J getVCF4Allo
 #SBATCH -o /home/ecalfee/hilo/slurm-log/getVCF4Allo_%A_%a.out
 #SBATCH -t 12:00:00
-#SBATCH --mem=16G
+#SBATCH --mem=32G
 #SBATCH --array=1-10
-#SBATCH --export="n_threads=2,ALL"
+
+# to run: sbatch --export=PREFIX=pas2_alloMAIZE getVCFforAllo.sh
 
 # note: number of threads should not exceed memory requested divided by 8G/thread
 
 # array is the chromosome #
-POP="maize.allo.4Low16"
+POP="allo.maize"
 i=$SLURM_ARRAY_TASK_ID
-DIR_SITES="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
-DIR_OUT=${DIR_SITES}
+DIR_SITES="results/thinnedSNPs/$PREFIX"
+DIR_OUT="results/counts/$PREFIX"
 DIR_SCRATCH="/scratch/ecalfee/vcfAllo_chr"${i}
+BAMS="../samples/alloMAIZE_IDs.list"
+n_threads=2
 
-# minimum and maximum individual depth filters
-MAX_DEPTH_IND=63
-MIN_DEPTH_IND=3
+# minimum and maximum individual depth filters. max will be set in export variables
+MAX_DEPTH_IND=62 # 2x the mean for the highest coverage individual
+MIN_DEPTH_IND=4
 
 # this script takes in a sites file and calls genotypes for allopatric individuals
 # from high coverage maize, outputing a VCF
@@ -35,23 +38,14 @@ module load bio
 
 # make temporary scratch directories
 mkdir -p $DIR_SCRATCH
-
-echo "checking if sites index file exists and making a new one if it does not"
-if [ ! -e ${DIR_SITES}/chr${i}.var.sites.bin ]
-then
-    echo "indexing sites file"
-    angsd sites index ${DIR_SITES}/chr${i}.var.sites
-else
-    echo "index already exists"
-fi
-
+mkdir -p $DIR_OUT
 
 echo "calling genotypes and outputting a vcf chr"${i}" pop "${POP}
 # (1) make VCF in ANGSD
 angsd -out ${DIR_SCRATCH}/${POP}_chr${i} \
 -r ${i} \
 -sites ${DIR_SITES}/chr${i}.var.sites \
--bam pass1_bam_pops/${POP}.list \
+-bam $BAMS \
 -remove_bads 1 \
 -minMapQ 30 \
 -minQ 20 \

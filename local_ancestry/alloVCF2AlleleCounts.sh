@@ -1,16 +1,18 @@
 #!/bin/bash -l
-#SBATCH --partition=med
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J vcf2counts
 #SBATCH -o /home/ecalfee/hilo/slurm-log/alloVCF2AlleleCounts_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=2G
 #SBATCH --array=1-10
 
+# to run: sbatch --export=PREFIX=pass2_alloMAIZE alloVCF2AlleleCounts.sh
+
 # array is the chromosome #
 i=$SLURM_ARRAY_TASK_ID
-POP="maize.allo.4Low16"
-dir="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/"
+POP="allo.maize"
+dir="results/counts/$PREFIX"
 
 # this script takes in a VCF file (for an allopatric population)
 # and outputs a counts file from plink
