@@ -1,8 +1,8 @@
-# local ancestry calling
+a# local ancestry calling
 
 0) Before starting:
 Call variant sites (variant_sites/)
-Get genomewide ancestry prior for each pop from NGSAdmix (global_ancestry/) 
+Get genomewide ancestry prior for each pop from NGSAdmix (global_ancestry/)
 Calculate allele frequencies & # included individuals for allopatric maize and mex (within_ancestry_diversity/)
 
 1) Filter SNPs for 'informative' sites with > .3 alelle freq diff between allopatric maize and mexicana and minimum 10 individuals with data from each group
@@ -12,7 +12,8 @@ Submitted batch job 10490726 - RUNNING
 
 2) Reduce LD by filter SNPs to minimum >.001 cM spacing
 local_ancestry$ sbatch --dependency=afterok:10490726 pruneFixedcM_HMM.sh
-Submitted batch job 10491135 - WAITING 4 DEPENDENCY 4.26.19
+Submitted batch job 10491135 - DIDN;T WORK - FORGOT PREFIX 4.26.19:
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE pruneFixedcM_HMM.sh
 
 3) Get allele and read counts
 
