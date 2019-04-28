@@ -20,18 +20,21 @@ Submitted batch job 10495041
 # making VCF for allopatric maize
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495041 getVCFforAllo.sh
 Submitted batch job 10495391 - FAILED 4.26.19. fix typo:
-local_ancestry$ sbatch --export=PREFIX=pas2_alloMAIZE getVCFforAllo.sh
-Submitted batch job ***
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE getVCFforAllo.sh
+Submitted batch job 10496067 - RUNNING 4.27.19
+
 
 # turning VCF into an allele counts file
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495391 alloVCF2AlleleCounts.sh
 Submitted batch job 10495392 - DEPENDENCY NOT MET 4.26.19. RETRY:
-local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:*** alloVCF2AlleleCounts.sh
-
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10496067 alloVCF2AlleleCounts.sh
+Submitted batch job 10496078 - WAITING 4 DEPENDENCY 4.27.19
 
 3b) Get read counts for all hilo individuals
-countReadsACGT.sh
-countReadsMajorMinor.sh
+ACGT counts:
+local_ancestry$ sbatch --array=0-217 --export="CHR=1,PREFIX=pass2_alloMAIZE,ALL" countReadsACGT.sh
+Major Minor allele counts:
+local_ancestry$ sbatch --dependency=afterok:$(echo {**..**} | tr " " ",") --array=0-217 --export=PREFIX=pass2_alloMAIZE countReadsMajorMinor.sh
 
 3c) Sample one read per allopatric mexicana as an 'allele' count & put together with allopatric maize allele counts
 makeAlloCountsAncHMMInput.sh
