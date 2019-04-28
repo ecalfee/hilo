@@ -42,6 +42,7 @@ Submitted batch job 10496695 - COMPLETED 4.28.19
 
 3c) Sample one read per allopatric mexicana as an 'allele' count & put together with allopatric maize allele counts
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE makeAlloCountsAncHMMInput.sh
+Submitted batch job 10500863
 
 4a) Get lists of included individuals per sympatric pop meeting some minimum coverage threshold, e.g. >.1x mean.
 

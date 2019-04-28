@@ -13,10 +13,10 @@
 CHR=$SLURM_ARRAY_TASK_ID
 MEX_IDs="../samples/pass2_pops/allo.mexicana_IDs.list"
 PREFIX="pass2_alloMAIZE"
-MAIZE_FILE="results/counts/$PREFIX/allo.maize_chr$CHR.frq.count"
+DIR_MEX_COUNTS="results/countsMajMin/$PREFIX"
+MAIZE_FILE="results/counts/$PREFIX/allo.maize_chr$CHR"
 DIR_SITES="results/thinnedHMM/$PREFIX"
 DIR_OUT="results/counts/$PREFIX"
-
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -29,6 +29,6 @@ module load R
 
 # run R script
 echo "making ancestry hmm input allopatric counts for chr"$CHR
-Rscript ./make_allo_counts_ancestry_hmm.R $CHR $MEX_IDs $MAIZE_FILE $DIR_SITES $DIR_OUT
+Rscript ./make_allo_counts_ancestry_hmm.R $CHR $MEX_IDs $DIR_MEX_COUNTS $MAIZE_FILE $DIR_SITES $DIR_OUT
 
 echo 'all done!'

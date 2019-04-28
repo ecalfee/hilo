@@ -81,7 +81,7 @@ maize_counts <- read.table(paste0(MAIZE_FILE, ".frq.count"),
 mex_counts = data.frame(n_major_mex = rep(0, nrow(SNPs)), n_minor_mex = rep(0, nrow(SNPs)))
 for (id in MEX_IDs){
   newCounts = sample1_read(
-      ind_counts_file = paste0(path, "/countsMajMin/chr", i, "/hilo_", id, ".counts.txt"))
+      ind_counts_file = paste0(DIR_MEX_COUNTS, "/", id, "/chr", i, ".counts.txt"))
   colnames(newCounts) = c("n_major", "n_minor")
   # update count totals
   mex_counts$n_minor_mex = mex_counts$n_minor_mex + newCounts$n_minor
