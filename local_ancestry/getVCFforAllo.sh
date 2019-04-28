@@ -17,7 +17,7 @@ i=$SLURM_ARRAY_TASK_ID
 DIR_SITES="results/thinnedSNPs/$PREFIX"
 DIR_OUT="results/counts/$PREFIX"
 DIR_SCRATCH="/scratch/ecalfee/vcfAllo_chr"${i}
-BAMS="../samples/alloMAIZE_IDs.list"
+BAMS="../samples/alloMAIZE_bams.list"
 n_threads=2
 
 # minimum and maximum individual depth filters. max will be set in export variables

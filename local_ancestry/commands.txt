@@ -18,10 +18,16 @@ Submitted batch job 10495041
 
 3a) Get allele counts for allopatric maize
 # making VCF for allopatric maize
-local_ancestry$ sbatch --export=PREFIX=pas2_alloMAIZE --dependency=afterok:10495041 getVCFforAllo.sh
-Submitted batch job *****
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495041 getVCFforAllo.sh
+Submitted batch job 10495391 - FAILED 4.26.19. fix typo:
+local_ancestry$ sbatch --export=PREFIX=pas2_alloMAIZE getVCFforAllo.sh
+Submitted batch job ***
+
 # turning VCF into an allele counts file
-local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:***** alloVCF2AlleleCounts.sh
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495391 alloVCF2AlleleCounts.sh
+Submitted batch job 10495392 - DEPENDENCY NOT MET 4.26.19. RETRY:
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:*** alloVCF2AlleleCounts.sh
+
 
 3b) Get read counts for all hilo individuals
 countReadsACGT.sh
@@ -35,7 +41,7 @@ makeAlloCountsAncHMMInput.sh
 4b) Make input files; including global ancestry per pop. Only include sympatric individuals > threshold coverage
 makeAncHMMInput.sh
 
-5) Run ancestry_mm for each population. Set priors for non admixed populations very low, e.g. .001 admixture
+5) Run ancestry_hmm for each population. Set priors for non admixed populations very low, e.g. .001 admixture
 runAncHMM.sh
 runAncHMM_noboot.sh
 
