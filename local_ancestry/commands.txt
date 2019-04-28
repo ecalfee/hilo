@@ -21,23 +21,27 @@ Submitted batch job 10495041
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495041 getVCFforAllo.sh
 Submitted batch job 10495391 - FAILED 4.26.19. fix typo:
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE getVCFforAllo.sh
-Submitted batch job 10496067 - RUNNING 4.27.19
-
+Submitted batch job 10496067 - COMPLETED 4.27.19
 
 # turning VCF into an allele counts file
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10495391 alloVCF2AlleleCounts.sh
 Submitted batch job 10495392 - DEPENDENCY NOT MET 4.26.19. RETRY:
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --dependency=afterok:10496067 alloVCF2AlleleCounts.sh
-Submitted batch job 10496078 - WAITING 4 DEPENDENCY 4.27.19
+Submitted batch job 10496078 - COMPLETED 4.27.19
 
 3b) Get read counts for all hilo individuals
 ACGT counts:
-local_ancestry$ sbatch --array=0-217 --export="CHR=1,PREFIX=pass2_alloMAIZE,ALL" countReadsACGT.sh
+local_ancestry$ sbatch -p med2 --array=0-217 --export="CHR=1,PREFIX=pass2_alloMAIZE,ALL" countReadsACGT.sh
+Submitted batch job 10496223
+local_ancestry$ for i in {2..19}; do sbatch -p med2 --array=0-217 --export="CHR=$i,PREFIX=pass2_alloMAIZE,ALL" countReadsACGT.sh; done
+Submitted batch job 10496411..10496415 10496436..10496448 - COMPLETED 4.28.19
+
 Major Minor allele counts:
-local_ancestry$ sbatch --dependency=afterok:$(echo {**..**} | tr " " ",") --array=0-217 --export=PREFIX=pass2_alloMAIZE countReadsMajorMinor.sh
+local_ancestry$ sbatch --dependency=afterok:$(echo 10496223 {10496411..10496415} {10496436..10496448} | tr " " ",") --array=0-217 --export=PREFIX=pass2_alloMAIZE countReadsMajorMinor.sh
+Submitted batch job 10496695 - COMPLETED 4.28.19
 
 3c) Sample one read per allopatric mexicana as an 'allele' count & put together with allopatric maize allele counts
-makeAlloCountsAncHMMInput.sh
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE makeAlloCountsAncHMMInput.sh
 
 4a) Get lists of included individuals per sympatric pop meeting some minimum coverage threshold, e.g. >.1x mean.
 

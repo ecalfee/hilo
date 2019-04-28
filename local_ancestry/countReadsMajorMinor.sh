@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH --partition=med
+#SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J countMajMin
 #SBATCH -o /home/ecalfee/hilo/slurm-log/countReadsMajorMinor_%A_%a.out
