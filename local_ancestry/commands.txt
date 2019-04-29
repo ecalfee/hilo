@@ -53,11 +53,45 @@ globalAdmixtureIncludedByPopN.txt
 
 4b) Make input files; including global ancestry per pop. Only include sympatric individuals > threshold coverage
 local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE makeAncHMMInput.sh
+Submitted batch job 10501680 - super fast. COMPLETED 4.28.19. But have to redo ploidy file (typo):
+Submitted batch job 10501747, 10501980  - fixing problem to get all individuals from pop
+Submitted batch job 10502091
 
 5) Run ancestry_hmm for each population. Use NGSAdmix mean alpha_mex as initial prior
 runAncHMM.sh
 runAncHMM_noboot.sh
 local_ancestry$ sbatch --export="Ne=10000,PREFIX=pass2_alloMAIZE,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh
+Submitted batch job 10502122 running just array=1
+Submitted batch job 10502128 running all sympatric pops 4.28.19 (very fast)
 
+6) Summarize ancestry individual and population level results by converting posteriors to ancestry proportions:
+local_ancestry$ sbatch --export=SUBDIR=output_noBoot,PREFIX=pass2_alloMAIZE calcAncfromPost.sh
+Submitted batch job 10502209 - fixed typo:
+Submitted batch job 10502241 - RUNNING 4.28.19
 
-6) Test robustness by filtering counts down to a lower x coverage
+6) Test robustness of ancestry calls by filtering counts down to a lower x coverage
+# I decided to down-sample just a few higher coverage individuals, one per pop:
+# and will check their new posteriors against their old posteriors
+# I made new ancestry_hmm input files interactively using make_downsampled_input_ancestry_hmm.R
+# This script takes the original input file and for downsampled individuals uses a binomial to decide whether to keep or discard each count Observed
+# where prob p = target_coverage/original_coverage
+# copied over ploidy files
+hilo/local_ancestry/results/ancestry_hmm$ for i in $(ls -d downsampled*); do for pop in 21 26 371 370; do cp pass2_alloMAIZE/input/pop$pop.anc_hmm.ids.ploidy $i/input/.; done; done
+# running hidden markov model for pops 21, 26, 370, 371 downsampled to 0.5x coverage
+# for focal individuals: HILO207, HILO41, HILO42, HILO218
+local_ancestry$ sbatch --array=3,7,24,25 --export="Ne=10000,PREFIX=downsampled_0.5x,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh
+Submitted batch job 10502656 - COMPLETED
+# running for other coverage amounts:
+local_ancestry$ for i in 0.05 0.1 0.25 1 1.5; do sbatch --array=3,7,24,25 \
+--export="Ne=10000,PREFIX=downsampled_"$i"x,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh;
+done
+Submitted batch job 10502781-5 - COMPLETED 4.28.19
+# summarising ancestry frequency from results:
+local_ancestry$ sbatch --export=SUBDIR=output_noBoot,PREFIX=downsampled_0.5x --array=21,26,370,371 calcAncfromPost.sh
+Submitted batch job 10502806 COMPLETED
+local_ancestry$ for i in 0.05 0.1 0.25 1 1.5; do sbatch --export=SUBDIR=output_noBoot,PREFIX=downsampled_"$i"x --array=21,26,370,371 calcAncfromPost.sh; done
+Submitted batch job 10502811-5 COMPLETED
+# copying over results:
+ancestry_hmm$ for j in HILO207 HILO41 HILO218 HILO42; do for i in 0.05 0.1 0.5 1 1.5; do mkdir -p downsampled_"$i"x/output_noBoot; scp -P 2022 -r ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/downsampled_"$i"x/output_noBoot/"$j".posterior downsampled_"$i"x/output_noBoot/.; done; done
+ancestry_hmm$ for i in 0.05 0.1 0.5 1 1.5; do mkdir -p downsampled_"$i"x/output_noBoot/anc; scp -P 2022 -r ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/downsampled_"$i"x/output_noBoot/anc/* downsampled_"$i"x/output_noBoot/anc/.; done; done
+# Plot results in plot_sensitivity_to_coverage.R
