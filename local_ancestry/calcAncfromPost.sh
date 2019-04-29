@@ -1,12 +1,13 @@
 #!/bin/bash
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/scripts
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J calcAnc
 #SBATCH -o /home/ecalfee/hilo/slurm-log/calcAnc_%A_%a.out
 #SBATCH -t 4:00:00
 #SBATCH --mem=8G
-#SBATCH --array=0-27
-#SBATCH --export="SUBDIR=output_noBoot,GLOBAL_ADMIXTURE=globalAdmixtureByPopN.txt,ALL"
+#SBATCH --array=18-19,21,23-31,34-35,360-363,365-374
+
+# to run: sbatch --export=SUBDIR=output_noBoot,PREFIX=pass2_alloMAIZE calcAncfromPost.sh
 
 # note: pop 366 is a good one to start with and has index 19
 
@@ -28,34 +29,18 @@ set –o nounset
 module load R
 
 # directory with input/output subdirectories
-DIR_MAIN="../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
+DIR_MAIN="results/ancestry_hmm/$PREFIX/"
 DIR_IN=${DIR_MAIN}/${SUBDIR}
-GLOBAL_ADMIXTURE_FILE="${DIR_MAIN}/input/${GLOBAL_ADMIXTURE}"
 DIR_OUT=${DIR_IN}/${anc}
 # make output directory
 mkdir -p ${DIR_OUT}
 
-# pull columns from file into arrays
-LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))
-LIST_OF_ALPHA_MAIZE=($(cut -d$'\t' -f 2  < $GLOBAL_ADMIXTURE_FILE))
-LIST_OF_ALPHA_MEX=($(cut -d$'\t' -f 3  < $GLOBAL_ADMIXTURE_FILE))
-
-# use slurm array task id as the array index to pull particular values out
-i=$SLURM_ARRAY_TASK_ID
-POP_N=${LIST_OF_POPS[${i}]} # e.g. 366 for pop366
-ALPHA_MAIZE=${LIST_OF_ALPHA_MAIZE[${i}]}
-ALPHA_MEX=${LIST_OF_ALPHA_MEX[${i}]}
-
-# check for no admixture
-echo "running pop"${POP_N}" maize: " ${ALPHA_MAIZE}" mex: "${ALPHA_MEX}
-if [ ${ALPHA_MAIZE} = 0.00 ] || [ ${ALPHA_MAIZE} = 1.00 ]
-then
-    echo "pop"${POP_N}" is 100% one ancestry -> skipping local ancestry summary"
-    exit 0 # exit without failure (no inference needed)
-fi
-
+# use slurm array task id as the population number
+POP_N=$SLURM_ARRAY_TASK_ID
+IDs_FILE=${DIR_MAIN}/input/pop${POP_N}.anc_hmm.ids
 
 #process output of ancestry_hmm
 echo "summarising ancestry for pop"${POP_N}
-Rscript calc_genomewide_pop_anc_freq.R ${POP_N} ${DIR_IN}
+Rscript calc_genomewide_pop_anc_freq.R ${POP_N} ${DIR_IN} ${IDs_FILE}
+
 echo "all done!"

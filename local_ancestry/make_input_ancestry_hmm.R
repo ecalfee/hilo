@@ -31,12 +31,13 @@ for (i in 1:10){ # for each chromosome, get counts
   # from allopatric reference panels
   allo_counts = read.table(paste0(dir_allo_counts, "/allo_counts_chr", i, ".txt"),
                            header = T, stringsAsFactors = F)
+  d = allo_counts
   # and each admixed individual
   for (id in pop_ids){
     ind_counts_file = paste0(dir_symp_counts, "/", id, "/chr", i, ".counts.txt")
     ind_counts_new = read.table(ind_counts_file, header = T, stringsAsFactors = F, sep = "\t")
     colnames(ind_counts_new) = paste0(id, "_", colnames(ind_counts_new))
-    d = cbind(allo_counts, ind_counts_new) # column bind b/c all files have the same sites
+    d = cbind(d, ind_counts_new) # column bind b/c all files have the same sites
   }
   # write lines for current chromosome to file
   select(d, -major, -minor) %>%
@@ -49,7 +50,7 @@ for (i in 1:10){ # for each chromosome, get counts
 write.table(pop_ids, paste0(dir_output, "/pop", N, ".anc_hmm.ids"),
             row.names = F, col.names = F, quote = F)
 # write ploidy file for included individuals in the same order they appear in ancestry_hmm input file
-ploidy = data.frame(id = paste0("HILO", pop_ids), ploidy = 2)
+ploidy = data.frame(id = pop_ids, ploidy = 2)
 write.table(ploidy, paste0(dir_output, "/pop", N, ".anc_hmm.ids.ploidy"),
             row.names = F, col.names = F, quote = F, sep = "\t")
 

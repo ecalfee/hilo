@@ -13,10 +13,10 @@
 popN=$SLURM_ARRAY_TASK_ID
 
 # paths to input and output directories
-dir_allo_counts = "results/counts/$PREFIX"
-dir_symp_counts = "results/countsMajMin/$PREFIX"
-inds_file = "../global_ancestry/results/NGSAdmix/$PREFIX/globalAdmixtureByIncludedIndividual.txt" # has list of all included individuals, and which pop
-dir_output = "results/ancestry_hmm/$PREFIX/input"
+dir_allo_counts="results/counts/$PREFIX"
+dir_symp_counts="results/countsMajMin/$PREFIX"
+inds_file="../global_ancestry/results/NGSAdmix/$PREFIX/globalAdmixtureByIncludedIndividual.txt" # has list of all included individuals, and which pop
+dir_output="results/ancestry_hmm/$PREFIX/input"
 
 
 # general bash script settings to make sure if any errors in the pipeline fail
@@ -29,10 +29,10 @@ set –o nounset
 module load R
 
 # make directory to store output (if doesn't yet exist)
-mkdir -p $output_dir
+mkdir -p "$dir_output"
 
 # run R script
 echo "making ancestry hmm input files for population "$popN
-Rscript ../scripts/make_input_ancestry_hmm.R $popN $dir_allo_counts $dir_symp_counts $inds_file $dir_output
+Rscript ./make_input_ancestry_hmm.R $popN $dir_allo_counts $dir_symp_counts $inds_file $dir_output
 
 echo 'all done!'
