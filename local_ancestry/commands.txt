@@ -41,16 +41,23 @@ local_ancestry$ sbatch --dependency=afterok:$(echo 10496223 {10496411..10496415}
 Submitted batch job 10496695 - COMPLETED 4.28.19
 
 3c) Sample one read per allopatric mexicana as an 'allele' count & put together with allopatric maize allele counts
-local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE makeAlloCountsAncHMMInput.sh
-Submitted batch job 10500863
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --array=1 makeAlloCountsAncHMMInput.sh
+Submitted batch job 10500875 - COMPLETED
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE --array=2-10 makeAlloCountsAncHMMInput.sh
+Submitted batch job 10500878 - COMPLETED 4.28.19 (fast)
 
-4a) Get lists of included individuals per sympatric pop meeting some minimum coverage threshold, e.g. >.1x mean.
+4a) Get population mean mexicana ancestry (prior) and lists of included individuals per sympatric pop meeting some minimum coverage threshold, e.g. >.1x mean.
+made iteractively in: global_ancestry/plot_NGSAdmix.R
+globalAdmixtureByIncludedIndividual.txt
+globalAdmixtureIncludedByPopN.txt
 
 4b) Make input files; including global ancestry per pop. Only include sympatric individuals > threshold coverage
-makeAncHMMInput.sh
+local_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE makeAncHMMInput.sh
 
-5) Run ancestry_hmm for each population. Set priors for non admixed populations very low, e.g. .001 admixture
+5) Run ancestry_hmm for each population. Use NGSAdmix mean alpha_mex as initial prior
 runAncHMM.sh
 runAncHMM_noboot.sh
+local_ancestry$ sbatch --export="Ne=10000,PREFIX=pass2_alloMAIZE,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh
 
-6) Test robustness by filtering counts down to a lower different x coverage
+
+6) Test robustness by filtering counts down to a lower x coverage

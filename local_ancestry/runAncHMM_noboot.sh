@@ -1,14 +1,15 @@
 #!/bin/bash
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J ancNoBoot
 #SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_noBoot_%A_%a.out
 #SBATCH -t 1:00:00
 #SBATCH --mem=8G
-#SBATCH --array=0-27
-#SBATCH --export="Ne=10000,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN.txt,ALL"
+#SBATCH --array=1-29
 
-# note: pop 366 is a good one to start with and has index 19
+# to run: sbatch --export="Ne=10000,PREFIX=pass2_alloMAIZE,SUBDIR_OUT=output_noBoot,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh
+
+# note: pop 366 is a good one to start with
 # try loading bio module
 module load bio
 module load Ancestry_HMM # loads copy from farm
@@ -22,9 +23,9 @@ set –o errexit
 set –o nounset
 
 # directory with input/output subdirectories
-DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
-cd ${DIR} # move to main directory
-#GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt" # set in export so it can change
+DIR="results/ancestry_hmm/$PREFIX"
+
+#GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureIncludedByPopN.txt" # set in export so it can change
 
 # pull columns from file into arrays
 LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))
@@ -46,6 +47,7 @@ then
 fi
 
 # make and go to directory where ancestry_hmm should output files
+cd ${DIR} # move to main directory for ancestry_hmm
 mkdir -p ${SUBDIR_OUT}
 cd ${SUBDIR_OUT} # change directory to output directory
 
@@ -54,7 +56,7 @@ echo "running local ancestry inference "${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
 --ne ${Ne} --tmin 0 --tmax 10000 \
--i ../input/${POP}.anc_hmm.input \
--s ../input/${POP}.anc_hmm.ids.ploidy
+-i "../input/${POP}.anc_hmm.input" \
+-s "../input/${POP}.anc_hmm.ids.ploidy"
 
 echo "all done!"

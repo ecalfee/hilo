@@ -1,17 +1,20 @@
 #!/bin/bash
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/local_ancestry
 #SBATCH -J ancHMM
 #SBATCH -o /home/ecalfee/hilo/slurm-log/runAncHMM_%A_%a.out
 #SBATCH -t 24:00:00
 #SBATCH --mem=8G
-#SBATCH --array=0-27
-#SBATCH --export="Ne=10000,SUBDIR_OUT=output_bootT,GLOBAL_ADMIXTURE_FILE=input/globalAdmixtureByPopN.txt,ALL"
+#SBATCH --array=1-28
 
-# note: pop 366 is a good one to start with and has index 19
+# to run: sbatch --export="Ne=10000,PREFIX=pass2_alloMAIZE,SUBDIR_OUT=output_bootT,GLOBAL_ADMIXTURE_FILE=../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/globalAdmixtureIncludedByPopN.txt" runAncHMM_noboot.sh
+
+# note: pop 366 is a good one to start with
 # try loading bio module
 module load bio
 module load Ancestry_HMM # loads copy from farm
+
+# this script runs local ancestry inference using ancestry_hmm
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -20,9 +23,9 @@ set –o errexit
 set –o nounset
 
 # directory with input/output subdirectories
-DIR="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm"
-cd ${DIR} # move to main directory
-#GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureByPopN.txt" # set in export so it can change
+DIR="results/ancestry_hmm/$PREFIX"
+
+#GLOBAL_ADMIXTURE_FILE="input/globalAdmixtureIncludedByPopN.txt" # set in export so it can change
 
 # pull columns from file into arrays
 LIST_OF_POPS=($(cut -d$'\t' -f 1  < $GLOBAL_ADMIXTURE_FILE))
@@ -44,10 +47,11 @@ then
 fi
 
 # make and go to directory where ancestry_hmm should output files
+cd ${DIR} # move to main directory for ancestry_hmm
 mkdir -p ${SUBDIR_OUT}
 cd ${SUBDIR_OUT} # change directory to output directory
 
-#run ancestry_hmm
+#run ancestry_hmm with bootstrap for time
 echo "running local ancestry inference "${POP}
 ancestry_hmm -a 2 ${ALPHA_MAIZE} ${ALPHA_MEX} \
 -p 0 100000 ${ALPHA_MAIZE} -p 1 -100 ${ALPHA_MEX} \
