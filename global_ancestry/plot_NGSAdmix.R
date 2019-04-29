@@ -11,22 +11,27 @@ colors_maize2mex = c(yellows, blues)
 labels_maize2mex = c("allopatric_maize", "sympatric_maize", "sympatric_mexicana", "allopatric_mexicana")
 colorsK = c(colors_maize2mex[c(4,1)], brewer.pal(n = 9, name = "YlOrRd")[6], brewer.pal(n=9, name = "YlGn")[6])
 
+# minimum coverage to include in ancestry_hmm
+min_coverage = 0.05
+
 K = 2 # K = number of genetic clusters/groups
 K = 3
 K = 4
 # starting with pass1 analysis from 1st round of sequencing
 #file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
-PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+PREFIX_METRICS <- "hilo_alloMAIZE_MAIZE4LOW"
+PREFIX <- "pass2_alloMAIZE"
 file_prefix <- paste0("results/NGSAdmix/", PREFIX, "/K", K)
 admix <- read.table(paste0(file_prefix, ".qopt"))
 colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
+out_dir <- paste0("results/NGSAdmix/", PREFIX)
 
 # get metadata for individuals included in NGSadmix analysis
 #pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
 #                             header = T, sep = "\t")
 
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
-metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
+metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX_METRICS, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
 maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
@@ -34,7 +39,7 @@ landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, h
 seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
 
 # only for using RIMMA0625_small
-landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
+#landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
 
 # a rough coverage estimate is number of reads passing filtering * 150bp/read
 # divided by total area they could map to in maize reference genome v4
@@ -57,23 +62,50 @@ d <- bind_cols(IDs, admix)  %>%
   arrange(., zea) %>%
   arrange(., symp_allo)
 
-# make anc_hmm input file with population #, avg. maize proportion, avg. mex proportion ancestry
-# first make directory
-path_global_out = file.path("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm", "input")
-if (!dir.exists(path_global_out)) dir.create(path_global_out, recursive = T)
-# then create data summarizing mean global ancestry for each pop
-# excluding ind's w/ low coverage. for Ancestry_hmm input
-alphasByPop = d %>%
-  filter(., symp_allo == "sympatric" & est_coverage >= 0.05) %>%
-  group_by(., popN) %>%
-  summarise(., alpha_maize = round(mean(anc2),2)) %>%
-  mutate(., alpha_mex = 1 - alpha_maize)
-table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN) # numbers of individuals per pop
-#View(cbind(alphasByPop,table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN) ))
+# for K=2 only, which ancestry anc1 or anc2 is mexicana-like?
 if (K == 2) {
-  write.table(format(as.data.frame(alphasByPop), digits=2, scientific = F),  # write table so I can pull population global ancestry values for ancestry_hmm
-            file.path(path_global_out, "globalAdmixtureByPopN.txt"),
-            col.names = F, row.names = F, quote = F, sep = "\t")
+  mex_anc  <- d %>%
+    filter(group == "allopatric_mexicana") %>%
+    dplyr::select(c("anc1", "anc2")) %>%
+    apply(., 2, mean) %>%
+    which.max(.)
+  maize_anc  <- d %>%
+    filter(group == "allopatric_maize") %>%
+    dplyr::select(c("anc1", "anc2")) %>%
+    apply(., 2, mean) %>%
+    which.max(.)
+  d2 <- dplyr::mutate(d, alpha_mex = round(d[ , names(mex_anc)], 10)) %>%
+    dplyr::mutate(., alpha_maize = round(d[ , names(maize_anc)], 10))
+
+  # make anc_hmm input file with population #, avg. maize proportion, avg. mex proportion ancestry
+  # first make directory
+  #path_global_out = file.path("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm", "input")
+  
+  if (!dir.exists(out_dir)) dir.create(out_dir, recursive = T)
+  # then create data summarizing mean global ancestry for each pop
+  # excluding ind's w/ low coverage. for Ancestry_hmm input
+  alphasByPop = d2 %>%
+    filter(., symp_allo == "sympatric" & est_coverage >= min_coverage) %>%
+    group_by(., popN) %>%
+    summarise(., alpha_maize = mean(alpha_maize), 
+              alpha_mex = mean(alpha_mex),
+              n = n()) # number included individuals per group
+  table(filter(d, symp_allo == "sympatric" & est_coverage >= min_coverage)$popN) # numbers of individuals per pop
+  #View(cbind(alphasByPop,table(filter(d, symp_allo == "sympatric" & est_coverage >= 0.05)$popN) ))
+  # write file with mean population ancestry (for prior in ancestry_hmm)
+  write.table(format(as.data.frame(alphasByPop), scientific = F),  # write table so I can pull population global ancestry values for ancestry_hmm
+            file.path(out_dir, "globalAdmixtureIncludedByPopN.txt"),
+            col.names = T, row.names = F, quote = F, sep = "\t")
+  # also write out individual admixture proportions for included individuals
+  ind_included_summary <- d2 %>%
+    filter(., symp_allo == "sympatric" & est_coverage >= min_coverage) %>%
+    arrange(., n) %>%
+    arrange(., popN) %>%
+    dplyr::select(., c("ID", "popN", "alpha_mex", "alpha_maize", "est_coverage"))
+  
+  write.table(x = format(ind_included_summary, digits = 10, scientific = F),  # write table so I can pull population global ancestry values for ancestry_hmm
+              file = file.path(out_dir, "globalAdmixtureByIncludedIndividual.txt"),
+              col.names = T, row.names = F, quote = F, sep = "\t")
 }
 
 # lets look at allele frequency estimates for each ancestry
@@ -96,12 +128,13 @@ Fst
 
 # make STRUCTURE-like ancestry plots:
 p1 <- d %>% 
-  filter(est_coverage > 0.05) %>%
+  filter(est_coverage > min_coverage) %>%
+  arrange(., popN) %>%
   tidyr::gather(., "ancestry", "p", colnames(admix)) %>%
   ggplot(., aes(fill=ancestry, y=p, x=ID)) +
   geom_bar(stat = "identity", position = "fill") + 
   facet_wrap(~group) +
-  ggtitle("pass 2 K=2 NGSAdmix results. ind's with depth > 0.05")
+  ggtitle(paste0("pass 2 K=2 NGSAdmix results. ind's with depth > ", min_coverage))
 plot(p1)
 ggsave(paste0("plots/NGS_admix_K", K, "_", PREFIX, ".png"), 
        plot = p1, 
@@ -116,7 +149,7 @@ p1_allomaize <- d %>%
   ggplot(., aes(fill=ancestry, y=p, x=ID)) +
   geom_bar(stat = "identity", position = "fill") + 
   facet_wrap(~LOCALITY) +
-  ggtitle("pass 2 K=2 NGSAdmix results. ind's with depth > 0.05")
+  ggtitle(paste0("pass 2 K=2 NGSAdmix results. ind's with depth > ", min_coverage))
 plot(p1_allomaize)
 ggsave(paste0("plots/NGS_admix_allo_maize_only_K", K, "_", PREFIX, ".png"), 
        plot = p1_allomaize, 
@@ -130,7 +163,7 @@ ggsave(paste0("plots/NGS_admix_allo_maize_only_K", K, "_", PREFIX, ".png"),
 png(paste0("../plots/NGSadmix_K", K, ".png"), # saves plot as pin in ../plots/
     height = 5, width = 8, units = "in", res = 150)
 d %>%
-  select(., colnames(admix)) %>%
+  dplyr::select(., colnames(admix)) %>%
   t(.) %>%
   barplot(height = .,
           col = colorsK[1:K],
@@ -143,10 +176,10 @@ mtext(paste("est. between-ancestry Fst:", round(Fst,2)))
 dev.off()
 
 # now plot again with individuals with very low coverage <0.05x filtered out      
-png(paste0("../plots/NGSadmix_K", K, "_over_0.05x_coverage.png"),
+png(paste0("../plots/NGSadmix_K", K, "_over_", min_coverage, "x_coverage.png"),
     height = 5, width = 8, units = "in", res = 150)
 d %>%
-  filter(., est_coverage >= .05) %>%
+  filter(., est_coverage >= min_coverage) %>%
   select(., colnames(admix)) %>%
   t(.) %>%
   barplot(height = .,
@@ -154,7 +187,7 @@ d %>%
           space=0,
           border=NA,
           main = "all HILO populations",
-          xlab="Individuals with est. coverage >= 0.05x",
+          xlab=paste0("Individuals with est. coverage >= ", min_coverage, "x"),
           ylab="admixture") 
 mtext(paste("est. between-ancestry Fst:", round(Fst,2)))
 dev.off()
@@ -164,7 +197,7 @@ for (g in unique(d$group)){
       height = 5, width = 8, units = "in", res = 150)
   d %>%
     filter(., group == g) %>%
-    filter(., est_coverage >= .05) %>%
+    filter(., est_coverage >= min_coverage) %>%
     select(., colnames(admix)) %>%
     t(.) %>%
     barplot(height = .,
@@ -172,7 +205,7 @@ for (g in unique(d$group)){
             space=0,
             border=NA,
             main = g,
-            xlab="Individuals with est. coverage >= 0.05x",
+            xlab=paste0("Individuals with est. coverage >= ", min_coverage, "x"),
             ylab="admixture")  
   dev.off()
 }
@@ -205,16 +238,43 @@ meta = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
                  stringsAsFactors = F, header = T, sep = "\t")
 d_meta = left_join(d, meta, by = c("popN", "zea", "symp_allo", 
                                    "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
-  filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
+  filter(., est_coverage >= min_coverage) %>% # only include individuals with at least .05x coverage
   .[with(., order(group, ELEVATION)), ]
+# simple linear model predicting ancestry2 from group and elevation
+d_meta %>%
+  filter(., symp_allo == "sympatric") %>%
+  lm(data = ., anc2 ~ zea + ELEVATION + est_coverage) %>%
+  summary(.)
+lmZeaElev <- d_meta %>%
+  filter(., symp_allo == "sympatric") %>%
+  lm(data = ., anc2 ~ zea*ELEVATION) 
+summary(lmZeaElev)
+# plot linear model predictions for effects of elevation
+d_meta %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = anc2, color = zea, size = est_coverage)) +
+  geom_point() +
+  ylab("mexicana ancestry") +
+  scale_colour_manual(values = colors_maize2mex[2:3]) +
+  geom_abline(intercept = lmZeaElev$coefficients["(Intercept)"] + lmZeaElev$coefficients["zeamexicana"], 
+              slope = lmZeaElev$coefficients["ELEVATION"] + lmZeaElev$coefficients["zeamexicana:ELEVATION"],
+              color = colors_maize2mex[3]) +
+  geom_abline(intercept = lmZeaElev$coefficients["(Intercept)"], 
+              slope = lmZeaElev$coefficients["ELEVATION"],
+              color = colors_maize2mex[2]) +
+  ggtitle("Higher mexicana ancestry at higher elevations")
+ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
 
-
-  # now plot again with individuals with very low coverage <0.05x filtered out      
-png(paste0("../plots/NGSadmix_K", K, "_over_0.05x_coverage_wElevation_for_poster.png"),
+# now plot again with individuals with very low coverage <0.05x filtered out      
+png(paste0("plots/", PREFIX, "NGSadmix_K", K, "_over_", min_coverage, "x_coverage_wElevation_for_poster.png"),
     height = 5, width = 8, units = "in", res = 300)
 par(mar=c(4.1,4.1,4.1,4.1))
 bar = d_meta %>%
-  select(., colnames(admix)) %>%
+  #dplyr::select(., colnames(admix)) %>%
+  dplyr::select(., rev(colnames(admix))) %>% # reverse order so blue = mexicana
   t(.) %>%
   barplot(height = .,
           col = colorsK[1:K],
@@ -222,8 +282,10 @@ bar = d_meta %>%
           border=NA, xaxt = "n")
 title(main = "Admixture in highland maize and mexicana",
       ylab=paste0("Ancestry proportion K=", K, " (NGSAdmix)"))
-title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric Mexicana", 
-      line = 1)
+#title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric Mexicana", 
+#      line = 1)
+text(x = tapply(bar, d_meta$group, mean), par("usr")[3], srt = 60, adj= 1, xpd = TRUE,
+     labels = unique(d_meta$group), cex=0.45)
 #title(xlab=paste("Allopatric Ref.", "Sympatric Maize", "Sympatric Mexicana",
 #      sep = "               |               "),
 #      line = 1)

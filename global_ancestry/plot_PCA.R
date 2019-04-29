@@ -34,7 +34,7 @@ landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
 # divided by total area they could map to in maize reference genome v4
 
 # size of reference genome reads are mapped to
-ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai", 
+ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
                                   stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
 # including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
 metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
@@ -59,12 +59,12 @@ for (i in c(0, 0.25, 0.5, 1)) {
     geom_histogram(stat = "count") +
     ggtitle(paste0("pass2; # individuals with coverage > ", i, "x")) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-  ggsave(paste0("plots/counts_pass2_morethan", i, "x_coverage.png"), 
+  ggsave(paste0("plots/counts_pass2_morethan", i, "x_coverage.png"),
          plot = p_counts,
-         device = "png", 
+         device = "png",
          width = 12, height = 8, units = "in",
          dpi = 200)
-} 
+}
 
 # what is the total depth per population?
 sum(meta$est_coverage) # total coverage
@@ -79,8 +79,8 @@ meta %>%
   geom_bar(stat = "sum") +
   ggtitle(paste0("pass2; total x coverage per group")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(paste0("plots/total_x_coverage_pass2.png"), 
-       device = "png", 
+ggsave(paste0("plots/total_x_coverage_pass2.png"),
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 # how evenly is that coverage distributed across individuals?
@@ -90,8 +90,8 @@ meta %>%
   geom_point() +
   ggtitle(paste0("pass2; individual x coverage")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(paste0("plots/ind_x_coverage_pass2_scatter_by_pop.png"), 
-       device = "png", 
+ggsave(paste0("plots/ind_x_coverage_pass2_scatter_by_pop.png"),
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -106,8 +106,8 @@ meta %>%
   geom_histogram(stat = "count") +
   ggtitle("# individuals excluded with > 0.25x coverage") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave("plots/counts_excluded_samples_with_morethan0.25x_coverage.png", 
-       device = "png", 
+ggsave("plots/counts_excluded_samples_with_morethan0.25x_coverage.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 meta %>%
@@ -119,8 +119,8 @@ meta %>%
   geom_histogram(stat = "count") +
   ggtitle("# individuals excluded with > 0.5x coverage") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave("plots/counts_excluded_samples_with_morethan0.5x_coverage.png", 
-       device = "png", 
+ggsave("plots/counts_excluded_samples_with_morethan0.5x_coverage.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -145,92 +145,92 @@ d <- bind_cols(IDs, pca_small) %>%
   left_join(., meta, by = "ID")
 d %>%
   filter(., ID %in% seq_Jan2019 | (symp_allo == "allopatric" & zea == "maize")) %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, 
-                size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group,
+                size = est_coverage)) +
+  geom_point(alpha = .5) +
   scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("newly seq. HILO Jan19 all; SNPs spaced >.01cM")
 
-ggsave("plots/PC_new_HILO_seq_Jan19.png", 
-       device = "png", 
+ggsave("plots/PC_new_HILO_seq_Jan19.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 d %>%
   filter(., (ID %in% seq_Jan2019 & n > 200) | (symp_allo == "allopatric" & zea == "maize")) %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, 
-                size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group,
+                size = est_coverage)) +
+  geom_point(alpha = .5) +
   scale_colour_manual(values = colors_alphabetical[c(1,3:4)]) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("newly seq. HILO Jan19 only (n>200); SNPs spaced >.01cM")
-ggsave("plots/PC_new_HILO_seq_post_Jan19_only.png", 
-       device = "png", 
+ggsave("plots/PC_new_HILO_seq_post_Jan19_only.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 
 d %>%
   filter(., !(ID %in% seq_Jan2019) | (symp_allo == "allopatric" & zea == "maize")) %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, 
-                size = est_coverage)) + 
-  geom_point(alpha = .75) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group,
+                size = est_coverage)) +
+  geom_point(alpha = .75) +
   scale_colour_manual(values = colors_alphabetical[c(1,3:4)]) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("old seq. HILO only; SNPs spaced >.01cM")
-ggsave("plots/PC_old_HILO_seq_before_Jan19_only.png", 
-       device = "png", 
+ggsave("plots/PC_old_HILO_seq_before_Jan19_only.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 d %>%
   filter(., (ID %in% seq_Jan2019 & n <= 200) | (symp_allo == "allopatric" & zea == "maize")) %>%
   #filter(., (ID %in% seq_Jan2019 & n <= 200)) %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, 
-                size = est_coverage)) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group,
+                size = est_coverage)) +
   scale_colour_manual(values = colors_alphabetical) +
-  geom_point(alpha = .75) + 
+  geom_point(alpha = .75) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained[2], "%)")) +
   ggtitle("new seq. HILO, overlap w/ pass1 only; SNPs spaced >.01cM")
-ggsave("plots/PC_HILO_seq_Jan19_overlap_w_pass1.png", 
-       device = "png", 
+ggsave("plots/PC_HILO_seq_Jan19_overlap_w_pass1.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 # just look at allopatric maize
 d %>%
   #filter(., (symp_allo == "allopatric" & zea == "maize")) %>%
-  ggplot(., aes(x = -PC1, y = PC2, 
-                color = ifelse((symp_allo == "allopatric" & zea == "maize"), 
+  ggplot(., aes(x = -PC1, y = PC2,
+                color = ifelse((symp_allo == "allopatric" & zea == "maize"),
                                LOCALITY, "hilo_samples"),
-                size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+                size = est_coverage)) +
+  geom_point(alpha = .5) +
   #scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("structure within allopatric maize; SNPs spaced >.01cM")
-ggsave("plots/PC_allopatric_maize_landraces.png", 
-       device = "png", 
+ggsave("plots/PC_allopatric_maize_landraces.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 # allopatric maize PC3 & 4
 d %>%
-  ggplot(., aes(x = PC3, y = PC4, 
-                color = ifelse((symp_allo == "allopatric" & zea == "maize"), 
+  ggplot(., aes(x = PC3, y = PC4,
+                color = ifelse((symp_allo == "allopatric" & zea == "maize"),
                                LOCALITY, "hilo_samples"),
-                size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+                size = est_coverage)) +
+  geom_point(alpha = .5) +
   #scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC3 (", PC_var_explained[3], "%)")) +
   ylab(paste0("PC4 (", PC_var_explained[4], "%)")) +
   ggtitle("PC3 & 4 within allopatric maize; SNPs spaced >.01cM")
-ggsave("plots/PC34_allopatric_maize_landraces.png", 
-       device = "png", 
+ggsave("plots/PC34_allopatric_maize_landraces.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -245,15 +245,15 @@ PC_var_explained2 = round(pca2$values, 2)
 d2 <- data.frame(ID = IDs[1:291,], pca_small2, stringsAsFactors = F) %>%
   left_join(., meta, by = "ID")
 d2 %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, 
-                size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group,
+                size = est_coverage)) +
+  geom_point(alpha = .5) +
   #scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained2[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained2[2], "%)")) +
   ggtitle("Li's landraces and all hilo samples; SNPs spaced >.01cM")
-ggsave("plots/PCA_Lis_landraces_plus_hilo.png", 
-       device = "png", 
+ggsave("plots/PCA_Lis_landraces_plus_hilo.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -262,7 +262,7 @@ ggsave("plots/PCA_Lis_landraces_plus_hilo.png",
 # old data (before 2019 sequencing)
 cov_data_old <- read.table("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/PCA/whole_genome.cov",
                            header = F, stringsAsFactors = F)
-                       
+
 # PC's are each column of dataframe pca:
 # i.e. PC1 is V1, PC2 is V2 etc.
 pca_old <- eigen(cov_data_old) # take PCA of covariance matrix
@@ -270,7 +270,7 @@ pca_small_old <- data.frame(pca_old$vectors[ , 1:n])
 colnames(pca_small_old) = paste0("PC", 1:n)
 # rounded eigen values
 PC_var_explained_old = round(pca_old$values, 2)
-pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
+pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F,
                              header = T, sep = "\t")
 # join bams and first 10 PCs of covariance PCA data by position (CAUTION - bam list order and admix results MUST MATCH!)
 d_old <- bind_cols(pass1_allo4Low, pca_small_old)  %>%
@@ -282,47 +282,47 @@ d_old <- bind_cols(pass1_allo4Low, pca_small_old)  %>%
 # plot first PC's
 # PC1 and 2, all no filter
 p12_coverage = d_old %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained_old[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained_old[2], "%)")) +
   ggtitle("PC1 and PC2 (all ind's); SNPs spaced >.01cM") +
   geom_point(aes(color = group, size = est_coverage, shape = (ID == "HILO80"))) +
   scale_colour_manual(values = colors_alphabetical)
 plot(p12_coverage)
-ggsave("plots/PCA_12_by_coverage.png", plot = p12_coverage, device = png(), 
+ggsave("plots/PCA_12_by_coverage.png", plot = p12_coverage, device = png(),
        width = 12, height = 8, units = "in",
        dpi = 200)
 # PC1 and 2, excluding super low coverae ind's
 p12 = d_old %>%
   filter(., est_coverage >= .05) %>%
-  ggplot(., aes(PC1, PC2)) + 
+  ggplot(., aes(PC1, PC2)) +
   ggtitle("PC1 and PC2 (excl. low coverage ind's < .05x); SNPs spaced >.01cM") +
   xlab(paste0("PC1 (", PC_var_explained_old[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained_old[2], "%)")) +
   geom_point(aes(color = group)) +
   scale_colour_manual(values = colors_alphabetical)
 plot(p12)
-ggsave("plots/PCA_12.png", plot = p12, device = "png", 
+ggsave("plots/PCA_12.png", plot = p12, device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 # PC3 and PC4, excluding low coverage ind's
 p34 = d_old %>%
   filter(., est_coverage >= .05) %>%
-  ggplot(., aes(PC3, PC4)) + 
+  ggplot(., aes(PC3, PC4)) +
   ggtitle("PC3 and PC4 (excl. low coverage ind's < .05x); SNPs spaced >.01cM") +
   xlab(paste0("PC3 (", PC_var_explained_old[3], "%)")) +
   ylab(paste0("PC4 (", PC_var_explained_old[4], "%)")) +
   geom_point(aes(color = group)) +
   scale_colour_manual(values = colors_alphabetical)
 plot(p34)
-ggsave("plots/PCA_34.png", plot = p34, device = "png", 
+ggsave("plots/PCA_34.png", plot = p34, device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 # Use vars() to supply faceting variables:
 p12 + facet_wrap(~LOCALITY)
-ggsave("plots/PCA_facet_by_population.png", 
-       plot = p12 + facet_wrap(~LOCALITY), device = "png", 
+ggsave("plots/PCA_facet_by_population.png",
+       plot = p12 + facet_wrap(~LOCALITY), device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -349,47 +349,47 @@ PC_var_explained_1000 = round(pca_1000$values, 2)
 # plot first PC's
 # PC1 and 2, all no filter
 p12_coverage_1000 = d_1000 %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained_1000[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained_1000[2], "%)")) +
   ggtitle("PC1 and PC2 (all ind's); every 1000th SNP") +
   geom_point(aes(color = group, size = est_coverage)) +
   scale_colour_manual(values = colors_alphabetical)
-ggsave("plots/PCA_12_by_coverage_pruned1000.png", 
-       plot = p12_coverage_1000, device = png(), 
+ggsave("plots/PCA_12_by_coverage_pruned1000.png",
+       plot = p12_coverage_1000, device = png(),
        width = 12, height = 8, units = "in",
        dpi = 200)
 # PC1 and 2, excluding super low coverae ind's
 p12_1000 = d_1000 %>%
   filter(., est_coverage >= .05) %>%
-  ggplot(., aes(PC1, PC2)) + 
+  ggplot(., aes(PC1, PC2)) +
   ggtitle("PC1 and PC2 (excl. low coverage ind's < .05x; every 1000th SNP)") +
   xlab(paste0("PC1 (", PC_var_explained_1000[1], "%)")) +
   ylab(paste0("PC1 (", PC_var_explained_1000[2], "%)")) +
   geom_point(aes(color = group)) +
   scale_colour_manual(values = colors_alphabetical)
 plot(p12_1000)
-ggsave("plots/PCA_12_pruned1000.png", plot = p12_1000, device = png(), 
+ggsave("plots/PCA_12_pruned1000.png", plot = p12_1000, device = png(),
        width = 12, height = 8, units = "in",
        dpi = 200)
 # PC3 and PC4, excluding low coverage ind's
 p34_1000 = d_1000 %>%
   filter(., est_coverage >= .05) %>%
-  ggplot(., aes(PC3, PC4)) + 
+  ggplot(., aes(PC3, PC4)) +
   ggtitle("PC3 and PC4 (excl. low coverage ind's < .05x); every 1000th SNP") +
   xlab(paste0("PC3 (", PC_var_explained_1000[3], "%)")) +
   ylab(paste0("PC4 (", PC_var_explained_1000[4], "%)")) +
   geom_point(aes(color = group)) +
   scale_colour_manual(values = colors_alphabetical)
 plot(p34_1000)
-ggsave("plots/PCA_34_pruned1000.png", plot = p34_1000, device = png(), 
+ggsave("plots/PCA_34_pruned1000.png", plot = p34_1000, device = png(),
        width = 12, height = 8, units = "in",
        dpi = 200)
 
 # Use vars() to supply faceting variables:
 p12_1000 + facet_wrap(~LOCALITY)
-ggsave("plots/PCA_facet_by_population_pruned1000.png", 
-       plot = p12_1000 + facet_wrap(~LOCALITY), device = png(), 
+ggsave("plots/PCA_facet_by_population_pruned1000.png",
+       plot = p12_1000 + facet_wrap(~LOCALITY), device = png(),
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -397,18 +397,18 @@ ggsave("plots/PCA_facet_by_population_pruned1000.png",
 # trouble shooting new vs old sequencing:
 # re-plot PCA, but by facet_wrap(~lane)
 
-d %>% 
+d %>%
   left_join(., jan19, by = "ID") %>%
   mutate(., lane2 = ifelse(is.na(novogene_ID), "pass1_only", lane)) %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("new PCA facet by seq lane") +
   geom_point(aes(color = group, size = est_coverage)) +
   scale_colour_manual(values = colors_alphabetical) +
   facet_wrap(~lane2)
-ggsave("plots/jan2019_new_PCA_facet_by_seq_lane.png", 
-       device = "png", 
+ggsave("plots/jan2019_new_PCA_facet_by_seq_lane.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -419,33 +419,33 @@ par(mfrow=c(1,2))
 # old data
 d_1000 %>%
   filter(., ID %in% seq_Jan2019 & ID %in% pass1_allo4Low$ID) %>%
-  ggplot(., aes(-PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(-PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained_1000[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained_1000[2], "%)")) +
   ggtitle("PC1 and PC2 - old PCA (ind's that overlap with seq2019)") +
   geom_point(aes(color = ID, size = est_coverage)) +
   facet_wrap(~group)
-ggsave("plots/jan2019_old_PCA_overlap.png", 
-       device = "png", 
+ggsave("plots/jan2019_old_PCA_overlap.png",
+       device = "png",
        width = 20, height = 6, units = "in",
        dpi = 200)
 
 # new data
 d %>%
   filter(ID %in% seq_Jan2019 & ID %in% pass1_allo4Low$ID) %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("PC1 & PC2 - new seq 2019 (ind's that overlap with pass1)") +
   geom_point(aes(color = ID, size = est_coverage)) +
   facet_wrap(~group)
-ggsave("plots/jan2019_new_PCA_overlap.png", 
-       device = "png", 
+ggsave("plots/jan2019_new_PCA_overlap.png",
+       device = "png",
        width = 20, height = 6, units = "in",
        dpi = 200)
 
 # testing with new population labels
-l678_raw <- read.table("../samples/HILO_test_lane6_7_8.csv", 
+l678_raw <- read.table("../samples/HILO_test_lane6_7_8.csv",
                  sep = ",", header = F, stringsAsFactors = F)
 colnames(l678_raw) <- c("ID", "popN_fam")
 l678 <- l678_raw %>%
@@ -453,8 +453,8 @@ l678 <- l678_raw %>%
   mutate(popN = as.integer(popN))
 
 # what population assignments changed? Basically HILO202 - HILO217 get reassigned
-left_join(l678, d, by = "ID") %>% 
-  filter(., popN.x!=popN.y) %>% 
+left_join(l678, d, by = "ID") %>%
+  filter(., popN.x!=popN.y) %>%
   select(ID, popN.x, popN.y)
 # get metadata for updated population labels
 d678 <- d %>%
@@ -465,29 +465,29 @@ d678 <- d %>%
 d678 %>%
   left_join(., select(jan19, c("ID", "lane")), by = "ID") %>%
   filter(!is.na(popN)) %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("PC1 & PC2 - pools 6-8, new family ID's)") +
   geom_point(aes(color = group, shape = (n <= 219))) +
   facet_wrap(~lane)
-ggsave("plots/jan2019_new_family_IDs_PCA.png", 
-       device = "png", 
+ggsave("plots/jan2019_new_family_IDs_PCA.png",
+       device = "png",
        width = 20, height = 6, units = "in",
        dpi = 200)
 
 d %>%
   left_join(., select(jan19, c("ID", "lane")), by = "ID") %>%
   filter(!is.na(popN)) %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("new PCA family Ids facet by seq lane") +
   geom_point(aes(color = group, size = est_coverage)) +
   scale_colour_manual(values = colors_alphabetical) +
   facet_wrap(~lane)
-ggsave("plots/jan2019_new_family_Ids_PCA_facet_by_seq_lane.png", 
-       device = "png", 
+ggsave("plots/jan2019_new_family_Ids_PCA_facet_by_seq_lane.png",
+       device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
 
@@ -520,30 +520,30 @@ d_updated <- bind_cols(IDs, pca_small) %>%
   mutate(., plate_number_pcr = ifelse(group == "allopatric_maize", "external_seq", plate_number))
 
 d_updated %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("new PCA - show pcr plates - facet by seq lane") +
   geom_point(aes(color = group, size = est_coverage, shape = plate_number_pcr)) +
   scale_colour_manual(values = colors_alphabetical) +
   facet_wrap(~lane)
-ggsave("plots/jan2019_new_seq_by_pcr_plate_and_novogene_lane.png", 
-       device = "png", 
+ggsave("plots/jan2019_new_seq_by_pcr_plate_and_novogene_lane.png",
+       device = "png",
        width = 8, height = 6, units = "in",
        dpi = 200)
 
 d_updated %>%
   #filter(., ID %in% seq_Jan2019 & ID %in% pass1_allo4Low$ID | group == "allopatric_maize") %>%
   filter(., duplicated(ID) | group == "allopatric_maize") %>%
-  ggplot(., aes(PC1, PC2, alpha = .5)) + 
+  ggplot(., aes(PC1, PC2, alpha = .5)) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("PCA of samples with repeated sequencing") +
   geom_point(aes(color = group, size = est_coverage, shape = plate_number_pcr)) +
   scale_colour_manual(values = colors_alphabetical) +
   facet_wrap(~lane)
-ggsave("plots/jan2019_are_duplicates_new_seq_by_pcr_plate_and_novogene_lane.png", 
-       device = "png", 
+ggsave("plots/jan2019_are_duplicates_new_seq_by_pcr_plate_and_novogene_lane.png",
+       device = "png",
        width = 8, height = 6, units = "in",
        dpi = 200)
 
@@ -554,17 +554,17 @@ d_updated %>%
 # plot these samples
 d_updated %>%
   filter(., ((zea == "maize" & PC1 < 0) | (zea == "mexicana" & PC1 > 0))) %>%
-  ggplot(., aes(PC1, PC2)) + 
+  ggplot(., aes(PC1, PC2)) +
   xlab(paste0("mexicana like to maize like - PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("samples where PCA positions don't match mex/maize label") +
   geom_point(aes(color = group, size = est_coverage), alpha = .5) +
   scale_colour_manual(values = colors_alphabetical[3:4]) +
   facet_wrap(~plate_number_pcr) +
-  geom_text(aes(label=ifelse(plate_number_pcr != "plate2", 
+  geom_text(aes(label=ifelse(plate_number_pcr != "plate2",
                              ID, '')), hjust=0, vjust=0)
-ggsave("plots/jan2019_samples_wrong_side_of_PC1.png", 
-       device = "png", 
+ggsave("plots/jan2019_samples_wrong_side_of_PC1.png",
+       device = "png",
        width = 8, height = 6, units = "in",
        dpi = 200)
 # looks at data frame for these samples:
@@ -574,7 +574,7 @@ d_updated %>%
   mutate(label_switch = ifelse(abs(PC1) > 0.01, "likely", "possible")) %>%
   write.table(., "../samples/possible_label_switches_2019_hilo.txt",
               quote = F, col.names = T, row.names = F, sep = "\t")
-  
+
 
 # coverage looks particularly poor for lane 7;
 # a lot higher % of libraries failed for lanes 6 & 7:
@@ -587,8 +587,8 @@ table(d_updated$lane, d_updated$est_coverage <= .05)
 # ok I don't understand why HILO16 is the only one driving the PCA at all
 d %>%
   filter(ID != "HILO16") %>%
-  ggplot(., aes(x = PC1, y = PC2, color = ID)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = PC1, y = PC2, color = ID)) +
+  geom_point(alpha = .5) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("duplicates") #+
@@ -606,28 +606,28 @@ d2 <- read.table(gzfile("results/thinnedSNPs/duplicates/whole_genome.beagle.gz")
 d3 <- right_join(d1, d2, by = c("marker", "allele1", "allele2"))
 colnames(d3) <- d3_header
 d3_header <- c("marker", "allele1", "allele2", paste0("Ind", sapply(0:(dim(d3)[2]/3-2), function(x) rep(x, 3))))
-d3_IDs <- data.frame(ID = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1, 
+d3_IDs <- data.frame(ID = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1,
                             sapply(read.table(paste0("../samples/", "duplicates", "_IDs.list"), header = F, stringsAsFactors = F)$V1,
                                    function(x) rep(x, 2))),
                      source = c(rep("merged", 306), rep(c("dup1", "dup2"), 37)),
-                     bam = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_bams.list"), header = F, stringsAsFactors = F)$V1, 
+                     bam = c(read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_bams.list"), header = F, stringsAsFactors = F)$V1,
                              read.table(paste0("../samples/", "duplicates", "_bams.list"), header = F, stringsAsFactors = F)$V1))
 gz1 <- gzfile("results/thinnedSNPs/hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates/whole_genome.beagle.gz", "w")
 write.table(as.data.frame(d3, col.names = d3_header, check.names = F), # slow
-            gz1, 
-            sep = "\t", quote = F, 
+            gz1,
+            sep = "\t", quote = F,
             row.names = F, col.names = T)
 close(gz1)
 
 # need to fix merge:
 d %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group, size = est_coverage, shape = (ID %in% ids_dup))) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = group, size = est_coverage, shape = (ID %in% ids_dup))) +
+  geom_point(alpha = .5) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("duplicates, merged data, and hilo")
-ggsave("plots/resequenced_duplicates_PCA_perspective_with_other_hilo.png", 
-       device = "png", 
+ggsave("plots/resequenced_duplicates_PCA_perspective_with_other_hilo.png",
+       device = "png",
        width = 8, height = 8, units = "in",
        dpi = 200)
 
@@ -635,26 +635,26 @@ ggsave("plots/resequenced_duplicates_PCA_perspective_with_other_hilo.png",
 d %>%
   filter(ID %in% ids_dup) %>%
   filter(duplicated(ID)) %>% # only look at original (unmerged)
-  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group, size = est_coverage)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group, size = est_coverage)) +
+  geom_point(alpha = .5) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
   ggtitle("duplicates")
-ggsave("plots/resequenced_duplicates_PCA.png", 
-       device = "png", 
+ggsave("plots/resequenced_duplicates_PCA.png",
+       device = "png",
        width = 8, height = 8, units = "in",
        dpi = 200)
 d %>%
   filter(ID %in% ids_dup) %>%
   filter(duplicated(ID)) %>% # only look at original (unmerged)
-  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group)) + 
-  geom_point(alpha = .5) + 
+  ggplot(., aes(x = -PC1, y = PC2, color = ID, shape = group)) +
+  geom_point(alpha = .5) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
-  ggtitle("duplicates") + 
+  ggtitle("duplicates") +
   facet_wrap(~ID)
-ggsave("plots/resequenced_duplicates_PCA_facet_ID.png", 
-       device = "png", 
+ggsave("plots/resequenced_duplicates_PCA_facet_ID.png",
+       device = "png",
        width = 15, height = 15, units = "in",
        dpi = 200)
 
