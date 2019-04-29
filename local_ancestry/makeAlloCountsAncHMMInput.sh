@@ -15,7 +15,7 @@ MEX_IDs="../samples/pass2_pops/allo.mexicana_IDs.list"
 PREFIX="pass2_alloMAIZE"
 DIR_MEX_COUNTS="results/countsMajMin/$PREFIX"
 MAIZE_FILE="results/counts/$PREFIX/allo.maize_chr$CHR"
-DIR_SITES="results/thinnedHMM/$PREFIX"
+DIR_SITES="results/thinnedSNPs/$PREFIX"
 DIR_OUT="results/counts/$PREFIX"
 
 # general bash script settings to make sure if any errors in the pipeline fail
