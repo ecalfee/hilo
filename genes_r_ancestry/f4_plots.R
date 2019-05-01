@@ -26,6 +26,8 @@ d <- left_join(genome, f4_nonadmix, by = c("chr", "start", "end", "10kb_region")
   mutate(f4_mexicana = as.numeric(f4_mexicana)) %>%
   mutate(alpha_mexicana = f4_mexicana/f4_nonadmix) %>% # f4-ratio to estimate % maize
   mutate(alpha_maize = f4_maize/f4_nonadmix) %>%
+  mutate(coding_density = length_cds/r) %>%
+  mutate(cds5 = cut(.$coding_density, breaks = c(0, .1, 1000, 10000, 100000, 1000000), right = T, include.lowest = T)) %>%
   #mutate(cds5 = cut(.$perc_coding, breaks = quantile(x = .$perc_coding, probs = seq(0, 1, by = .5)), right = T, include.lowest = T)) %>%
   mutate(r10 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .1)), right = T, include.lowest = T)) %>% # bin recombination rate
   mutate(r5 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .2)), right = T, include.lowest = T)) # 5 quantiles
@@ -39,9 +41,15 @@ summary(d$alpha_maize)
 
 lma <- with(d, lm(f4_maize ~ f4_nonadmix))
 summary(lma)
-lmr <- with(d, lm(f4_maize ~ f4_nonadmix*r))
-summary(lmr)
-
+# an overly simplistic linear model. but slope isn't 1:1 for f4_nonadmix and f4_admix 
+# these are bins which is probably bad. but higher r suggests lower minor ancestry (not what we'd predict)
+lmr_maize <- with(d, lm(f4_maize ~ f4_nonadmix + r + perc_coding))
+summary(lmr_maize)
+lmr_mex <- with(d, lm(f4_mexicana ~ f4_nonadmix + r + perc_coding))
+summary(lmr_mex)
+# weak model
+d1 <- mutate(d, coding_density = as.numeric(length_cds)/r)
+summary(with(d1, lm(f4_maize ~ f4_nonadmix + coding_density)))
 
 d %>%
   group_by(r5) %>%
@@ -95,6 +103,12 @@ d %>%
   filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
   group_by(r10) %>%
   summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix)))
+# I can't do true quantiles for coding density, but I can visualize:
+d %>% # not a super clear trend
+  filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
+  group_by(cds5) %>%
+  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix))) 
+
 
 # and mexicana; pattern is not clear:
 d %>%

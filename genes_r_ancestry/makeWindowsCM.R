@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-source("calcMapLinearApprox.R") # linear interpolation functions
+source("../scripts/calcMapLinearApprox.R") # linear interpolation functions
 
 # this script makes windows of a specific cM width
 # around each SNP position given

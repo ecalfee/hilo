@@ -95,3 +95,5 @@ Submitted batch job 10502811-5 COMPLETED
 ancestry_hmm$ for j in HILO207 HILO41 HILO218 HILO42; do for i in 0.05 0.1 0.5 1 1.5; do mkdir -p downsampled_"$i"x/output_noBoot; scp -P 2022 -r ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/downsampled_"$i"x/output_noBoot/"$j".posterior downsampled_"$i"x/output_noBoot/.; done; done
 ancestry_hmm$ for i in 0.05 0.1 0.5 1 1.5; do mkdir -p downsampled_"$i"x/output_noBoot/anc; scp -P 2022 -r ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/downsampled_"$i"x/output_noBoot/anc/* downsampled_"$i"x/output_noBoot/anc/.; done; done
 # Plot results in plot_sensitivity_to_coverage.R
+
+

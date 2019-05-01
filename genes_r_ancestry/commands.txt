@@ -53,6 +53,10 @@ f4/pass2_alloMAIZE$ for p in parv_pop*_allo.mexicana_trip; do for i in {0..425};
 bedtools map -a ~/hilo/data/refMaize/windows_10kb/whole_genome.bed -b "$p"/f4.bed -c 4 -o mean -g ~/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths > "$p"/f4_10kb.bed;
 bedtools map -a ~/hilo/data/refMaize/windows_10kb/whole_genome.bed -b "$p"/f4.bed -c 4 -o count -g ~/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths > "$p"/SNP_count_10kb.bed; done
 
+# I am testing for the expected pattern with recombination using the newest local ancestry calls:
+# First I identify .1cM windows around SNPs with called ancestry (to get r and coding density)
+genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 makeWindowsCM.sh
+
 
 # TO DO: 
 # (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population. 
