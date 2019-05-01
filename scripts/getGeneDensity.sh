@@ -20,9 +20,12 @@ set –o nounset
 # load software needed
 module load R
 
+input_dir="../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/"
 
 # run R script
 echo "getting gene density for all sites"
-Rscript rmap.R
+Rscript rmap.R $input_dir
+
+
 
 echo 'all done!'

@@ -1,13 +1,16 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/genes_r_ancestry
 #SBATCH -J geneOverlap
 #SBATCH -o /home/ecalfee/hilo/slurm-log/geneOverlapWindowsCM_%A_%a.out
 #SBATCH -t 5:00:00
 #SBATCH --mem=8G
 
-DIR_WINDOWS="geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/windows0.1cM"
-CDS_FILE="refMaize/geneAnnotations/CDS_merged.bed"
+# to run: genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 geneOverlapWindowsCM.sh
+
+
+DIR_WINDOWS="../local_ancestry/results/thinnedSNPs/"$PREFIX"/windows"$CM_WINDOW"cM"
+CDS_FILE="../data/refMaize/geneAnnotations/CDS_merged.bed"
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables

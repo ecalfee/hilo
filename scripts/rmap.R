@@ -1,7 +1,11 @@
+#!/usr/bin/env Rscript
 source("rmap_functions.R") # get functions and recomb. map
 source("gene_density.R")
 
-dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/"
+# arguments
+args = commandArgs(trailingOnly=TRUE)
+# input directory
+dir_in = args[1]
 pos_thin <- read.table(paste0(dir_in, "pop18.anc_hmm.input"),
                        stringsAsFactors = F)[ , 1:2] # all pops have same sites
 colnames(pos_thin) <- c("chr", "pos")

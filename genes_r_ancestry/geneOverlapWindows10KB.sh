@@ -1,10 +1,12 @@
 #!/bin/bash -l
 #SBATCH --partition=med2
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH -D /home/ecalfee/hilo/genes_r_ancestry
 #SBATCH -J geneOver10kb
 #SBATCH -o /home/ecalfee/hilo/slurm-log/geneOverlapWindows10KB_%A_%a.out
 #SBATCH -t 2:00:00
 #SBATCH --mem=8G
+
+#to run: genes_r_ancestry$ sbatch geneOverlapWindows10KB.sh
 
 # script to divide genome into fixed non-overlapping 10kb windows 
 # and calculate gene density within each window and recombination rates by window

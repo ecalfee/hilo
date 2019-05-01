@@ -56,6 +56,14 @@ bedtools map -a ~/hilo/data/refMaize/windows_10kb/whole_genome.bed -b "$p"/f4.be
 # I am testing for the expected pattern with recombination using the newest local ancestry calls:
 # First I identify .1cM windows around SNPs with called ancestry (to get r and coding density)
 genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 makeWindowsCM.sh
+Submitted batch job 10513303 - COMPLETED (very fast)
+# calculating gene overlap with windows:
+genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 geneOverlapWindowsCM.sh
+
+# I already have output from geneOverlapWindows10KB.sh for gene density for all 10kb windows
+# what I need to summarise is ancestry frequency for these same 10kb windows
+# and I need to get local recombination rate for each position with ancestry_hmm output
+
 
 
 # TO DO: 
