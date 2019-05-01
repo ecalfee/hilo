@@ -59,7 +59,7 @@ genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 makeWindo
 Submitted batch job 10513303 - COMPLETED (very fast)
 # calculating gene overlap with windows:
 genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,CM_WINDOW=0.1 geneOverlapWindowsCM.sh
-
+Submitted batch job 10513646 - RUNNING 4.30.19
 # I already have output from geneOverlapWindows10KB.sh for gene density for all 10kb windows
 # what I need to summarise is ancestry frequency for these same 10kb windows
 # and I need to get local recombination rate for each position with ancestry_hmm output
