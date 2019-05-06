@@ -11,24 +11,31 @@ yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
 colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
-PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small"
+
+PREFIX <- "pass2_alloMAIZE"
 #PREFIX <- "duplicates"
 #PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
+PREFIX_metrics <- "hilo_alloMAIZE_MAIZE4LOW"
 ids_dup = unlist(lapply(data.frame(ID = read.table(paste0("../samples/duplicates_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F),
                         function(x) rep(x, 2)))
 ids_merged = read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
 #IDs = data.frame(ID = c(ids_merged, ids_dup))
 #PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
-metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX, ".flagstat.total"), header = F, stringsAsFactors = F)
+metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX_metrics, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
 maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
 landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
 seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
 
+# elevation
+pop_elev <- read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+                       stringsAsFactors = F, header = T, sep = "\t") %>%
+  dplyr::select(., popN, ELEVATION)
+
 # only for using RIMMA0625_small
-landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
+#landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
 
 # a rough coverage estimate is number of reads passing filtering * 150bp/read
 # divided by total area they could map to in maize reference genome v4
@@ -42,6 +49,7 @@ metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
 # combine sample meta data
 meta <- bind_rows(hilo, maize4low, landraces) %>%
   left_join(., metrics, by = "ID") %>%
+  left_join(., pop_elev, by = "popN") %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
 #meta$est_coverage[meta$ID=="RIMMA0625"] <- metrics$est_coverage[metrics$ID=="RIMMA0625_small"]
 sum(meta$est_coverage < .025)
@@ -657,6 +665,95 @@ ggsave("plots/resequenced_duplicates_PCA_facet_ID.png",
        device = "png",
        width = 15, height = 15, units = "in",
        dpi = 200)
+
+
+# plot PCA or pass2_alloMAIZE individuals:
+d %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  geom_point(alpha = 0.5, aes(color = group, size = depth)) +
+  scale_colour_manual(values = colors_alphabetical) +
+  ggtitle(paste("PCA HiLo and reference ind's colored by maize/mexicana group"))
+ggsave(paste0("plots/PCA_", PREFIX, ".png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+d %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  geom_point(alpha = 0.5, aes(color = LOCALITY, size = depth)) +
+  ggtitle(paste("PCA HiLo and reference ind's colored by population"))
+ggsave(paste0("plots/PCA_", PREFIX, "_colored_by_pop.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+d %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained[2], "%)")) +
+  geom_point(aes(color = ELEVATION, size = depth)) + # coverage truncated to be viewable
+  ggtitle(paste("PCA HiLo colored by elevation")) +
+  scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
+ggsave(paste0("plots/PCA_", PREFIX, "_colored_by_elevation.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+# what does the PCA look like for just inv4m, a large inversion on chr4?
+# get PCA data
+cov_dir_inv4m <- paste0("results/PCA/", PREFIX, "_inv4m")
+cov_data_inv4m <- read.table(file.path(cov_dir_inv4m, "whole_genome.cov"),
+                       header = F, stringsAsFactors = F)
+# PC's are each column of dataframe pca:
+# i.e. PC1 is V1, PC2 is V2 etc.
+pca_inv4m <- eigen(cov_data_inv4m) # take PCA of covariance matrix
+n = 4 # make small dataframe w/ only first n eigenvectors
+pca_small_inv4m <- data.frame(pca_inv4m$vectors[ , 1:n])
+colnames(pca_small_inv4m) = paste0("PC", 1:n)
+# rounded eigen values
+PC_var_explained_inv4m = round(pca_inv4m$values, 2)
+
+#IDs <- data.frame(ID = sapply(IDs, function(x) rep(x, 2)))
+# quick plot of new data:
+d_inv4m <- bind_cols(IDs, pca_small_inv4m) %>%
+  left_join(., meta, by = "ID")
+d_inv4m %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  xlab(paste0("PC1 (", PC_var_explained_inv4m[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
+  geom_point(aes(color = LOCALITY, shape = group, size = depth)) +
+  ggtitle(paste("PCA HiLo inv4m locus")) #+
+  #scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
+ggsave(paste0("plots/PCA_", PREFIX, "inv4m.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+d_inv4m %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC1, y = PC2)) +
+  xlab(paste0("PC1 (", PC_var_explained_inv4m[1], "%)")) +
+  ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
+  geom_point(aes(color = ELEVATION, shape = group, size = depth)) +
+  ggtitle(paste("PCA HiLo inv4m locus")) +
+scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
+ggsave(paste0("plots/PCA_", PREFIX, "inv4m_colored_by_elevation.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+d_inv4m %>%
+  mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
+  ggplot(., aes(x = PC3, y = PC4)) +
+  xlab(paste0("PC3 (", PC_var_explained_inv4m[3], "%)")) +
+  ylab(paste0("PC4 (", PC_var_explained_inv4m[4], "%)")) +
+  geom_point(aes(color = LOCALITY, shape = group, size = depth)) +
+  ggtitle(paste("PCA HiLo inv4m locus - PC 3 & 4"))
 
 
 

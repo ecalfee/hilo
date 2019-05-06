@@ -226,7 +226,7 @@ if (K == 2){
     labs(y = "proportion 'mexicana-like' ancestry")
   p + facet_wrap(~LOCALITY) # show plot
   # save plot
-  ggsave("../plots/NGSadmix_proportion_mexicana-like_by_location.png", plot = p + facet_wrap(~LOCALITY), device = png(), 
+  ggsave("plots/NGSadmix_proportion_mexicana-like_by_location.png", plot = p + facet_wrap(~LOCALITY), device = png(), 
          width = 12, height = 8, units = "in",
          dpi = 200)
 }
@@ -264,6 +264,23 @@ d_meta %>%
               color = colors_maize2mex[2]) +
   ggtitle("Higher mexicana ancestry at higher elevations")
 ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+d_meta %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = anc2, color = LOCALITY, size = est_coverage)) +
+  geom_point() +
+  ylab("mexicana ancestry") +
+  #scale_colour_manual(values = colors_maize2mex[2:3]) +
+  geom_abline(intercept = lmZeaElev$coefficients["(Intercept)"] + lmZeaElev$coefficients["zeamexicana"], 
+              slope = lmZeaElev$coefficients["ELEVATION"] + lmZeaElev$coefficients["zeamexicana:ELEVATION"],
+              color = colors_maize2mex[3]) +
+  geom_abline(intercept = lmZeaElev$coefficients["(Intercept)"], 
+              slope = lmZeaElev$coefficients["ELEVATION"],
+              color = colors_maize2mex[2]) +
+  ggtitle("Higher mexicana ancestry at higher elevations")
+ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop.png", 
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)

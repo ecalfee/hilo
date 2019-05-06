@@ -94,4 +94,11 @@ Submitted batch job 10430203 - running 4.19.19
 hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_with_duplicates
 
 
+9) # I want to plot a PCA just for the chr4 inversion 4m:
+# So I limit my GL file to just that region based on published inversion endpoints:
+global_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ cat chr4.var.sites | awk '$2 >= 171771502 && $2 <= 185951149 {print $0}' >  ../pass2_alloMAIZE_inv4m/inv4m.var.sites
+global_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ zcat whole_genome.beagle.gz | head -n 1 | gzip > ../pass2_alloMAIZE_inv4m/whole_genome.beagle.gz; zcat whole_genome.beagle.gz | tail -n +52543 | head -n 1366 | gzip >> ../pass2_alloMAIZE_inv4m/whole_genome.beagle.gz
+global_ancestry$ sbatch -p med2 --export=PREFIX="pass2_alloMAIZE_inv4m" runPCAngsd.sh
+Submitted batch job 10626776 - RUNNING 5.5.19
+
 # TO DO:
