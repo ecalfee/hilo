@@ -31,6 +31,17 @@ d <- left_join(genome, f4_nonadmix, by = c("chr", "start", "end", "10kb_region")
   #mutate(cds5 = cut(.$perc_coding, breaks = quantile(x = .$perc_coding, probs = seq(0, 1, by = .5)), right = T, include.lowest = T)) %>%
   mutate(r10 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .1)), right = T, include.lowest = T)) %>% # bin recombination rate
   mutate(r5 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .2)), right = T, include.lowest = T)) # 5 quantiles
+
+# print out regions falling into the 5 quantiles of recombination:
+for (l in 1:5){
+  filter(d, r5 == levels(d$r5)[l]) %>%
+    dplyr::select(., c("chr", "start", "end", "r")) %>%
+  write.table( ., 
+               paste0("../data/refMaize/windows_10kb/recomb_", l, ".bed"), 
+               quote = F, col.names = F, row.names = F)
+} 
+
+
 # plot
 hist(d$f4_maize)
 hist(d$f4_mexicana)

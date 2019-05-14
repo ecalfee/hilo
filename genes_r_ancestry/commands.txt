@@ -65,6 +65,29 @@ Submitted batch job 10513646 - RUNNING 4.30.19
 # and I need to get local recombination rate for each position with ancestry_hmm output
 
 
+# I don't see the f4 pattern I'd expect in maize ~ recombination rate:
+Why is this?
+(A) Low resolution - What percent of variant sites have tripsacum calls? Probably not why, > 20% sites also seen in Tripsacum
+variant_sites/results/pass2_alloMAIZE$ zcat region_*.mafs.gz | wc -l
+50189317
+hilo/within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE/trip$ zcat region_*.mafs.gz | wc -l
+10955233
+
+(B) Mapping bias - Does maize with mexicana ancestry have lower read coverage in regions of the genome where we'd expect these populations to have lower mexicana ancestry, like regions of the genome with low recombination?
+
+
+(C) Pattern isn't really there - Does something less sensitive to subtle biases than the hmm (or possibly the f4) also show reduced minor ancestry in regions of the genome with low recombination? What happens if I partition NGSAdmix by recombination rate regions? 
+I start by partitioning the bed files into low (1) to high (5) quantiles of recombination:
+Made files using f4_plots.R, e.g. recomb_1.bed. Next I use bedtools to partition variant sites into these groups and then get GL files for these subsets.
+
+
+(D) SNP choice or subtle ascertainment bias (?). I did not include tripsacum or parviglumis when I ascertained SNPs .. is this a problem?
+
+(E) f4 is being affected by admixture between parviglumis and teosinte that is uneven across the genome
+
+(F) Sampling noise -- What does a block bootstrap say about certainty of these estimates? I could bootstrap by chromosome possibly.
+
+(G) Error from the recombination map -- is 10kb too wide? is the original results robust to excluding areas towards the telomeres on chromosome edges where recombination is poorly estimated?
 
 # TO DO: 
 # (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population. 

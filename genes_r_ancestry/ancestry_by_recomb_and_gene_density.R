@@ -884,11 +884,14 @@ d.pops %>%
   group_by(inv4m, pop, ELEVATION, LOCALITY, zea) %>%
   summarise(mex_anc_freq = mean(meanAnc)) %>%
   ggplot(aes(x = ELEVATION, y = mex_anc_freq, color = inv4m)) +
-  geom_smooth() +
+  geom_smooth(method = "lm") +
   geom_point() +
   facet_wrap(~zea) +
   ylab("mean population mexicana ancestry") +
   ggtitle("mean mexicana ancestry in and out of inversion")
+ggsave("plots/lm_mexicana_ancestry_inv4m_vs_genomewide_background_by_elevation.png",
+       height = 10, width = 14,
+       units = "in", device = "png")
 
 # can I get a PCA of just the inversion?
 # plot ZAnc ~ environment across the genome?
