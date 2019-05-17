@@ -940,30 +940,165 @@ zBeta3_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each 
   zBeta3(ancFreq = l,
          envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"], 
          invL = zAnc_maize$InvL, 
-         alpha = zAnc_maize$alpha))
-zb3 <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
-with(zb3, plot(r_squared ~ slope.zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zb3"))
-with(zb3, plot(sum_sq_res ~ slope.zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zb3"))
+         alpha = zAnc_maize$alpha)) 
+zb3_elev <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
+zBeta3_highmex_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+  zBeta3(ancFreq = l,
+         envWeights = rep(1, 14), 
+         invL = zAnc_maize$InvL, 
+         alpha = zAnc_maize$alpha)) 
+zb3_hmex <- data.frame(t(zBeta3_highmex_maize)) # data frame is easier to work with
+
+with(zb3_elev, plot(r_squared ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
+with(zb3_elev, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
+with(zb3_hmex, plot(r_squared ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 universally high mexicana anc in maize"))
+with(zb3_hmex, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 universally high mexicana anc in maize"))
+
+# plot outliers against their population means
+d %>%
+  bind_cols(., zb3_hmex) %>%
+  filter(., pval < .01) %>%
+  ggplot(aes(x = pop_meanAlpha_maize, y = zEnv, color = log(pval))) +
+  geom_point(size = .1)
+d %>% # color by sum of squared residuals. okay actually that's only relevant as a relative value compared to the null model residuals
+  bind_cols(., zb3_hmex) %>%
+  filter(., r_squared > .5) %>%
+  ggplot(aes(x = pop_meanAlpha_maize, y = zEnv, color = r_squared)) +
+  geom_point(size = .1)
+
+# calculate zAnc at each locus. 
+zAnc3 <- t(apply(maize_anc, 1, function(l) zAnc(ancFreq = l, 
+                                      invL = zAnc_maize$InvL, 
+                                      alpha = zAnc_maize$alpha)))
+# what are the dominant patterns in my data?
+# note: default algorithm is Hartigan-Wong. My other choices include 'Lloyd' and 'MacQueen'
+set.seed(10) # set seed for k-means clustering
+kmeans(zAnc3, 1)$centers # good, with k=1 one cluster, the mean should be all ~ zeros
+k1 <- kmeans(zAnc3, centers = 1, nstart = 25, iter.max = 25)
+k2 <- kmeans(zAnc3, centers = 2, nstart = 25, iter.max = 25)
+k2$centers
+k3 <- kmeans(zAnc3, centers = 3, nstart = 25, iter.max = 50)
+#k4 <- kmeans(zAnc3, centers = 4, nstart = 25, iter.max = 50, trace = T) # produces a lot of output
+k4 <- kmeans(zAnc3, centers = 4, nstart = 25, iter.max = 50)
+k5 <- kmeans(zAnc3, centers = 5, nstart = 25, iter.max = 50)
+k10 <- kmeans(zAnc3, centers = 10, nstart = 25, iter.max = 50) # 22 warnings, but 25 starts? it's choosing the best one out of the ones that don't fail I assume
+# I increased iterations and number of starts to avoid nonconvergence errors:
+# 16: Quick-TRANSfer stage steps exceeded maximum (= 19105350)
+
+kmeans(maize_anc, 1)$centers
+
+# first look at clusters in all positions (not just outliers):
+colnames(maize_anc) <- maize_pops
+maize_anc %>%
+  mutate(k.2 = as.factor(k2$cluster)) %>% # which cluster does this locus belong to?
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  ggplot(aes(x = pop, y = mex_freq, fill = k.2)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+maize_anc %>% # too big a plot to view properly
+  mutate(k.1 = as.factor(k1$cluster)) %>%
+  mutate(k.2 = as.factor(k2$cluster)) %>%
+  mutate(k.3 = as.factor(k3$cluster)) %>%
+  mutate(k.4 = as.factor(k4$cluster)) %>%
+  mutate(k.5 = as.factor(k5$cluster)) %>%
+  mutate(k.10 = as.factor(k10$cluster)) %>% 
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  gather(., "k", "cluster", paste("k", c(1:5, 10), sep = ".")) %>%
+  ggplot(aes(x = pop, y = mex_freq, fill = cluster)) +
+  geom_boxplot() +
+  facet_wrap(~k) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("all loci maize - k-means clusters")
+# save individual plots
+ks <- list(k1, k2, k3, k4, k5, k10)
+ks_names <- paste0("k", c(1:5, 10))
+plot_ks <- lapply(1:length(ks), function(i)
+  maize_anc %>%
+    mutate(cluster = as.factor(ks[[i]]$cluster)) %>% # which cluster does this locus belong to?
+    gather(., "pop", "mex_freq", maize_pops) %>%
+    left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+    ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, fill = cluster)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle(paste("k-means clustering:", ks_names[i])))
+for (i in 1:length(ks)){
+  plot(plot_ks[[i]])
+  ggsave(paste0("plots/k_means_all_loci_maize_", ks_names[i], ".png"),
+         device = "png",
+         width = 10, height = 8, units = "in")
+}
+  
+ 
+# Now get zTz -- basically the sum of residual errors to the null model
+# zTz
+zTz3 <- apply(zAnc3, 1, function(i) t(i) %*% i)
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_hmex) %>%
+  filter(zTz >= quantile(zTz, .95)) %>% # limit to top 1%
+  mutate(log_pval = log(pval)) %>%
+  ggplot(aes(x = meanAlpha_maize, y = zEnv, color = log_pval)) +
+  geom_point(size = .1) +
+  ggtitle("only showing top 5% zTz outliers; universal selection model")
+d %>% # note: inv4m is not in top 1% of zTz but it is in top 5% of zTz
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_elev) %>%
+  filter(zTz >= quantile(zTz, .95)) %>% # limit to top 1%
+  mutate(log_pval = log(pval)) %>%
+  ggplot(aes(x = meanAlpha_maize, y = zEnv, color = log_pval)) +
+  #ggplot(aes(x = meanAlpha_maize, y = zEnv, color = inv4m)) +
+  geom_point(size = .1) +
+  ggtitle("only showing top 5% zTz outliers; elevation gradient model")
+
+# now cluster just within the top 1% outliers
+top1.zAnc3 <- zAnc3[zTz3 >= quantile(zTz3, .99), ]
+top1.ks <- lapply(1:5, function(k)
+  kmeans(top1.zAnc3, centers = k, nstart = 25, iter.max = 50))
+top1.ks_names <- paste0("k", 1:5)
+top1.plot_ks <- lapply(1:length(top1.ks), function(i)
+  maize_anc[zTz3 >= quantile(zTz3, .99), ] %>%
+    mutate(cluster = as.factor(top1.ks[[i]]$cluster)) %>% # which cluster does this locus belong to?
+    gather(., "pop", "mex_freq", maize_pops) %>%
+    left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+    ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, fill = cluster)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle(paste("top 1% zTz hits: k-means clustering:", top1.ks_names[i])))
+for (i in 1:length(top1.ks)){
+  plot(top1.plot_ks[[i]])
+  ggsave(paste0("plots/k_means_top1percent_loci_maize_", top1.ks_names[i], ".png"),
+         device = "png",
+         width = 10, height = 8, units = "in")
+}
+
+
+
+
+
+
+
 
 # what is the qualitative diff of centering? zb2 vs. zb3:
-plot(zb2$slope.zEnv ~ zb3$slope.zEnv) # eh blob
-cor(zb2$slope.zEnv, zb3$slope.zEnv) # very weak correlation, or = .04
-plot(zb2$pval_slope ~ zb3$pval_slope) # black box (everywhere)
-cor(zb2$pval_slope, zb3$pval_slope) # slightly negative, cor -.06
-plot(zb2$sum_sq_res ~ zb3$sum_sq_res) # highly correlated
-cor(zb2$sum_sq_res, zb3$sum_sq_res) # cor = .96
+plot(zb2$slope.zEnv ~ zb3_elev$slope.zEnv) # eh blob
+cor(zb2$slope.zEnv, zb3_elev$slope.zEnv) # very weak correlation, or = .04
+plot(zb2$pval_slope ~ zb3_elev$pval_slope) # black box (everywhere)
+cor(zb2$pval_slope, zb3_elev$pval_slope) # slightly negative, cor -.06
+plot(zb2$sum_sq_res ~ zb3_elev$sum_sq_res) # highly correlated
+cor(zb2$sum_sq_res, zb3_elev$sum_sq_res) # cor = .96
 
 
 # test set: there are 14 populations of maize. I will create some test sets with 14 pops
 # that have perfect environmental correlations
 # each row is a made-up ancestry frequency observation; each column is a population 
-test_case_names <- c("all_1", "last_pop_only", "sixth_pop_only", "first_pop_only", "linear_env")
+test_case_names <- c("all_1", "last_pop_only", "sixth_pop_only", "first_pop_only", "linear_env", "first_one_out", "last_one_out")
 
 test_anc <- rbind(rep(1, 14), # all selected for mexicana ancestry
                   c(zAnc_maize$alpha[1:13], 1), # only last population selected
                   c(zAnc_maize$alpha[1:5], 1, zAnc_maize$alpha[7:14]), # 6th population selected
                   c(1, zAnc_maize$alpha[2:14]), # last population selected
-                  seq(0, 1, length.out = 14)) # linear association with simple linear environmental gradient: e.g. seq(100, 200, length.out = 14)
+                  seq(0, 1, length.out = 14),
+                  c(0, rep(1, 13)),
+                  c(rep(1,13), 0)) # linear association with simple linear environmental gradient: e.g. seq(100, 200, length.out = 14)
                   # could also test false positive cases: e.g. one outlier but no real other association with
 
 # I'll use my test_anc cases with the empirical K matrix:
@@ -1029,12 +1164,12 @@ a3 <- do.call(rbind,
                   mutate(test_model = test_case_names) %>%
                   mutate(true_model = test_case_names[l])))
 a3 %>%
-  ggplot(aes(x = test_model, y = intercept..Intercept., color = true_model, shape = (true_model == test_model))) +
+  ggplot(aes(x = test_model, y = r_squared, color = true_model, shape = (true_model == test_model))) +
   geom_point() + 
   ggtitle("not mean centered environment test cases")
 a3 %>%
-  gather(., "model_output", "value", c("intercept..Intercept.", "slope.zEnv", "r_squared")) %>%
-  ggplot(aes(x = test_model, y = value, color = true_model, shape = (true_model == test_model))) +
+  gather(., "model_output", "value", c("zEnv", "r_squared")) %>%
+  ggplot(aes(x = true_model, y = value, color = test_model, shape = (true_model == test_model))) +
   geom_point() + 
   ggtitle("not mean centered environment test cases") +
   facet_wrap(~model_output) +
@@ -1043,7 +1178,7 @@ ggsave("plots/test_cases_environment_ZAnc_model_values.png",
        height = 10, width = 10, device = "png", units = "in")
 
 a3 %>%
-  gather(., "model_output", "value", c("sum_sq_res", "pval_intercept", "pval_slope.zEnv")) %>%
+  gather(., "model_output", "value", c("sum_sq_res", "pval")) %>%
   mutate(., log_value = log(value)) %>%
   ggplot(aes(x = test_model, y = log_value, color = true_model, shape = (true_model == test_model))) +
   geom_point() + 
@@ -1052,6 +1187,8 @@ a3 %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ggsave("plots/test_cases_environment_ZAnc_fit_values.png",
        height = 10, width = 10, device = "png", units = "in")
+
+# instead of calculating zTz in it's own framework -- can I just put in a vector of 0's for environment?
 
 
 # straight regression, no rotation:
