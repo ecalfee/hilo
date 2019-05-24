@@ -1515,6 +1515,7 @@ pops_shared %>%
 ggsave("plots/hist_shared_high_minor_ancestry.png",
        height = 12, width = 13, units = "in", device = "png")
 
+
 # observations: in general, maize is more likely to have no populations with > 1,2,3,4 s.d. above the mean for minor ancestry.
 # this could be a power issue because in general mexicana has lower % maize than maize has % mexicana admixture.
 # at the lower cutoff thresholds, maize tends to have more loci with broadly shared peaks whereas in mexicana minor ancestry peaks are 

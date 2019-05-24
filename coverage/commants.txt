@@ -1,0 +1,27 @@
+# coverage analysis
+# for each individual:
+# calculate coverage for reads mapQ >= 30 in
+
+(A) number of reads overlapping 10kb windows across the genome using bedtools 
+# testing:
+data/refMaize/windows_10kb$ samtools view -b ../../../filtered_bams/results/merged/HILO9.sort.dedup.baq.bam 1:0-30000 | bedtools coverage -sorted -a whole_genome.bed -b stdin | head
+
+# running script calculating coverage for maize and mexicana:
+coverage$ sbatch --array=0-232 --export=PREFIX=pass2_alloMAIZE count_reads_10kb_windows.sh
+
+# running script calculating coverage for parviglumis:
+coverage$ sbatch --array=0-49 --export=PREFIX=PalmarChico count_reads_10kb_windows.sh
+
+# running script calculating coverage for outgroup tripsacum:
+coverage$ sbatch --array=0 --export=PREFIX=trip count_reads_10kb_windows.sh
+
+(B) number of reads at every 1bp site with a local ancestry call
+
+# make bed files (0-indexed) for all SNPs in local ancestry calling:
+local_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ for i in {1..10}; do cat chr$i.var.sites | awk '{print $1"\t"$2 - 1"\t"$2}'; done > whole_genome.bed
+
+# testing:
+local_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ samtools view -b ../../../../filtered_bams/results/merged/HILO9.sort.dedup.baq.bam 1:0-30000 | bedtools coverage -sorted -a chr1.bed -b stdin | head
+
+# running script for maize and mexicana:
+sbatch --array=0-232 --export=BED_POS=../local_ancestry/results/thinnedSNPs/pass2_alloMAIZE/whole_genome.bed, DIR_OUT=results/localAncSNPs/pass2_alloMAIZE,PREFIX=pass2_alloMAIZE count_depth_at_SNPs.sh
