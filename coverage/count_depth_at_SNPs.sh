@@ -22,9 +22,9 @@ set –o nounset
 module load bio3 # for bedtools and samtools
 
 i="$SLURM_ARRAY_TASK_ID"
-bams=($(cat ../samples/${PREFIX_LIST}_bams.list))
+bams=($(cat ../samples/"$PREFIX"_bams.list))
 BAM=${bams["$i"]}
-ids=($(cat ../samples/${PREFIX_LIST}_IDs.list))
+ids=($(cat ../samples/"$PREFIX"_IDs.list))
 ID=${ids["$i"]}
 
 # make output directory
