@@ -23,10 +23,10 @@ module load bio3 # for bedtools and samtools
 
 WINDOWS="../data/refMaize/windows_10kb/whole_genome.bed"
 DIR_OUT="results/windows_10kb"
-i=$SLURM_ARRAY_TASK_ID
-bams=($(cat ${DIR_IN}/${PREFIX_LIST}_bams.list))
+i="$SLURM_ARRAY_TASK_ID"
+bams=($(cat ../samples/${PREFIX_LIST}_bams.list))
 BAM=${bams["$i"]}
-ids=($(cat ${DIR_IN}/${PREFIX_LIST}_IDs.list))
+ids=($(cat ../samples/${PREFIX_LIST}_IDs.list))
 ID=${ids["$i"]}
 
 # make output directory
