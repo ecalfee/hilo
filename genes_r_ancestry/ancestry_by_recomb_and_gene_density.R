@@ -1561,3 +1561,70 @@ data.frame(maize = apply(maize_anc < 0.1 | maize_anc_s <= -2, 1, sum),
 ggsave("plots/hist_shared_low_minor_ancestry_01_or2sd.png",
        height =6, width = 8, units = "in", device = "png")
   
+
+# plot ancestry at candidate incompatibility loci:
+GRMZM2G410783 <- read.table("../data/refMaize/geneAnnotations/GRMZM2G410783_v4_coord.bed", stringsAsFactors = F, sep = "\t")
+d$GRMZM2G410783 <- (d$chr == GRMZM2G410783$V1 & d$pos >= GRMZM2G410783$V2 & d$pos <= GRMZM2G410783$V3)
+AC231426.1_FG002 <- read.table("../data/refMaize/geneAnnotations/AC231426.1_FG002_v4_coord.bed", stringsAsFactors = F, sep = "\t")
+d$AC231426.1_FG002 <- (d$chr == AC231426.1_FG002$V1 & d$pos >= AC231426.1_FG002$V2 & d$pos <= AC231426.1_FG002$V3)
+d %>%
+  ggplot(aes(x = GRMZM2G410783, y = pop_meanAlpha_mex)) +
+  geom_boxplot()
+d %>%
+  ggplot(aes(x = AC231426.1_FG002, y = pop_meanAlpha_mex)) +
+  geom_boxplot()
+# local ancestry around loci of interest
+d %>%
+  tidyr::gather(., "zea", "meanMexAnc", c(pop_meanAlpha_maize, pop_meanAlpha_mex)) %>%
+  filter(chr == 5 & pos >= 150000000 & pos <= 155000000) %>%
+  tidyr::gather(., "locus", "within_locus", c(GRMZM2G410783, AC231426.1_FG002)) %>%
+  #ggplot(aes(x = pos, y = meanMexAnc, color = GRMZM2G410783 | AC231426.1_FG002, shape = zea)) +
+  ggplot(aes(x = pos, y = meanMexAnc, color = within_locus, shape = zea)) +
+  geom_point() +
+  facet_wrap(~locus) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at putative Ga2 loci")
+ggsave("plots/mex_freq_around_candidate_incompatibility_loci_combined_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+# zoomed out view with boxplot
+d %>%
+  rename(maize = pop_meanAlpha_maize) %>%
+  rename(mexicana = pop_meanAlpha_mex) %>%
+  tidyr::gather(., "zea", "meanMexAnc", c(maize, mexicana)) %>%
+  tidyr::gather(., "locus", "within_locus", c(GRMZM2G410783, AC231426.1_FG002)) %>%
+  #mutate(zea = sapply(zea, function(x) strsplit(x, split = "_")[[1]][3])) %>%
+  ggplot(aes(x = zea, y = meanMexAnc, color = within_locus)) +
+  geom_boxplot() +
+  facet_wrap(~locus) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at putative Ga2 loci compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_loci_combined_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+
+# plot by population:
+# at female locus
+bind_cols(d, all_anc) %>%
+  tidyr::gather(., "pop", "meanMexAnc", meta.pops$pop) %>%
+  left_join(., meta.pops, by = "pop") %>%
+  dplyr::group_by(., pop, zea, LOCALITY, ELEVATION, GRMZM2G410783) %>%
+  summarise(meanMexAnc = mean(meanMexAnc)) %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = meanMexAnc, color = GRMZM2G410783)) +
+  geom_point() +
+  facet_wrap(~zea) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at GRMZM2G410783 compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_GRMZM2G410783_ind_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+# male locus:
+bind_cols(d, all_anc) %>%
+  tidyr::gather(., "pop", "meanMexAnc", meta.pops$pop) %>%
+  left_join(., meta.pops, by = "pop") %>%
+  dplyr::group_by(., pop, zea, LOCALITY, ELEVATION, AC231426.1_FG002) %>%
+  summarise(meanMexAnc = mean(meanMexAnc)) %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = meanMexAnc, color = AC231426.1_FG002)) +
+  geom_point() +
+  facet_wrap(~zea) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at AC231426.1_FG002 compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_AC231426.1_FG002_ind_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+
