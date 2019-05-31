@@ -20,3 +20,13 @@ Saved output file as gene_model_translation_to_APGv4.txt
 Saved just list of gene names on APGv4 to 
 domestication$ cut -f 3 gene_model_translation_to_APGv4.txt | uniq | awk '$0 != "" && $0 != "Zm00001d.2" {print $0}' | \
 head > genes_on_APGv4_Zm00001d.2_gene_model.list
+# I think the third column is the one that can be found in APGv4 gff3 file.
+# My goal is to make 2 bed files: all the domestication genes and all non-domestication genes
+# first I limit the gff3 to just genes (~45K):
+data/refMaize/geneAnnotations$ cat Zea_mays.B73_RefGen_v4.41.chr.gff3 | awk -F" " '$3 ~ /gene/ {print $0}' > Zea_mays.B73_RefGen_v4.41.chr.genes.only.gff3
+# then I get all genes with a match in Zm00001d.2 gene set (which I believe should all be in APG4 annotations)
+data/domestication$ awk '$3 != "" {print $3}' gene_model_translation_to_APGv4.txt | tail -n +2 > gene_model_translation_to_APGv4_Zm00001d.2_hits.txt
+# now I can look at ancestry calls for these genes and for other genes in R. But I may have to create windows around the genes for ancestry
+# because genes are so short it's unlikely they will have an ancestry call within...but I could average the 2 closest ancestry calls on either side or another window approach
+# first I want to get ancestry at all genes and then use permutations to see if domestication genes look different. 
+# I could also look at depth of coverage across domestication genes.
