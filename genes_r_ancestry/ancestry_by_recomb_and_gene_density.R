@@ -1815,3 +1815,6 @@ g10_maize %>%
 g10 %>%
   mutate(., domestication = gene %in% domestication_genes) %>%
   with(., summary(lm(meanAlpha_mex ~ domestication)))
+# domestication genes don't look any more likely than other genes
+# to not have ancestry calls 
+table(data.frame(domestication = g10$gene %in% domestication_genes, has_ancestry = is.na(g10$meanAlpha_mex)))

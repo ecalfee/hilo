@@ -284,4 +284,4 @@ reseq <- hilo %>%
   dplyr::select("RI_ACCESSION", "family", "zea", "symp_allo", "ID", "LOCALITY", "plate_number", "est_coverage") %>%
   unique()
 
-  RIMMA0360, B1, maize, sympatric, HILO112, Nabogame, plate3+4
+#  RIMMA0360, B1, maize, sympatric, HILO112, Nabogame, plate3+4

@@ -57,7 +57,6 @@ sum(meta$est_coverage < .025)
 # which individuals are included in 'pass2'?
 pass2 <- read.table("../samples/pass2_IDs.list", stringsAsFactors = F, header = F)$V1
 
-
 # just plot numbers for pass2:
 for (i in c(0, 0.25, 0.5, 1)) {
   p_counts <- meta %>%
@@ -205,6 +204,42 @@ pass2_plus_reseq %>%
   group_by(LOCALITY, zea) %>%
   summarise(., tot_cov = sum(est_coverage)) %>%
   summary(.)
+
+# update: 32 plants didn't grow
+failed <- read.table("../samples/2019_25_May_failed2grow.txt", stringsAsFactors = F, header = F, sep = " ")
+colnames(failed) <- c("RIMMEA", "popN", "family")
+pass2_plus_reseq$failed <- !pass2_plus_reseq$replaced & paste0(pass2_plus_reseq$popN, substr(pass2_plus_reseq$family, 1, 1)) %in% paste0(failed$popN, substr(failed$family, 1, 1))
+# now how many per pop:
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  filter(., (symp_allo == "allopatric" | !under0.5x)) %>%
+  ggplot(aes(fill = failed,  
+             x = reorder(LOCALITY, ELEVATION))) +
+  geom_bar(stat = 'count') +
+  facet_wrap(~group) +
+  ggtitle(paste0("pass2 plus reseq; samples >0.5x coverage per group")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/counts_pass2_plus_reseq_morethan0.5x_coverage_failed_grow2.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# coverage
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  filter(., (symp_allo == "allopatric" | !under0.5x)) %>%
+  ggplot(aes(fill = failed,  
+             x = reorder(LOCALITY, ELEVATION), 
+             y = est_coverage)) +
+  geom_bar(stat = 'identity') +
+  facet_wrap(~group) +
+  ggtitle(paste0("pass2 plus reseq; total x coverage per group")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/total_x_coverage_pass2_plus_reseq_failed_grow2.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+
 
 
 
