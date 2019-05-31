@@ -83,8 +83,8 @@ meta %>% # per pop/group
 # plotted coverage per population:
 meta %>%
   filter(., ID %in% pass2) %>%
-  ggplot(aes(fill = group, x = LOCALITY, y = est_coverage)) +
-  geom_bar(stat = "sum") +
+  ggplot(aes(fill = group, x = reorder(LOCALITY, ELEVATION), y = est_coverage)) +
+  geom_bar(stat = "identity") +
   ggtitle(paste0("pass2; total x coverage per group")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 ggsave(paste0("plots/total_x_coverage_pass2.png"),
@@ -94,7 +94,7 @@ ggsave(paste0("plots/total_x_coverage_pass2.png"),
 # how evenly is that coverage distributed across individuals?
 meta %>%
   filter(., ID %in% pass2) %>%
-  ggplot(aes(color = group, x = LOCALITY, y = est_coverage)) +
+  ggplot(aes(color = group, x = reorder(LOCALITY, ELEVATION), y = est_coverage)) +
   geom_point() +
   ggtitle(paste0("pass2; individual x coverage")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
@@ -109,7 +109,7 @@ meta %>%
   filter(., group != "allopatric_maize") %>%
   filter(., est_coverage >= 0.25) %>%
   filter(., !(ID %in% pass2)) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
+  ggplot(aes(fill = group, x = reorder(LOCALITY, ELEVATION))) +
   xlab("LOCALITY - (!) group/pop may not be accurate") +
   geom_histogram(stat = "count") +
   ggtitle("# individuals excluded with > 0.25x coverage") +
@@ -122,7 +122,7 @@ meta %>%
   filter(., group != "allopatric_maize") %>%
   filter(., est_coverage >= 0.5) %>%
   filter(., !(ID %in% pass2)) %>%
-  ggplot(aes(fill = group, x = LOCALITY)) +
+  ggplot(aes(fill = group, x = reorder(LOCALITY, ELEVATION))) +
   xlab("LOCALITY - (!) group/pop may not be accurate") +
   geom_histogram(stat = "count") +
   ggtitle("# individuals excluded with > 0.5x coverage") +
@@ -131,6 +131,80 @@ ggsave("plots/counts_excluded_samples_with_morethan0.5x_coverage.png",
        device = "png",
        width = 12, height = 8, units = "in",
        dpi = 200)
+
+# what are the projections after resequencing individuals?
+new_plants <- read.table("../samples/seeds_planted_5.1.19.csv", 
+                         quote="",
+                         sep = ",",
+                         fill = F,
+                         stringsAsFactors = F, header = T) %>%
+  mutate(est_coverage = 1.5) %>% # projected coverage post-sequencing
+  left_join(., unique(dplyr::select(meta, 
+                                    c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY", "ELEVATION", "group"))),
+                      by = c("popN", "RI_ACCESSION"))
+pass2_plus_reseq <- filter(meta, ID %in% pass2) %>%
+  bind_rows(., new_plants) %>%
+  mutate(., fam = substr(family, 1, 1)) %>%
+  arrange(., -est_coverage) %>% # if duplicates, mark the lower coverage one as the duplicate
+  mutate(., replaced = duplicated(dplyr::select(., c("popN", "fam")))) %>%
+  mutate(., under0.5x = est_coverage < 0.5)
+
+# about half of the individuals < 0.5x coverage are getting replaced
+table(dplyr::select(pass2_plus_reseq, c("replaced", "under0.5x")))
+
+# what's going on in plots?
+pass2_plus_reseq %>%
+  filter(LOCALITY=="Tenango del Aire") %>%
+  group_by(zea) %>%
+  summarize(., tot_cov = sum(est_coverage))
+
+# what does projected coverage look like?
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  filter(., (symp_allo == "allopatric" | !under0.5x)) %>%
+  ggplot(aes(fill = group,  
+             x = reorder(LOCALITY, ELEVATION), 
+             y = est_coverage)) +
+  geom_bar(stat = 'identity') +
+  ggtitle(paste0("pass2 plus reseq; total x coverage per group")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/total_x_coverage_pass2_plus_reseq.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# how evenly is that coverage distributed across individuals?
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  ggplot(aes(color = group, x = reorder(LOCALITY, ELEVATION), y = est_coverage,
+             shape = under0.5x)) +
+  geom_point() +
+  ggtitle(paste0("pass2 plus reseq; individual x coverage")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/ind_x_coverage_pass2_plus_reseq_scatter_by_pop.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+# how many individuals per population will be included in local ancestry inference?
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  filter(., (symp_allo == "allopatric" | !under0.5x)) %>%
+  ggplot(aes(fill = group,  
+             x = reorder(LOCALITY, ELEVATION))) +
+  geom_bar(stat = 'count') +
+  ggtitle(paste0("pass2 plus reseq; samples >0.5x coverage per group")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(paste0("plots/counts_pass2_plus_reseq_morethan0.5x_coverage.png"),
+       device = "png",
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+# table of population coverage
+pass2_plus_reseq %>%
+  filter(., !replaced) %>%
+  filter(., (symp_allo == "allopatric" | !under0.5x)) %>%
+  group_by(LOCALITY, zea) %>%
+  summarise(., tot_cov = sum(est_coverage)) %>%
+  summary(.)
 
 
 

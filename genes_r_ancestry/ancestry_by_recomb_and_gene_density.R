@@ -7,6 +7,8 @@ library(dplyr)
 library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
+library(bedr)
+library(IRanges)
 
 # first, load data:
 #source("ZAnc_statistic.R") 
@@ -26,7 +28,7 @@ hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T,
 meta.pops <- read.table(paste0("../global_ancestry/results/NGSAdmix/", PREFIX, "/globalAdmixtureIncludedByPopN.txt"),
                         stringsAsFactors = F, header = T) %>%
   left_join(., pop_elev, by = c("popN")) %>%
-  left_join(., unique(select(hilo, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY"))), by = c("popN")) %>%
+  left_join(., unique(dplyr::select(hilo, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY"))), by = c("popN")) %>%
   mutate(pop = paste0("pop", popN))
 
 meta.ind <- read.table(paste0("../global_ancestry/results/NGSAdmix/", PREFIX, "/globalAdmixtureByIncludedIndividual.txt"), 
@@ -266,6 +268,26 @@ plot(box_coding_density_alpha)
 ggsave("plots/box_coding_density_alpha_0.1cM_windows.png", 
        height = 15, width = 20, 
        units = "in", device = "png")
+lm_coding_density_alpha <- with(filter(d2, !inv4m), 
+                                lm(alpha ~ coding_density*group_alpha))
+lm_coding_density_alpha_maize <- with(filter(d, !inv4m), 
+                                lm(meanAlpha_maize ~ coding_density))
+lm_coding_density_alpha_mex <- with(filter(d, !inv4m), 
+                                      lm(meanAlpha_mex ~ coding_density))
+
+lm_alpha <- with(filter(d2, !inv4m),
+                 lm(alpha ~ group_alpha))
+lm_coding_bp_alpha_maize <- with(filter(d, !inv4m),
+                           lm(meanAlpha_maize ~ coding_bp))
+lm_coding_bp_alpha_mex <- with(filter(d, !inv4m),
+                                 lm(meanAlpha_mex ~ coding_bp))
+
+summary(lm_coding_density_alpha)
+summary(lm_alpha)
+summary(lm_coding_density_alpha_maize) # highly sig. but small
+summary(lm_coding_density_alpha_mex) # explains >4x the variance in ancestry as coding density does in maize
+summary(lm_coding_bp_alpha_maize)
+summary(lm_coding_bp_alpha_mex)
 
 # now for gene density: make bar plot for mean ancestry mexicna
 violin_coding_density_alpha <- 
@@ -325,14 +347,14 @@ d %>%
   geom_smooth(col = "blue")
 
 # I can describe in a linear model the effects of total coding bp and non-coding bp in a .1cM window:
-lm_maize <- d %>%
+lm_maize <- filter(d, !inv4m) %>% # test with and without inversion
   mutate(noncoding_bp = width_bp - coding_bp) %>%
   lm(meanAlpha_maize ~ coding_bp + noncoding_bp, data = .)
-lm_mex <- d %>%
+lm_mex <- filter(d, !inv4m) %>%
   mutate(noncoding_bp = width_bp - coding_bp) %>%
   lm(meanAlpha_mex ~ coding_bp + noncoding_bp, data = .)
 summary(lm_maize)
-summary(lm_mex)
+summary(lm_mex) # unexpected negative estimate for effect of noncoding_bp
 # linear regression isn't right because alpha is bounded by 0-1
 # so I'm doing quantile regression below using the quantreg package:
 # I don't quite understand how tau is used
@@ -546,7 +568,7 @@ plot(boxplot_perc_coding_alpha_10kb)
 ggsave("plots/boxplot_perc_coding_alpha_10kb_windows.png",
        height = 5, width = 8,
        units = "in", device = "png")
-# not super convincing but htere are so many points in low coding density side of this fig.
+# not super convincing but there are so many points in low coding density side of this fig.
 boxplot_coding_density_alpha_10kb <- d_10kb %>%
   filter(!inv_any) %>%
   gather("group_alpha", "alpha", 
@@ -1628,3 +1650,94 @@ bind_cols(d, all_anc) %>%
 ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_AC231426.1_FG002_ind_pops.png",
        height = 6, width = 8, units = "in", device = "png")
 
+# mexicana ancestry around domestication genes
+domestication_genes <- read.table("../data/domestication/gene_model_translation_to_APGv4_Zm00001d.2_hits.txt", stringsAsFactors = F)$V1
+genes <- read.table("../data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.genes.only.gff3", 
+                    sep = "\t", 
+                    stringsAsFactors = F)[ , c(1,4,5,9)]
+colnames(genes) <- c("chr", "start", "end", "label")
+genes$id <- sapply(substr(genes$label, 9, 100), function(x) strsplit(x, split = ";")[[1]][1])
+genes$domestication <- genes$id %in% domestication_genes
+table(domestication_genes %in% genes$id) # about half the domestication genes can be found in the full genes list
+genes$length = genes$end - genes$start + 1
+# now I need to get an ancestry approximation for each gene
+get_gene_anc <- function(anc_snps = d, gene, focal_col){
+  anc_snps_chr <- dplyr::filter(anc_snps, chr == gene$chr)
+  low <- ifelse(gene$start < anc_snps_chr$pos[1], 0, max(which(anc_snps_chr$pos < gene$start)))
+  high <- ifelse(gene$end > anc_snps_chr$pos[nrow(anc_snps_chr)], nrow(anc_snps_chr), min(which(anc_snps_chr$pos > gene$end)))
+  #return(data.frame(value = mean(anc_snps_chr[low:high, focal_col]), n = length(low:high)))
+  return(mean(anc_snps_chr[low:high, focal_col]))
+}
+d %>%
+  mutate(., start_bp = pos - 1) %>%
+  mutate(., end_bp = pos) %>%
+  dplyr::select(chr, start_bp, end_bp, meanAlpha_maize) %>%
+  write.table(., "../data/domestication/meanAlpha_maize.bed", sep = "\t", col.names = F, row.names = F, quote = F)
+d %>%
+  mutate(., start_bp = pos - 1) %>%
+  mutate(., end_bp = pos) %>%
+  dplyr::select(chr, start_bp, end_bp, meanAlpha_mex) %>%
+  write.table(., "../data/domestication/meanAlpha_mex.bed", sep = "\t", col.names = F, row.names = F, quote = F)
+genes %>%
+  filter(domestication) %>%
+  dplyr::select(chr, start, end, id) %>%
+  write.table(., "../data/domestication/domestication_genes.bed", sep = "\t", col.names = F, row.names = F, quote = F)
+genes %>%
+  filter(!domestication) %>%
+  dplyr::select(chr, start, end, id) %>%
+  write.table(., "../data/domestication/nondomestication_genes.bed", sep = "\t", col.names = F, row.names = F, quote = F)
+genes %>%
+  dplyr::select(chr, start, end, id) %>%
+  write.table(., "../data/domestication/all_genes.bed", sep = "\t", col.names = F, row.names = F, quote = F)
+
+
+# get mean ancestry for each gene: (VERY SLOW)
+genes$meanAlpha_maize <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_maize"))
+genes$meanAlpha_mex <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_mex"))
+
+# after analysing with bedtools (see data/domestication/README.txt), reload into R
+g <- read.table("../data/domestication/all_genes.meanAlpha_mex.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
+g10 <- read.table("../data/domestication/all_genes.meanAlpha_mex.10kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
+g20 <- read.table("../data/domestication/all_genes.meanAlpha_mex.20kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g20) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
+
+g_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
+g10_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.10kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
+g20_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.20kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g20_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
+
+g10_maize %>%
+  mutate(., domestication = gene %in% domestication_genes) %>%
+  ggplot(aes(y = meanAlpha_maize, fill = domestication)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(d$meanAlpha_maize), 
+              linetype = "dotted") +
+  ggtitle("mean ancestry in maize pops near genes") +
+  xlab("gene type") +
+  ylab("mean mexicana ancestry in gene +/- 5kb")
+ggsave("plots/mean_mex_anc_in_maize_near_domestication_genes_10kb.png",
+       height = 8, width = 10, units = "in", device = "png")
+
+g10 %>%
+  mutate(., domestication = gene %in% domestication_genes) %>%
+  ggplot(aes(y = meanAlpha_mex, fill = domestication)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(d$meanAlpha_mex), 
+              linetype = "dotted") +
+  ggtitle("mean ancestry in mexicana pops near genes") +
+  xlab("gene type") +
+  ylab("mean mexicana ancestry in gene +/- 5kb")
+ggsave("plots/mean_mex_anc_in_mexicana_near_domestication_genes_10kb.png",
+       height = 8, width = 10, units = "in", device = "png")
+
+
+g10_maize %>%
+  mutate(., domestication = gene %in% domestication_genes) %>%
+  with(., summary(lm(meanAlpha_maize ~ domestication)))
+g10 %>%
+  mutate(., domestication = gene %in% domestication_genes) %>%
+  with(., summary(lm(meanAlpha_mex ~ domestication)))

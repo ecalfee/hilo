@@ -5,7 +5,7 @@ library(rgbif) # for elevation data
 
 # ID and population labels:
 pools <- do.call(rbind,
-                 lapply(1:8, function(p) read.csv(paste0("../samples/pool", p, ".csv"), 
+                 lapply(1:8, function(p) read.csv(paste0("../samples/pool", p, ".csv"),
                                                   stringsAsFactors = F)[,1:7] %>%
                           mutate(., lane = p) %>%
                           filter(!(Library.name=="")))) %>%
@@ -75,18 +75,18 @@ for (z in c("maize", "mexicana")){
     filter(., zea == z) %>%
     filter(., symp_allo == "sympatric") %>%
     dplyr::select(., "ID") %>%
-    write.table(., 
-                paste0("pass2_pops/symp.", z, "_IDs.list"), 
+    write.table(.,
+                paste0("pass2_pops/symp.", z, "_IDs.list"),
                 row.names = F, col.names = F, quote = F)
-  
+
 }
 # allopatric mexicana
 pass2.ind %>%
   filter(., zea == "mexicana") %>%
   filter(., symp_allo == "allopatric") %>%
   dplyr::select(., "ID") %>%
-  write.table(., 
-              paste0("pass2_pops/allo.mexicana_IDs.list"), 
+  write.table(.,
+              paste0("pass2_pops/allo.mexicana_IDs.list"),
               row.names = F, col.names = F, quote = F)
 
 # all other populations
@@ -94,10 +94,10 @@ for (N in unique(pass2.ind$popN)){
   pass2.ind %>%
     filter(., popN == N) %>%
     dplyr::select(., "ID") %>%
-    write.table(., 
-                paste0("pass2_pops/pop", N, "_IDs.list"), 
+    write.table(.,
+                paste0("pass2_pops/pop", N, "_IDs.list"),
                 row.names = F, col.names = F, quote = F)
-  
+
 }
 
 
@@ -172,3 +172,116 @@ elev2 = unique(gps[!is.na(gps$ELEVATION), c("LOCALITY", "LAT", "LON")]) %>%
 
 write.table(gps, "gps_and_elevation_for_sample_sites.txt",
             row.names = F, col.names = T, quote = F, sep = "\t")
+
+# add metrics data for pass2 coverage:
+metrics <- read.table("../filtered_bams/metrics/hilo_alloMAIZE_MAIZE4LOW.flagstat.total", stringsAsFactors = F)
+colnames(metrics) <- c("ID", "total_reads_pass")
+# size of reference genome reads are mapped to
+ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
+                                    stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
+# including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
+metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
+
+length(unique(hilo$ID))
+length(unique(hilo$Adapter))
+dim(unique(hilo[, c("ID", "Adapter")]))
+hilo[!duplicated(hilo[, c("ID", "Adapter")]) & duplicated(hilo$ID), c("ID", "Adapter")]
+# the only sample with more than one adapter is HILO80; which is excluded
+
+dim(unique(hilo[, c("ID", "Adapter")]))
+
+target = 8
+status <- pass2.ind %>%
+  left_join(., metrics, by = "ID") %>%
+  group_by(popN, LOCALITY, RI_ACCESSION, symp_allo, zea) %>%
+  summarise(over0.5x = sum(est_coverage >= 0.5),
+            reseq0.25to0.5x = sum(est_coverage < 0.5 & est_coverage >= 0.25),
+            under0.25x = sum(est_coverage < 0.25)) %>%
+  mutate(need_to_plant = target - over0.5x - reseq0.25to0.5x) %>%
+  mutate(need_to_plant = ifelse(need_to_plant < 0, 0, need_to_plant))
+
+#cov_below_0.25x <- pass2.ind %>%
+pass2.ind %>%
+  left_join(., metrics, by = "ID") %>%
+  #filter(est_coverage < 0.25) %>%
+  ggplot(., aes(x = est_coverage, fill = paste(zea, symp_allo, sep = "_"))) +
+  geom_histogram()
+hist(cov_below_0.25x$est_coverage, breaks = 20)
+pass2.ind %>%
+  left_join(., metrics, by = "ID") %>%
+  filter(est_coverage < 0.25) %>%
+  ggplot(., aes(x = est_coverage, fill = paste(zea, symp_allo, sep = "_"))) +
+  geom_histogram()
+pass2.ind %>%
+  left_join(., metrics, by = "ID") %>%
+  filter(., est_coverage >= 0.25 & est_coverage < .5) %>%
+  ggplot(., aes(x = est_coverage*2, fill = paste(zea, symp_allo, sep = "_"))) +
+  geom_histogram()
+pass2.ind %>%
+  left_join(., metrics, by = "ID") %>%
+  #filter(., est_coverage < .5) %>%
+  filter(., symp_allo == "allopatric") %>%
+  ggplot(., aes(x = est_coverage, fill = LOCALITY)) +
+  geom_histogram()
+
+pass2.ind %>%
+  left_join(., unique(hilo[ , c("ID", "Adapter")]), by = "ID") %>%
+  #filter(symp_allo != "sympatric") %>%
+  #filter(popN != 20) %>%
+  left_join(., metrics, by = "ID") %>%
+  filter(., est_coverage >= 0.2 & est_coverage < .5) %>%
+  #group_by(lane) %>%
+  group_by(Adapter) %>%
+  summarise(n()) %>%
+  View(.) # great, no more than 2 uses per adapter so I can repool and split across 2 lanes
+
+sum(status$need_to_plant) + 5
+sum(status$reseq0.25to0.5x)
+(105+68)/4
+(78+68)/4
+View(status)
+4*1300+500
+
+status %>%
+  filter(symp_allo == "allopatric") %>%
+  View(.) # why are there > 10 for one pop?
+
+
+# Coverage estimate to run 96 samples on a lane of NovaSeq6000:
+n_pass2_sequencing <- nrow(pass2.ind) + sum(duplicated(hilo %>% # only include individuals once, even if sequenced twice
+                                   filter(., pass2 == T) %>%
+                                 dplyr::select(., ID)))
+pass2.ind %>% left_join(., metrics, by = "ID") %>%
+  filter(., !(zea == "maize" & symp_allo == "allopatric")) %>%
+  dplyr::select(., est_coverage) %>%
+  sum()/n_pass2_sequencing # .47-.55 mean coverage for 254 individuals; 40 per lane
+
+sapply(c(.47, .55), function(x) c(2.5, 3)*10^9/(340*10^6)*x*40/96)
+# so I can expect between 1.4 and 2x mean coverage per re-sequenced individual
+
+# make a re-sequencing priority list:
+filter(pass2.ind, symp_allo == "sympatric") %>%
+  left_join(., metrics, by = "ID") %>%
+  filter(est_coverage >= .5) %>%
+  summarise(n())
+length(unique(pass2.ind[pass2.ind$symp_allo == "sympatric", "RI_ACCESSION"]))*8
+filter(pass2.ind) %>%
+  left_join(., metrics, by = "ID") %>%
+  filter(est_coverage >= .5) %>%
+  ggplot(aes(x = LOCALITY, fill = paste(zea, symp_allo, sep = "_"))) +
+  geom_bar() +
+  facet_wrap(~zea)
+hilo %>%
+  dplyr::select(., c("ID", "zea", "symp_allo", "family", "popN", "LOCALITY", "pass2")) %>%
+  unique(.) %>%
+  ggplot(aes(x = LOCALITY, fill = paste(zea, symp_allo, sep = "_"))) +
+  geom_bar() +
+  facet_wrap(~zea)
+
+reseq <- hilo %>%
+  left_join(., metrics, by = "ID") %>%
+  mutate(est_coverage = ifelse(ID == "HILO80" | plate_number == "plate2", 0, est_coverage)) %>%
+  dplyr::select("RI_ACCESSION", "family", "zea", "symp_allo", "ID", "LOCALITY", "plate_number", "est_coverage") %>%
+  unique()
+
+  RIMMA0360, B1, maize, sympatric, HILO112, Nabogame, plate3+4

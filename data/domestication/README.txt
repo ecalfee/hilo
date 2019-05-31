@@ -30,3 +30,17 @@ data/domestication$ awk '$3 != "" {print $3}' gene_model_translation_to_APGv4.tx
 # because genes are so short it's unlikely they will have an ancestry call within...but I could average the 2 closest ancestry calls on either side or another window approach
 # first I want to get ancestry at all genes and then use permutations to see if domestication genes look different. 
 # I could also look at depth of coverage across domestication genes.
+
+
+# made bed files of genes in R as well as ancestry snps
+# using bedtools to summarise
+# but first needed to sort and get rid of Mt and Pt genes
+awk '$1 ~ /^[0-9]+$/ {print $0}' all_genes.sorted.bed > all_genes.autosomal.sorted.bed
+bedtools map -a all_genes.autosomal.sorted.bed -b meanAlpha_mex.bed -sorted -g ../refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > all_genes.meanAlpha_mex.autosomal.sorted.bed
+# also using 10kb windows (5kb either side of the gene endpoints)
+bedtools slop -g ../refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -b 5000 -i all_genes.autosomal.sorted.bed > all_genes.10kb.autosomal.sorted.bed
+# then get overlapping mean ancestry in these broader windows
+bedtools map -a all_genes.10kb.autosomal.sorted.bed -b meanAlpha_maize.bed -sorted -g ../refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > all_genes.meanAlpha_maize.10kb.autosomal.sorted.bed
+# about 5% of genes don't have good ancestry calls (any calls within 5kb either side)..if I go out to 20kb total windows (10 each side) it's closer to 1%
+awk '$5 >= 0 {print $0}' all_genes.meanAlpha_mex.10kb.autosomal.sorted.bed | wc -l
+# 19089 out of my set of 20870 autosomal genes
