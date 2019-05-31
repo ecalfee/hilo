@@ -1021,6 +1021,10 @@ zAnc3 <- t(apply(maize_anc, 1, function(l) zAnc(ancFreq = l,
                                       invL = zAnc_maize$InvL, 
                                       alpha = zAnc_maize$alpha)))
 
+zAnc3_mex <- t(apply(mexicana_anc, 1, function(l) zAnc(ancFreq = l, 
+                                                invL = zAnc_mexicana$InvL, 
+                                                alpha = zAnc_mexicana$alpha)))
+
 # what do individual top outliers look like?
 # e.g. frequency of pval < .05 zElev outliers across pops, colored by inversion
 
@@ -1127,6 +1131,7 @@ for (i in 1:length(ks)){
 # Now get zTz -- basically the sum of residual errors to the null model
 # zTz
 zTz3 <- apply(zAnc3, 1, function(i) t(i) %*% i)
+zTz3_mex <- apply(zAnc3_mex, 1, function(i) t(i) %*% i)
 d %>%
   mutate(zTz = zTz3) %>%
   bind_cols(., zb3_hmex) %>%
@@ -1525,6 +1530,20 @@ pops_shared %>%
   #scale_x_discrete(name = "# pops sharing elevated ancestry", 
   #                   limits=c(14:0))
   ggtitle("# populations NOT sharing elevated ancestry (>99% or 1,2,3,4 s.d. above pop mean)")
+ggsave("plots/cum_dist_shared_high_minor_ancestry_reverse.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  #filter(., n_pops_sharing > 0) %>%
+  ggplot(aes(x = n_pops_sharing, color = zea)) +
+  stat_ecdf(position = "identity") +
+  xlab("number pops (of 14) WITH elevated minor ancestry") +
+  ylab("cumulative frequency across all sites w/ ancestry calls") +
+  facet_wrap(~sd) +
+  #scale_x_discrete(name = "# pops sharing elevated ancestry", 
+  #                   limits=c(14:0)) +
+  ggtitle("# populations sharing elevated ancestry (>99% or 1,2,3,4 s.d. above pop mean)")
 ggsave("plots/cum_dist_shared_high_minor_ancestry.png",
        height = 12, width = 13, units = "in", device = "png")
 
@@ -1543,6 +1562,61 @@ ggsave("plots/hist_shared_high_minor_ancestry.png",
 # at the lower cutoff thresholds, maize tends to have more loci with broadly shared peaks whereas in mexicana minor ancestry peaks are 
 # concentrated around 1-5 populations
 # In contrast, maize has some peaks at 1 s.d. above the mean shared among all 14 maize pops, and a noticeable uptick at 8 populations
+
+# what if I limit my view to loci that appear non-neutral by zTz?
+# ! problem: zTz is really zTz3_maize. I need to plot separately mexicana outliers
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  filter(., (zea == "maize" & rep(zTz3 >= quantile(zTz3, .99), 8)) |
+                        (zea == "mexicana" & rep(zTz3_mex >= quantile(zTz3_mex, .99), 8))) %>%
+  ggplot(aes(x = n_pops_sharing, color = zea)) +
+  stat_ecdf(position = "identity") +
+  xlab("number pops (of 14) WITH elevated minor ancestry") +
+  ylab("cumulative frequency across all sites w/ ancestry calls") +
+  facet_wrap(~sd) +
+  ggtitle("top 1% zTz outliers: # populations sharing elevated ancestry (>99% or 1,2,3,4 s.d. above pop mean)")
+ggsave("plots/cum_dist_shared_high_minor_ancestry_zTz_outliers99.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  filter(., (zea == "maize" & rep(zTz3 >= quantile(zTz3, .99), 8)) |
+           (zea == "mexicana" & rep(zTz3_mex >= quantile(zTz3_mex, .99), 8))) %>%
+  ggplot(aes(x = n_pops_sharing, fill = zea)) +
+  geom_histogram(position = "identity", alpha = .5) +
+  facet_wrap(~sd) +
+  ggtitle("top 1% zTz outliers: # populations sharing elevated minor ancestry (> 99% or X s.d. above pop mean)")
+ggsave("plots/hist_shared_high_minor_ancestry_ztz_outliers99.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+# top 10%
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  filter(., (zea == "maize" & rep(zTz3 >= quantile(zTz3, .90), 8)) |
+           (zea == "mexicana" & rep(zTz3_mex >= quantile(zTz3_mex, .90), 8))) %>%
+  ggplot(aes(x = n_pops_sharing, color = zea)) +
+  stat_ecdf(position = "identity") +
+  xlab("number pops (of 14) WITH elevated minor ancestry") +
+  ylab("cumulative frequency across all sites w/ ancestry calls") +
+  facet_wrap(~sd) +
+  ggtitle("top 10% zTz outliers: # populations sharing elevated ancestry (>99% or 1,2,3,4 s.d. above pop mean)")
+ggsave("plots/cum_dist_shared_high_minor_ancestry_zTz_outliers90.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  filter(., (zea == "maize" & rep(zTz3 >= quantile(zTz3, .90), 8)) |
+           (zea == "mexicana" & rep(zTz3_mex >= quantile(zTz3_mex, .90), 8))) %>%
+  ggplot(aes(x = n_pops_sharing, fill = zea)) +
+  geom_histogram(position = "identity", alpha = .5) +
+  facet_wrap(~sd) +
+  ggtitle("top 10% zTz outliers: # populations sharing elevated minor ancestry (> 99% or X s.d. above pop mean)")
+ggsave("plots/hist_shared_high_minor_ancestry_ztz_outliers90.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+
 
 
 # Q: do these tend to be the same 8 populations? a cluster? Are they the highest elevation pops? Is this all the inv4m?
