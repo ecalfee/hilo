@@ -124,6 +124,13 @@ d$meanAlpha_maize = t((N_per_pop_maize %*% t(all_anc[ , maize_pops]))/sum(N_per_
 d <- mutate(d, inv4m = (chr == inv$chr[inv$ID=="inv4m"] & 
                           pos >= inv$excl_start[inv$ID=="inv4m"] & 
                           pos <= inv$excl_end[inv$ID == "inv4m"])) 
+d <- mutate(d, inv9d_or_e = chr == inv$chr[inv$ID=="inv9d_or_e"] &
+              pos >= inv$excl_start[inv$ID == "inv9d_or_e"] &
+              pos <= inv$excl_end[inv$ID == "inv9d_or_e"])
+d <- mutate(d, inv9e_or_d = chr == inv$chr[inv$ID == "inv9e_or_d"] &
+              pos >= inv$excl_start[inv$ID == "inv9e_or_d"] &
+              pos <= inv$excl_end[inv$ID == "inv9e_or_d"])
+
 d2 <- d %>%
   gather(., "group_alpha", "alpha", 
          c("meanAlpha_mex", "meanAlpha_maize"))
@@ -912,7 +919,7 @@ make_calcs = function(pop_anc){
   pop_p_ZAnc = calcProbZAnc(ZAnc = pop_ZAnc, nPop = length(pop_alpha), logProb = F)
   return(list(alpha = pop_alpha, K = pop_K, InvL = pop_InvL, ZAnc = pop_ZAnc, p_ZAnc = pop_p_ZAnc))
 }
-
+zAnc_mexicana = make_calcs(t(mexicana_anc))
 zAnc_maize = make_calcs(t(maize_anc))
 meta.pops$pop[meta.pops$zea == "maize"] == colnames(maize_anc)
 zBeta_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
@@ -940,30 +947,275 @@ zBeta3_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each 
   zBeta3(ancFreq = l,
          envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"], 
          invL = zAnc_maize$InvL, 
-         alpha = zAnc_maize$alpha))
-zb3 <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
-with(zb3, plot(r_squared ~ slope.zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zb3"))
-with(zb3, plot(sum_sq_res ~ slope.zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zb3"))
+         alpha = zAnc_maize$alpha)) 
+zb3_elev <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
+zBeta3_highmex_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+  zBeta3(ancFreq = l,
+         envWeights = rep(1, 14), 
+         invL = zAnc_maize$InvL, 
+         alpha = zAnc_maize$alpha)) 
+zb3_hmex <- data.frame(t(zBeta3_highmex_maize)) # data frame is easier to work with
+
+with(zb3_elev, plot(r_squared ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
+with(zb3_elev, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
+with(zb3_hmex, plot(r_squared ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 universally high mexicana anc in maize"))
+with(zb3_hmex, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 universally high mexicana anc in maize"))
+
+zBeta3_elev_int_maize <- apply(maize_anc, 1, function(l)
+  zBeta3_int(ancFreq = l,
+             envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"],
+             invL = zAnc_maize$InvL,
+             alpha = zAnc_maize$alpha))
+zb3_elev_int <- data.frame(t(zBeta3_elev_int_maize))
+
+
+# plot outliers against their population means
+d %>%
+  bind_cols(., zb3_hmex) %>%
+  filter(., pval < .01) %>%
+  ggplot(aes(x = pop_meanAlpha_maize, y = zEnv, color = log(pval))) +
+  geom_point(size = .1) +
+  ggtitle("zAnc outliers, p < .01")
+ggsave(paste0("plots/zAnc_top_mex_outliers_in_maize_1percent.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+d %>%
+  bind_cols(., zb3_hmex) %>%
+  ggplot(aes(x = pop_meanAlpha_maize, y = zEnv, color = log(pval))) +
+  geom_point(size = .1) +
+  ggtitle("zAnc vs. population mean mexicana")
+ggsave(paste0("plots/zAnc_pop_mean_mexicana_in_maize_allLoci.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+d %>% # color by sum of squared residuals. okay actually that's only relevant as a relative value compared to the null model residuals
+  bind_cols(., zb3_hmex) %>%
+  filter(., r_squared > .5) %>%
+  ggplot(aes(x = pop_meanAlpha_maize, y = zEnv, color = r_squared)) +
+  geom_point(size = .1)
+
+# calculate zAnc at each locus. 
+zAnc3 <- t(apply(maize_anc, 1, function(l) zAnc(ancFreq = l, 
+                                      invL = zAnc_maize$InvL, 
+                                      alpha = zAnc_maize$alpha)))
+
+# what do individual top outliers look like?
+# e.g. frequency of pval < .05 zElev outliers across pops, colored by inversion
+
+bind_cols(maize_anc, d) %>%
+  filter(., zb3_elev$pval < .05) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, fill = inv4m)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# now what if I let variation with environment have an intercept?
+bind_cols(maize_anc, d) %>%
+  bind_cols(., zb3_elev_int) %>%
+  filter(., pval_zEnv < .01) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, shape = inv4m, color = zEnv, group = pos)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset low p-val outliers from zElev test - with rotated intercept zInt")
+ggsave(paste0("plots/a_few_example_loci_zElev_outliers_rotated_intercept.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+bind_cols(maize_anc, d) %>%
+  bind_cols(., zb3_elev) %>%
+  filter(., pval < .01) %>%
+  .[ c(T, rep(F, 240)), ] %>% # take subset
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, shape = inv4m, color = zEnv, group = pos)) +
+  geom_point() + 
+  geom_line() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset low p-val outliers from zElev test - no intercept")
+ggsave(paste0("plots/a_few_example_loci_zElev_outliers_no_intercept.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+
+# what are the dominant patterns in my data?
+# note: default algorithm is Hartigan-Wong. My other choices include 'Lloyd' and 'MacQueen'
+set.seed(10) # set seed for k-means clustering
+kmeans(zAnc3, 1)$centers # good, with k=1 one cluster, the mean should be all ~ zeros
+k1 <- kmeans(zAnc3, centers = 1, nstart = 25, iter.max = 25)
+k2 <- kmeans(zAnc3, centers = 2, nstart = 25, iter.max = 25)
+k2$centers
+k3 <- kmeans(zAnc3, centers = 3, nstart = 25, iter.max = 50)
+#k4 <- kmeans(zAnc3, centers = 4, nstart = 25, iter.max = 50, trace = T) # produces a lot of output
+k4 <- kmeans(zAnc3, centers = 4, nstart = 25, iter.max = 50)
+k5 <- kmeans(zAnc3, centers = 5, nstart = 25, iter.max = 50)
+k10 <- kmeans(zAnc3, centers = 10, nstart = 25, iter.max = 50) # 22 warnings, but 25 starts? it's choosing the best one out of the ones that don't fail I assume
+# I increased iterations and number of starts to avoid nonconvergence errors:
+# 16: Quick-TRANSfer stage steps exceeded maximum (= 19105350)
+
+kmeans(maize_anc, 1)$centers
+
+# first look at clusters in all positions (not just outliers):
+colnames(maize_anc) <- maize_pops
+maize_anc %>%
+  mutate(k.2 = as.factor(k2$cluster)) %>% # which cluster does this locus belong to?
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  ggplot(aes(x = pop, y = mex_freq, fill = k.2)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+maize_anc %>% # too big a plot to view properly
+  mutate(k.1 = as.factor(k1$cluster)) %>%
+  mutate(k.2 = as.factor(k2$cluster)) %>%
+  mutate(k.3 = as.factor(k3$cluster)) %>%
+  mutate(k.4 = as.factor(k4$cluster)) %>%
+  mutate(k.5 = as.factor(k5$cluster)) %>%
+  mutate(k.10 = as.factor(k10$cluster)) %>% 
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  gather(., "k", "cluster", paste("k", c(1:5, 10), sep = ".")) %>%
+  ggplot(aes(x = pop, y = mex_freq, fill = cluster)) +
+  geom_boxplot() +
+  facet_wrap(~k) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("all loci maize - k-means clusters")
+# save individual plots
+ks <- list(k1, k2, k3, k4, k5, k10)
+ks_names <- paste0("k", c(1:5, 10))
+plot_ks <- lapply(1:length(ks), function(i)
+  maize_anc %>%
+    mutate(cluster = as.factor(ks[[i]]$cluster)) %>% # which cluster does this locus belong to?
+    gather(., "pop", "mex_freq", maize_pops) %>%
+    left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+    ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, fill = cluster)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle(paste("k-means clustering:", ks_names[i])))
+for (i in 1:length(ks)){
+  plot(plot_ks[[i]])
+  ggsave(paste0("plots/k_means_all_loci_maize_", ks_names[i], ".png"),
+         device = "png",
+         width = 10, height = 8, units = "in")
+}
+  
+ 
+# Now get zTz -- basically the sum of residual errors to the null model
+# zTz
+zTz3 <- apply(zAnc3, 1, function(i) t(i) %*% i)
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_hmex) %>%
+  filter(zTz >= quantile(zTz, .95)) %>% # limit to top 1%
+  mutate(log_pval = log(pval)) %>%
+  ggplot(aes(x = meanAlpha_maize, y = zEnv, color = log_pval)) +
+  geom_point(size = .1) +
+  ggtitle("only showing top 5% zTz outliers; universal selection model")
+d %>% # note: inv4m is not in top 1% of zTz but it is in top 5% of zTz
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_elev) %>%
+  filter(zTz >= quantile(zTz, .95)) %>% # limit to top 1%
+  mutate(log_pval = log(pval)) %>%
+  ggplot(aes(x = meanAlpha_maize, y = zEnv, color = log_pval)) +
+  #ggplot(aes(x = meanAlpha_maize, y = zEnv, color = inv4m)) +
+  geom_point(size = .1) +
+  ggtitle("only showing top 5% zTz outliers; elevation gradient model")
+
+# now cluster just within the top 1% outliers
+top1.zAnc3 <- zAnc3[zTz3 >= quantile(zTz3, .99), ]
+top1.ks <- lapply(1:5, function(k)
+  kmeans(top1.zAnc3, centers = k, nstart = 25, iter.max = 50))
+top1.ks_names <- paste0("k", 1:5)
+top1.plot_ks <- lapply(1:length(top1.ks), function(i)
+  maize_anc[zTz3 >= quantile(zTz3, .99), ] %>%
+    mutate(cluster = as.factor(top1.ks[[i]]$cluster)) %>% # which cluster does this locus belong to?
+    gather(., "pop", "mex_freq", maize_pops) %>%
+    left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+    ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, fill = cluster)) +
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle(paste("top 1% zTz hits: k-means clustering:", top1.ks_names[i])))
+for (i in 1:length(top1.ks)){
+  plot(top1.plot_ks[[i]])
+  ggsave(paste0("plots/k_means_top1percent_loci_maize_", top1.ks_names[i], ".png"),
+         device = "png",
+         width = 10, height = 8, units = "in")
+}
+
+
+
+# what does zEnv look like genomewide for elevation?
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_hmex) %>%
+  ggplot(aes(x = pos, y = zEnv, color = zTz, shape = inv4m)) +
+  geom_point(size = .1) +
+  ggtitle("zElev outliers across the genome") +
+  facet_wrap(~chr)
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_hmex) %>%
+  mutate(., log_pval = log(pval)) %>%
+  ggplot(aes(x = pos, y = zEnv, color = zTz)) +
+  geom_point(size = .1) +
+  ggtitle("zAnc outliers across the genome") +
+  facet_wrap(~chr)
+ggsave("plots/zAnc_in_maize_pops_genomewide.png",
+       height = 10, width = 14,
+       units = "in", device = "png")
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_elev) %>%
+  mutate(., log_pval = log(pval)) %>%
+  ggplot(aes(x = pos, y = zEnv, color = zTz)) +
+  geom_point(size = .1) +
+  ggtitle("zElev outliers across the genome") +
+  facet_wrap(~chr)
+ggsave("plots/zElev_in_maize_pops_genomewide.png",
+       height = 10, width = 14,
+       units = "in", device = "png")
+
+# with intercept zInt for elevation:
+d %>%
+  mutate(zTz = zTz3) %>%
+  bind_cols(., zb3_elev_int) %>%
+  mutate(., log_pval = log(pval_zEnv)) %>%
+  ggplot(aes(x = pos, y = zEnv, color = (inv4m | inv9e_or_d | inv9d_or_e))) +
+  geom_point(size = .1) + 
+  ggtitle("zElev outliers across the genome (w/ intercept)") +
+  facet_wrap(~chr) # color inversion on chr9 too .. do I have the correct coordinates for these? is the length reasonable? are there others?
+ggsave("plots/zElev_in_maize_pops_genomewide_w_intercept.png",
+       height = 10, width = 14, 
+       units = "in", device = "png")
 
 # what is the qualitative diff of centering? zb2 vs. zb3:
-plot(zb2$slope.zEnv ~ zb3$slope.zEnv) # eh blob
-cor(zb2$slope.zEnv, zb3$slope.zEnv) # very weak correlation, or = .04
-plot(zb2$pval_slope ~ zb3$pval_slope) # black box (everywhere)
-cor(zb2$pval_slope, zb3$pval_slope) # slightly negative, cor -.06
-plot(zb2$sum_sq_res ~ zb3$sum_sq_res) # highly correlated
-cor(zb2$sum_sq_res, zb3$sum_sq_res) # cor = .96
+plot(zb2$slope.zEnv ~ zb3_elev$slope.zEnv) # eh blob
+cor(zb2$slope.zEnv, zb3_elev$slope.zEnv) # very weak correlation, or = .04
+plot(zb2$pval_slope ~ zb3_elev$pval_slope) # black box (everywhere)
+cor(zb2$pval_slope, zb3_elev$pval_slope) # slightly negative, cor -.06
+plot(zb2$sum_sq_res ~ zb3_elev$sum_sq_res) # highly correlated
+cor(zb2$sum_sq_res, zb3_elev$sum_sq_res) # cor = .96
+cor(zb3_elev_int$zEnv, zb3_elev$zEnv) # poorly correlated
+# plot zb3_elev_int$zEnv vs. simple beta elevation
 
 
 # test set: there are 14 populations of maize. I will create some test sets with 14 pops
 # that have perfect environmental correlations
 # each row is a made-up ancestry frequency observation; each column is a population 
-test_case_names <- c("all_1", "last_pop_only", "sixth_pop_only", "first_pop_only", "linear_env")
+test_case_names <- c("all_1", "last_pop_only", "sixth_pop_only", "first_pop_only", "linear_env", "first_one_out", "last_one_out", "linear_env+100", "linear_env*2", "linear_env*2+100")
 
 test_anc <- rbind(rep(1, 14), # all selected for mexicana ancestry
                   c(zAnc_maize$alpha[1:13], 1), # only last population selected
                   c(zAnc_maize$alpha[1:5], 1, zAnc_maize$alpha[7:14]), # 6th population selected
                   c(1, zAnc_maize$alpha[2:14]), # last population selected
-                  seq(0, 1, length.out = 14)) # linear association with simple linear environmental gradient: e.g. seq(100, 200, length.out = 14)
+                  seq(0, 1, length.out = 14),
+                  c(0, rep(1, 13)),
+                  c(rep(1,13), 0),
+                  seq(0, 1, length.out = 14) + 100,
+                  seq(0, 1, length.out = 14)*2,
+                  seq(0, 1, length.out = 14)*2 + 100) # linear association with simple linear environmental gradient: e.g. seq(100, 200, length.out = 14)
                   # could also test false positive cases: e.g. one outlier but no real other association with
 
 # I'll use my test_anc cases with the empirical K matrix:
@@ -1029,12 +1281,13 @@ a3 <- do.call(rbind,
                   mutate(test_model = test_case_names) %>%
                   mutate(true_model = test_case_names[l])))
 a3 %>%
-  ggplot(aes(x = test_model, y = intercept..Intercept., color = true_model, shape = (true_model == test_model))) +
+  ggplot(aes(x = test_model, y = r_squared, color = true_model, shape = (true_model == test_model))) +
   geom_point() + 
   ggtitle("not mean centered environment test cases")
 a3 %>%
-  gather(., "model_output", "value", c("intercept..Intercept.", "slope.zEnv", "r_squared")) %>%
-  ggplot(aes(x = test_model, y = value, color = true_model, shape = (true_model == test_model))) +
+  gather(., "model_output", "value", c("zEnv", "r_squared")) %>%
+  mutate(., log_value = log(value)) %>%
+  ggplot(aes(x = true_model, y = log_value, color = test_model, shape = (true_model == test_model))) +
   geom_point() + 
   ggtitle("not mean centered environment test cases") +
   facet_wrap(~model_output) +
@@ -1043,15 +1296,73 @@ ggsave("plots/test_cases_environment_ZAnc_model_values.png",
        height = 10, width = 10, device = "png", units = "in")
 
 a3 %>%
-  gather(., "model_output", "value", c("sum_sq_res", "pval_intercept", "pval_slope.zEnv")) %>%
+  gather(., "model_output", "value", c("sum_sq_res", "pval")) %>%
   mutate(., log_value = log(value)) %>%
-  ggplot(aes(x = test_model, y = log_value, color = true_model, shape = (true_model == test_model))) +
+  ggplot(aes(x = true_model, y = log_value, color = test_model, shape = (true_model == test_model))) +
   geom_point() + 
   ggtitle("not mean centered environment test cases") +
   facet_wrap(~model_output) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ggsave("plots/test_cases_environment_ZAnc_fit_values.png",
        height = 10, width = 10, device = "png", units = "in")
+
+# add in an intercept of 1's vectors for the environmental correlation case
+# b/c I don't want the environmental effect to be constrained to the non-centered environment
+# but I won't test the c(1,1,1,1) model with this
+zTest3_int <- lapply(1:nrow(test_env), function(e)
+  apply(test_anc[ , ], 1, function(l) # calculate slope for each locus
+    #zBeta(ancFreq = t(maize_anc[1,]),
+    zBeta3_int(ancFreq = l,
+           envWeights = test_env[e, ], 
+           invL = zAnc_maize$InvL, 
+           alpha = zAnc_maize$alpha)))
+
+
+# get full linear models as output
+# testing just the linear environment true model
+zTest3_int_lm <- lapply(1:nrow(test_env), function(e)
+  apply(test_anc, 1, function(l) # calculate slope for each locus
+    #zBeta(ancFreq = t(maize_anc[1,]),
+    zBeta3_int_lm(ancFreq = l,
+               envWeights = test_env[e, ], 
+               invL = zAnc_maize$InvL, 
+               alpha = zAnc_maize$alpha)))
+lapply(zTest3_int_lm, function(m) summary(m))
+length(zTest3_int_lm)
+
+
+# hmm..problem is that r-squared doesn't have the same meaning if there is an intercept or not
+# (all models are being compared to free intercept model, not zTz now)
+a3_int <- do.call(rbind,
+              lapply(1:length(zTest3_int), function(l)
+                data.frame(t(zTest3_int[[l]])) %>%
+                  mutate(test_model = test_case_names) %>%
+                  mutate(true_model = test_case_names[l])))
+a3_int %>%
+  gather(., "model_output", "value", c("zEnv", "zInt", "r_squared")) %>%
+  #mutate(., log_value = log(value)) %>%
+  ggplot(aes(x = true_model, y = value, color = test_model, shape = (true_model == test_model))) +
+  geom_point() + 
+  ggtitle("not mean centered environment test cases + intercept") +
+  facet_wrap(~model_output, scales = "free_y") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/test_cases_environment_ZAnc_model_values_3int.png",
+       height = 10, width = 10, device = "png", units = "in")
+
+a3_int %>%
+  gather(., "model_output", "value", c("sum_sq_res", "pval_zEnv")) %>%
+  mutate(., log_value = log(value)) %>%
+  ggplot(aes(x = true_model, y = log_value, color = test_model, shape = (true_model == test_model))) +
+  geom_point() + 
+  ggtitle("not mean centered environment test cases + intercept") +
+  facet_wrap(~model_output) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/test_cases_environment_ZAnc_fit_values_3int.png",
+       height = 10, width = 10, device = "png", units = "in")
+
+
+
+# instead of calculating zTz in it's own framework -- can I just put in a vector of 0's for environment?
 
 
 # straight regression, no rotation:
@@ -1151,3 +1462,169 @@ d %>%
 ggsave("plots/mexicana_ancestry_in_maize_ztz_wholegenome.png",
        height = 10, width = 14,
        units = "in", device = "png")
+
+# how many populations are participating in a 'peak'?
+# let's start with the distribution of shared high mexicana across maize populations:
+# by standardizing ancestry, and letting a 'peak' be anything > 2 s.d. above population mean:
+maize_anc_s <- t(apply(maize_anc, 1, function(x) (x - zAnc_maize$alpha)/sqrt(diag(zAnc_maize$K)))) # normalize by subtracting pop mean and dividing by sqrt variance (= diag of K matrix)
+mexicana_anc_s <- t(apply(mexicana_anc, 1, function(x) (x - zAnc_mexicana$alpha)/sqrt(diag(zAnc_mexicana$K))))
+summary(maize_anc_s)
+summary(maize_anc) # some populations hit 2 s.d. before getting to 100% maize ancestry; should only use this to look at high mexicana
+summary(mexicana_anc_s)
+summary(mexicana_anc) # all populations hit 2 s.d. before getting to 100% mexicana ancestry; can only use this to look at low mexicana/high maize
+
+# number of populations sharing high minor-ancestry peak:
+maize_shared <- apply(maize_anc_s, 1, function(x) sum(x >= 2))
+hist(maize_shared[maize_shared > 0])
+mexicana_shared <- apply(mexicana_anc_s, 1, function(x) sum(x <= -2))
+hist(mexicana_shared[mexicana_shared > 0])
+pops_shared <- data.frame(maize = apply(maize_anc_s >= 2 | maize_anc > .99, 1, sum),
+                          mexicana = apply(mexicana_anc_s <= -2 | mexicana_anc < .01, 1, sum),
+           sd = 2) %>%
+  bind_rows(., data.frame(maize = apply(maize_anc_s >= 3 | maize_anc > .99, 1, sum),
+            mexicana = apply(mexicana_anc_s <= -3 | mexicana_anc < .01, 1, sum),
+            sd = 3)) %>%
+  bind_rows(., data.frame(maize = apply(maize_anc_s >= 4 | maize_anc > .99, 1, sum),
+                          mexicana = apply(mexicana_anc_s <= -4 | mexicana_anc < .01, 1, sum),
+                          sd = 4)) %>%
+  bind_rows(., data.frame(maize = apply(maize_anc_s >= 1 | maize_anc > .99, 1, sum),
+                          mexicana = apply(mexicana_anc_s <= -1 | mexicana_anc < .01, 1, sum),
+                          sd = 1))
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  #filter(., n_pops_sharing > 0) %>%
+  ggplot(aes(x = 14 - n_pops_sharing, color = zea)) +
+  #ggplot(aes(x = n_pops_sharing, color = zea)) +
+  stat_ecdf(position = "identity") +
+  xlab("number pops (of 14) WITHOUT elevated minor ancestry") +
+  ylab("cumulative frequency across all sites w/ ancestry calls") +
+  facet_wrap(~sd) +
+  #ggtitle("# populations sharing elevated minor ancestry over X s.d. above pop mean") +
+  #scale_x_discrete(name = "# pops sharing elevated ancestry", 
+  #                   limits=c(14:0))
+  ggtitle("# populations NOT sharing elevated ancestry (>99% or 1,2,3,4 s.d. above pop mean)")
+ggsave("plots/cum_dist_shared_high_minor_ancestry.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+pops_shared %>%
+  tidyr::gather(., "zea", "n_pops_sharing", c("maize", "mexicana")) %>%
+  ggplot(aes(x = n_pops_sharing, fill = zea)) +
+  geom_histogram(position = "identity", alpha = .5) +
+  facet_wrap(~sd) +
+  ggtitle("# populations sharing elevated minor ancestry (> 99% or X s.d. above pop mean)")
+ggsave("plots/hist_shared_high_minor_ancestry.png",
+       height = 12, width = 13, units = "in", device = "png")
+
+
+# observations: in general, maize is more likely to have no populations with > 1,2,3,4 s.d. above the mean for minor ancestry.
+# this could be a power issue because in general mexicana has lower % maize than maize has % mexicana admixture.
+# at the lower cutoff thresholds, maize tends to have more loci with broadly shared peaks whereas in mexicana minor ancestry peaks are 
+# concentrated around 1-5 populations
+# In contrast, maize has some peaks at 1 s.d. above the mean shared among all 14 maize pops, and a noticeable uptick at 8 populations
+
+
+# Q: do these tend to be the same 8 populations? a cluster? Are they the highest elevation pops? Is this all the inv4m?
+sort(table(apply((maize_anc_s > 2)[apply(maize_anc_s > 2, 1, sum) == 8, ], 1, paste, collapse = "-")), decreasing = T)
+maize_pops[c(F, F, F, T, T, T, T, F, F, T, F, T, T, T)] # n=146 the most frequent set of 8
+
+meta.pops[meta.pops$pop %in% maize_pops[c(F, T, T, T, F, F, T, F, T, T, T, T, F, F)], c("ELEVATION", "LOCALITY", "pop")] %>%
+  arrange(ELEVATION) # n=186
+meta.pops[meta.pops$pop %in% maize_pops[c(F, F, T, T, T, T, F, T, F, F, F, T, T, T)], c("ELEVATION", "LOCALITY", "pop")] %>%
+  arrange(ELEVATION) # n = 390; possibly mostly the inversion
+# not working -- what portion of this is the inversion?
+#sort(table(apply(((maize_anc_s > 2)[apply(maize_anc_s > 2, 1, sum) == 8])[!d$inv4m, ], 
+#                 1, paste, collapse = "-")), decreasing = T)
+
+
+# does the pattern look different if I restrict it to just zTz outliers (presumably non-neutral sites)?
+
+
+
+# what do these patterns of shared ancestry look like for low minor ancestry? <.01 since all pops are hitting lower bound threshold before 2 s.d.
+data.frame(maize = apply(maize_anc, 1, function(x) sum(x < .01)),
+           mexicana = apply(mexicana_anc, 1, function(x) sum(x > .99))) %>%
+  tidyr::gather(., "zea", "n_pops_sharing") %>%
+  ggplot(., aes(x = n_pops_sharing, fill = zea)) +
+  geom_histogram(position = "identity", alpha = .5) +
+  ylab("number of loci") +
+  ggtitle("# populations sharing low (<.01) minor ancestry")
+ggsave("plots/hist_shared_low_minor_ancestry_01.png",
+       height = 6, width = 8, units = "in", device = "png")
+
+data.frame(maize = apply(maize_anc < 0.1 | maize_anc_s <= -2, 1, sum),
+           mexicana = apply(mexicana_anc > .99 | mexicana_anc_s >= 2, 1, sum)) %>%
+  tidyr::gather(., "zea", "n_pops_sharing") %>%
+  ggplot(., aes(x = n_pops_sharing, fill = zea)) +
+  geom_histogram(position = "identity", alpha = .5) +
+  ylab("number of loci") +
+  ggtitle("# populations sharing low (< 0.01 or 2 sd below mean) minor ancestry")
+ggsave("plots/hist_shared_low_minor_ancestry_01_or2sd.png",
+       height =6, width = 8, units = "in", device = "png")
+  
+
+# plot ancestry at candidate incompatibility loci:
+GRMZM2G410783 <- read.table("../data/refMaize/geneAnnotations/GRMZM2G410783_v4_coord.bed", stringsAsFactors = F, sep = "\t")
+d$GRMZM2G410783 <- (d$chr == GRMZM2G410783$V1 & d$pos >= GRMZM2G410783$V2 & d$pos <= GRMZM2G410783$V3)
+AC231426.1_FG002 <- read.table("../data/refMaize/geneAnnotations/AC231426.1_FG002_v4_coord.bed", stringsAsFactors = F, sep = "\t")
+d$AC231426.1_FG002 <- (d$chr == AC231426.1_FG002$V1 & d$pos >= AC231426.1_FG002$V2 & d$pos <= AC231426.1_FG002$V3)
+d %>%
+  ggplot(aes(x = GRMZM2G410783, y = pop_meanAlpha_mex)) +
+  geom_boxplot()
+d %>%
+  ggplot(aes(x = AC231426.1_FG002, y = pop_meanAlpha_mex)) +
+  geom_boxplot()
+# local ancestry around loci of interest
+d %>%
+  tidyr::gather(., "zea", "meanMexAnc", c(pop_meanAlpha_maize, pop_meanAlpha_mex)) %>%
+  filter(chr == 5 & pos >= 150000000 & pos <= 155000000) %>%
+  tidyr::gather(., "locus", "within_locus", c(GRMZM2G410783, AC231426.1_FG002)) %>%
+  #ggplot(aes(x = pos, y = meanMexAnc, color = GRMZM2G410783 | AC231426.1_FG002, shape = zea)) +
+  ggplot(aes(x = pos, y = meanMexAnc, color = within_locus, shape = zea)) +
+  geom_point() +
+  facet_wrap(~locus) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at putative Ga2 loci")
+ggsave("plots/mex_freq_around_candidate_incompatibility_loci_combined_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+# zoomed out view with boxplot
+d %>%
+  rename(maize = pop_meanAlpha_maize) %>%
+  rename(mexicana = pop_meanAlpha_mex) %>%
+  tidyr::gather(., "zea", "meanMexAnc", c(maize, mexicana)) %>%
+  tidyr::gather(., "locus", "within_locus", c(GRMZM2G410783, AC231426.1_FG002)) %>%
+  #mutate(zea = sapply(zea, function(x) strsplit(x, split = "_")[[1]][3])) %>%
+  ggplot(aes(x = zea, y = meanMexAnc, color = within_locus)) +
+  geom_boxplot() +
+  facet_wrap(~locus) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at putative Ga2 loci compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_loci_combined_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+
+# plot by population:
+# at female locus
+bind_cols(d, all_anc) %>%
+  tidyr::gather(., "pop", "meanMexAnc", meta.pops$pop) %>%
+  left_join(., meta.pops, by = "pop") %>%
+  dplyr::group_by(., pop, zea, LOCALITY, ELEVATION, GRMZM2G410783) %>%
+  summarise(meanMexAnc = mean(meanMexAnc)) %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = meanMexAnc, color = GRMZM2G410783)) +
+  geom_point() +
+  facet_wrap(~zea) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at GRMZM2G410783 compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_GRMZM2G410783_ind_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+# male locus:
+bind_cols(d, all_anc) %>%
+  tidyr::gather(., "pop", "meanMexAnc", meta.pops$pop) %>%
+  left_join(., meta.pops, by = "pop") %>%
+  dplyr::group_by(., pop, zea, LOCALITY, ELEVATION, AC231426.1_FG002) %>%
+  summarise(meanMexAnc = mean(meanMexAnc)) %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = meanMexAnc, color = AC231426.1_FG002)) +
+  geom_point() +
+  facet_wrap(~zea) +
+  ggtitle("mean mexicana ancestry in maize and mexicana at AC231426.1_FG002 compared to genomewide") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_AC231426.1_FG002_ind_pops.png",
+       height = 6, width = 8, units = "in", device = "png")
+

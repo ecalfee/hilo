@@ -1,0 +1,7 @@
+Gene ID 	Group 	Transcripts 	Location 	Version 	Line	Candidate
+GRMZM2G410783  	transposable_element  	1  	Chr5:148771089-148776553  	5b+  	B73	female_Ga2
+GRMZM2G410783  	WGS  	  	chr5:148732068-148737532  	RefGen_v2  	B73	female_Ga2
+GRMZM2G410783  	WGS  	  	chr5:147994006-147999470  	RefGen_v1  	B73	female_Ga2
+AC231426.1_FG002  	transposable_element  	1  	Chr5:149270832-149272500  	5b+  	B73  	male_Ga2
+AC231426.1_FG002  	WGS  	  	chr5:149231811-149233479  	RefGen_v2  	B73  	male_Ga2
+AC231426.1_FG002  	WGS  	  	chr5:148479075-148479677  	RefGen_v1  	B73  	male_Ga2

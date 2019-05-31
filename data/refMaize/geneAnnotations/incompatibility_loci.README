@@ -1,0 +1,7 @@
+5.30.19 Jeff gave me gene candidates for the incompatibility loci Ga2 (male and female).
+I used maizeGDB to look up the positions of those candidate genes and got positions for v1, v2, and v3 (5b+) reference genomes.
+https://www.maizegdb.org/gene_center/gene
+The gene annotation for reference genome v4 is comparatively poor and doesn't have these genes annotated but I can either
+(1) match by sequence
+(2) liftover from v3 to v4 coordinates - did this using http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter
+The v4 coordinates are saved as GRMZM2G410783_v4_coord.bed (female Ga2) and AC231426.1_FG002_v4_coord.bed (male Ga2)
