@@ -283,5 +283,3 @@ reseq <- hilo %>%
   mutate(est_coverage = ifelse(ID == "HILO80" | plate_number == "plate2", 0, est_coverage)) %>%
   dplyr::select("RI_ACCESSION", "family", "zea", "symp_allo", "ID", "LOCALITY", "plate_number", "est_coverage") %>%
   unique()
-
-#  RIMMA0360, B1, maize, sympatric, HILO112, Nabogame, plate3+4

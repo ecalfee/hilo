@@ -838,7 +838,9 @@ d_inv4m %>%
   xlab(paste0("PC1 (", PC_var_explained_inv4m[1], "%)")) +
   ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
   geom_point(aes(color = LOCALITY, shape = group, size = depth)) +
-  ggtitle(paste("PCA HiLo inv4m locus")) #+
+  ggtitle(paste("PCA HiLo inv4m locus")) +
+  geom_vline(aes(xintercept = -.035), linetype = "dashed") +
+  geom_vline(aes(xintercept = .035), linetype = "dashed")
   #scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
 ggsave(paste0("plots/PCA_", PREFIX, "inv4m.png"),
        device = "png",
@@ -851,7 +853,9 @@ d_inv4m %>%
   ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
   geom_point(aes(color = ELEVATION, shape = group, size = depth)) +
   ggtitle(paste("PCA HiLo inv4m locus")) +
-scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
+  scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) + # change the colors
+  geom_vline(aes(xintercept = -.035), linetype = "dashed") +
+  geom_vline(aes(xintercept = .035), linetype = "dashed")
 ggsave(paste0("plots/PCA_", PREFIX, "inv4m_colored_by_elevation.png"),
        device = "png",
        width = 12, height = 8, units = "in",
@@ -864,8 +868,28 @@ d_inv4m %>%
   geom_point(aes(color = LOCALITY, shape = group, size = depth)) +
   ggtitle(paste("PCA HiLo inv4m locus - PC 3 & 4"))
 
+# write a file with the different inv4m groups:
+for (g in unique(d_inv4m$group)){
+  dir_bam <- ifelse(g == "allopatric_maize", "alloMAIZE", "merged")
+  # write maize haplotype ID list
+  write.table(d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 < -.035],
+    paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".maize_hap.IDs"),
+    sep = "\t", col.names = F, row.names = F, quote = F)
+  # and bam list
+  write.table(paste0("../filtered_bams/result/", dir_bam, "/", d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 < -.035], ".sort.dedup.baq.bam"),
+              paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".maize_hap.bams"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+  # write mexicana haplotype ID list
+  write.table(d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 > .035],
+              paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".mexicana_hap.IDs"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+  # and bam list
+  write.table(paste0("../filtered_bams/result/", dir_bam, "/", 
+                     d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 > .035], 
+                     ".sort.dedup.baq.bam"),
+              paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".mexicana_hap.bams"),
+              sep = "\t", col.names = F, row.names = F, quote = F)
+}
 
-
-# TO DO: possibly rerun PCAngsd with separate entries for bams of the same individual,
-# but before merging across sequencing pools to confirm it's the same sample
-# (include all final merged individuals too -- just add the pre-merging individual copies too)
+# TO DO: 
+# Add parviglumis to inv4m PCA

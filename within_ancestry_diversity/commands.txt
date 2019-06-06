@@ -246,8 +246,8 @@ within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=alloMAIZE,PREF
 Submitted batch job 10460993 - COMPLETED 4.24.19 (actually very fast)
 # renamed allo.maize to match other naming convention
 
-# allele freqs for all hilo populations and groups: 
-# NOTE: I changed the output folders from 'all' to 'pass2_alloMAIZE' to be more specific 
+# allele freqs for all hilo populations and groups:
+# NOTE: I changed the output folders from 'all' to 'pass2_alloMAIZE' to be more specific
 # make symlinks:
 within_ancestry_diversity$ for i in $(cat ../samples/pass2_pops/pop_labels.list); do ln -s /home/ecalfee/hilo/samples/pass2_pops/"$i"_bams.list results/input/all/pops/"$i".list; done
 # run allele freq calc:
@@ -262,12 +262,23 @@ within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/trip_bams.list resul
 within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=trip,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 10461997 - COMPLETED 4.24.19
 
-
-# TO DO: (1) Plot results for pi for these outlier regions defined by high mex ancestry
 # Get pi and Fst estimates for the chr4 inversion.
-# (2) Is there evidence of single-pop selection? - maybe, look into this more.
-# (3) plot of print out ZAnc covariance matrix (and number per pop).
-# (4) what is going on at very neg. ZAnc but pretty avg. mean_ancestry loci?!
+# pi for all groups of haplotypes, e.g. sympatric maize homozygous for mexicana haplotypes
+# Fst between allopatric maize (hom. maize hap), allopatric mexicana (hom. mexicana hap)
+# and parviglumis
+# (1) Identify individuals homozygous for maize or mexicana inversion type based on PCA for inv4m
+# global_ancestry/plot_PCA.R creates the bam file lists for these individuals based on PC1 cutoffs
+# e.g. file within_ancestry_diversity/results/inv4m/pass2_alloMAIZE/allopatric_mexicana.mexicana_hap.bams
+# intermediate individuals are not included (and there are some allopatric mexicana that appear intermediate/heterozygous from PCA).
+# make symlink for parviglumis (include all individuals in bam list for parviglumis)
+hilo/within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ ln -s ../../../../samples/PalmarChico_IDs.list parviglumis.IDs
+hilo/within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ ln -s ../../../../samples/PalmarChico_bams.list parviglumis.bams
+# inv4m	4:171771502-185951149 on v4 coordinates but I add 1Mb to either end as additional buffer
+within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE piFstAngsd_inv4m.sh
+
+# TO DO:
+# add parviglumis to chr4 PCA. check if any parviglumis have mexicana-like haplotype at inv4m.
+# redo within-ancestry peaks for pass2 data
 # (4) look up the estimated dates for very high maize ancestry prior run of maize local anc. inference
 
 # TO DO: start by looking at mexicana ancestry in maize. Make a generic regions script, but set your first region = chr4 and see if it runs overnight. Use unfolded SFS.
@@ -294,7 +305,3 @@ Submitted batch job 10461997 - COMPLETED 4.24.19
 
 # Step 5: Summarize statistics to characterize genomewide patterns but also
 # large outlier regions individually
-
-
-
-
