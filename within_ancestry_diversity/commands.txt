@@ -280,9 +280,9 @@ Submitted batch job 11248326 - RUNNING 6.5.19. CANCELLED.
 # then run all 2nd priority pi and fst estimates (e.g. with parviglumis and sympatric pops)
 # also made scripts general to any locus:
 within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus.sh
-
+Submitted batch job 11248335 - RUNNING 6.5.19
 within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus_extra.sh
-
+ubmitted batch job 11248336 - RUNNING 6.5.19
 # TO DO:
 # add parviglumis to chr4 PCA. check if any parviglumis have mexicana-like haplotype at inv4m.
 # redo within-ancestry peaks for pass2 data
