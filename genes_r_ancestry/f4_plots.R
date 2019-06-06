@@ -2,13 +2,13 @@ library(dplyr)
 library(ggplot2)
 # what does f4 look like across the genome?
 # distribution with recombination rate and gene density?
-f4_nonadmix <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F), 
+f4_nonadmix <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F),
                      read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/SNP_count_10kb.bed", stringsAsFactors = F)$V5)
 colnames(f4_nonadmix) <- c("chr", "start", "end", "10kb_region", "f4_nonadmix", "n_SNPs_nonadmix")
-f4_maize <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F), 
+f4_maize <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F),
                   read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mexicana_trip/SNP_count_10kb.bed", stringsAsFactors = F)$V5)
 colnames(f4_maize) <- c("chr", "start", "end", "10kb_region", "f4_maize", "n_SNPs_maize")
-f4_mexicana <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F), 
+f4_mexicana <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F),
                      read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_allo.mexicana_trip/SNP_count_10kb.bed", stringsAsFactors = F)$V5)
 colnames(f4_mexicana) <- c("chr", "start", "end", "10kb_region", "f4_mexicana", "n_SNPs_mexicana")
 
@@ -36,10 +36,10 @@ d <- left_join(genome, f4_nonadmix, by = c("chr", "start", "end", "10kb_region")
 for (l in 1:5){
   filter(d, r5 == levels(d$r5)[l]) %>%
     dplyr::select(., c("chr", "start", "end", "r")) %>%
-  write.table( ., 
-               paste0("../data/refMaize/windows_10kb/recomb_", l, ".bed"), 
-               quote = F, col.names = F, row.names = F)
-} 
+  write.table( .,
+               paste0("../data/refMaize/windows_10kb/recomb_", l, ".bed"),
+               quote = F, col.names = F, row.names = F, sep = "\t")
+}
 
 
 # plot
@@ -52,7 +52,7 @@ summary(d$alpha_maize)
 
 lma <- with(d, lm(f4_maize ~ f4_nonadmix))
 summary(lma)
-# an overly simplistic linear model. but slope isn't 1:1 for f4_nonadmix and f4_admix 
+# an overly simplistic linear model. but slope isn't 1:1 for f4_nonadmix and f4_admix
 # these are bins which is probably bad. but higher r suggests lower minor ancestry (not what we'd predict)
 lmr_maize <- with(d, lm(f4_maize ~ f4_nonadmix + r + perc_coding))
 summary(lmr_maize)
@@ -86,7 +86,7 @@ sum(is.na(d$f4_nonadmix) & is.na(d$f4_mexicana))/nrow(d) # 30% of 10kb windows h
 
 mean(d$f4_maize, na.rm = T)/mean(d$f4_nonadmix, na.rm = T)
 
-# this is very different from the all.summary file results. Why would taking a mean over I'll check by region. 
+# this is very different from the all.summary file results. Why would taking a mean over I'll check by region.
 maize_regions <- read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mexicana_trip/all.regions", stringsAsFactors = F, header = T)
 
 nonadmix_regions <- read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/all.regions", stringsAsFactors = F, header = T)
@@ -96,7 +96,7 @@ mexicana_regions<- read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_all
 (sum(mexicana_regions$f4_sum)/sum(mexicana_regions$n))/(sum(nonadmix_regions$f4_sum)/sum(nonadmix_regions$n)) # also pretty reasonable
 
 # individual regions aren't well estimated, but mean of regions is close to the genomewide mean
-summary((maize_regions$f4_sum/maize_regions$n)/(nonadmix_regions$f4_sum/nonadmix_regions$n)) 
+summary((maize_regions$f4_sum/maize_regions$n)/(nonadmix_regions$f4_sum/nonadmix_regions$n))
 summary((mexicana_regions$f4_sum/mexicana_regions$n)/(nonadmix_regions$f4_sum/nonadmix_regions$n))
 
 # use data for # SNPs:
@@ -108,7 +108,7 @@ d %>%
 d %>%
   filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
   group_by(r5) %>%
-  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix))) 
+  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix)))
 # more bins, same general trend
 d %>%
   filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
@@ -118,7 +118,7 @@ d %>%
 d %>% # not a super clear trend
   filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
   group_by(cds5) %>%
-  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix))) 
+  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix)))
 
 
 # and mexicana; pattern is not clear:
@@ -171,15 +171,15 @@ ngsadmixInd <- read.table("../global_ancestry/results/NGSAdmix/pass2_alloMAIZE/g
 ngsadmixInd$zea <- ifelse(ngsadmixInd$popN > 100, "maize", "mexicana")
 ngsadmix$zea <- ifelse(ngsadmix$popN > 100, "maize", "mexicana")
 
-# group means aren't exactly the same but similar to genomewide f4-ratio results. 
+# group means aren't exactly the same but similar to genomewide f4-ratio results.
 # exact match isn't expected: f4 uses more SNPs and overall diff. approach; but reassuring the f4 isn't way lower
 ngsadmixInd %>%
   group_by(zea) %>%
-  summarise(mean(alpha_maize)) 
+  summarise(mean(alpha_maize))
 
 # I can also look at each individual population:
 pops <- unique(ngsadmix$popN)
-f4_pops <- lapply(pops, function(p) cbind(read.table(paste0("results/f4/pass2_alloMAIZE/parv_pop", p, "_allo.mexicana_trip/f4_10kb.bed"), stringsAsFactors = F), 
+f4_pops <- lapply(pops, function(p) cbind(read.table(paste0("results/f4/pass2_alloMAIZE/parv_pop", p, "_allo.mexicana_trip/f4_10kb.bed"), stringsAsFactors = F),
                                              read.table(paste0("results/f4/pass2_alloMAIZE/parv_pop", p, "_allo.mexicana_trip/SNP_count_10kb.bed"), stringsAsFactors = F)$V5) %>%
                     setNames(., c("chr", "start", "end", "10kb_region", "f4", "n_SNPs")) %>%
                     left_join(genome, ., by = c("chr", "start", "end", "10kb_region")) %>%
@@ -236,11 +236,11 @@ d %>% # same pattern
   filter(complete.cases(dplyr::select(., c("f4_maize", "f4_nonadmix")))) %>%
   filter(chr != 4) %>%
   group_by(r5) %>%
-  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix))) 
+  summarise((sum(f4_maize*n_SNPs_maize)/sum(n_SNPs_maize))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix)))
 d %>% # weak pattern
   filter(complete.cases(dplyr::select(., c("f4_mexicana", "f4_nonadmix")))) %>%
   filter(chr != 4) %>%
   group_by(r5) %>%
-  summarise((sum(f4_mexicana*n_SNPs_mexicana)/sum(n_SNPs_mexicana))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix))) 
+  summarise((sum(f4_mexicana*n_SNPs_mexicana)/sum(n_SNPs_mexicana))/(sum(f4_nonadmix*n_SNPs_nonadmix)/sum(n_SNPs_nonadmix)))
 
 # maybe these estimates are just too unstable and I should be using angsd's built-in -doAbbaBaba2 f4 estimator..

@@ -356,3 +356,86 @@ axis(side = 4, at = c(1000, 2000, 3000),
 mtext("Elevation (m)", side=4, line=2.5)
 par(mar=c(5.1,4.1,4.1,2.1)) # set back default
 dev.off()
+
+# do global ancestry estimates from NGSadmix confirm the ancestry ~ r pattern?
+# get ngsadmix k=2 estimates for 5 bins of recombination rate:
+admix_r <- do.call(rbind,
+                   lapply(1:5, function(i)
+                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"/K2.qopt")) %>%
+                       bind_cols(IDs, .) %>%
+                       left_join(., meta, by = "ID") %>%
+                       arrange(., popN) %>%
+                       arrange(., zea) %>%
+                       arrange(., symp_allo) %>%
+                       dplyr::mutate(., recomb_bin = paste0('recomb_', i)) %>%
+                       dplyr::mutate(., # label 'mexicana' ancestry least common in allopatric maize
+                                     mexicana_ancestry = sapply(1:nrow(.), function(j) ifelse(mean(filter(., group == "allopatric_maize")$V1) < .5, 
+                                                                                              .$V1[j], 
+                                                                                              .$V2[j])))
+                   ))
+# plot across recombination bins:
+admix_r %>%
+  dplyr::mutate(est_coverage = ifelse(est_coverage > 2, 2, est_coverage)) %>%
+  ggplot(aes(x = recomb_bin, y = mexicana_ancestry, 
+             color = LOCALITY, size = est_coverage)) +
+  geom_point() +
+  facet_wrap(~group) +
+  ggtitle("individual K=2 NGSAdmix mex-like ancestry estimate by r bin") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("plots/ind_mexicana-like-ancestry_by_recomb_bin.png",
+       height = 8, width = 8,
+       units = "in", device = "png")
+
+admix_r %>%
+  filter(., est_coverage > 0.1) %>%
+  ggplot(aes(fill = recomb_bin, y = mexicana_ancestry)) +
+  geom_boxplot() +
+  facet_wrap(~group) +
+  ggtitle("NGSadmix population mex-like ancestry estimates by r bin") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)")
+ggsave("plots/pop_mexicana-like-ancestry_by_recomb_bin.png",
+       height = 6, width = 8,
+       units = "in", device = "png")
+# hmm .. looks like everyone has more mexicana ancestry in high r windows
+# including allopatric mexicana
+
+# now look at Fst for the different r bins
+freqs_f <- do.call(rbind,
+                   lapply(1:5, function(i)
+                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"/K2.fopt.gz")) %>%
+                       dplyr::mutate(., het1 = 2*V1*(1-V1)) %>%
+                       dplyr::mutate(., het2 = 2*V2*(1-V2)) %>%
+                       dplyr::mutate(., pTot = (V1+V2)/2) %>%
+                       dplyr::mutate(., hetTot = 2*pTot*(1-pTot)) %>%
+                       dplyr::mutate(., piBetween = V1*(1-V2) + (1-V1)*V2) %>%
+                       dplyr::mutate(., recomb_bin = paste0("recomb_", i))
+                   ))
+
+maize_is_anc1 <- admix_r %>%
+  filter(., group == "allopatric_maize") %>%
+  group_by(recomb_bin) %>%
+  dplyr::summarise(isTrue = mean(V1) > .5)
+                                                                         
+freqs_f %>%
+  dplyr::group_by(recomb_bin) %>%
+  dplyr::summarise(., Fst = (mean(het1) + mean(het2))/2/mean(hetTot),
+                   het1 = mean(het1),
+                   het2 = mean(het2),
+                   hetTot = mean(hetTot),
+                   piBetween = mean(piBetween)) %>%
+  left_join(., maize_is_anc1, by = "recomb_bin") %>%
+  dplyr::mutate(hetMaizeAnc = ifelse(maize_is_anc1$isTrue, het1, het2)) %>%
+  dplyr::mutate(hetMexicanaAnc = ifelse(maize_is_anc1$isTrue, het2, het1)) %>%
+  gather(., "stat", "value", c("hetMaizeAnc", "hetMexicanaAnc", "piBetween", "Fst", "hetTot")) %>%
+  ggplot(aes(x = recomb_bin, y = value, group = stat, color = stat)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~stat=="Fst", scales = "free") +
+  ggtitle("pi and Fst for ancestry-estimated-allele-freqs from NGSadmix K=2 clusters") +
+  xlab("low to high recomb bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("plots/fst_by_recomb_bin.png",
+       height = 6, width = 12,
+       units = "in", device = "png")
+        

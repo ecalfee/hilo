@@ -36,7 +36,7 @@ Submitted batch job 10480999-1029 - COMPLETED 4.29.19
 # combine my f4 regions files into bed files (note bed files are 0 indexed, while angsd files are 1 indexed, and it only left-inclusive (start_pos, end_pos]: chr start_pos end_pos, so 1:3-3 in angsd woud be 1:2-3 in a bed file:
 hilo/f4/results/f4/all/parv_symp.maize_allo.mexicana_trip$ for i in {0..425}; do zcat region_$i.f4.gz | tail -n +2 | awk '{print $1"\t"$2-1"\t"$2"\t"$3}'; done > f4.bed
 # I also make an f4.bed file the same way for the denominator (parv_allo.maize_allo.mexicana_trip$ same command
-# now I can use bedtools to summarise values for different genomic regions, 
+# now I can use bedtools to summarise values for different genomic regions,
 # starting with 10kb windows:
 # denominator:
 ~/hilo/genes_r_ancestry/results/f4/all/parv_allo.maize_allo.mexicana_trip$ bedtools map -a ~/hilo/data/refMaize/windows_10kb/whole_genome.bed -b f4.bed -c 4 -o mean -g ~/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths > f4_10kb.bed
@@ -72,23 +72,42 @@ variant_sites/results/pass2_alloMAIZE$ zcat region_*.mafs.gz | wc -l
 50189317
 hilo/within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE/trip$ zcat region_*.mafs.gz | wc -l
 10955233
+# would it make a difference if tripsacum had lower mapping rates in regions with low r?
 
 (B) Mapping bias - Does maize with mexicana ancestry have lower read coverage in regions of the genome where we'd expect these populations to have lower mexicana ancestry, like regions of the genome with low recombination?
+Use bedtools?
 
-
-(C) Pattern isn't really there - Does something less sensitive to subtle biases than the hmm (or possibly the f4) also show reduced minor ancestry in regions of the genome with low recombination? What happens if I partition NGSAdmix by recombination rate regions? 
+(C) Pattern isn't really there - Does something less sensitive to subtle biases than the hmm (or possibly the f4) also show reduced minor ancestry in regions of the genome with low recombination? What happens if I partition NGSAdmix by recombination rate regions?
 I start by partitioning the bed files into low (1) to high (5) quantiles of recombination:
 Made files using f4_plots.R, e.g. recomb_1.bed. Next I use bedtools to partition variant sites into these groups and then get GL files for these subsets.
-
+data/refMaize/windows_10kb/recomb_1.bed
+# note I used command line to fix from space to tab delimited (R code should also be changed now for future):
+data/refMAIZE/windows_10kb$ for i in {1..5}; do sed 's/ /\t/g' recomb_"$i".space.bed > recomb_"$i".bed; done
+# in command line I split the marker identifier 1_1245 into bed format 1 1244 1245, filter snps
+# to find those that overlap with different recomb. window bins, and then print the GL's just for those bins
+# (fast). note first line is just to keep the GL header and last part is gzipping again; parenthesis makes sure header is also gzipped
+hilo/global_ancestry$ for i in {1..5}; do mkdir -p results/thinnedNSPs/pass2_alloMAIZE/recomb_$i; (zcat results/thinnedSNPs/pass2_alloMAIZE/test.beagle.gz | head -n 1; zcat results/thinnedSNPs/pass2_alloMAIZE/whole_genome.beagle.gz | awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | bedtools intersect -a stdin -b ../data/refMaize/windows_10kb/recomb_"$i".bed -wa -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4-) | gzip > results/thinnedSNPs/pass2_alloMAIZE/recomb_$i.beagle.gz; done
+hilo/global_ancestry$ for i in {1..5}; do mkdir -p results/thinnedSNPs/pass2_alloMAIZE/recomb_$i; (zcat results/thinnedSNPs/pass2_alloMAIZE/test.beagle.gz | head -n 1; zcat results/thinnedSNPs/pass2_alloMAIZE/whole_genome.beagle.gz | awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | bedtools intersect -a stdin -b ../data/refMaize/windows_10kb/recomb_"$i".bed -wa -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4-) | gzip > results/thinnedSNPs/pass2_alloMAIZE/recomb_$i/whole_genome.beagle.gz; done
+# ! note there are 75x more SNPs in the highest recomb. bin (recomb_5: 75k) than the lowest (recomb_1: 1k)
+# this is at least in part because I thin SNPs by .01cM distance which enriches for high recomb. regions.
+# and differences in r can be up to 2 orders of magnitude across the genome. but it's not clear this explains all of it.
+# I don't know how much SNP density varies across recomb. bin.
+# running NGSadmix on these SNP subsets, keeping in mind a lot higher uncertainty for low recomb bins.
+(see global_ancestry/results directory for output)
+global_ancestry$ sbatch --export=PREFIX="pass2_alloMAIZE/recomb_1" --array=2 runNGSadmix.sh
+Submitted batch job 11215774 # COMPLETED
+global_ancestry$ for i in {2..5}; do sbatch --export=PREFIX="pass2_alloMAIZE/recomb_$i" --array=2 runNGSadmix.sh; done
+Submitted batch job 11215775-8 # COMPLETED 6.2.19
 
 (D) SNP choice or subtle ascertainment bias (?). I did not include tripsacum or parviglumis when I ascertained SNPs .. is this a problem?
 
 (E) f4 is being affected by admixture between parviglumis and teosinte that is uneven across the genome
 
 (F) Sampling noise -- What does a block bootstrap say about certainty of these estimates? I could bootstrap by chromosome possibly.
+# is the original result with local ancestry robust to bootstrapping?
 
 (G) Error from the recombination map -- is 10kb too wide? is the original results robust to excluding areas towards the telomeres on chromosome edges where recombination is poorly estimated?
 
-# TO DO: 
-# (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population. 
+# TO DO:
+# (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population.
 # (3) Divide genome into .01cM fixed windows. summarise mean f4 for each window.
