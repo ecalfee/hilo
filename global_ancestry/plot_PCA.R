@@ -876,7 +876,7 @@ for (g in unique(d_inv4m$group)){
     paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".maize_hap.IDs"),
     sep = "\t", col.names = F, row.names = F, quote = F)
   # and bam list
-  write.table(paste0("../filtered_bams/result/", dir_bam, "/", d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 < -.035], ".sort.dedup.baq.bam"),
+  write.table(paste0("../filtered_bams/results/", dir_bam, "/", d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 < -.035], ".sort.dedup.baq.bam"),
               paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".maize_hap.bams"),
               sep = "\t", col.names = F, row.names = F, quote = F)
   # write mexicana haplotype ID list
@@ -884,7 +884,7 @@ for (g in unique(d_inv4m$group)){
               paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".mexicana_hap.IDs"),
               sep = "\t", col.names = F, row.names = F, quote = F)
   # and bam list
-  write.table(paste0("../filtered_bams/result/", dir_bam, "/", 
+  write.table(paste0("../filtered_bams/results/", dir_bam, "/", 
                      d_inv4m$ID[d_inv4m$group == g & d_inv4m$PC1 > .035], 
                      ".sort.dedup.baq.bam"),
               paste0("../within_ancestry_diversity/results/inv4m/", PREFIX, "/", g, ".mexicana_hap.bams"),

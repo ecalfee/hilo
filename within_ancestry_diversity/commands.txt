@@ -275,6 +275,13 @@ hilo/within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ ln -s ../../../../
 hilo/within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ ln -s ../../../../samples/PalmarChico_bams.list parviglumis.bams
 # inv4m	4:171771502-185951149 on v4 coordinates but I add 1Mb to either end as additional buffer
 within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE piFstAngsd_inv4m.sh
+Submitted batch job 11248326 - RUNNING 6.5.19. CANCELLED.
+# Instead I want to run this in 2 parts: first priority is getting fst between allopatric maize and mex
+# then run all 2nd priority pi and fst estimates (e.g. with parviglumis and sympatric pops)
+# also made scripts general to any locus:
+within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus.sh
+
+within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus_extra.sh
 
 # TO DO:
 # add parviglumis to chr4 PCA. check if any parviglumis have mexicana-like haplotype at inv4m.
