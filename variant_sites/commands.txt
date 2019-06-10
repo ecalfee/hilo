@@ -64,5 +64,19 @@ variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE,ALL" --dependency=af
 Submitted batch job 10453205 - COMPLETED 4.23.19 
 
 
-# TO DO: Call genotypes for tripsacum
-# TO DO: Get allele frequencies for parviglumis
+# Get SNPs called including parviglumis so I can get accurate allele frequencies for parviglumis
+# first make list of samples:
+samples$ cat pass2_alloMAIZE_IDs.list PalmarChico_IDs.list > pass2_alloMAIZE_PalmarChico_IDs.list
+samples$ cat pass2_alloMAIZE_bams.list PalmarChico_bams.list > pass2_alloMAIZE_PalmarChico_bams.list
+# then call SNPs
+# call variant sites with cutoff based on < 2x mean
+# interactively using plot_mapping_metrics.R I inferred the mean coverage for random regions is ~***x
+# running flagstat to get that estimate right now
+# find SNPs
+variant_sites$ sbatch --mem=24G --export=PREFIX=pass2_alloMAIZE_PalmarChico,MAX_DEPTH=** id_SNPs.sh
+# create sites file from SNPs mafs.gz file
+******
+variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE_PalmarChico,ALL" --dependency=afterok:****** -p med2 mafsToSitesFile.sh
+
+
+

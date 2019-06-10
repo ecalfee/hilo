@@ -5,7 +5,7 @@
 #SBATCH -o /home/ecalfee/hilo/slurm-log/getHomozygTractsBamsMaize_%A_%a.out
 #SBATCH -t 2-00:00:00
 #SBATCH --mem=16G
-# to run: sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams.sh
+# to run: sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_maize.sh
 
 # this script takes in a set of short tracts around sites with ancestry posteriors from ancestry_hmm
 # and the posteriors for an individual at those sites
@@ -28,7 +28,7 @@ ID=${ids["$i"]}
 bams=($(cat ../samples/${PREFIX}_bams.list))
 BAM=${bams["$i"]}
 SITES_FILE=results/input/"$PREFIX"/var.sites.bed
-DIR_OUT="results/input/$PREFIX/mex2"
+DIR_OUT="results/input/$PREFIX/maize2"
 DIR_POST="../local_ancestry/results/ancestry_hmm/$PREFIX/$PREFIX_HMM"
 
 # make directory for output

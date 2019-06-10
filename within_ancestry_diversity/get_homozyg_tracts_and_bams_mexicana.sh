@@ -5,7 +5,7 @@
 #SBATCH -o /home/ecalfee/hilo/slurm-log/getHomozygTractsBamsMex_%A_%a.out
 #SBATCH -t 2-00:00:00
 #SBATCH --mem=16G
-# to run: sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams.sh
+# to run: sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
 
 # this script takes in a set of short tracts around sites with ancestry posteriors from ancestry_hmm
 # and the posteriors for an individual at those sites
