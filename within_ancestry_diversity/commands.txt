@@ -283,6 +283,23 @@ within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CH
 Submitted batch job 11248335 - RUNNING 6.5.19
 within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus_extra.sh
 ubmitted batch job 11248336 - RUNNING 6.5.19
+
+# NEW DATA - pass2_alloMAIZE - redo calling homozygous ancestry tracts (post > .8):
+# Step 1: use R and bedtools to identify regions with homozygous ancestry for each individual:
+
+# 1a: R script makes short tracts around variant sites: ancestry_sites_to_tracts.R
+within_ancestry_diversity$ Rscript ./ancestry_sites_to_tracts.R pass2_alloMAIZE
+COMPLETED (interactively on farm -- very fast)
+# 1b: then use awk to identify which tracts have posterior > 0.8
+# and bedtools to merge adjacent tracts (array 0-217 is all HILO ind's -- script will try (and fail) to find posteriors for allopatric mexicana, so I expect some failed jobs
+within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
+
+within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_maize.sh
+
+
+
+
+
 # TO DO:
 # add parviglumis to chr4 PCA. check if any parviglumis have mexicana-like haplotype at inv4m.
 # redo within-ancestry peaks for pass2 data
