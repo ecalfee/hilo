@@ -4,12 +4,15 @@
 # into tracts around those sites
 
 # to run:
-# Rscript ancestry_sites_to_tracts.R ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM
+# OLD: Rscript ancestry_sites_to_tracts.R ../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM
+# NEW: Rscript ancestry_sites_to_tracts.R pass2_alloMAIZE
+
 
 # arguments
 args = commandArgs(trailingOnly=TRUE)
 # directory with chri.var.sites files
-input_dir = args[1]
+PREFIX = args[1]
+input_dir = paste0("../local_ancestry/results/thinnedSNPs/", PREFIX)
 
 # helper function makes start and end positions of tracts around a SNP site
 # as the bp position halfway between that marker and the next closest marker.
@@ -28,7 +31,7 @@ all_sites <- do.call(rbind,
                      lapply(1:10, function(i)
                        get_start_end(chrom = i, dir = input_dir)))
 # create output directory
-dir.create(file.path("results", "input"), recursive = T)
+dir.create(file.path("results", "input", PREFIX), recursive = T)
 # write sites to output file
-write.table(all_sites, file.path("results", "input", "var.sites.bed"),
+write.table(all_sites, file.path("results", "input", PREFIX, "var.sites.bed"),
             sep = "\t", col.names = F, row.names = F, quote = F)
