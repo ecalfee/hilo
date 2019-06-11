@@ -36,12 +36,12 @@ echo "calculating allele freq. at variant sites region " $REGION_I "for pop "$PO
 
 angsd -out "${DIR_SCRATCH}/whole_genome" \
 -ref "$REF" \
--rf "${DIR_POPS}/region.txt" \
+-rf "${DIR_POPS}/regions.txt" \
 -bam "${DIR_POPS}/${POP}.bams" \
 -remove_bads 1 \
 -minMapQ 30 -minQ 20 \
 -doMajorMinor 3 \
--sites "../global_ancestry/results/${PREFIX}/whole_genome.var.sites" \
+-sites "../global_ancestry/results/thinnedSNPs/${PREFIX}/whole_genome.var.sites" \
 -doCounts 1 \
 -doMaf 8 \
 -P 1
