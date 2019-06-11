@@ -357,16 +357,18 @@ mtext("Elevation (m)", side=4, line=2.5)
 par(mar=c(5.1,4.1,4.1,2.1)) # set back default
 dev.off()
 
-# do global ancestry estimates from NGSadmix confirm the ancestry ~ r pattern?
+# do global ancestry estimatesiloveyou
+# from NGSadmix confirm the ancestry ~ r pattern?
 # get ngsadmix k=2 estimates for 5 bins of recombination rate:
 admix_r <- do.call(rbind,
                    lapply(1:5, function(i)
-                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"/K2.qopt")) %>%
+                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"_1percent/K2.qopt")) %>%
                        bind_cols(IDs, .) %>%
                        left_join(., meta, by = "ID") %>%
                        arrange(., popN) %>%
                        arrange(., zea) %>%
                        arrange(., symp_allo) %>%
+                       filter(est_coverage > .05) %>%
                        dplyr::mutate(., recomb_bin = paste0('recomb_', i)) %>%
                        dplyr::mutate(., # label 'mexicana' ancestry least common in allopatric maize
                                      mexicana_ancestry = sapply(1:nrow(.), function(j) ifelse(mean(filter(., group == "allopatric_maize")$V1) < .5, 
@@ -376,6 +378,7 @@ admix_r <- do.call(rbind,
 # plot across recombination bins:
 admix_r %>%
   dplyr::mutate(est_coverage = ifelse(est_coverage > 2, 2, est_coverage)) %>%
+  filter(est_coverage > .05) %>%
   ggplot(aes(x = recomb_bin, y = mexicana_ancestry, 
              color = LOCALITY, size = est_coverage)) +
   geom_point() +
@@ -387,23 +390,52 @@ ggsave("plots/ind_mexicana-like-ancestry_by_recomb_bin.png",
        height = 8, width = 8,
        units = "in", device = "png")
 
+# plot across recombination bins:
 admix_r %>%
-  filter(., est_coverage > 0.1) %>%
+  dplyr::mutate(est_coverage = ifelse(est_coverage > 2, 2, est_coverage)) %>%
+  filter(est_coverage > 0.05) %>%
+  ggplot(aes(x = recomb_bin, y = mexicana_ancestry, 
+             color = LOCALITY, group = ID)) +
+  geom_line() +
+  #geom_point(aes(size = est_coverage)) +
+  facet_wrap(~group) +
+  ggtitle("individual K=2 NGSAdmix mex-like ancestry estimate by r bin") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("plots/ind_mexicana-like-ancestry_by_recomb_bin_lines.png",
+       height = 8, width = 8,
+       units = "in", device = "png")
+
+admix_r %>%
+  filter(., est_coverage > 0.05) %>%
+  ggplot(aes(fill = recomb_bin, x = LOCALITY, y = mexicana_ancestry)) +
+  geom_boxplot() +
+  facet_wrap(~group) +
+  ggtitle("NGSadmix population mex-like ancestry estimates by r bin (boxplot of ind admixture proportions)") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/pop_mexicana-like-ancestry_by_recomb_bin_pops_by_locality.png",
+       height = 10, width = 12,
+       units = "in", device = "png")
+
+admix_r %>%
+  filter(., est_coverage > 0.05) %>%
   ggplot(aes(fill = recomb_bin, y = mexicana_ancestry)) +
   geom_boxplot() +
   facet_wrap(~group) +
-  ggtitle("NGSadmix population mex-like ancestry estimates by r bin") +
-  xlab("low to high recombination bins (quintiles of 10kb windows)")
-ggsave("plots/pop_mexicana-like-ancestry_by_recomb_bin.png",
+  ggtitle("NGSadmix mex-like ancestry estimates by r bin (boxplot of ind admixture proportions)") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/pop_mexicana-like-ancestry_by_recomb_bin_boxplot.png",
        height = 6, width = 8,
        units = "in", device = "png")
 # hmm .. looks like everyone has more mexicana ancestry in high r windows
-# including allopatric mexicana
+# including mexicana
 
 # now look at Fst for the different r bins
 freqs_f <- do.call(rbind,
                    lapply(1:5, function(i)
-                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"/K2.fopt.gz")) %>%
+                     read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"_1percent/K2.fopt.gz")) %>%
                        dplyr::mutate(., het1 = 2*V1*(1-V1)) %>%
                        dplyr::mutate(., het2 = 2*V2*(1-V2)) %>%
                        dplyr::mutate(., pTot = (V1+V2)/2) %>%
@@ -419,7 +451,7 @@ maize_is_anc1 <- admix_r %>%
                                                                          
 freqs_f %>%
   dplyr::group_by(recomb_bin) %>%
-  dplyr::summarise(., Fst = (mean(het1) + mean(het2))/2/mean(hetTot),
+  dplyr::summarise(., Fst = 1 - (mean(het1) + mean(het2))/2/mean(hetTot),
                    het1 = mean(het1),
                    het2 = mean(het2),
                    hetTot = mean(hetTot),

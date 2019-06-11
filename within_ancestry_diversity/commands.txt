@@ -294,10 +294,10 @@ COMPLETED (interactively on farm -- very fast)
 # and bedtools to merge adjacent tracts (array 0-217 is all HILO ind's -- script will try (and fail) to find posteriors for allopatric mexicana, so I expect some failed jobs
 within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
 Submitted batch job 11274982 - written over my maize tracts. FIX error & rerun:
-RUNNING 6.10.19
+Submitted batch job 11276814 - RUNNING 6.10.19
 within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 11275552 - FIX error & rerun:
-RUNNING 6.10.19
+Submitted batch job 11276999 - RUNNING 6.10.19
 
 
 

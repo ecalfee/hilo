@@ -70,13 +70,20 @@ samples$ cat pass2_alloMAIZE_IDs.list PalmarChico_IDs.list > pass2_alloMAIZE_Pal
 samples$ cat pass2_alloMAIZE_bams.list PalmarChico_bams.list > pass2_alloMAIZE_PalmarChico_bams.list
 # then call SNPs
 # call variant sites with cutoff based on < 2x mean
-# interactively using plot_mapping_metrics.R I inferred the mean coverage for random regions is ~***x
+# interactively using plot_mapping_metrics.R I inferred the mean coverage for random regions is ~1189x
 # running flagstat to get that estimate right now
-# find SNPs
-variant_sites$ sbatch --mem=24G --export=PREFIX=pass2_alloMAIZE_PalmarChico,MAX_DEPTH=** id_SNPs.sh
-# create sites file from SNPs mafs.gz file
-******
-variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE_PalmarChico,ALL" --dependency=afterok:****** -p med2 mafsToSitesFile.sh
+filtered_bams/metrics$ for i in {1..50}; do cat PARV"$i".flagstat | grep 'QC-passed' | cut -f1 -d" "; done > PalmarChico.nreads
+filtered_bams/metrics$ cat PalmarChico.nreads | paste -s -d+ | bc --
+11217984084 # total number reads
+> 11217984084*150/ref_genome_size
+[1] 788.1181 # or about 15x per parviglumis
 
+# find SNPs
+variant_sites$ sbatch --mem=48G --export=PREFIX=pass2_alloMAIZE_PalmarChico,MAX_DEPTH=1590 id_SNPs.sh
+# create sites file from SNPs mafs.gz file
+Submitted batch job 11278797 - RUNNING 6.10.19
+variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE_PalmarChico,ALL" --dependency=afterok:11278797 -p med2 mafsToSitesFile.sh
+Submitted batch job 11278884 - WAITING 4 DEPENDENCY
+# note: if this takes far too long I could just run inv4m or limit number of parviglumis individuals included in SNP calling to a subset
 
 
