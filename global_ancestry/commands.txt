@@ -100,5 +100,20 @@ global_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ cat chr4.var.sites | awk '$
 global_ancestry/results/thinnedSNPs/pass2_alloMAIZE$ zcat whole_genome.beagle.gz | head -n 1 | gzip > ../pass2_alloMAIZE_inv4m/whole_genome.beagle.gz; zcat whole_genome.beagle.gz | tail -n +52543 | head -n 1366 | gzip >> ../pass2_alloMAIZE_inv4m/whole_genome.beagle.gz
 global_ancestry$ sbatch -p med2 --export=PREFIX="pass2_alloMAIZE_inv4m" runPCAngsd.sh
 Submitted batch job 10626776 - RUNNING 5.5.19
+# Now get a new PCA including parviglumis for the chr4 inversion (I won't filter SNPs by recomb. dist -- take all SNPs)
+results/pass2_alloMAIZE_PalmarChico$ head region_*0.var.sites # I find 190-200 regions are my target
+variant_sites/results/pass2_alloMAIZE_PalmarChico$ for i in {190..200}; do awk '$1=4 && $2>171771502 && $2<185951149 {print $0}' region_"$i".var.sites; done | wc -l
+312636 # 300k snps
+# make sites file:
+hilo/variant_sites/results/pass2_alloMAIZE_PalmarChico$ for i in {190..200}; do awk '$1=4 && $2>171771502 && $2<185951149 {print $0}' region_"$i".var.sites; done > ../../../global_ancestry/results/thinnedSNPs/pass2_alloMAIZE_PalmarChico_inv4m_allSNPs/whole_genome.var.sites
+# get matching GL's file
+variant_sites/results/pass2_alloMAIZE_PalmarChico$ (zcat region_0.beagle.gz | head -n 1; for i in {190..200}; do zcat region_"$i".beagle.gz | tail -n +2 | awk '{split($1,a,"_") ; a[2]+=0 ; a[1]+=0 ; if (a[1]=4 && a[2]>171771502 && a[2]<185951149) {print $0}}'; done) | gzip > ../../../global_ancestry/results/thinnedSNPs/pass2_alloMAIZE_PalmarChico_inv4m_allSNPs/whole_genome.beagle.gz
+# note above split in awk splits chr_pos into chr and pos and a[1]+=0 makes awk recognize these strings as numbers 
+
+# run PCA on all SNPs in inversion:
+global_ancestry$ sbatch --export="PREFIX=pass2_alloMAIZE_PalmarChico_inv4m_allSNPs,ALL" runPCAngsd.sh
+Submitted batch job 11281019 - didn't work. Fixed input file and re-running:
+Submitted batch job 11281162 - COMPLETED 6.10.19
+
 
 # TO DO:

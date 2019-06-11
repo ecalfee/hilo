@@ -11,8 +11,8 @@ yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
 colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
-
-PREFIX <- "pass2_alloMAIZE"
+PREFIX <- "pass2_alloMAIZE_PalmarChico"
+#PREFIX <- "pass2_alloMAIZE"
 #PREFIX <- "duplicates"
 #PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
 PREFIX_metrics <- "hilo_alloMAIZE_MAIZE4LOW"
@@ -817,6 +817,7 @@ ggsave(paste0("plots/PCA_", PREFIX, "_colored_by_elevation.png"),
 # what does the PCA look like for just inv4m, a large inversion on chr4?
 # get PCA data
 cov_dir_inv4m <- paste0("results/PCA/", PREFIX, "_inv4m")
+cov_dir_inv4m <- paste0("results/PCA/", PREFIX, "_inv4m_allSNPs")
 cov_data_inv4m <- read.table(file.path(cov_dir_inv4m, "whole_genome.cov"),
                        header = F, stringsAsFactors = F)
 # PC's are each column of dataframe pca:
@@ -831,7 +832,14 @@ PC_var_explained_inv4m = round(pca_inv4m$values, 2)
 #IDs <- data.frame(ID = sapply(IDs, function(x) rep(x, 2)))
 # quick plot of new data:
 d_inv4m <- bind_cols(IDs, pca_small_inv4m) %>%
-  left_join(., meta, by = "ID")
+  left_join(., meta, by = "ID") %>%
+  mutate(group = ifelse(substr(ID, 1, 4)=="PARV" & is.na(group), "parviglumis", group)) %>%
+  mutate(LOCALITY = ifelse(group=="parviglumis" & is.na(LOCALITY), "Mex_lowland", LOCALITY)) %>%
+  mutate(est_coverage = ifelse(group=="parviglumis" & is.na(est_coverage), 2, est_coverage))
+
+#pc_div = .035 # division between het and hom calls from PC1
+pc_div = 0
+
 d_inv4m %>%
   mutate(depth = ifelse(group == "allopatric_maize", 2, est_coverage)) %>%
   ggplot(., aes(x = PC1, y = PC2)) +
@@ -839,8 +847,8 @@ d_inv4m %>%
   ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
   geom_point(aes(color = LOCALITY, shape = group, size = depth)) +
   ggtitle(paste("PCA HiLo inv4m locus")) +
-  geom_vline(aes(xintercept = -.035), linetype = "dashed") +
-  geom_vline(aes(xintercept = .035), linetype = "dashed")
+  geom_vline(aes(xintercept = -pc_div), linetype = "dashed") +
+  geom_vline(aes(xintercept = pc_div), linetype = "dashed")
   #scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) # change the colors
 ggsave(paste0("plots/PCA_", PREFIX, "inv4m.png"),
        device = "png",
@@ -853,9 +861,10 @@ d_inv4m %>%
   ylab(paste0("PC2 (", PC_var_explained_inv4m[2], "%)")) +
   geom_point(aes(color = ELEVATION, shape = group, size = depth)) +
   ggtitle(paste("PCA HiLo inv4m locus")) +
-  scale_color_gradientn(colors = brewer.pal(7, "YlGnBu")) + # change the colors
-  geom_vline(aes(xintercept = -.035), linetype = "dashed") +
-  geom_vline(aes(xintercept = .035), linetype = "dashed")
+  #scale_color_gradientn(colors = brewer.pal(9, "BrBG")) + # change the colors
+  scale_color_gradientn(colors = brewer.pal(9, "YlGnBu")) + # change the colors
+  geom_vline(aes(xintercept = -pc_div), linetype = "dashed") +
+  geom_vline(aes(xintercept = pc_div), linetype = "dashed")
 ggsave(paste0("plots/PCA_", PREFIX, "inv4m_colored_by_elevation.png"),
        device = "png",
        width = 12, height = 8, units = "in",

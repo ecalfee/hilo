@@ -81,9 +81,11 @@ filtered_bams/metrics$ cat PalmarChico.nreads | paste -s -d+ | bc --
 # find SNPs
 variant_sites$ sbatch --mem=48G --export=PREFIX=pass2_alloMAIZE_PalmarChico,MAX_DEPTH=1590 id_SNPs.sh
 # create sites file from SNPs mafs.gz file
-Submitted batch job 11278797 - RUNNING 6.10.19
+Submitted batch job 11278797 - COMPLETED 6.10.19
 variant_sites$ sbatch --export="DIR=results/pass2_alloMAIZE_PalmarChico,ALL" --dependency=afterok:11278797 -p med2 mafsToSitesFile.sh
-Submitted batch job 11278884 - WAITING 4 DEPENDENCY
+Submitted batch job 11278884 - COMPLETED 6.10.19
 # note: if this takes far too long I could just run inv4m or limit number of parviglumis individuals included in SNP calling to a subset
+
+# TO DO: Get tripsacum, parviglumis, symp/allo maize/mex allele frequencies for all SNPs called including PalmarChico
 
 
