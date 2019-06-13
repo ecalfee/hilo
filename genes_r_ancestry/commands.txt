@@ -89,7 +89,6 @@ data/refMAIZE/windows_10kb$ for i in {1..5}; do sed 's/ /\t/g' recomb_"$i".space
 # in command line I split the marker identifier 1_1245 into bed format 1 1244 1245, filter snps
 # to find those that overlap with different recomb. window bins, and then print the GL's just for those bins
 # (fast). note first line is just to keep the GL header and last part is gzipping again; parenthesis makes sure header is also gzipped
-hilo/global_ancestry$ for i in {1..5}; do mkdir -p results/thinnedNSPs/pass2_alloMAIZE/recomb_$i; (zcat results/thinnedSNPs/pass2_alloMAIZE/test.beagle.gz | head -n 1; zcat results/thinnedSNPs/pass2_alloMAIZE/whole_genome.beagle.gz | awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | bedtools intersect -a stdin -b ../data/refMaize/windows_10kb/recomb_"$i".bed -wa -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4-) | gzip > results/thinnedSNPs/pass2_alloMAIZE/recomb_$i.beagle.gz; done
 hilo/global_ancestry$ for i in {1..5}; do mkdir -p results/thinnedSNPs/pass2_alloMAIZE/recomb_$i; (zcat results/thinnedSNPs/pass2_alloMAIZE/test.beagle.gz | head -n 1; zcat results/thinnedSNPs/pass2_alloMAIZE/whole_genome.beagle.gz | awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | bedtools intersect -a stdin -b ../data/refMaize/windows_10kb/recomb_"$i".bed -wa -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4-) | gzip > results/thinnedSNPs/pass2_alloMAIZE/recomb_$i/whole_genome.beagle.gz; done
 # ! note there are 75x more SNPs in the highest recomb. bin (recomb_5: 75k) than the lowest (recomb_1: 1k)
 # this is at least in part because I thin SNPs by .01cM distance which enriches for high recomb. regions.
@@ -101,6 +100,34 @@ global_ancestry$ sbatch --export=PREFIX="pass2_alloMAIZE/recomb_1" --array=2 run
 Submitted batch job 11215774 # COMPLETED
 global_ancestry$ for i in {2..5}; do sbatch --export=PREFIX="pass2_alloMAIZE/recomb_$i" --array=2 runNGSadmix.sh; done
 Submitted batch job 11215775-8 # COMPLETED 6.2.19
+
+# trying again but getting equal number of SNPs per r bin, even if they aren't in low LD
+# get 100k SNPs in each recombination bin:
+# or alternatively, get ~1% of SNPs in each bin by sampling reads with .01 probability
+(i) get 1% of SNPs into a whole_genome_1percent.gz file
+variant_sites/results/pass2_alloMAIZE$ (zcat region_0.beagle.gz | head -n 1; for i in {0..425}; \
+do zcat region_$i.beagle.gz | tail -n +2; done | \
+awk 'BEGIN {srand(25)} !/^$/ { if (rand() <= .01) print $0}') | gzip > whole_genome_1percent.beagle.gz
+# note: seed is 25 for reproducibility. takes a few minutes. and it's an estimated ~1%
+(ii) subsample with bedtools reads that overlap different recombination bins
+global_ancestry$ for i in {1..5}; do mkdir -p results/thinnedSNPs/pass2_alloMAIZE/recomb_"$i"_1percent; \
+(zcat ../variant_sites/results/pass2_alloMAIZE/whole_genome_1percent.beagle.gz | head -n 1; \
+zcat ../variant_sites/results/pass2_alloMAIZE/whole_genome_1percent.beagle.gz | \
+awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | \
+bedtools intersect -a stdin -b ../data/refMaize/windows_10kb/recomb_"$i".bed -wa -sorted \
+-g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4-) | \
+gzip > results/thinnedSNPs/pass2_alloMAIZE/recomb_"$i"_1percent/whole_genome.beagle.gz; done
+# not perfectly even # SNPs per group, but I can start with this:
+global_ancestry$ for i in {1..5}; do zcat results/thinnedSNPs/pass2_alloMAIZE/recomb_"$i"_1percent/whole_genome.beagle.gz | wc -l; done
+106328
+112024
+100307
+92057
+91577
+# e.g. I could take 1 in every 100 SNPs instead of a random subsample
+(iii) run NGSAdmix on these snp subsets
+global_ancestry$ for i in {1..5}; do sbatch --export=PREFIX=pass2_alloMAIZE/recomb_"$i"_1percent --array=2 runNGSadmix.sh; done
+Submitted batch job 11268341-5 RUNNING 6.9.19
 
 (D) SNP choice or subtle ascertainment bias (?). I did not include tripsacum or parviglumis when I ascertained SNPs .. is this a problem?
 

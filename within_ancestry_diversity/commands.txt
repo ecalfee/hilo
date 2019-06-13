@@ -262,6 +262,8 @@ within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/trip_bams.list resul
 within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=trip,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
 Submitted batch job 10461997 - COMPLETED 4.24.19
 
+
+
 # Get pi and Fst estimates for the chr4 inversion.
 # pi for all groups of haplotypes, e.g. sympatric maize homozygous for mexicana haplotypes
 # Fst between allopatric maize (hom. maize hap), allopatric mexicana (hom. mexicana hap)
@@ -304,6 +306,12 @@ calcAlleleFreq_onelocus.sh
 within_ancestry_diversity$ sbatch --array=0-7 --export="PREFIX=pass2_alloMAIZE_PalmarChico_inv4m_allSNPs,DIR_POPS=results/inv4m/pass2_alloMAIZE" calcAlleleFreq_onelocus.sh
 Submitted batch job 11292471 - RUNNING 6.10.19
 
+# also interesting locus on chr9:
+# my outlier locus on chr9 associated with elevation I looked up and estimate bounds:
+# 9:108413387-111859503
+# this is a candidate for the mhl1 locus -- I need to look up how close it is to the genetic mapping of this locus
+
+
 # NEW DATA - pass2_alloMAIZE - redo calling homozygous ancestry tracts (post > .8):
 # Step 1: use R and bedtools to identify regions with homozygous ancestry for each individual:
 
@@ -318,7 +326,6 @@ Submitted batch job 11276814 - RUNNING 6.10.19
 within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_maize.sh
 Submitted batch job 11275552 - FIX error & rerun:
 Submitted batch job 11276999 - RUNNING 6.10.19
-
 
 
 
