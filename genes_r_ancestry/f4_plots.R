@@ -38,6 +38,12 @@ d <- left_join(genome, f4_nonadmix, by = c("chr", "start", "end", "10kb_region")
   mutate(r10 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .1)), right = T, include.lowest = T)) %>% # bin recombination rate
   mutate(r5 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .2)), right = T, include.lowest = T)) # 5 quantiles
 
+# visualize quintiles:
+png("plots/histogram_r_quintiles.png", width = 8, height = 6, units = "in", res = 300)
+hist(d$r[d$r < 5]) # truncated because very few at very large r
+for (i in quantile(x = d$r, probs = seq(0, 1, by = .2))) {abline(v=i, col = "blue")}
+dev.off()
+
 # print out regions falling into the 5 quantiles of recombination:
 for (l in 1:5){
   filter(d, r5 == levels(d$r5)[l]) %>%

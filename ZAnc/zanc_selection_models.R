@@ -6,10 +6,14 @@ library(ggplot2)
 # TO DO:
 # write out generalized least squares comparison to what I'm doing. IF I use AIC it should be AICc for n=14 data points.
 
+rerun_all_models <- F # rerun or just load results of models
+
 # load external scripts
 source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
 
 # load data 
+PREFIX="pass2_alloMAIZE"
+
 # metadata for each individual, including pop association
 pop_elev <- read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
                        stringsAsFactors = F, header = T, sep = "\t") %>%
@@ -23,7 +27,6 @@ meta.pops <- read.table(paste0("../global_ancestry/results/NGSAdmix/", PREFIX, "
   mutate(pop = paste0("pop", popN))
 
 # ancestry calls
-PREFIX="pass2_alloMAIZE"
 LOCAL_ANC_SUBDIR="output_noBoot"
 dir_in = paste0("../local_ancestry/results/ancestry_hmm/", PREFIX)
 dir_anc = file.path(dir_in, LOCAL_ANC_SUBDIR, "anc")
@@ -89,18 +92,50 @@ zTz3_mex <- apply(zAnc3_mex, 1, function(i) t(i) %*% i)
 
 # Environmental selection models (in maize):
 # Elevation-based selection
-zBeta3_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
-  zBeta3(ancFreq = l,
-         envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"], 
-         invL = zAnc_maize$InvL, 
-         alpha = zAnc_maize$alpha,
-         zInt = T)) # has transformed intercept
-zb3_elev <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
-write.table(zb3_elev,
-            paste0("results/models/", PREFIX, "/maize/elevation.txt"),
-            sep = "\t",
-            quote = F,
-            col.names = T, row.names = F)
+if (rerun_all_models){ # rerun or just load results of models
+  zBeta3_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+    zBeta3(ancFreq = l,
+           envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"], 
+           invL = zAnc_maize$InvL, 
+           alpha = zAnc_maize$alpha,
+           zInt = T)) # has transformed intercept
+  zb3_elev <- data.frame(t(zBeta3_elev_maize)) # data frame is easier to work with
+  write.table(zb3_elev,
+              paste0("results/models/", PREFIX, "/maize/elevation.txt"),
+              sep = "\t",
+              quote = F,
+              col.names = T, row.names = F)
+}else{
+  zb3_elev <- read.table(paste0("results/models/", PREFIX, "/maize/elevation.txt"),
+                         sep = "\t",
+                         header = T,
+                         stringsAsFactors = F)
+}
+
+
+# threshold Elevation-based selection - 11pops > 1900m experience (equal) selection, 3 lowland pops do not
+if (rerun_all_models){ # rerun or just load results of models
+  zBeta3_over1900m_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+    zBeta3(ancFreq = l,
+           envWeights = as.numeric(meta.pops$ELEVATION[meta.pops$zea == "maize"] > 1900), 
+           invL = zAnc_maize$InvL, 
+           alpha = zAnc_maize$alpha,
+           zInt = F)) # no intercept -- low elevation populations not under selection
+  zb3_over1900m <- data.frame(t(zBeta3_over1900m_maize)) # data frame is easier to work with
+  write.table(zb3_over1900m,
+              paste0("results/models/", PREFIX, "/maize/sel_over1900m.txt"),
+              sep = "\t",
+              quote = F,
+              col.names = T, row.names = F)
+}else{
+  zb3_over1900m <- read.table(paste0("results/models/", PREFIX, "/maize/sel_over_1900m.txt"),
+                         sep = "\t",
+                         header = T,
+                         stringsAsFactors = F)
+}
+
+
+
 
 # make plot log 10 pval for zEnv vs. zElev slope estimate to show enrichment for selection for mexicana ancestry at high elevation
 zb3_elev %>%
@@ -123,19 +158,26 @@ ggsave("plots/zbe_elev_pval_histograms.png", device = "png",
        height = 6, width = 8, units = "in")
 
 # Universal selection for or against mexicana
+if (rerun_all_models){ # rerun or just load results of models
+  zBeta3_highmex_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+    zBeta3(ancFreq = l,
+           envWeights = rep(1, 14), 
+           invL = zAnc_maize$InvL, 
+           alpha = zAnc_maize$alpha,
+           zInt = F)) # no intercept 
+  zb3_hmex <- data.frame(t(zBeta3_highmex_maize)) # data frame is easier to work with
+  write.table(zb3_hmex,
+              paste0("results/models/", PREFIX, "/maize/universal_sel_hmex.txt"),
+              sep = "\t",
+              quote = F,
+              col.names = T, row.names = F)
+}else{
+  zb3_hmex <- read.table(paste0("results/models/", PREFIX, "/maize/universal_sel_hmex.txt"),
+                         sep = "\t",
+                         header = T,
+                         stringsAsFactors = F)
+}
 
-zBeta3_highmex_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
-  zBeta3(ancFreq = l,
-         envWeights = rep(1, 14), 
-         invL = zAnc_maize$InvL, 
-         alpha = zAnc_maize$alpha,
-         zInt = F)) # no intercept 
-zb3_hmex <- data.frame(t(zBeta3_highmex_maize)) # data frame is easier to work with
-write.table(zb3_hmex,
-            paste0("results/models/", PREFIX, "/maize/universal_sel_mex.txt"),
-            sep = "\t",
-            quote = F,
-            col.names = T, row.names = F)
 png("plots/zb3_hmex_pval_combined.png")
 hist(zb3_hmex$pval_zEnv)
 dev.off()
@@ -155,23 +197,47 @@ zb3_hmex %>%
 ggsave("plots/zbe_hmex_pval_vs_effect.png", device = "png",
        height = 6, width = 8, units = "in")
 
+
+# test
+zb3_onepop_test <- lapply(1:2, function(x)
+  data.frame(t(apply(maize_anc[1:10,], 1, function(l) # calculate slope for each locus
+    zBeta3(ancFreq = l,
+           envWeights = onePop[x, ], # column for 1 population with selection 
+           invL = zAnc_maize$InvL, 
+           alpha = zAnc_maize$alpha,
+           zInt = F))), stringsAsFactors = F)) # no intercept
+
+
 # Selection in one population only (14 possibilities for populations)
 onePop <- matrix(0, 14, 14)
 diag(onePop) <- 1 # matrix with all posibilities for which population has selection '1'
-zb3_onepop <- lapply(1:14, function(x)
-                     data.frame(t(apply(maize_anc, 1, function(l) # calculate slope for each locus
-                       zBeta3(ancFreq = l,
-                              envWeights = onePop[x, ], # column for 1 population with selection 
-                              invL = zAnc_maize$InvL, 
-                              alpha = zAnc_maize$alpha,
-                              zInt = F))), stringsAsFactors = F)) # no intercept
-lapply(1:14, function(i)
-  write.table(zb3_onepop[[i]],
-              paste0("results/models/", PREFIX, "/maize/pop_", i, "_only.txt"),
+if (rerun_all_models){ # rerun or just load results of models
+  for (i in 1:14){
+    zb3_onepop1 <- apply(maize_anc, 1, function(l) # calculate slope for each locus
+        zBeta3(ancFreq = l,
+               envWeights = onePop[i, ], # column for 1 population with selection 
+               invL = zAnc_maize$InvL, 
+               alpha = zAnc_maize$alpha,
+               zInt = F))
+    zb3_onepop2 <- data.frame(t(zb3_onepop1), stringsAsFactors = F) # no intercept
+
+  write.table(zb3_onepop2,
+              paste0("results/models/", PREFIX, "/maize/sel_pop_", i, "_only.txt"),
               sep = "\t",
               quote = F,
-              col.names = T, row.names = F))
+              col.names = T, row.names = F)
+  }
+}
+# proportional to the Sum of Squared Errors (SSE), and the log likelihood
+# load model results for all 14 models
+zb3_onepop <- lapply(1:14, function(i)
+  read.table(paste0("results/models/", PREFIX, "/maize/sel_pop_", i, "_only.txt"),
+             sep = "\t",
+             header = T,
+             stringsAsFactors = F))
 ordered_maize_pops <- left_join(data.frame(pop = colnames(maize_anc), stringsAsFactors = F), meta.pops, by = "pop")
+
+
 png("plots/pos_sel_1pop_pvals_hist.png")
 par(mfrow = c(4,4))
 lapply(1:14, function(i) hist(zb3_onepop[[i]]$pval_zEnv[zb3_onepop[[i]]$zEnv  > 0], main = paste("+ sel", ordered_maize_pops$LOCALITY[i],
@@ -195,7 +261,7 @@ with(zb3_hmex, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), m
 zb3_compare <- data.frame(zTz = zTz3,
                           elev = zb3_elev$sum_sq_res,
                           hmex = zb3_hmex$sum_sq_res,
-                          pop1 = zb3_onepop[[1]]$sum_sq_res)
+                          over1900m = zb3_over1900m$sum_sq_res)
 # note: some of these models are nested: zTz < hmex < elev
 # but others are separate model families, e.g. zTz < pop1
 # AIC in OLS framework: 
@@ -228,7 +294,8 @@ aic_onepop <- do.call(cbind,
 colnames(aic_onepop) <- ordered_maize_pops$LOCALITY
 aic_compare <- data.frame(zTz = aic(SSE = zb3_compare$zTz, n = 14, k = 0),
                           elev = aic(SSE = zb3_compare$elev, n = 14, k = 2),
-                          hmex = aic(SSE = zb3_compare$hmex, n = 14, k = 1)) %>%
+                          hmex = aic(SSE = zb3_compare$hmex, n = 14, k = 1),
+                          over1900m = aic(SSE = zb3_compare$over1900m, n = 14, k = 1)) %>%
   bind_cols(., data.frame(aic_onepop))
 # AICc for small sample size
 aic_c_onepop <- do.call(cbind,
@@ -237,7 +304,8 @@ aic_c_onepop <- do.call(cbind,
 colnames(aic_c_onepop) <- ordered_maize_pops$LOCALITY
 aic_c_compare <- data.frame(zTz = aic_c(SSE = zb3_compare$zTz, n = 14, k = 0),
                             elev = aic_c(SSE = zb3_compare$elev, n = 14, k = 2),
-                            hmex = aic_c(SSE = zb3_compare$hmex, n = 14, k = 1)) %>%
+                            hmex = aic_c(SSE = zb3_compare$hmex, n = 14, k = 1),
+                            over1900m = aic_c(SSE = zb3_compare$over1900m, n = 14, k = 1)) %>%
   bind_cols(., data.frame(aic_c_onepop))
 # AIC model weights
 aic_w_compare <- data.frame(t(apply(aic_compare, 1, aic_w)))
@@ -256,23 +324,55 @@ ll_onepop <- do.call(cbind,
 colnames(ll_onepop) <- ordered_maize_pops$LOCALITY
 ll <- data.frame(zTz = loglik_OLS(SSE = zb3_compare$zTz, n = 14),
                  elev = loglik_OLS(SSE = zb3_compare$elev, n = 14),
-                 hmex = loglik_OLS(SSE = zb3_compare$hmex, n = 14)) %>%
+                 hmex = loglik_OLS(SSE = zb3_compare$hmex, n = 14),
+                 hmex = loglik_OLS(SSE = zb3_compare$over1900m, n = 14)) %>%
   bind_cols(., data.frame(ll_onepop))
 # bayes factor is the likelihood(h1)/likelihood(h2),
 # so I have to exponentiate after subtracting the log likelihoods of the alt and null hypothesis
 bf <- data.frame(apply(ll, 2, function(x) exp(x - ll$zTz)))
 
-plot(zb3_hmex$pval_zEnv, bf$hmex)
-
 table(apply(aic_compare, 1, which.min))/nrow(aic_compare) # not good - MOST loci should fit the null model best
+table(apply(aic_compare[ , 1:3], 1, which.min))/nrow(aic_compare) # but if I limit it to just a few models, the neutral model wins most of the time
 table(apply(aic_compare[zTz3 > quantile(zTz3, .99),], 1, which.min))/sum(zTz3 > quantile(zTz3, .99))
 table(apply(aic_compare[zTz3 > quantile(zTz3, .95),], 1, which.min))/sum(zTz3 > quantile(zTz3, .95))
 table(apply(aic_compare[zTz3 > quantile(zTz3, .9),], 1, which.min))/sum(zTz3 > quantile(zTz3, .9))
 
 table(apply(aic_c_compare, 1, which.min))/nrow(aic_c_compare)
-table(apply(aic_c_compare[zTz3 > quantile(zTz3, .90),], 1, which.min))/sum(zTz3 > quantile(zTz3, .99))
+tab1 <- table(apply(aic_c_compare, 1, which.min))/nrow(aic_c_compare)
+names(tab1) <- colnames(aic_c_compare)
+png("plots/counts_model_win_all_loci_18models.png", width = 8, height = 6, res = 300, units = "in")
+barplot(tab1, las = 2, main = "all loci - which model has lowest AICc?")
+dev.off()
+
+tab2 <- table(apply(aic_c_compare[ , 1:5], 1, which.min))/nrow(aic_c_compare)  # 80% of the time the neutral model does better
+names(tab2) <- colnames(aic_c_compare)[1:5]
+png("plots/counts_model_win_all_loci_5models.png", width = 8, height = 6, res = 300, units = "in")
+barplot(tab2, las = 2, main = "all loci - which model has lowest AICc?")
+dev.off()
+
+# just tabulate for outlier high zTz loci
+tab1_99 <- table(apply(aic_c_compare[zTz3 > quantile(zTz3, .99),], 1, which.min))/nrow(aic_c_compare[zTz3 > quantile(zTz3, .99),])
+names(tab1_99) <- colnames(aic_c_compare)
+png("plots/counts_model_win_99perc_outlier_loci_18models.png", width = 8, height = 6, res = 300, units = "in")
+barplot(tab1_99, las = 2, main = "99% zTz top outlier loci - which model has lowest AICc?")
+dev.off()
+# very very top outliers
+tab1_999 <- table(apply(aic_c_compare[zTz3 > quantile(zTz3, .999),], 1, which.min))/nrow(aic_c_compare[zTz3 > quantile(zTz3, .999),])
+names(tab1_999) <- colnames(aic_c_compare)[as.numeric(unlist(dimnames(tab1_999)))]
+png("plots/counts_model_win_999perc_outlier_loci_18models.png", width = 8, height = 6, res = 300, units = "in")
+barplot(tab1_999, las = 2, main = "99.9% zTz top outlier loci - which model has lowest AICc?")
+dev.off()
+
+# than hmex or elevational trend (nothing too surprising here)
+table(apply(aic_c_compare[zTz3 > quantile(zTz3, .99),], 1, which.min))/sum(zTz3 > quantile(zTz3, .99))
 table(apply(aic_c_compare[zTz3 > quantile(zTz3, .95),], 1, which.min))/sum(zTz3 > quantile(zTz3, .95))
-table(apply(aic_c_compare[zTz3 > quantile(zTz3, .9),], 1, which.min))/sum(zTz3 > quantile(zTz3, .9))
+table(apply(aic_c_compare[zTz3 > quantile(zTz3, .90),], 1, which.min))/sum(zTz3 > quantile(zTz3, .9))
+apply(aic_c_w_compare, 2, mean)
+# for loci that seem to be selected, what are the weights across models? summarize across loci together to start
+png("plots/mean_model_weights_99zTzoutlier.png", width = 8, height = 6, res = 300, units = "in")
+model_weights <- apply(aic_c_w_compare[zTz3 > quantile(zTz3, .99),], 2, sum)/sum(zTz3 > quantile(zTz3, .99))
+barplot(model_weights, las = 2, main = "mean model AICc weights across zTz>99% outlier loci")
+dev.off()
 
 # set 'other' category for loci with low bayes factors
 m <- apply(aic_c_compare, 1, which.min)
