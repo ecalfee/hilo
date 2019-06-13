@@ -69,7 +69,7 @@ zAnc_mexicana = make_K_calcs(t(mexicana_anc))
 zAnc_maize = make_K_calcs(t(maize_anc))
 
 # script to run test cases of ancestry selection models using empirical K matrices
-source("zanc_selection_models.R") # makes plots
+#source("zanc_selection_models.R") # makes plots
 
 # calculate zAnc at each locus. 
 zAnc3 <- t(apply(maize_anc, 1, function(l) zAnc(ancFreq = l, 
@@ -108,13 +108,19 @@ zb3_elev %>%
   ggplot(aes(x = zEnv, y = -log10(pval_zEnv), color = inv4m)) +
   geom_point(alpha = .2) +
   ggtitle("model: zAnc ~ elevation")
+ggsave("plots/zbe_elev_pval_vs_effect.png", device = "png",
+       height = 6, width = 8, units = "in")
+png("plots/zb3_elev_pval_combined.png")
 hist(zb3_elev$pval_zEnv)
+dev.off()
 hist(zb3_elev$pval_zEnv[zb3_elev$zEnv >= 0])
 hist(zb3_elev$pval_zEnv[zb3_elev$zEnv <= 0])
 ggplot(zb3_elev, aes(x = pval_zEnv, fill = (zEnv >= 0))) + 
   geom_histogram(binwidth = .01) +
   facet_wrap(~(zEnv >= 0)) +
   ggtitle("pvalue distribution zAnc ~ zElev, TRUE = + slope")
+ggsave("plots/zbe_elev_pval_histograms.png", device = "png",
+       height = 6, width = 8, units = "in")
 
 # Universal selection for or against mexicana
 
@@ -130,19 +136,24 @@ write.table(zb3_hmex,
             sep = "\t",
             quote = F,
             col.names = T, row.names = F)
-
+png("plots/zb3_hmex_pval_combined.png")
 hist(zb3_hmex$pval_zEnv)
+dev.off()
 hist(zb3_hmex$pval_zEnv[zb3_hmex$zEnv >= 0])
 hist(zb3_hmex$pval_zEnv[zb3_hmex$zEnv <= 0])
 ggplot(zb3_hmex, aes(x = pval_zEnv, fill = (zEnv >= 0))) + 
   geom_histogram(binwidth = .01) +
   facet_wrap(~(zEnv >= 0)) +
   ggtitle("pvalue distribution zAnc ~ z1's, all selected, TRUE = + slope")
+ggsave("plots/zbe_hmex_pval_histograms.png", device = "png",
+       height = 6, width = 8, units = "in")
 zb3_hmex %>%
   bind_cols(., sites) %>%
   ggplot(aes(x = zEnv, y = -log10(pval_zEnv), color = inv4m)) +
-  geom_point(alpha = .2) +
+  geom_point(size = .1) +
   ggtitle("model: zAnc ~ 1")
+ggsave("plots/zbe_hmex_pval_vs_effect.png", device = "png",
+       height = 6, width = 8, units = "in")
 
 # Selection in one population only (14 possibilities for populations)
 onePop <- matrix(0, 14, 14)
@@ -161,15 +172,19 @@ lapply(1:14, function(i)
               quote = F,
               col.names = T, row.names = F))
 ordered_maize_pops <- left_join(data.frame(pop = colnames(maize_anc), stringsAsFactors = F), meta.pops, by = "pop")
+png("plots/pos_sel_1pop_pvals_hist.png")
 par(mfrow = c(4,4))
-lapply(1:14, function(i) hist(zb3_onepop[[i]]$pval_zEnv[zb3_onepop[[i]]$zEnv  > 0], main = paste("+ selection pop", ordered_maize_pops$LOCALITY[i], "only,",
-                                                                          ordered_maize_pops$ELEVATION[i], "elev.")))
+lapply(1:14, function(i) hist(zb3_onepop[[i]]$pval_zEnv[zb3_onepop[[i]]$zEnv  > 0], main = paste("+ sel", ordered_maize_pops$LOCALITY[i],
+                                                                          ordered_maize_pops$ELEVATION[i], "m"), xlab = "pval", ylab = "freq"))
 par(mfrow = c(1,1))
-par(mfrow = c(4,4))
-lapply(1:14, function(i) hist(zb3_onepop[[i]]$pval_zEnv[zb3_onepop[[i]]$zEnv  < 0], main = paste("- selection pop", ordered_maize_pops$LOCALITY[i], "only,",
-                                                                                                 ordered_maize_pops$ELEVATION[i], "elev.")))
-par(mfrow = c(1,1))
+dev.off()
 
+png("plots/neg_sel_1pop_pvals_hist.png")
+par(mfrow = c(4,4))
+lapply(1:14, function(i) hist(zb3_onepop[[i]]$pval_zEnv[zb3_onepop[[i]]$zEnv  < 0], main = paste("- sel", ordered_maize_pops$LOCALITY[i],
+                                                                                                 ordered_maize_pops$ELEVATION[i], "m"), xlab = "pval", ylab = "freq"))
+par(mfrow = c(1,1))
+dev.off()
 
 with(zb3_elev, plot(r_squared ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
 with(zb3_elev, plot(sum_sq_res ~ zEnv, col = ifelse(d$inv4m, "blue", "black"), main = "zBeta3 association mexicana ancestry with high elevation in maize"))
@@ -321,16 +336,16 @@ l1 <- data.frame(chr = 4,
                  pos = 174081774)
 l2 <- data.frame(chr = 4, pos = 45404997)
 l3 <- data.frame(chr = 4, pos = 102315184)
-a1 <- unlist(maize_anc[sites$chr == l1$chr & sites$pos == l1$pos, ])
-a1 <- unlist(maize_anc[sites$chr == l2$chr & sites$pos == l2$pos, ])
-a1 <- unlist(maize_anc[sites$chr == l3$chr & sites$pos == l3$pos, ])
-# fit elevation model
-zAnc1 = zAnc_maize$InvL %*% (a1 - zAnc_maize$alpha)
-zEnv1 = zAnc_maize$InvL %*% ordered_maize_pops$ELEVATION
-zInt1 = zAnc_maize$InvL %*% rep(1, 14)
+for (l in c(l1, l2, l3)){
+  a1 <- unlist(maize_anc[sites$chr == l["chr"] & sites$pos == l["pos"], ])
 
-m1 <- lm(zAnc1 ~ 0 + zEnv1 + zInt1) # transformed intercept but no untransformed intercept
-fit1 <- data.frame(zAnc = zAnc1, 
+# fit elevation model
+  zAnc1 = zAnc_maize$InvL %*% (a1 - zAnc_maize$alpha)
+  zEnv1 = zAnc_maize$InvL %*% ordered_maize_pops$ELEVATION
+  zInt1 = zAnc_maize$InvL %*% rep(1, 14)
+
+  m1 <- lm(zAnc1 ~ 0 + zEnv1 + zInt1) # transformed intercept but no untransformed intercept
+  fit1 <- data.frame(zAnc = zAnc1, 
                    zElev = zEnv1,
                    zInt = zInt1,
                    alpha = zAnc_maize$alpha,
@@ -340,13 +355,22 @@ fit1 <- data.frame(zAnc = zAnc1,
 
 #plot(fit1$alpha + fit1$zInt ~ fit1$ELEVATION)
 #plot(t(chol(zAnc_maize$K))%*%fit1$zElev~fit1$ELEVATION) # transformation back works
-
-plot(t(chol(zAnc_maize$K))%*%fit1$zFit+fit1$alpha~fit1$ELEVATION, 
-     col = "blue", pch = 20, ylim = c(-.5, 1.5))
-points(a1~fit1$ELEVATION, col = "green", pch = 20)
-points(fit1$alpha~fit1$ELEVATION, col = "grey", pch = 20)
-abline(h = 0, col = "grey") # any predicted points outside of 0,1?
-abline(h = 1, col = "grey")
+  png(paste0("plots/model_pred_zElev_", l["chr"], "-", l["pos"], ".png"))
+  plot(t(chol(zAnc_maize$K))%*%fit1$zFit+fit1$alpha~fit1$ELEVATION, 
+     col = "blue", pch = 20, ylim = c(-.5, 1.5), 
+     main = paste0("zAnc ~ zElev + zInt prediction vs. observed anc. zElev=", round(m1$coefficients[1],4), 
+                   " zInt=", round(m1$coefficients[2],4)),
+     ylab = "freq mex. ancestry", xlab = "elevation")
+  points(a1~fit1$ELEVATION, col = "green", pch = 20)
+  points(fit1$alpha~fit1$ELEVATION, col = "grey", pch = 20)
+  abline(h = 0, col = "grey") # any predicted points outside of 0,1?
+  abline(h = 1, col = "grey")
+  legend(x = "topleft", 
+       legend = c("pop mean ancestry", "observed ancestry", "model predicted ancestry"), 
+       col = c("grey", "green", "blue"), 
+       pch = 20)
+  dev.off()
+}
 # total change in ancestry across our elevational gradient predicted by model:
 max(t(chol(zAnc_maize$K))%*%fit1$zFit) - min(t(chol(zAnc_maize$K))%*%fit1$zFit) # 55% over ~ 1000 meters
 # (55% beyond what can be explained by genomewide ancestry increasing with elevation)

@@ -1,6 +1,7 @@
 library(dplyr)
 library(ggplot)
 library(reader)
+library(zoo)
 
 getTheta <- function(theta_file, pop, region){
   if (file.exists(theta_file) && reader::file.nrow(theta_file) > 1){
@@ -19,8 +20,23 @@ getTheta <- function(theta_file, pop, region){
   return(d1)
 }
 
+getFstWind <- function(fst_file, pop, region){
+  if (file.exists(fst_file) && reader::file.nrow(fst_file) > 1){
+    d <- read.table(fst_file, sep = "\t", skip = 1)[ , 2:5]
+    colnames(d) <- c("chr", "pos", "n_bp", "fst_Hudson")
+    d1 <- d %>% # scale thetas per bp not per region analyzed, based on total number of bp's with data
+      mutate(pop = pop) %>%
+      mutate(region = region)
+    
+  }else{ # returns empty dataframe if no file exists (some regions some populations have no data)
+    d1 <- NULL
+    print(paste("warning: no fst file found for pop", pop, "region", region))
+  }
+  return(d1)
+}
+
 getFst <- function(fst_file, pop, region){
-  if (file.exists(theta_file)){
+  if (file.exists(fst_file)){
   d <- read.table(fst_file, sep = "\t")
   colnames(d) <- c("fst_Hudson", "fst_avg_ratios")
   d1 <- d %>%
@@ -183,4 +199,40 @@ for (j in unique(thetasWind_ind$region)){
          dpi = 300)
 }
 
+theta_files <- c("allopatric_mexicana.mexicana_hap", "allopatric_maize.maize_hap", "parviglumis", "sympatric_maize.mexicana_hap")
+theta_inv4m <- do.call(bind_rows,
+                       lapply(theta_files, function(i)
+                         getTheta(theta_file = paste0("results/inv4m/pass2_alloMAIZE/", i, ".thetasWindows.pestPG"),
+                 pop = i,
+                 region = "inv4m")))
+theta_inv4m %>%
+  ggplot(aes(x = pos, y = theta_pi, color = pop, group = pop)) +
+  geom_point(size = .1) +
+  facet_wrap(~pop, scales = "free_y", ncol = 1)
+ggsave("plots/inv4m_pi_mex_maize_parv.png", device = "png",
+       height = 8, width = 20, units = "in"
+)  
+  
+fst_inv4m <- getFstWind(fst_file = "results/inv4m/pass2_alloMAIZE/allopatric_mexicana.mexicana_hap-allopatric_maize.maize_hap.fstWindows.stats",
+                        pop = "mex-maize",
+                        region = "inv4m")
+
+fst_inv4m %>%
+  ggplot(aes(x = pos, y = fst_Hudson)) +
+  geom_point()
+
+filter(theta_inv4m, pop %in% c("allopatric_mexicana.mexicana_hap", "allopatric_maize.maize_hap")) %>%
+  bind_rows(fst_inv4m, .) %>%
+  gather(., "stat", "value", c("theta_pi", "fst_Hudson")) %>%
+  ggplot(aes(x = pos, y = value, color = pop)) +
+  geom_point() +
+  facet_wrap(~stat, scales = "free_y", nrow = 2)
+ggsave("plots/inv4m_fst_pi_mex_maize.png", device = "png",
+       height = 8, width = 20, units = "in"
+)
+
+fst_inv4m %>% # oops! I should make fst windows larger to group more loci for het. calculation instead of averaging fst across windows after the fact
+  mutate(roll = rollmean(fst_Hudson, 100, na.pad=TRUE)) %>%
+  ggplot(aes(x = pos, y = roll)) +
+  geom_point()
 

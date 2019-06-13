@@ -1,12 +1,11 @@
 #!/bin/bash
-#SBATCH --partition=bigmemm
+#SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/within_ancestry_diversity
 #SBATCH -J getMex2
 #SBATCH -o /home/ecalfee/hilo/slurm-log/getHomozygTractsBamsMex_%A_%a.out
 #SBATCH -t 2-00:00:00
 #SBATCH --mem=16G
-#SBATCH --array=1-200
-# to run: sbatch --export=DIR_BAMS=../filtered_bams/results/pass1,DIR_POST=../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/output_noBoot get_homozyg_tracts_and_bams.sh
+# to run: sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,PREFIX_HMM=output_noBoot get_homozyg_tracts_and_bams_mexicana.sh
 
 # this script takes in a set of short tracts around sites with ancestry posteriors from ancestry_hmm
 # and the posteriors for an individual at those sites
@@ -24,29 +23,35 @@ set –o nounset
 module load bio # for bedtools and samtools
 
 i=$SLURM_ARRAY_TASK_ID
-SITES_FILE=results/input/var.sites.bed
+ids=($(cat ../samples/${PREFIX}_IDs.list))
+ID=${ids["$i"]}
+bams=($(cat ../samples/${PREFIX}_bams.list))
+BAM=${bams["$i"]}
+SITES_FILE=results/input/"$PREFIX"/var.sites.bed
+DIR_OUT="results/input/$PREFIX/mex2"
+DIR_POST="../local_ancestry/results/ancestry_hmm/$PREFIX/$PREFIX_HMM"
 
 # make directory for output
-mkdir -p "results/input/mex2/tracts"
-mkdir -p "results/input/mex2/bams"
+mkdir -p "$DIR_OUT/tracts"
+mkdir -p "$DIR_OUT/bams"
 
 # only run script if the posterior file can be found first
-if [ ! -f "$DIR_POST"/HILO"$i".posterior ]; then
-	echo "posterior does not exist: ${DIR_POST}/HILO${i}.posterior"
+if [ ! -f "$DIR_POST"/"$ID".posterior ]; then
+	echo "posterior does not exist: ${DIR_POST}/${ID}.posterior"
 else
   # getting high posterior probability tracts homozygous for mexicana ancestry
   echo "finding mexicana tracts"
-  pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST"/HILO"$i".posterior | cut -f5) | \
-  awk '$4 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > results/input/mex2/tracts/HILO"$i".bed
+  pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST/$ID".posterior | cut -f5) | \
+  awk '$4 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > $DIR_OUT/tracts/"$ID".bed
 
   # filtering bam for homozygous mex regions
   echo "filtering bam for homozygous mexicana regions"
-  bedtools intersect -sorted -a "$DIR_BAMS"/HILO"$i".sort.dedup.baq.bam \
-  -b results/input/mex2/tracts/HILO"$i".bed > results/input/mex2/bams/HILO"$i".sort.dedup.baq.bam
+  bedtools intersect -sorted -a "$BAM" \
+  -b $DIR_OUT/tracts/"$ID".bed > $DIR_OUT/bams/"$ID".sort.dedup.baq.bam
 
   echo "now indexing new bam!"
   sleep 5s # because index needs to have a later timestamp
-  samtools index results/input/mex2/bams/HILO"$i".sort.dedup.baq.bam
+  samtools index $DIR_OUT/bams/"$ID".sort.dedup.baq.bam
 
   echo "all done!"
 fi
