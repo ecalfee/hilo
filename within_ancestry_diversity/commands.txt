@@ -283,6 +283,12 @@ within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CH
 Submitted batch job 11248335 - RUNNING 6.5.19
 within_ancestry_diversity$ sbatch --export=PREFIX=pass2_alloMAIZE,LOCUS=inv4m,CHR=4,START=170771502,END=186951149 piFstAngsd_onelocus_extra.sh
 ubmitted batch job 11248336 - RUNNING 6.5.19
+
+# my outlier locus on chr9 associated with elevation I looked up and estimate bounds:
+# 9:108413387-111859503
+# this is a candidate for the mhl1 locus -- I need to look up how close it is to the genetic mapping of this locus
+
+
 # TO DO:
 # add parviglumis to chr4 PCA. check if any parviglumis have mexicana-like haplotype at inv4m.
 # redo within-ancestry peaks for pass2 data
