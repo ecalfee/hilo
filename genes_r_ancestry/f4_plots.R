@@ -1,5 +1,11 @@
 library(dplyr)
 library(ggplot2)
+
+# doc suggests demming regression
+# or 'errors in variables' regression
+# also Peter Ralph's recent paper on thinking about f4's as a parameter with errors in its estimate
+# https://www.sciencedirect.com/science/article/pii/S0040580918301667
+
 # what does f4 look like across the genome?
 # distribution with recombination rate and gene density?
 f4_nonadmix <- cbind(read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/f4_10kb.bed", stringsAsFactors = F),
@@ -52,6 +58,9 @@ summary(d$alpha_maize)
 
 lma <- with(d, lm(f4_maize ~ f4_nonadmix))
 summary(lma)
+lme <- with(d, lm(f4_mexicana ~ f4_nonadmix))
+summary(lme)
+
 # an overly simplistic linear model. but slope isn't 1:1 for f4_nonadmix and f4_admix
 # these are bins which is probably bad. but higher r suggests lower minor ancestry (not what we'd predict)
 lmr_maize <- with(d, lm(f4_maize ~ f4_nonadmix + r + perc_coding))
@@ -92,8 +101,29 @@ maize_regions <- read.table("results/f4/pass2_alloMAIZE/parv_symp.maize_allo.mex
 nonadmix_regions <- read.table("results/f4/pass2_alloMAIZE/parv_allo.maize_allo.mexicana_trip/all.regions", stringsAsFactors = F, header = T)
 mexicana_regions<- read.table("results/f4/pass2_alloMAIZE/parv_symp.mexicana_allo.mexicana_trip/all.regions", stringsAsFactors = F, header = T)
 
-(sum(maize_regions$f4_sum)/sum(maize_regions$n))/(sum(nonadmix_regions$f4_sum)/sum(nonadmix_regions$n)) # reasonable estimate of maize-like ancestry in maize
-(sum(mexicana_regions$f4_sum)/sum(mexicana_regions$n))/(sum(nonadmix_regions$f4_sum)/sum(nonadmix_regions$n)) # also pretty reasonable
+expected_slope_maize <- (sum(maize_regions$f4_sum)/sum(maize_regions$n))/(sum(nonadmix_regions$f4_sum)/sum(nonadmix_regions$n)) # reasonable estimate of maize-like ancestry in maize
+d %>% # 64k 10kb windows are dropped because they have no data
+  ggplot(aes(x = f4_nonadmix, y = f4_maize)) +
+  geom_point(color = "grey", alpha = "0.5") +
+  geom_smooth(method= "lm", color = "black") +
+  geom_abline(slope = expected_slope_maize, intercept = 0, color = "blue") + 
+  ggtitle("f4 ratio regression for maize over 10kb windows; black = lm, blue = expected (slope = alpha)")
+ggsave("plots/lm_f4_maize_vs_nonadmix_w_alpha_slope_expected.png",
+       device = "png", width = 8, height = 6)
+maizef4 <- 0.0094075069990609 # maize
+mexf4 <- 0.000354797329571704 # mex
+unadmixedf4 <- 0.0123252026809957 # unadmixed
+maizef4/unadmixedf4
+mexf4/unadmixedf4
+expected_slope_mexicana <- (sum(mexicana_regions$f4_sum)/sum(mexicana_regions$n))/(sum(nonadmix_regions$f4_sum)/sum(nonadmix_regions$n)) # also pretty reasonable
+d %>%
+  ggplot(aes(x = f4_nonadmix, y = f4_mexicana)) +
+  geom_point(color = "grey", alpha = "0.5") +
+  geom_smooth(method= "lm", color = "black") +
+  geom_abline(slope = expected_slope_mexicana, intercept = 0, color = "blue") + 
+  ggtitle("f4 ratio regression for mexicana over 10kb windows; black = lm, blue = expected (slope = alpha)")
+ggsave("plots/lm_f4_mexicana_vs_nonadmix_w_alpha_slope_expected.png",
+       device = "png", width = 8, height = 6)
 
 # individual regions aren't well estimated, but mean of regions is close to the genomewide mean
 summary((maize_regions$f4_sum/maize_regions$n)/(nonadmix_regions$f4_sum/nonadmix_regions$n))

@@ -288,7 +288,7 @@ Submitted batch job 11248336 - RUNNING 6.5.19. OUT_OF_TIME (but finished thetas 
 # 50kb with 10kb step:
 within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ pop1="allopatric_mexicana.mexicana_hap"; pop2="allopatric_maize.maize_hap"; realSFS fst stats2 "$pop1-$pop2.fst.idx" -win 50000 -step 10000 > $pop1-$pop2.50kb.fstWindows.stats
 # and smoothing theta within-ancestry diversity estimates to 50kb windows (fast):
-within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ for pop1 in allopatric_maize.maize_hap allopatric_mexicana.mexicana_hap parviglumis sympatric_maize.maize_hap sympatric_maize.mexicana_hap sympatric_mexicana.maize_hap sympatric_mexicana.mexicana_hap; do thetaStat do_stat "$pop1.thetas.idx" -win 50000 -step 10000 > $pop1.50kb.thetasWindows; done
+within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ for pop1 in allopatric_maize.maize_hap allopatric_mexicana.mexicana_hap parviglumis sympatric_maize.maize_hap sympatric_maize.mexicana_hap sympatric_mexicana.maize_hap sympatric_mexicana.mexicana_hap; do thetaStat do_stat "$pop1.thetas.idx" -win 50000 -step 10000 -outnames $pop1.50kb.thetasWindows; done
 
 # get allele frequencies for parviglumis, tripsacum, allopatric mexicana (excl non homozygous), allopatric maize, sympatric maize homozygous for mex/maize and sympatric mexicana homozygous for mex/maize
 # then calculate pairwise dxy between all of these groups and estimate divergence time
@@ -301,8 +301,8 @@ within_ancestry_diversity/results/inv4m/pass2_alloMAIZE$ ln -s /home/ecalfee/hil
 within_ancestry_diversity/results/inv4m/pass2_alloMAIZE/pops.list
 calcAlleleFreq_onelocus.sh
 # calculate allele frequencies across the inversion for each of my groups:
-within_ancestry_diversity$ sbatch --array=0-7 --export="PREFIX=pass2_alloMAIZE_parviglumis_inv4m_allSNPs,DIR_POPS=results/inv4m/pass2_alloMAIZE" calcAlleleFreq_onelocus.sh
-
+within_ancestry_diversity$ sbatch --array=0-7 --export="PREFIX=pass2_alloMAIZE_PalmarChico_inv4m_allSNPs,DIR_POPS=results/inv4m/pass2_alloMAIZE" calcAlleleFreq_onelocus.sh
+Submitted batch job 11292471 - RUNNING 6.10.19
 
 # NEW DATA - pass2_alloMAIZE - redo calling homozygous ancestry tracts (post > .8):
 # Step 1: use R and bedtools to identify regions with homozygous ancestry for each individual:

@@ -1,3 +1,6 @@
+# Genomewide associations between ancestry, recombination and gene density (e.g. boxplots, lm)
+# Testing hypothesis that minor ancestry goes down with higher gene density/cM (or simply lower recombination)
+
 # calculating f4 for f4-stats
 # denominator: parviglumis, allopatric maize, allopatric mexicana, tripsacum (all regions)
 genes_r_ancestry$ sbatch --export="POP1=parv,POP2=allo.maize,POP3=allo.mexicana,POP4=trip,PREFIX=all" f4fromPopFreq.sh
@@ -107,6 +110,7 @@ Submitted batch job 11215775-8 # COMPLETED 6.2.19
 # is the original result with local ancestry robust to bootstrapping?
 
 (G) Error from the recombination map -- is 10kb too wide? is the original results robust to excluding areas towards the telomeres on chromosome edges where recombination is poorly estimated?
+
 
 # TO DO:
 # (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population.

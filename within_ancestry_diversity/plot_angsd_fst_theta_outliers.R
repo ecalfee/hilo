@@ -202,18 +202,18 @@ for (j in unique(thetasWind_ind$region)){
 theta_files <- c("allopatric_mexicana.mexicana_hap", "allopatric_maize.maize_hap", "parviglumis", "sympatric_maize.mexicana_hap")
 theta_inv4m <- do.call(bind_rows,
                        lapply(theta_files, function(i)
-                         getTheta(theta_file = paste0("results/inv4m/pass2_alloMAIZE/", i, ".thetasWindows.pestPG"),
+                         getTheta(theta_file = paste0("results/inv4m/pass2_alloMAIZE/", i, ".50kb.thetasWindows.pestPG"),
                  pop = i,
                  region = "inv4m")))
 theta_inv4m %>%
   ggplot(aes(x = pos, y = theta_pi, color = pop, group = pop)) +
   geom_point(size = .1) +
   facet_wrap(~pop, scales = "free_y", ncol = 1)
-ggsave("plots/inv4m_pi_mex_maize_parv.png", device = "png",
+ggsave("plots/inv4m_pi_mex_maize_parv_50kb.png", device = "png",
        height = 8, width = 20, units = "in"
 )  
   
-fst_inv4m <- getFstWind(fst_file = "results/inv4m/pass2_alloMAIZE/allopatric_mexicana.mexicana_hap-allopatric_maize.maize_hap.fstWindows.stats",
+fst_inv4m <- getFstWind(fst_file = "results/inv4m/pass2_alloMAIZE/allopatric_mexicana.mexicana_hap-allopatric_maize.maize_hap.50kb.fstWindows.stats",
                         pop = "mex-maize",
                         region = "inv4m")
 
@@ -227,7 +227,7 @@ filter(theta_inv4m, pop %in% c("allopatric_mexicana.mexicana_hap", "allopatric_m
   ggplot(aes(x = pos, y = value, color = pop)) +
   geom_point() +
   facet_wrap(~stat, scales = "free_y", nrow = 2)
-ggsave("plots/inv4m_fst_pi_mex_maize.png", device = "png",
+ggsave("plots/inv4m_fst_pi_mex_maize_50kb.png", device = "png",
        height = 8, width = 20, units = "in"
 )
 
@@ -236,3 +236,29 @@ fst_inv4m %>% # oops! I should make fst windows larger to group more loci for he
   ggplot(aes(x = pos, y = roll)) +
   geom_point()
 
+
+# plot dxy across the inversion:
+# first load all SNPs:
+groups <- read.table("results/inv4m/pass2_alloMAIZE/pops.list", stringsAsFactors = F)$V1
+freqs <- lapply(groups, function(pop)
+                read.table(paste0("results/allele_freq/pass2_alloMAIZE_PalmarChico_inv4m_allSNPs/", pop, "/whole_genome.mafs.gz"),
+                           stringsAsFactors = F, header = T) %>%
+                  rename(p = phat) %>%
+                  mutate(q = (1-p)))
+freqs1 <- freqs[[1]]
+for (f in 2:length(freqs)){
+  freqs1 <- dplyr::full_join(freqs1, freqs[[f]], by = c("chromo", "position", "major", "minor", "ref"), suffix = c("", paste0(".", groups[f])))
+}
+freqs1 <- freqs1 %>%
+  rename(p.allopatric_maize.maize_hap = p, q.allopatric_maize.maize_hap = q, nInd.allopatric_maize.maize_hap = nInd)
+freqs1$dxy_allopatric_maize_mex <- freqs1$p.allopatric_mexicana.mexicana_hap*freqs1$q.allopatric_maize.maize_hap + freqs1$q.allopatric_mexicana.mexicana_hap*freqs1$p.allopatric_maize.maize_hap
+freqs1$dxy_parviglumis_maize <- freqs1$p.parviglumis*freqs1$q.allopatric_maize.maize_hap + freqs1$q.parviglumis*freqs1$p.allopatric_maize.maize_hap
+freqs1$dxy_parviglumis_mex <- freqs1$p.parviglumis*freqs1$q.allopatric_mexicana.mexicana_hap + freqs1$q.parviglumis*freqs1$p.allopatric_mexicana.mexicana_hap
+dplyr::select(freqs1, starts_with("dxy")) %>%
+                filter(complete.cases(.))%>%
+  apply(., 2, function(x) sum(x, na.rm = T))/14000000
+dplyr::select(freqs1, starts_with("dxy")) %>%
+  filter(complete.cases(.))%>%
+  apply(., 2, function(x) mean(x, na.rm = T))
+
+freqs2 <- dplyr::full_join(freqs1, freqs[[1]], by = c("chromo", "position", "major", "minor", "ref"), suffix = c("", paste0(".", groups[1])))

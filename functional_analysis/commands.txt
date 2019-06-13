@@ -1,0 +1,35 @@
+# this is a functional analysis of outliers:
+(I) Are domestication genes 'special' in terms of resistance to introgression?
+(II) What does ancestry look like at specific known barrier-genes?
+(III) Do we find evidence of elevation-associated mexicana introgression for genes associated with flowering time?
+
+
+(I) Domestication genes
+Dan is re-doing the domestication scan with Li's maize landraces, looking for sweeps in maize
+For now I can use the cross-pop LD-based domestication candidates from Hufford 2012
+data/domestication/gene_model_translation_to_APGv4_Zm00001d.2_hits.txt #only about half could be found in v4 gene set
+
+(II) Barrier gene candidates
+Putative Ga2 loci male and female (right next to each other)
+GRMZM2G410783, AC231426.1_FG002
+5.30.19 Jeff gave me gene candidates for the incompatibility loci Ga2 (male and female).
+I used maizeGDB to look up the positions of those candidate genes and got positions for v1, v2, and v3 (5b+) reference genomes.
+https://www.maizegdb.org/gene_center/gene
+The gene annotation for reference genome v4 is comparatively poor and doesn't have these genes annotated but I can either
+(1) match by sequence
+(2) liftover from v3 to v4 coordinates - did this using http://ensembl.gramene.org/Zea_mays/Tools/AssemblyConverter
+The v4 coordinates are saved as GRMZM2G410783_v4_coord.bed (female Ga2) and AC231426.1_FG002_v4_coord.bed (male Ga2)
+
+
+(III) Flowering time pathway and GWAS hits
+# All flowering time genes are written for v3 gene sets:
+(a) Li Wang's candidate genes. PBE = Population Branch Excess. MH = mexico highland PBE outlier, US is US Southwest, GH is Guatemala HIghland, AN is Andean 
+(b) Dong 2012 pathway analysis using QTL/functional studies and componenets of Arabidopsis pathway (n=48)
+data/flowering_time/floweringTimeMaizeDong2012.csv
+(c) Navarro 2017. F1 association mapping study 'FOAM GWAS' using landraces across the Americas. 
+(d) I could alternatively use a set of 220 flowering time candidates from Yong-xiang Li 2016 https://onlinelibrary.wiley.com/doi/pdf/10.1111/tpj.13174 from NAM US + NAM CHINA + natural pop AMES (all RILs; ~8.7k total; GWAS). But I think Navarro 2017 is better because it includes variation from the highlands specifically vs. NAMs
+
+
+# I downloaded the full set of conversions between v3 and all other gene sets (including v4)
+# then I removed extra lines
+hilo$ cat data/refMaize/geneAnnotations/gene_model_xref_v3.txt | tail -n +5 | head -n -4 > data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt
