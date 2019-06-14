@@ -106,10 +106,10 @@ if (rerun_all_models){ # rerun or just load results of models
               quote = F,
               col.names = T, row.names = F)
 }else{
-  zb3_elev <- read.table(paste0("results/models/", PREFIX, "/maize/elevation.txt"),
+  zb3_elev <- bind_cols(sites, read.table(paste0("results/models/", PREFIX, "/maize/elevation.txt"),
                          sep = "\t",
                          header = T,
-                         stringsAsFactors = F)
+                         stringsAsFactors = F))
 }
 
 
@@ -128,10 +128,10 @@ if (rerun_all_models){ # rerun or just load results of models
               quote = F,
               col.names = T, row.names = F)
 }else{
-  zb3_over1900m <- read.table(paste0("results/models/", PREFIX, "/maize/sel_over_1900m.txt"),
+  zb3_over1900m <- bind_cols(sites, read.table(paste0("results/models/", PREFIX, "/maize/sel_over1900m.txt"),
                          sep = "\t",
                          header = T,
-                         stringsAsFactors = F)
+                         stringsAsFactors = F))
 }
 
 
@@ -172,10 +172,10 @@ if (rerun_all_models){ # rerun or just load results of models
               quote = F,
               col.names = T, row.names = F)
 }else{
-  zb3_hmex <- read.table(paste0("results/models/", PREFIX, "/maize/universal_sel_hmex.txt"),
+  zb3_hmex <- bind_cols(sites, read.table(paste0("results/models/", PREFIX, "/maize/universal_sel_hmex.txt"),
                          sep = "\t",
                          header = T,
-                         stringsAsFactors = F)
+                         stringsAsFactors = F))
 }
 
 png("plots/zb3_hmex_pval_combined.png")
@@ -231,10 +231,10 @@ if (rerun_all_models){ # rerun or just load results of models
 # proportional to the Sum of Squared Errors (SSE), and the log likelihood
 # load model results for all 14 models
 zb3_onepop <- lapply(1:14, function(i)
-  read.table(paste0("results/models/", PREFIX, "/maize/sel_pop_", i, "_only.txt"),
+  bind_cols(sites, read.table(paste0("results/models/", PREFIX, "/maize/sel_pop_", i, "_only.txt"),
              sep = "\t",
              header = T,
-             stringsAsFactors = F))
+             stringsAsFactors = F)))
 ordered_maize_pops <- left_join(data.frame(pop = colnames(maize_anc), stringsAsFactors = F), meta.pops, by = "pop")
 
 
@@ -262,6 +262,18 @@ zb3_compare <- data.frame(zTz = zTz3,
                           elev = zb3_elev$sum_sq_res,
                           hmex = zb3_hmex$sum_sq_res,
                           over1900m = zb3_over1900m$sum_sq_res)
+
+# combine all model outputs together into one dataframe
+zb3_hmex$model = "hmex"
+zb3_elev$model = "elevation"
+zb3_over1900m$model = "over1900m"
+for (i in 1:14){
+  zb3_onepop[[i]]$model <- ordered_maize_pops$LOCALITY[i]
+}
+zb3_all <- rbind(zb3_hmex, zb3_elev, zb3_over1900m, 
+                 do.call(rbind,
+                         zb3_onepop))
+
 # note: some of these models are nested: zTz < hmex < elev
 # but others are separate model families, e.g. zTz < pop1
 # AIC in OLS framework: 
@@ -269,16 +281,23 @@ zb3_compare <- data.frame(zTz = zTz3,
 # https://en.wikipedia.org/wiki/Akaike_information_criterion)
 # AIC = n*ln(SSE/n) + 2k where k is predictors + intercept and n is # data points
 # AICc = AIC + (2k^2 + 2k)/(n-k-1) correction for small sample size adds additoinal penalty for model complexity
-aic <- function(SSE, n, k){
-  n*log(SSE/n) + 2*k
+aic <- function(SSE, n, k, fixed_var = F){
+    -2*loglik_OLS(SSE, n, fixed_var) + 2*k # general equation
+    # n*log(SSE/n) + 2*k # true in the case of not-fixed variance
 }
-aic_c <- function(SSE, n, k){
-  aic(SSE, n, k) + (2*k^2 + 2*k)/(n - k - 1)
+aic_c <- function(SSE, n, k, fixed_var = F){
+  aic(SSE, n, k, fixed_var) + (2*k^2 + 2*k)/(n - k - 1)
 }
 # log likelihood for OLS regression: https://en.wikipedia.org/wiki/Akaike_information_criterion
-loglik_OLS <- function(SSE, n){
-  - n/2*log(2*pi) - n/2*log(SSE/n) - n/2
-}
+loglik_OLS <- function(SSE, n, fixed_var = F){
+  # normal LL = -n/2*ln(2*pi*var) - 1/(2*var)*SSE
+  if (fixed_var) {
+    - n/2*log(2*pi) - 1/2*SSE # under fixed variance of the residuals, var = 1
+    } else{
+      - n/2*log(2*pi) - n/2*log(SSE/n) - n/2 # under point estimation of variance of the residulas, var = SSE/n, which I've plugged in here
+    }  
+} 
+
 
 # Akaike weights for model averaging: calc relative likelihood of each model exp(-0.5 * ∆AIC) and divide by sum of these values across all models. 
 aic_w <- function(AICs){
@@ -307,6 +326,19 @@ aic_c_compare <- data.frame(zTz = aic_c(SSE = zb3_compare$zTz, n = 14, k = 0),
                             hmex = aic_c(SSE = zb3_compare$hmex, n = 14, k = 1),
                             over1900m = aic_c(SSE = zb3_compare$over1900m, n = 14, k = 1)) %>%
   bind_cols(., data.frame(aic_c_onepop))
+
+# AICc for small sample size assuming fixed variance = 1 for all residuals
+aic_c_onepop_fixedv <- do.call(cbind,
+                        lapply(zb3_onepop, function(x)
+                          aic_c(SSE = x$sum_sq_res, n = 14, k = 1, fixed_var = T)))
+colnames(aic_c_onepop_fixedv) <- ordered_maize_pops$LOCALITY
+aic_c_compare_fixedv <- data.frame(zTz = aic_c(SSE = zb3_compare$zTz, n = 14, k = 0, fixed_var = T),
+                            elev = aic_c(SSE = zb3_compare$elev, n = 14, k = 2, fixed_var = T),
+                            hmex = aic_c(SSE = zb3_compare$hmex, n = 14, k = 1, fixed_var = T),
+                            over1900m = aic_c(SSE = zb3_compare$over1900m, n = 14, k = 1, fixed_var = T)) %>%
+  bind_cols(., data.frame(aic_c_onepop_fixedv))
+
+
 # AIC model weights
 aic_w_compare <- data.frame(t(apply(aic_compare, 1, aic_w)))
 aic_c_w_compare <- data.frame(t(apply(aic_c_compare, 1, aic_w)))
@@ -350,12 +382,111 @@ png("plots/counts_model_win_all_loci_5models.png", width = 8, height = 6, res = 
 barplot(tab2, las = 2, main = "all loci - which model has lowest AICc?")
 dev.off()
 
+# fixed variance assumption
+tab1_fixedv <- table(apply(aic_c_compare_fixedv, 1, which.min))/nrow(aic_c_compare_fixedv)
+names(tab1_fixedv) <- colnames(aic_c_compare_fixedv)
+barplot(tab1_fixedv, las = 2, main = "all loci fixed var=1, which model has lowest AICc?")
+tab1_fixedv_99 <- table(apply(aic_c_compare_fixedv[zTz3 > quantile(zTz3, .99),], 1, which.min))/nrow(aic_c_compare_fixedv[zTz3 > quantile(zTz3, .99),])
+names(tab1_fixedv_99) <- colnames(aic_c_compare_fixedv)[as.numeric(unlist(dimnames(tab1_fixedv_99)))]
+barplot(tab1_fixedv_99, las = 2, main = "99% zTz top outlier loci var=1 fixed - which model has lowest AICc?")
+
+
 # just tabulate for outlier high zTz loci
 tab1_99 <- table(apply(aic_c_compare[zTz3 > quantile(zTz3, .99),], 1, which.min))/nrow(aic_c_compare[zTz3 > quantile(zTz3, .99),])
 names(tab1_99) <- colnames(aic_c_compare)
 png("plots/counts_model_win_99perc_outlier_loci_18models.png", width = 8, height = 6, res = 300, units = "in")
 barplot(tab1_99, las = 2, main = "99% zTz top outlier loci - which model has lowest AICc?")
 dev.off()
+
+aic_c_winners <- data.frame(x = apply(aic_c_compare, 1, which.min)) %>%
+  left_join(., data.frame(top_model = c("zTz", "elevation", "hmex", "over1900m", ordered_maize_pops$LOCALITY), 
+                          x = 1:ncol(aic_c_compare), 
+                          stringsAsFactors = F), by = "x") %>%
+  bind_cols(sites[,c("chr", "pos")], .) %>%
+  left_join(., zb3_all, by = c("chr", "pos", "top_model"="model"))
+aic_c_winners %>%
+  filter(zTz3 > quantile(zTz3, .99)) %>%
+  ggplot(aes(x = top_model, fill = zEnv > 0)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("AICc top model (maize); 99% zTz outlier loci only, blue = sel for mexicana")
+ggsave("plots/AICc_top_model_99perzTz_outliers.png", device = "png",
+       width = 10, height = 6, units = "in")
+
+
+# (!) it looks like most of the environmental selection is towards low mex at high altitude
+# (which makes little sense). But there's also the intercept. Which is not only positive,
+# but high for these outlier loci
+aic_c_winners %>%
+  filter(zTz3 > quantile(zTz3, .99)) %>%
+  ggplot(aes(x = top_model, fill = zInt > 1)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  ggtitle("AICc top model (maize); 99% zTz outlier loci only, blue = intercept high towards mexicana")
+ggsave("plots/AICc_top_model_99perzTz_outliers_zInt.png", device = "png",
+       width = 10, height = 6, units = "in")
+# intercept isn't always high:
+hist(aic_c_winners$zInt[zTz3 > quantile(zTz3, .99) & aic_c_winners$top_model == "elevation"])
+hist(aic_c_winners$zInt[aic_c_winners$top_model == "elevation"])
+hist(aic_c_winners$zEnv[zTz3 > quantile(zTz3, .99) & aic_c_winners$top_model == "hmex"])
+# so what do these loci look like?
+# ~zElev individual loci. The highest zTz3 outliers all have elevated mexicana (high intercepts)
+# and flat or mild downward slope. broadening to top 90% percentile and we see some upward 
+# trending loci
+# loci that are universally selected against mexicana are never in this set of top zTz3 outliers
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_elev) %>%
+  mutate(zTz3 = zTz3) %>%
+  #filter(., aic_c_winners$top_model == "elevation" & zTz3 > quantile(zTz3, .99)) %>%
+  filter(., aic_c_winners$top_model == "elevation" & zTz3 > quantile(zTz3, .9)) %>%
+  #filter(., aic_c_winners_fixedv$top_model == "elevation" & zTz3 > quantile(zTz3, .9)) %>%
+  .[c(T, rep(F, 50)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, shape = inv4m, 
+             color = log10(zTz3), group = pos)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset 90% top zTz3 outliers w/ elevation model best fit")
+ggsave(paste0("plots/a_few_example_loci_zElev_best_model_highzTz3_outliers.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+
+
+aic_c_winners %>%
+  ggplot(aes(x = top_model, fill = zEnv > 0)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ggtitle("AICc top model (maize); all loci. blue = sel for mexicana")
+ggsave("plots/AICc_top_model_all_loci.png", device = "png",
+       width = 10, height = 6, units = "in")
+
+aic_c_winners_fixedv <- data.frame(x = apply(aic_c_compare_fixedv, 1, which.min)) %>%
+  left_join(., data.frame(top_model = c("zTz", "elevation", "hmex", "over1900m", ordered_maize_pops$LOCALITY), 
+                          x = 1:ncol(aic_c_compare_fixedv), 
+                          stringsAsFactors = F), by = "x") %>%
+  bind_cols(sites[,c("chr", "pos")], .) %>%
+  left_join(., zb3_all, by = c("chr", "pos", "top_model"="model")) 
+
+aic_c_winners_fixedv %>%
+  filter(zTz3 > quantile(zTz3, .99)) %>%
+  ggplot(aes(x = top_model, fill = zEnv > 0)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ggtitle("AICc top model (maize); fixed var = 1; 99% zTz outliers, blue = sel for mexicana")
+ggsave("plots/AICc_top_model_fixedvar1_99perzTz_outliers.png", device = "png",
+       width = 10, height = 6, units = "in")
+aic_c_winners_fixedv %>%
+  ggplot(aes(x = top_model, fill = zEnv > 0)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90)) + 
+  ggtitle("AICc top model (maize); fixed var = 1; all loci, blue = sel for mexicana")
+ggsave("plots/AICc_top_model_fixedvar1_allLoci_outliers.png", device = "png",
+       width = 10, height = 6, units = "in")
+
 # very very top outliers
 tab1_999 <- table(apply(aic_c_compare[zTz3 > quantile(zTz3, .999),], 1, which.min))/nrow(aic_c_compare[zTz3 > quantile(zTz3, .999),])
 names(tab1_999) <- colnames(aic_c_compare)[as.numeric(unlist(dimnames(tab1_999)))]
@@ -497,6 +628,39 @@ bind_cols(maize_anc, sites) %>%
 ggsave(paste0("plots/a_few_example_loci_zElev_outliers_rotated_intercept.png"),
        device = "png",
        width = 10, height = 8, units = "in")
+# what is going on with high zEnv estimates but not very low pvalues?
+# not great fits but still have steep slopes it looks like
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_elev) %>%
+  filter(., zEnv > .0005) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, 
+             shape = inv4m, color = log10(pval_zEnv), group = pos)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset largest pos. slopes zElev test - with rotated intercept zInt -show pvals")
+
+# what do loci look like with higher 
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_over1900m) %>%
+  filter(., pval_zEnv < .001) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, 
+             shape = inv4m, color = zEnv, group = pos)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset low p-val outliers from over1900m test - with rotated intercept zInt")
+
+
+
 # all selected
 bind_cols(maize_anc, sites) %>%
   bind_cols(., zb3_hmex) %>%
