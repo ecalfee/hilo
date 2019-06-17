@@ -133,8 +133,36 @@ if (rerun_all_models){ # rerun or just load results of models
                          header = T,
                          stringsAsFactors = F))
 }
+# is elevation estimated positive or negative for top outliers?
+zb3_elev %>%
+  bind_cols(., sites) %>%
+  mutate(zTz3 = zTz3) %>%
+  ggplot(aes(x = log10(pval_zEnv), y = log10(zTz3), color = zEnv)) +
+  geom_point()
 
-
+hist(zTz3)
+# ~zElev individual loci
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_elev) %>%
+  mutate(zTz3 = zTz3) %>%
+  mutate(elev_pval = ifelse(pval_zEnv < 0.01, "zElev pval<.01", "pval>=.01")) %>%
+  ggplot(aes(x = zTz3, fill = zEnv>0)) +
+  geom_histogram(position = "stack") +
+  facet_wrap(~elev_pval, scales = "free_y")+
+  ggtitle("zTz scores for low vs. high p-val from zAnc~zElev slope")
+ggsave("plots/zEnv_pval_elevation_vs_ztz_score_all_loci.png", device = "png",
+       width = 10, height = 6, units = "in")
+# plot the inverse
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_elev) %>%
+  mutate(zTz3 = zTz3) %>%
+  mutate(elev_pval = ifelse(zTz3 > quantile(zTz3, .99), "zTz > 99%", "zTz non-outlier")) %>%
+  ggplot(aes(x = log10(pval_zEnv), fill = zEnv>0)) +
+  geom_histogram(position = "stack") +
+  facet_wrap(~elev_pval, scales = "free_y")+
+  ggtitle("p-vals slopes from zAnc~zElev for low vs. high zTz loci")
+ggsave("plots/zEnv_pval_elevation_vs_99percent_ztz_score_all_loci.png", device = "png",
+       width = 10, height = 6, units = "in")
 
 
 # make plot log 10 pval for zEnv vs. zElev slope estimate to show enrichment for selection for mexicana ancestry at high elevation

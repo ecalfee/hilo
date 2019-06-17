@@ -607,7 +607,7 @@ d_100kb %>%
   filter(! inv_any) %>%
   ggplot(., aes(x = rate, y = perc_coding)) +
   geom_point(alpha = .3) +
-  geom_smooth(color = "blue") + 
+  geom_smooth(method = "lm", color = "blue") + 
   labs(title = "across 100kb bins WITH ANCESTRY CALLS higher percent coding in regions with high recomb. rate",
        x = "recomb. rate - cM/Mb")
 ggsave("plots/scatter_perc_coding_by_r_100kb_windows.png",

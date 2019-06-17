@@ -4,6 +4,11 @@
 # (II) Barrier candidate genes are segregating in these pops. Maybe fewer barrier genes in pops with more gene flow. (predictions aren't super clear)
 # (III) Mexicana ancestry has contributed to genetic variation selected on for flowering time. So I expect an enrichment of flowering time genes in positive
 # zAnc ~ zElev hist (higher mexicana freq. at higher elevations)
+library(dplyr)
+library(tidyr)
+library(RColorBrewer)
+library(ggplot2)
+
 
 # plot ancestry at candidate incompatibility loci:
 GRMZM2G410783 <- read.table("../data/incompatibility_loci/GRMZM2G410783_v4_coord.bed", stringsAsFactors = F, sep = "\t")
@@ -86,13 +91,19 @@ table(flowering_pathway$geneID %in% flowering_pbe$geneID[flowering_pbe$sum >= 1]
 table(flowering_gwas_male$ID %in% flowering_pbe$geneID)
 table(flowering_gwas_female$ID %in% flowering_pbe$geneID)
 
-table(g3_convert$v4_gene_model %in% genes$id)
-
+# get conversion between coordinates downloaded from maizeGDB
+g3_convert <- read.table("../data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt", 
+                         stringsAsFactors = F, header = T, sep = "\t",
+                         na.strings = c("NA", "<NA>", "")) %>%
+  dplyr::select(c("v3_gene_model", "v3_start", "v3_end", "v3_chr", "v4_gene_model", "B73.Zm00001d.2."))
 genes <- read.table("../data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.genes.only.gff3", 
                     sep = "\t", 
                     stringsAsFactors = F)[ , c(1,4,5,9)]
 colnames(genes) <- c("chr", "start", "end", "label")
 genes$id <- sapply(substr(genes$label, 9, 100), function(x) strsplit(x, split = ";")[[1]][1])
+genes$length = genes$end - genes$start + 1
+
+# are my lists of genes in the .gff3? no. wrong gene name version.
 table(flowering_gwas_female$ID %in% genes$id)
 table(flowering_gwas_male$ID %in% genes$id)
 table(flowering_pathway$geneID %in% genes$id)
@@ -101,36 +112,64 @@ table(domestication$ID %in% genes$id) # none
 
 # get conversion to other gene models
 # oops! I'm not sure what's going on. Why doesn't my gff3 match v4? or match 
-table(g3_convert$v4_gene_model == g3_convert$B73.Zm00001d.2.)
 table(genes$id %in% g3_convert$B73.Zm00001d.2.)
-table(genes$id %in% g3_convert$v4_gene_model) # same genes are in both. not sure why there are some genes not in either.
-table(domestication_genes %in% g3_convert$v4_gene_model)
-table(domestication_genes %in% domestication2$v4_gene_model)
-table(unique(domestication2$v4_gene_model) %in% domestication_genes) # I'm finding more genes. Shouldn't this be the same??
+table(genes$id %in% g3_convert$v4_gene_model) 
+# same genes are in both gene models. but going the other way v4_gene_model has extra genes not in .gff3 
+table(g3_convert$v4_gene_model == g3_convert$B73.Zm00001d.2.)
+filter(g3_convert, v4_gene_model != B73.Zm00001d.2.) %>%
+  mutate(match_found = v4_gene_model %in% genes$id) %>%
+  dplyr::select(match_found) %>%
+  table() # the ones that don't match B73.Zm00001d.2. aren't in the .gff3 file either
+filter(g3_convert, v4_gene_model != B73.Zm00001d.2.) %>%
+  dplyr::select(B73.Zm00001d.2.) %>%
+  table() # no entry
+# what is going on? gff3 has only half the genes in B73.Zm00001d.2.
+table(unique(g3_convert$v4_gene_model) %in% genes$id)
+table(unique(g3_convert$B73.Zm00001d.2.) %in% genes$id)
+
+# convert to v4 list, id column must be ID
+convert2v4 <- function(gene_set){
+  id <- quo(id_col)
+  left_join(gene_set, g3_convert, 
+            by = c("ID"="v3_gene_model")) %>%
+    filter(!is.na(B73.Zm00001d.2.)) %>% 
+    dplyr::select(B73.Zm00001d.2.) %>%
+    unique()
+} 
+
+flowering_pathway2 <- flowering_pathway %>%
+  mutate(ID=geneID) %>%
+  convert2v4()
+flowering_pbe2 <- flowering_pbe %>%
+  mutate(ID=geneID) %>%
+  convert2v4()
+flowering_gwas_male2 <- convert2v4(flowering_gwas_male)
+flowering_gwas_female2 <- convert2v4(flowering_gwas_female)
+domestication2 <- convert2v4(gene_set = domestication)
+
+
+table(domestication_genes %in% g3_convert$B73.Zm00001d.2.)
+table(domestication_genes %in% domestication2$B73.Zm00001d.2.)
+table(unique(domestication2$B73.Zm00001d.2.) %in% domestication_genes) # I'm finding more genes. Shouldn't this be the same??
 head(g3_convert[,c("v3_gene_model", "v4_gene_model")])
 domestication_genes[duplicated(domestication_genes)]
 domestication_genes[is.na(domestication_genes)]
-domestication2[duplicated(domestication2$v4_gene_model),] # need to get rid of duplicates
-
-g3_convert <- read.table("../data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt", stringsAsFactors = F, header = T, sep = "\t") %>%
-  dplyr::select(c("v3_gene_model", "v3_start", "v3_end", "v3_chr", "v4_gene_model"))
-flowering_pathway2 <- left_join(flowering_pathway, g3_convert, by = c("geneID"="v3_gene_model"))
-flowering_pbe2 <- left_join(flowering_pathway2, g3_convert, by = c("geneID"="v3_gene_model"))
-flowering_gwas_male2 <- left_join(flowering_gwas_male, g3_convert, by = c("ID"="v3_gene_model"))
-flowering_gwas_female2 <- left_join(flowering_gwas_female, g3_convert, by = c("ID"="v3_gene_model"))
-domestication2 <- left_join(domestication, g3_convert, by = c("ID"="v3_gene_model"))
+domestication2[duplicated(domestication2$B73.Zm00001d.2),] # need to get rid of duplicates
+# one example
+domestication2[domestication2$B73.Zm00001d.2 == "Zm00001d015767", ]
+genes[genes$id == "Zm00001d015767",]
 
 # very few genes don't have hits v3 -> v4 gene models
-lapply(list(flowering_pathway2, flowering_pbe2, flowering_gwas_male2, flowering_gwas_female2, domestication2), function(x) table(is.na(x$v4_gene_model)))
-lapply(list(flowering_pathway2, flowering_pbe2, flowering_gwas_male, flowering_gwas_female, domestication2), function(x) x[is.na(x$v4_gene_model),])
-
-table(domestication_genes %in% domestication2$v4_gene_model)
-table(domestication_genes %in% g3_convert$v4_gene_model)
-
 genes$domestication <- genes$id %in% domestication_genes
+genes$domestication2 <- genes$id %in% domestication2$B73.Zm00001d.2.
 table(domestication_genes %in% genes$id) # about half the domestication genes can be found in the full genes list
-table(flowering_pathway$geneID %in% genes$id)
-genes$length = genes$end - genes$start + 1
+table(domestication2$B73.Zm00001d.2. %in% genes$id) # slightly more included. more genes in general.
+# but still only about half found in genes$id
+# domestication2 has 89 more hits (though missing 10) .. going with that for now
+table(genes[ , c("domestication", "domestication2")]) 
+lapply(list(flowering_pathway2, flowering_pbe2, flowering_gwas_female2, flowering_gwas_male2),
+       function(x) table(x$B73.Zm00001d.2. %in% genes$id)) # a bit more or less than half, depending on the set
+
 # now I need to get an ancestry approximation for each gene
 get_gene_anc <- function(anc_snps = d, gene, focal_col){
   anc_snps_chr <- dplyr::filter(anc_snps, chr == gene$chr)
@@ -215,3 +254,21 @@ g10 %>%
 # domestication genes don't look any more likely than other genes
 # to not have ancestry calls 
 table(data.frame(domestication = g10$gene %in% domestication_genes, has_ancestry = is.na(g10$meanAlpha_mex)))
+
+# flowering time
+flowers <- c(flowering_gwas_female2$B73.Zm00001d.2.,
+             flowering_gwas_male2$B73.Zm00001d.2.,
+             flowering_pathway2$B73.Zm00001d.2.,
+             flowering_pbe2$B73.Zm00001d.2.) %>%
+  .[!duplicated(.)]
+g %>%
+  mutate(., domestication = gene %in% flowering_gwas_male2$B73.Zm00001d.2.) %>%
+  ggplot(aes(y = meanAlpha_mex, fill = domestication)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(d$meanAlpha_maize), 
+              linetype = "dotted") +
+  ggtitle("mean ancestry in maize pops near genes") +
+  xlab("gene type") +
+  ylab("mean mexicana ancestry in gene +/- 5kb")
+
+

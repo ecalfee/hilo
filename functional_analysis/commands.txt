@@ -9,6 +9,17 @@ Dan is re-doing the domestication scan with Li's maize landraces, looking for sw
 For now I can use the cross-pop LD-based domestication candidates from Hufford 2012
 data/domestication/gene_model_translation_to_APGv4_Zm00001d.2_hits.txt #only about half could be found in v4 gene set
 
+Hufford 2012 Domestication Genes downloaded from Supplementary table 6:
+Letter | Published: 03 June 2012
+Comparative population genomics of maize domestication and improvement
+Matthew B Hufford, Xun Xu, Joost van Heerwaarden, Tanja Pyhäjärvi, Jer-Ming Chia, Reed A Cartwright, Robert J Elshire, Jeffrey C Glaubitz, Kate E Guill, Sha$
+Nature Genetics volume 44, pages 808–811 (2012)
+
+This paper used a comparison of XP-CLR cross-population composite likelihood ratio statistic (Chen 2010)
+to identify regions of the genome with elevated divergence between parviglumis and maize landraces
+extending over large regions, consistent with fast rises in frequency (ie selection) during domestication
+Candidate genes were identified within these elevated regions.
+
 (II) Barrier gene candidates
 Putative Ga2 loci male and female (right next to each other)
 GRMZM2G410783, AC231426.1_FG002
