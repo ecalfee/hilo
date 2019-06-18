@@ -17,7 +17,7 @@ PREFIX="pass2_alloMAIZE"
 # metadata for each individual, including pop association
 pop_elev <- read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
                        stringsAsFactors = F, header = T, sep = "\t") %>%
-  dplyr::select(., popN, ELEVATION)
+  dplyr::select(., popN, ELEVATION, LAT, LON)
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
 # admixture proportions per pop
 meta.pops <- read.table(paste0("../global_ancestry/results/NGSAdmix/", PREFIX, "/globalAdmixtureIncludedByPopN.txt"),
@@ -846,8 +846,286 @@ cor(zb3_elev_int$zEnv, zb3_elev$zEnv) # poorly correlated
 
 
 
+# make MVN simulations for maize
+n = 100000
+mvn_maize = mvrnorm(n=n, # create some MVN data
+                     mu = zAnc_maize$alpha, 
+                     Sigma = zAnc_maize$K,
+                     empirical = F)
+mvn_01_maize = mvn_maize # truncate at bounds [0, 1]
+sum(mvn_01_maize<0)/(n*14) # about 5% less than 0
+sum(mvn_01_maize>1)/(n*14) # and <.001% more than 1
+mvn_01_maize[mvn_01_maize < 0] <- 0
+mvn_01_maize[mvn_01_maize > 1] <- 1
+hist(apply(mvn_maize, 1, mean)) # before truncation
+mvn_01_maize_mean <- apply(mvn_01_maize, 1, mean)
+hist(mvn_01_maize_mean) # after truncation
+abline(v = quantile(mvn_01_maize_mean, c(.99, .999)), col = c("blue", "blue"))
+summary(mvn_01_maize_mean)
+
+maize_anc_mean <- apply(maize_anc, 1, mean)
+summary(maize_anc_mean)
+hist(maize_anc_mean)
+abline(v = quantile(mvn_01_maize_mean, c(.99, .999)), col = c("blue", "darkblue"))
+# slight enrichment but nothing crazy. What's my 5% false-discovery threshold?
+# And how many loci pass it?
+mean(maize_anc_mean > quantile(mvn_01_maize_mean, .99)) # 2x enriched
+mean(maize_anc_mean > quantile(mvn_01_maize_mean, .999)) # 5-6x enriched
+mean(maize_anc_mean > quantile(mvn_01_maize_mean, .9999)) # 20x enriched
+fdr <- function(p, data, sims){
+  obs <- sum(data > quantile(sims, p))
+  null <- (1-p)*length(data)
+  null/obs
+}
+sapply(c(.9, .99, .999, .9999, .99999), function(x) fdr(p = x, data = maize_anc_mean, sims = mvn_01_maize_mean))
+fdr2 <- function(a, data, sims){# takes in an ancestry
+  obs <- sum(data > a)
+  null <- sum(sims > a)/length(sims)*length(data)
+  null/obs
+}
+fdr2_low <- function(a, data, sims){# takes in an ancestry, test for low ancestry
+  obs <- sum(data < a)
+  null <- sum(sims < a)/length(sims)*length(data)
+  null/obs
+}
+# set FDR thresholds for high mexicana ancestry in maize
+test_anc <- seq(mean(maize_anc_mean), max(maize_anc_mean), length.out = 10000) # keep in range observed to not divide by 0
+test_fdr <- sapply(test_anc, function(x) fdr2(x, data = maize_anc_mean, sims = mvn_01_maize_mean))
+png("plots/power_curve_high_mex_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_anc, test_fdr, 
+     main = "FDR high-mex outliers calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red"))
+legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("green", "orange", "red"), lty = 1)
+dev.off()
+
+# set FDR threshold for low mexicana ancestry in maize
+test_anc_low <- seq(min(maize_anc_mean), mean(maize_anc_mean), length.out = 10000) # keep in range observed to not divide by 0
+test_fdr_low <- sapply(test_anc_low, function(x) fdr2_low(x, data = maize_anc_mean, sims = mvn_01_maize_mean))
+png("plots/power_curve_low_mex_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_anc_low, test_fdr_low, # we have no power to detect low mexicana outliers individually 
+     main = "FDR low-mex outliers calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red"))
+legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("green", "orange", "red"), lty = 1)
+dev.off()
+
+# calculate FDR thresholds (approx)
+FDRs <- sapply(c(0.1, .05, .01), function(p) max(test_anc[test_fdr>p], na.rm = T))
+
+
+# is seletion for mexicana ancestry a dominant mode of selection?
+# what portion of zTz outliers meet 5% FDR threshold for high mex (vs some other mode of selection)
 
 
 
+# plot maize ancestry across the genome colored by FDR
+d_maize_mean_anc <- sites %>%
+  mutate(mean_mexicana_anc_in_maize = maize_anc_mean)
+d_maize_mean_anc$significance <- cut(d_maize_mean_anc$mean_mexicana_anc_in_maize,
+                                     breaks = c(0, FDRs, 1), include.lowest = F, 
+                                     labels = c("n.s.", "FDR < 0.1", "FDR < 0.05", "FDR < 0.01"))
+ggplot(d_maize_mean_anc, aes(pos, mean_mexicana_anc_in_maize, color = significance)) +
+  geom_point(size = .1) +
+  scale_colour_manual(values = c("black", "darkgreen", "orange", "red")) + 
+  facet_wrap(~chr) +
+  geom_abline(slope = 0, intercept = quantile(maize_anc_mean, .99), linetype = "dashed", color = "grey") +
+  geom_abline(slope = 0, intercept = quantile(maize_anc_mean, .01), linetype = "dashed", color = "grey") +
+  geom_abline(slope = 0, intercept = mean(maize_anc_mean), linetype = "dotted", color = "grey")
+ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome.png", device = "png",
+       height = 8, width = 12, units = "in")
 
+# how unusual are the ancestry slopes?
+meta.pops.maize <- left_join(data.frame(pop = maize_pops, stringsAsFactors = F),
+                             meta.pops, by = "pop")
+maize_pops == meta.pops.maize$pop & maize_pops == colnames(maize_anc) # good
+corr_elev_mvn_maize <- apply(mvn_01_maize, 1, function(x) cor(x, 
+                                                            meta.pops.maize$ELEVATION))
+# standard deviation is zero for some simulations where all pops have ancestry 0 -- so I set those to correlation = 0.
+cor(rep(0,14), meta.pops.maize$ELEVATION)
+corr_elev_mvn_maize[is.na(corr_elev_mvn_maize)] <- 0
+corr_elev_maize <- apply(maize_anc, 1, function(x) cor(x, 
+                                                          meta.pops.maize$ELEVATION)) 
+hist(corr_elev_mvn_maize)
+
+# set FDR thresholds for correlations with environment
+test_elev_corr <- seq(0, max(corr_elev_maize), length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_elev_corr <- sapply(test_elev_corr, function(x) 
+  fdr2(x, data = corr_elev_maize, sims = corr_elev_mvn_maize))
+png("plots/power_curve_corrElev_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_elev_corr, test_fdr_elev_corr, 
+     main = "FDR correlation with elevation calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+# comes out as really enriched .. and it's non-indep so I don't know if that's believable
+# ok but overly conservative test because it's correcting for mean mexicana ancestry 
+# that is already highly correlated (.84) with elevation
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+dev.off()
+
+# plot neg relationship between mexicana ancestry and environment
+test_elev_corr_neg <- seq(min(corr_elev_maize), 0, length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_elev_corr_neg <- sapply(test_elev_corr_neg, function(x) 
+  fdr2_low(x, data = corr_elev_maize, sims = corr_elev_mvn_maize))
+png("plots/power_curve_neg_corrElev_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_elev_corr_neg, test_fdr_elev_corr_neg, 
+     main = "FDR neg. correlation with elevation calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+# comes out as really enriched .. and it's non-indep so I don't know if that's believable
+# ok but overly conservative test because it's correcting for mean mexicana ancestry 
+# that is already highly correlated (.84) with elevation
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+dev.off()
+
+# I can still plot empirical 1% cutoffs for association with elevation
+sites %>%
+  mutate(corr_Elev = corr_elev_maize) %>%
+  ggplot(., aes(pos, corr_Elev)) +
+  geom_point(size = .1, color = "black") +
+  facet_wrap(~chr) +
+  geom_abline(slope = 0, intercept = quantile(corr_elev_maize, .99), linetype = "dashed", color = "grey") +
+  geom_abline(slope = 0, intercept = quantile(corr_elev_maize, .01), linetype = "dashed", color = "grey") +
+  geom_abline(slope = 0, intercept = mean(corr_elev_maize), linetype = "dotted", color = "grey")
+ggsave("plots/mean_bElev_in_maize_FDR_empirical_1percent_whole_genome.png", device = "png",
+       height = 8, width = 12, units = "in")
+
+
+
+fdr(.99, data = corr_elev_maize, sims = corr_elev_mvn_maize)
+quantile(corr_elev_mvn_maize, c(.99))
+
+
+# actually I don't want the correlation, I want the slope of the linear model, Anc ~ elev, 
+# because some loci have more variance in ancestry freq. than others
+simple_bElev_mvn <- apply(mvn_01_maize, 
+                       1, function(x)
+                       simple_env_regression(ancFreq = x, envWeights = meta.pops.maize$ELEVATION)) %>%
+  as.data.frame(t(.))
+simple_bElev_anc <- apply(maize_anc, 
+                            1, function(x)
+                              simple_env_regression(ancFreq = x, envWeights = meta.pops.maize$ELEVATION)) %>%
+  as.data.frame(.)
+summary(as.data.frame(simple_bElev_mvn)$envWeights)
+summary(as.data.frame(simple_bElev_anc)$envWeights)
+# get FDR thresholds
+test_simple_bElev <- seq(0, max(simple_bElev_anc$envWeights), length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_simple_bElev <- sapply(test_simple_bElev, function(x) 
+  fdr2(x, data = simple_bElev_anc$envWeights, sims = simple_bElev_mvn$envWeights))
+png("plots/power_curve_simple_bElev_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_simple_bElev, test_fdr_simple_bElev, 
+     main = "FDR pos. slope simple Anc ~ elev calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+# comes out as really enriched .. and it's non-indep so I don't know if that's believable
+# ok but overly conservative test because it's correcting for mean mexicana ancestry 
+# that is already highly correlated (.84) with elevation
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+dev.off()
+# neg slope with env
+test_simple_bElev_neg <- seq(min(simple_bElev_anc$envWeights), 0, length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_simple_bElev_neg <- sapply(test_simple_bElev_neg, function(x) 
+  fdr2_low(x, data = simple_bElev_anc$envWeights, sims = simple_bElev_mvn$envWeights))
+png("plots/power_curve_simple_bElev_neg_in_maize_mvn_sim.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_simple_bElev_neg, test_fdr_simple_bElev_neg, 
+     main = "FDR neg. slope simple Anc ~ elev calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+# comes out as really enriched .. and it's non-indep so I don't know if that's believable
+# ok but overly conservative test because it's correcting for mean mexicana ancestry 
+# that is already highly correlated (.84) with elevation
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+dev.off()
+
+
+FDRs_simple_bElev <- sapply(c(0.1, .05, .01), function(p) max(test_simple_bElev[test_fdr_simple_bElev>p], na.rm = T))
+FDRs_simple_bElev_neg <- sapply(c(0.01, .05, .1), function(p) max(test_simple_bElev_neg[test_fdr_simple_bElev_neg<p], na.rm = T))
+
+
+# plot slopes with environment colored by FDR
+d_simple_bElev <- sites %>%
+  mutate(slope_elev = simple_bElev_anc$envWeights)
+d_simple_bElev$significance <- cut(d_simple_bElev$slope_elev,
+                                     breaks = c(-1, FDRs_simple_bElev_neg, FDRs_simple_bElev, 1), include.lowest = F, 
+                                     labels = c("FDR < 0.01", "FDR < 0.05", "FDR < 0.1", "n.s.", "FDR < 0.1", "FDR < 0.05", "FDR < 0.01"))
+
+ggplot(d_simple_bElev, 
+       aes(pos, slope_elev, color = significance)) +
+  geom_point(size = .1) +
+  scale_colour_manual(values = c("red", "orange", "darkgreen", "black")) + 
+  facet_wrap(~chr, scales = "free_x") +
+  geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .99), linetype = "dashed", color = "grey") +
+  #geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .01), linetype = "dashed", color = "grey") +
+  #geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), linetype = "dotted", color = "grey")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome.png", device = "png",
+       height = 6, width = 10, units = "in")
+
+# manhattan style plot
+ggplot(d_simple_bElev, 
+       aes(pos, slope_elev, color = significance)) +
+  geom_point(size = .1) +
+  scale_colour_manual(values = c("red", "orange", "darkgreen", "black")) + 
+  geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .99), linetype = "dashed", color = "grey") +
+  scale_x_continuous( label = axis_spacing$chr, breaks= axis_spacing$center )
+
+# Compute chromosome size
+sites_cum <- sites %>% 
+  group_by(chr) %>% 
+  summarise(chr_len=max(pos)) %>% 
+  
+  # Calculate cumulative position of each chromosome
+  mutate(tot=cumsum(chr_len)-chr_len) %>%
+  dplyr::select(-chr_len) %>%
+  # join to sites
+  left_join(sites[, c("chr", "pos")], ., by = c("chr")) %>%
+  mutate( pos_cum=pos+tot)
+
+axis_spacing = sites_cum %>%
+  group_by(chr) %>% 
+  summarize(center=( max(pos_cum) + min(pos_cum) ) / 2 )
+
+fdr_bElev = data.frame(FDR = rep(c("FDR < 0.01", "FDR < 0.05", "FDR < 0.1"), 2),
+                       cutoff = c(FDRs_simple_bElev, FDRs_simple_bElev_neg),
+                       stringsAsFactors = F)
+# make wide format                       
+d_simple_bElev %>%
+  left_join(., sites_cum, by = c("chr", "pos")) %>%
+              mutate(even_chr = (chr %% 2 == 0)) %>%
+             ggplot(., aes(pos_cum, slope_elev, 
+                           color = even_chr, show.legend = F)) +
+  geom_point(size = .1) +
+  xlab("bp position on chromosome") +
+  ylab("slope mexicana ancestry ~ elevation") +
+  scale_colour_manual(values = c("grey", "darkgrey")) + 
+  geom_abline(slope = 0, intercept = c(FDRs_simple_bElev_neg, FDRs_simple_bElev), linetype = "dashed", color = c("red", "orange", "skyblue", "skyblue", "orange", "red")) +
+  geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), color = "darkgrey", linetype = "dotted") +
+  #geom_abline(data = fdr_bElev, aes(intercept = cutoff, slope = 0, color = FDR)) +
+  #scale_colour_manual(values = c("grey", "darkgrey", "yellow", "red", "skyblue")) + 
+  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
+  theme(legend.position = "none")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide.png", device = "png",
+       height = 3, width = 12, units = "in")
+
+d_maize_mean_anc %>% # note no sig on low side because simulations exceeded values found in real data (namely, 0)
+  left_join(., sites_cum, by = c("chr", "pos")) %>%
+  mutate(even_chr = (chr %% 2 == 0)) %>%
+  ggplot(., aes(pos_cum, mean_mexicana_anc_in_maize, 
+                color = even_chr, show.legend = F)) +
+  geom_point(size = .1) +
+  xlab("bp position on chromosome") +
+  ylab("mexicana ancestry frequency") +
+  ylim(c(0,1)) +
+  scale_colour_manual(values = c("grey", "darkgrey")) + 
+  geom_abline(slope = 0, intercept = c(FDRs), linetype = "dashed", color = c("skyblue", "orange", "red")) +
+  geom_abline(slope = 0, intercept = mean(d_maize_mean_anc$mean_mexicana_anc_in_maize), color = "darkgrey", linetype = "dotted") +
+  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
+  theme(legend.position = "none")
+ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide.png", device = "png",
+       height = 3, width = 12, units = "in")
 
