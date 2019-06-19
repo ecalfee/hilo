@@ -848,6 +848,8 @@ cor(zb3_elev_int$zEnv, zb3_elev$zEnv) # poorly correlated
 
 # make MVN simulations for maize
 n = 100000
+seed = 500
+set.seed(seed)
 mvn_maize = mvrnorm(n=n, # create some MVN data
                      mu = zAnc_maize$alpha, 
                      Sigma = zAnc_maize$K,
@@ -896,8 +898,8 @@ png("plots/power_curve_high_mex_in_maize_mvn_sim.png",
 plot(test_anc, test_fdr, 
      main = "FDR high-mex outliers calculated based on MVN simulation of maize",
      pch = 20, cex = .1)
-abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red"))
-legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("green", "orange", "red"), lty = 1)
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red"))
+legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("skyblue", "orange", "red"), lty = 1)
 dev.off()
 
 # set FDR threshold for low mexicana ancestry in maize
@@ -908,8 +910,8 @@ png("plots/power_curve_low_mex_in_maize_mvn_sim.png",
 plot(test_anc_low, test_fdr_low, # we have no power to detect low mexicana outliers individually 
      main = "FDR low-mex outliers calculated based on MVN simulation of maize",
      pch = 20, cex = .1)
-abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red"))
-legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("green", "orange", "red"), lty = 1)
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red"))
+legend("topright", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("skyblue", "orange", "red"), lty = 1)
 dev.off()
 
 # calculate FDR thresholds (approx)
@@ -929,7 +931,7 @@ d_maize_mean_anc$significance <- cut(d_maize_mean_anc$mean_mexicana_anc_in_maize
                                      labels = c("n.s.", "FDR < 0.1", "FDR < 0.05", "FDR < 0.01"))
 ggplot(d_maize_mean_anc, aes(pos, mean_mexicana_anc_in_maize, color = significance)) +
   geom_point(size = .1) +
-  scale_colour_manual(values = c("black", "darkgreen", "orange", "red")) + 
+  scale_colour_manual(values = c("black", "skyblue", "orange", "red")) + 
   facet_wrap(~chr) +
   geom_abline(slope = 0, intercept = quantile(maize_anc_mean, .99), linetype = "dashed", color = "grey") +
   geom_abline(slope = 0, intercept = quantile(maize_anc_mean, .01), linetype = "dashed", color = "grey") +
@@ -1010,6 +1012,11 @@ simple_bElev_anc <- apply(maize_anc,
                             1, function(x)
                               simple_env_regression(ancFreq = x, envWeights = meta.pops.maize$ELEVATION)) %>%
   as.data.frame(.)
+write.table(simple_bElev_anc,
+            paste0("results/models/", PREFIX, "/maize/simple_bElev_anc.txt"),
+            sep = "\t",
+            quote = F,
+            col.names = T, row.names = F)
 summary(as.data.frame(simple_bElev_mvn)$envWeights)
 summary(as.data.frame(simple_bElev_anc)$envWeights)
 # get FDR thresholds
@@ -1021,11 +1028,11 @@ png("plots/power_curve_simple_bElev_in_maize_mvn_sim.png",
 plot(test_simple_bElev, test_fdr_simple_bElev, 
      main = "FDR pos. slope simple Anc ~ elev calculated based on MVN simulation of maize",
      pch = 20, cex = .1)
-abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red")) # I think what's happening is only the inversion
 # comes out as really enriched .. and it's non-indep so I don't know if that's believable
 # ok but overly conservative test because it's correcting for mean mexicana ancestry 
 # that is already highly correlated (.84) with elevation
-legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("skyblue", "orange", "red"), lty = 1)
 dev.off()
 # neg slope with env
 test_simple_bElev_neg <- seq(min(simple_bElev_anc$envWeights), 0, length.out = 1000) # keep in range observed to not divide by 0
@@ -1036,11 +1043,11 @@ png("plots/power_curve_simple_bElev_neg_in_maize_mvn_sim.png",
 plot(test_simple_bElev_neg, test_fdr_simple_bElev_neg, 
      main = "FDR neg. slope simple Anc ~ elev calculated based on MVN simulation of maize",
      pch = 20, cex = .1)
-abline(h=c(.1, .05,.01), col = c("darkgreen", "orange", "red")) # I think what's happening is only the inversion
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red")) # I think what's happening is only the inversion
 # comes out as really enriched .. and it's non-indep so I don't know if that's believable
 # ok but overly conservative test because it's correcting for mean mexicana ancestry 
 # that is already highly correlated (.84) with elevation
-legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("darkgreen", "orange", "red"), lty = 1)
+legend("topleft", legend = c("FDR = 0.1", "FDR = 0.05", "FDR = 0.01"), col = c("skyblue", "orange", "red"), lty = 1)
 dev.off()
 
 
@@ -1058,7 +1065,7 @@ d_simple_bElev$significance <- cut(d_simple_bElev$slope_elev,
 ggplot(d_simple_bElev, 
        aes(pos, slope_elev, color = significance)) +
   geom_point(size = .1) +
-  scale_colour_manual(values = c("red", "orange", "darkgreen", "black")) + 
+  scale_colour_manual(values = c("red", "orange", "skyblue", "black")) + 
   facet_wrap(~chr, scales = "free_x") +
   geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .99), linetype = "dashed", color = "grey") +
   #geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .01), linetype = "dashed", color = "grey") +
@@ -1070,7 +1077,7 @@ ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome.p
 ggplot(d_simple_bElev, 
        aes(pos, slope_elev, color = significance)) +
   geom_point(size = .1) +
-  scale_colour_manual(values = c("red", "orange", "darkgreen", "black")) + 
+  scale_colour_manual(values = c("red", "orange", "skyblue", "black")) + 
   geom_abline(slope = 0, intercept = quantile(d_simple_bElev$slope_elev, .99), linetype = "dashed", color = "grey") +
   scale_x_continuous( label = axis_spacing$chr, breaks= axis_spacing$center )
 
@@ -1128,4 +1135,124 @@ d_maize_mean_anc %>% # note no sig on low side because simulations exceeded valu
   theme(legend.position = "none")
 ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide.png", device = "png",
        height = 3, width = 12, units = "in")
+
+
+# look at pvalues for bElev instead of bElev directly:
+test_simple_bElev_log10_pval <- seq(0, max(-log10(simple_bElev_anc$pval_Env)), length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_simple_bElev_log10_pval <- sapply(test_simple_bElev_log10_pval, function(x) 
+  fdr2(x, data = -log10(simple_bElev_anc$pval_Env), 
+           sims = -log10(simple_bElev_mvn$pval_Env)))
+#png("plots/power_curve_simple_bElev_pval_in_maize_mvn_sim.png", 
+#    width = 8, height = 6, units = "in", res = 300)
+plot(test_simple_bElev_log10_pval, test_fdr_simple_bElev_log10_pval, 
+     main = "FDR log10 pval Anc ~ elev calculated based on MVN simulation of maize",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red")) # I think what's happening is only the inversion
+#dev.off()
+png("plots/pval_vs_slope_simple_bElev_in_maize_data_and_mvn_sim.png", 
+        width = 8, height = 6, units = "in", res = 300)
+plot(simple_bElev_anc$envWeights, -log10(simple_bElev_anc$pval_Env), 
+     col = alpha("orange", .1),
+     main = "OLS pval vs. slope mexicana anc. with elevation",
+     sub = "orange = data, grey = simulations",
+     xlab = "OLS slope w/ elevation",
+     ylab = "OLS pval for slope")
+points(simple_bElev_mvn$envWeights, -log10(simple_bElev_mvn$pval_Env), col = alpha("grey", .1))
+dev.off() # ok to use sims as null. these pvals aren't very meaningful given the independence assumption isn't met.
+# better to go with the simulated data than the parametric approximation pval
+
+# make sure the simulated MVN has the expected chi-squared distribution for zTz ~ chi-squared(14)
+# chisq expectation
+chisq14 <- rchisq(n=100000, df=14)
+
+# calculate zAnc for mvn simulation
+zAnc3_mvn <- t(apply(mvn_maize, 1, function(l) zAnc(ancFreq = l, 
+                                                          invL = zAnc_maize$InvL, 
+                                                          alpha = zAnc_maize$alpha)))
+# zTz
+zTz3_mvn <- apply(zAnc3_mvn, 1, function(i) t(i) %*% i)
+hist(zTz3_mvn)
+hist(chisq14, add = T, col = "blue") # fits untruncated mvn
+
+# truncated mvn
+zAnc3_01_mvn <- t(apply(mvn_01_maize, 1, function(l) zAnc(ancFreq = l, 
+                                                          invL = zAnc_maize$InvL, 
+                                                          alpha = zAnc_maize$alpha)))
+
+zTz3_01_mvn <- apply(zAnc3_01_mvn, 1, function(i) t(i) %*% i)
+hist(zTz3_01_mvn, freq = T)
+hist(chisq14, add = T, col = alpha("blue", .3)) # fits untruncated mvn
+
+
+
+quantile(chisq14, c(.9, .99, .999, .9999))
+quantile(zTz3_mvn, c(.9, .99, .999, .9999))
+quantile(zTz3_01_mvn, c(.9, .99, .999, .9999))
+sum(zTz3_01_mvn > quantile(chisq14, .99))/length(zTz3_01_mvn) # truncation reduces outliers slightly
+# so the result is a slightly conservative test.
+
+# what does my data look like?
+# compared to these others?
+png("plots/zTz_chisq14_hist_dist_MVN_sim_and_data.png", 
+    width = 4, height = 12, units = "in", res = 300)
+par(mfrow = c(3, 1))
+hist(zTz3_mvn, freq = F, ylim = c(0, .1), breaks = 30, main = "zTz MVN sim. - no truncation")
+curve(expr = dchisq(x, df = 14), from = 0, to = 100,
+      col = "blue", add = T)
+
+hist(zTz3_01_mvn, freq = F, ylim = c(0, .1), breaks = 30, "zTz MVN sim. - [0, 1] truncation")
+curve(expr = dchisq(x, df = 14), from = 0, to = 100,
+      col = "blue", add = T)
+
+hist(zTz3, freq = F, ylim = c(0, .1), breaks= 30, "zTz maize data")
+curve(expr = dchisq(x, df = 14), from = 0, to = 100,
+      col = "blue", add = T)
+par(mfrow = c(1, 1))
+dev.off()
+
+# ok so using zTz outliers, how many of them appear to fit
+# a steep elevational gradient?
+sum(zTz3 > quantile(chisq14, .999))/length(zTz3)
+# fdr at .999 threshold? about 2%
+.001*length(zTz3)/(sum(zTz3 > quantile(chisq14, .999)))
+
+test_zTz <- seq(0, max(zTz3), length.out = 1000) # keep in range observed to not divide by 0
+test_fdr_zTz <- sapply(test_zTz, 
+                       function(x) (1 - pchisq(q = x, df = 14))*length(zTz3)/(sum(zTz3 > x))) 
+png("plots/power_curve_zTz_chisq14.png", 
+    width = 8, height = 6, units = "in", res = 300)
+plot(test_zTz, test_fdr_zTz, 
+     main = "FDR zTz outliers calculated based on chi-squared dist. df=14",
+     pch = 20, cex = .1)
+abline(h=c(.1, .05,.01), col = c("skyblue", "orange", "red"))
+dev.off()
+
+# calculate FDR thresholds (approx)
+FDRs_zTz_chisq14_approx <- sapply(c(0.1, .05, .01), function(p) min(test_zTz[test_fdr_zTz<p], na.rm = T))
+
+# plot zTz across the maize genome:
+data.frame(sites, zTz = zTz3) %>%
+  left_join(., sites_cum, by = c("chr", "pos")) %>%
+  mutate(even_chr = (chr %% 2 == 0)) %>%
+  ggplot(., aes(pos_cum, zTz, 
+                color = even_chr, show.legend = F)) +
+  geom_point(size = .1) +
+  xlab("bp position on chromosome") +
+  ylab("zTz statistic") +
+  scale_colour_manual(values = c("grey", "darkgrey")) + 
+  geom_abline(slope = 0, intercept = FDRs_zTz_chisq14_approx, linetype = "dashed", color = c("skyblue", "orange", "red")) +
+  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
+  theme(legend.position = "none")
+ggsave("plots/zTz_in_maize_FDR_10_05_01_using_chisq14_whole_genome_wide.png", device = "png",
+       height = 3, width = 12, units = "in")
+
+# can I say what % of the top 1% FDR in zTz overlap with top 1% fdr for high mexicana ancestry or for anc ~ elev?
+top1_outliers <- sum(zTz3 > FDRs_zTz_chisq14_approx[3])
+table(zTz3 > FDRs_zTz_chisq14_approx[3], maize_anc_mean > FDRs[3])
+table(zTz3 > FDRs_zTz_chisq14_approx[3], simple_bElev_anc < FDRs_simple_bElev_neg[3])
+table(zTz3 > FDRs_zTz_chisq14_approx[3], simple_bElev_anc > FDRs_simple_bElev_neg[3])
+
+# like phylogenetic least squares
+
+
 
