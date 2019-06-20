@@ -53,6 +53,18 @@ for (l in 1:5){
                quote = F, col.names = F, row.names = F, sep = "\t")
 }
 
+# plot the r bin cutoffs:
+genome %>% 
+  mutate(r5 = cut(.$r, breaks = quantile(x = .$r, probs = seq(0, 1, by = .2)), right = T, include.lowest = T)) %>%
+  ggplot(aes(x = r5, fill = r5)) +
+  geom_bar() + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  #theme(legend.title = element_text("recombination bin (cM/Mb)")) +
+  theme(axis.text = element_text(size = 16)) +
+  labs(fill = "recombination bin (cM/Mb)")
+ggsave("plots/recomb1_5_bin_cutoff.png", height = 4, width = 4, 
+         units = "in", device = "png")
+  
+
 
 # plot
 hist(d$f4_maize)

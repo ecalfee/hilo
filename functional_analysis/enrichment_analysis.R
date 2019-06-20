@@ -9,7 +9,10 @@ library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
 
-
+d <- cbind(sites, maize_anc) # need to load sites and maize ancestry from another file
+d$meanAlpha_maize = apply(maize_anc, 1, mean)
+d$meanAlpha_mex = apply(mexicana_anc, 1, mean)
+# e.g zanc_selection_models.R
 # plot ancestry at candidate incompatibility loci:
 GRMZM2G410783 <- read.table("../data/incompatibility_loci/GRMZM2G410783_v4_coord.bed", stringsAsFactors = F, sep = "\t")
 d$GRMZM2G410783 <- (d$chr == GRMZM2G410783$V1 & d$pos >= GRMZM2G410783$V2 & d$pos <= GRMZM2G410783$V3)
@@ -143,10 +146,24 @@ flowering_pathway2 <- flowering_pathway %>%
 flowering_pbe2 <- flowering_pbe %>%
   mutate(ID=geneID) %>%
   convert2v4()
+flowering_pbe2_MexHigh <- flowering_pbe %>%
+  filter(MH == 1) %>%
+  mutate(ID=geneID) %>%
+  convert2v4()
+flowering_pbe2_MexHigh_and_other <- flowering_pbe %>% # mex high and one other region
+  filter(MH == 1 & (US == 1 | GH == 1 | AN == 1)) %>%
+  mutate(ID=geneID) %>%
+  convert2v4()
+flowering_pbe2_Not_MexHigh <- flowering_pbe %>%
+  filter(MH == 0) %>%
+  mutate(ID=geneID) %>%
+  convert2v4()
 flowering_gwas_male2 <- convert2v4(flowering_gwas_male)
 flowering_gwas_female2 <- convert2v4(flowering_gwas_female)
 domestication2 <- convert2v4(gene_set = domestication)
-
+flowering_genes2 <- bind_rows(flowering_pathway2, flowering_pbe2, flowering_gwas_female2, flowering_gwas_male2)$B73.Zm00001d.2. %>%
+  unique(.) # 1637 flowering time genes
+# what percent of the original is that?
 
 table(domestication_genes %in% g3_convert$B73.Zm00001d.2.)
 table(domestication_genes %in% domestication2$B73.Zm00001d.2.)
@@ -232,6 +249,66 @@ g10_maize %>%
 ggsave("plots/mean_mex_anc_in_maize_near_domestication_genes_10kb.png",
        height = 8, width = 10, units = "in", device = "png")
 
+# can I add error bars to this? Use a permutation test.
+# where under the null of 1 population of samples,
+# I simply reshuffle labels 'domestication' or 'not'
+# and see if the means are different
+iter = 100000
+set.seed(10)
+mean_diff <- numeric(iter)
+g10_maize_noNA <- g10_maize %>%
+  filter(!is.na(meanAlpha_maize))
+n_domestication = sum(g10_maize_noNA$gene %in% domestication_genes)
+n_total = length(g10_maize_noNA$gene)
+observed_diff = mean(g10_maize_noNA$meanAlpha_maize[g10_maize_noNA$gene %in% domestication_genes]) - 
+  mean(g10_maize_noNA$meanAlpha_maize[!(g10_maize_noNA$gene %in% domestication_genes)])
+
+for (i in 1:iter){
+    shuffled <- sample(x = g10_maize_noNA$meanAlpha_maize, size = n_total) # shuffle
+    mean_diff[i] <- mean(shuffled[1:n_domestication]) - mean(shuffled[(n_domestication + 1):n_total]) 
+}
+png("plots/permutation_test_reshuffle_domestication_vs_other_in_maize.png", 
+    height = 6, width = 8, units = "in", res = 300)
+hist(mean_diff, freq = F,
+     col = "darkgrey",
+     main = "permutation (re-shuffling) test of difference in means",
+     sub = "mexicana ancestry domestication genes vs. other genes",
+     xlim = c(-0.1, 0.1))
+abline(v = observed_diff, col = "blue")
+dev.off()
+# ggplot of permutation test:
+
+# chi-squared test of being in different categories: < .01 mexicana ancestry or not
+table(g10_maize$meanAlpha_maize[g10_maize$gene %in% domestication_genes] < .05)
+table(g10_maize$meanAlpha_maize[!(g10_maize$gene %in% domestication_genes)] < .05) # no genes
+# no genes have < 1% mexicana ancestry,
+# but 20 out of the 58 genes with less than < 5% mexicana ancestry are 'candidate domestication' genes
+tb1 <- g10_maize %>%
+  mutate(domestication = gene %in% domestication_genes) %>%
+  mutate(low_mexicana = meanAlpha_maize < .05) %>%
+  dplyr::select(c("domestication", "low_mexicana")) %>%
+  table(.)
+chisq.test(tb1, simulate.p.value = T)
+fisher.test(tb1)
+
+# what does mexicana ancestry look like in mexicana vs. maize for domestication genes?
+mutate(g10_maize, meanAlpha_mex = g10$meanAlpha_mex) %>%
+  mutate(domestication = gene %in% domestication_genes) %>%
+  arrange(domestication) %>%
+  ggplot(aes(x = meanAlpha_maize, y = meanAlpha_mex, color = domestication, alpha = .4)) +
+  geom_point() +
+  ggtitle("frequency of all genes in mexicana and maize")
+ggsave("plots/mean_mex_anc_in_mexicana_near_domestication_genes_10kb.png",
+       height = 8, width = 10, units = "in", device = "png")
+mutate(g10_maize, meanAlpha_mex = g10$meanAlpha_mex) %>%
+  mutate(domestication = gene %in% domestication_genes) %>%
+  arrange(domestication) %>%
+  ggplot(aes(x = meanAlpha_maize, y = meanAlpha_mex, color = domestication, alpha = .4)) +
+  xlim(c(0, .05)) +
+  geom_point() +
+  ggtitle("frequency of genes with low mexicana in maize")
+
+
 g10 %>%
   mutate(., domestication = gene %in% domestication_genes) %>%
   ggplot(aes(y = meanAlpha_mex, fill = domestication)) +
@@ -243,6 +320,22 @@ g10 %>%
   ylab("mean mexicana ancestry in gene +/- 5kb")
 ggsave("plots/mean_mex_anc_in_mexicana_near_domestication_genes_10kb.png",
        height = 8, width = 10, units = "in", device = "png")
+
+# compare to just domestication genes found to be at very low frequency in maize
+g10 %>%
+  mutate(., domestication = gene %in% domestication_genes) %>%
+  mutate(meanAlpha_maize = g10_maize$meanAlpha_maize) %>%
+  mutate(low_outlier_maize = meanAlpha_maize < .05) %>%
+  ggplot(aes(y = meanAlpha_mex, fill = low_outlier_maize & domestication)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(d$meanAlpha_mex), 
+              linetype = "dotted") +
+  ggtitle("mean ancestry in mexicana pops near genes (low = <.05 mex ancestry in maize)") +
+  xlab("gene type") +
+  ylab("mean mexicana ancestry in gene +/- 5kb")
+ggsave("plots/mean_mex_anc_in_mexicana_near_domestication_genes_with_low_mex_freq_in_maize_10kb.png",
+       height = 8, width = 14, units = "in", device = "png")
+# permutation test for these genes in particular?
 
 
 g10_maize %>%
@@ -271,4 +364,47 @@ g %>%
   xlab("gene type") +
   ylab("mean mexicana ancestry in gene +/- 5kb")
 
+# flowering time genes & slopes anc ~ elev:
+g10_maize_bElev <- read.table("../data/domestication/all_genes.simple_bElev_anc_maize.10kb.autosomal.sorted.bed", 
+                              header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10_maize_bElev) <- c("chr", "start", "end", "gene", "bElev")
+g10_maize_bElev %>% # check why slope is NA for some loci
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering_time = gene %in% c(flowering_pathway2$B73.Zm00001d.2., flowering_gwas_female2$B73.Zm00001d.2., flowering_gwas_male2$B73.Zm00001d.2.)) %>%
+  ggplot(aes(y = bElev, fill = flowering_time)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(g10_maize_bElev$bElev, na.rm = T), 
+              linetype = "dotted") +
+  ggtitle("mean slope ancestry ~ elev in maize near genes") +
+  xlab("gene type") +
+  ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
+ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_pathway_and_GWAS_10kb.png",
+       height = 4, width = 6, units = "in", device = "png")
+
+g10_maize_bElev %>% # check why slope is NA for some loci
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering_time = gene %in% flowering_genes2) %>%
+  ggplot(aes(y = bElev, fill = flowering_time)) +
+  geom_boxplot() +
+  geom_abline(slope = 0, intercept = mean(g10_maize_bElev$bElev, na.rm = T), 
+              linetype = "dotted") +
+  ggtitle("mean slope ancestry ~ elev in maize near genes") +
+  xlab("gene type") +
+  ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
+ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_all_10kb.png",
+       height = 4, width = 6, units = "in", device = "png")
+
+# not a big difference in means, but I can check for significance.
+# a more conservative approach would be to test for a difference in means only for genes
+# id-ed as part of flowering time across 2, 3, or all 4 datasets:
+# maybe I should just take pbe from the highlands -- although isn't that circular? Maybe not.
+# different genes could contribute to flowering time in different geographic regions
+# OR alternatively this could be a red flag that the GWAS and pop branch length methods
+# aren't id-ing flowering time genes but just admixture signals
+
+# this is complicated. Maybe for the talk I should just stick to published work -- the flowering
+# time pathway and the GWAS results. I can figure out how to think about the pbe from Li later
+
+
+# I'll also check the tails of the distribution:
 

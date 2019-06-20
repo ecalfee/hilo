@@ -44,3 +44,24 @@ data/flowering_time/floweringTimeMaizeDong2012.csv
 # I downloaded the full set of conversions between v3 and all other gene sets (including v4)
 # then I removed extra lines
 hilo$ cat data/refMaize/geneAnnotations/gene_model_xref_v3.txt | tail -n +5 | head -n -4 > data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt
+
+# I made a bed file of the combined set of genes in the gff, extended it by 5 to 10kb in both directions away from the gene and found the mean ancestry from overlap with the ancestry calls. 
+# more details here: ../data/domestication/README.txt
+# all genes sorted, filtered for autosomal:
+hilo/data/domestication/all_genes.autosomal.sorted.bed
+# e.g. adding 5kb either side and finding mean alpha (% mexicana introgression) in maize:
+hilo/data/domestication/meanAlpha_maize.bed
+hilo/data/domestication/all_genes.meanAlpha_maize.10kb.autosomal.sorted.bed
+For flowering time I want to do the same thing but with estimated anc ~ elevation slope instead of mean ancestry. 
+# so first I need to make a bed file with the slopes from my linear model
+hilo/ZAnc$ tail -n +2 results/models/pass2_alloMAIZE/maize/simple_bElev_anc.txt | cut -f2 | paste ../data/domestication/meanAlpha_maize.bed - | cut -f1-3,5 > results/models/pass2_alloMAIZE/maize/simple_bElev_anc_maize.bed
+# then I map those slope values onto my gene set:
+../data/domestication$ bedtools map -a all_genes.10kb.autosomal.sorted.bed -b ../../ZAnc/results/models/pass2_alloMAIZE/maize/simple_bElev_anc_maize.bed -sorted -g ../refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > all_genes.simple_bElev_anc_maize.10kb.autosomal.sorted.bed
+# then in R I test if the flowering time genes are significantly different from other genes in their slopes with ancestry
+
+
+
+
+
+
+
