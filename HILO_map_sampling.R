@@ -17,7 +17,9 @@ tapply(d$Pop, d$Population, unique)
 gps = read.csv("data/admixed_gps.csv", header = T, stringsAsFactors = F)
 
 m <- read.table("data/riplasm/gps_and_elevation_for_sample_sites.txt",
-                sep = "\t", header = T)
+                sep = "\t", header = T) %>%
+  mutate(group = paste(symp_allo, zea, sep = "_")) %>%
+  mutate(pop = paste0("pop", popN))
 
 # change in plot settings needed to plot raster images
 graphics.off() 
@@ -85,7 +87,8 @@ distm(m[m$zea=="maize", c("LON", "LAT")][1, ],
 # get matrices for the geographic and elevational differences
 # between populations
 # goal = compare geographic and elevational distance matrices to K matrix
-maize_pops <- m[m$zea == "maize", ] # note: may not be in same order as K matrix -- will need to reorder if so
+maize_pops_byElev <- m[m$zea == "maize", ] %>% # note: may not be in same order as K matrix -- will need to reorder if so
+  arrange(ELEVATION)
 distmatrix <- matrix(0, 14, 14) # in meters
 distelev <- matrix(0, 14, 14)
 for (i in 1:nrow(maize_pops)){
