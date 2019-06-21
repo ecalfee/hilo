@@ -106,7 +106,7 @@ mean((distmatrix-mean(distmatrix))*(distelev - mean(distelev)))/
   sqrt(mean((distmatrix-mean(distmatrix))^2)*
               mean((distelev - mean(distelev))^2))
 # mantel permutation test to see if the two matrices are correlated
-mantel.rtest(distmatrix, distelev, nrepet = 100)
+mantel.test(distmatrix, distelev, nrepeat = 100)
 
 # alternative colors
 my_colors = colorRampPalette(colors = c("blue", "green", "yellow"))(500)
