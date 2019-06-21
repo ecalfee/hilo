@@ -73,6 +73,9 @@ sites <- mutate(sites, inv4m_1Mb_buffer = (chr == inv$chr[inv$ID=="inv4m"] &
 zAnc_mexicana = make_K_calcs(t(mexicana_anc))
 zAnc_maize = make_K_calcs(t(maize_anc))
 
+write.table(zAnc_maize$K, "results/zAnc_K_matrix_maize.txt", sep = "\t", row.names = T, col.names = T, quote = F)
+write.table(zAnc_maize$alpha, "results/zAnc_alpha_maize.txt", sep = "\t", row.names = T, col.names = T, quote = F)
+
 # script to run test cases of ancestry selection models using empirical K matrices
 #source("zanc_selection_models.R") # makes plots
 
@@ -919,6 +922,8 @@ dev.off()
 
 # calculate FDR thresholds (approx)
 FDRs <- sapply(c(0.1, .05, .01), function(p) max(test_anc[test_fdr>p], na.rm = T))
+write.table(data.frame(thresholds = FDRs, FDR = c(0.1, 0.5, 0.01), model = "high_mexicana_ancestry"),
+            "results/FDRs_high_mex.txt", quote = F, col.names = T, row.names = F, sep = "\t")
 
 
 # is seletion for mexicana ancestry a dominant mode of selection?
@@ -1007,11 +1012,7 @@ quantile(corr_elev_mvn_maize, c(.99))
 
 # actually I don't want the correlation, I want the slope of the linear model, Anc ~ elev, 
 # because some loci have more variance in ancestry freq. than others
-simple_bElev_mvn <- apply(mvn_01_maize, 
-                       1, function(x)
-                       simple_env_regression(ancFreq = x, envWeights = meta.pops.maize$ELEVATION)) %>%
-  t(.) %>%
-  as.data.frame(.) # check transposed!
+
 if (rerun_all_models){ # rerun or just reload results
   simple_bElev_anc <- apply(maize_anc, 
                             1, function(x)
@@ -1020,6 +1021,16 @@ if (rerun_all_models){ # rerun or just reload results
     as.data.frame(.)
   write.table(simple_bElev_anc,
               paste0("results/models/", PREFIX, "/maize/simple_bElev_anc.txt"),
+              sep = "\t",
+              quote = F,
+              col.names = T, row.names = F)
+  simple_bElev_mvn <- apply(mvn_01_maize, 
+                            1, function(x)
+                              simple_env_regression(ancFreq = x, envWeights = meta.pops.maize$ELEVATION)) %>%
+    t(.) %>%
+    as.data.frame(.) # check transposed!
+  write.table(simple_bElev_mvn,
+              paste0("results/models/", PREFIX, "/maize/simple_bElev_mvn_seed", seed, ".txt"),
               sep = "\t",
               quote = F,
               col.names = T, row.names = F)
@@ -1066,6 +1077,12 @@ dev.off()
 
 FDRs_simple_bElev <- sapply(c(0.01, .05, .1), function(p) max(test_simple_bElev[test_fdr_simple_bElev>p], na.rm = T))
 FDRs_simple_bElev_neg <- sapply(c(0.01, .05, .1), function(p) max(test_simple_bElev_neg[test_fdr_simple_bElev_neg<p], na.rm = T))
+write.table(data.frame(thresholds = c(FDRs_simple_bElev, FDRs_simple_bElev_neg), 
+                       FDR = rep(c(0.01, 0.5, 0.1), 2), 
+                       model = c(rep("pos_slope_bElev", 3), rep("neg_slope_bElev", 3))),
+            "results/FDRs_simple_bElev.txt", quote = F, col.names = T, row.names = F, sep = "\t")
+
+
 qqplot(simple_bElev_anc$envWeights, simple_bElev_mvn$envWeights)
 abline(a = 0, b = 1, col = "blue")
 
@@ -1087,19 +1104,37 @@ ggplot(d_simple_bElev,
 ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome.png", device = "png",
        height = 6, width = 10, units = "in")
 
-# jsut chr9 
-bind_cols(sites, simple_bElev_anc) %>%
-filter(chr == 9) %>%
+# just chr9 QTL 
+qtl9 <- read.table("../data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
+                   header = F, sep = "\t")
+colnames(qtl9) <- c("chr", "start", "end")
+d_simple_bElev %>%
+  filter(chr == 9) %>%
+  filter(pos >= qtl9$start & pos <= qtl9$end) %>%
   ggplot(., 
-       aes(pos, envWeights)) +
+       aes(pos, slope_elev, color = significance)) +
   geom_point(size = .1) +
-  scale_colour_manual(values = c("red", "orange", "skyblue", "black")) + 
-  facet_wrap(~chr, scales = "free_x") +
-  geom_vline(aes(xintercept=119*10^6), color = "blue") +
-  geom_vline(aes(xintercept=110*10^6), color = "orange") +
+  geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), linetype = "dashed", color = "darkgrey") +
+  scale_colour_manual(values = c("red", "orange", "skyblue", "darkgrey")) + 
   ylab("slope ancestry ~ elevation") +
-  ggtitle("introgression at high elevation candidate near mhl1. blue line = 119Mb, orange = 115Mb")
+  ggtitle("introgression at high elevation candidate near mhl1 - showing map bin 4")
 ggsave("plots/simple_bElev_mex_anc_in_maize_chr9_mhl1_candidate_region.png",
+       device = "png", height = 4, width = 6)
+
+# just chr4 inversion
+d_simple_bElev %>%
+  filter(chr == 4) %>%
+  filter(pos >= inv[inv$ID == "inv4m", "start"]-2.5*10^6 & pos <= inv[inv$ID == "inv4m", "end"]+1.5*10^6) %>%
+  ggplot(., 
+         aes(pos, slope_elev, color = significance)) +
+  geom_point(size = .1) +
+  geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), linetype = "dashed", color = "darkgrey") +
+  geom_vline(xintercept = inv[inv$ID == "inv4m", "start"], color = "darkgrey") +
+  geom_vline(xintercept = inv[inv$ID == "inv4m", "end"], color = "darkgrey") +
+  scale_colour_manual(values = c("red", "orange", "skyblue", "darkgrey")) + 
+  ylab("slope ancestry ~ elevation") +
+  ggtitle("introgression across chr4 inversion")
+ggsave("plots/simple_bElev_mex_anc_in_maize_inv4m.png",
        device = "png", height = 4, width = 6)
 
 
@@ -1143,6 +1178,7 @@ d_simple_bElev %>%
 ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide.png", device = "png",
        height = 3, width = 12, units = "in")
 
+
 # hack to color outliers and by chromosome:
 d_simple_bElev %>%
   left_join(., sites_cum, by = c("chr", "pos")) %>%
@@ -1162,9 +1198,64 @@ d_simple_bElev %>%
   theme(legend.position = "none")
 ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide_color.png", device = "png",
        height = 3, width = 12, units = "in")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_less_wide_color.png", device = "png",
+       height = 3, width = 12, units = "in")
 
+# highlighting inv4m:
+# where does chr4 start?
+start_chr <- sites %>% 
+  group_by(chr) %>% 
+  summarise(chr_len=max(pos)) %>% 
+  
+  # Calculate cumulative position of each chromosome
+  mutate(tot=cumsum(chr_len)-chr_len) %>%
+  group_by(chr) %>%
+  summarise(start_chr = mean(tot)) %>%
+  data.frame()
 
+d_simple_bElev %>%
+  left_join(., sites_cum, by = c("chr", "pos")) %>%
+  mutate(color_by = ifelse(significance == "n.s." & (chr %% 2 == 0), 
+                           "n.s. - even chrom", significance)) %>%
+  ggplot(., aes(pos_cum, slope_elev, 
+                color = color_by, show.legend = F)) +
+  geom_point(size = .1) +
+  xlab("bp position on chromosome") +
+  ylab("slope mexicana ancestry ~ elevation") +
+  scale_colour_manual(values = c("red", "orange", "skyblue", "grey", "darkgrey")) + 
+  geom_vline(xintercept = inv[inv$ID == "inv4m", "start"] + start_chr[start_chr$chr==4, "start_chr"], color = "black", linetype = "dashed") +
+  geom_vline(xintercept = inv[inv$ID == "inv4m", "end"] + start_chr[start_chr$chr==4, "start_chr"], color = "black", linetype = "dashed") +
+  geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), color = "darkgrey", linetype = "dotted") +
+  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
+  theme(legend.position = "none")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_inv4m_wide_color.png", device = "png",
+       height = 3, width = 12, units = "in")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_inv4m_less_wide_color.png", device = "png",
+       height = 3, width = 9, units = "in")
+# highlighting chr9 mhl1 locus
+d_simple_bElev %>%
+  left_join(., sites_cum, by = c("chr", "pos")) %>%
+  mutate(color_by = ifelse(significance == "n.s." & (chr %% 2 == 0), 
+                           "n.s. - even chrom", significance)) %>%
+  ggplot(., aes(pos_cum, slope_elev, 
+                color = color_by, show.legend = F)) +
+  geom_point(size = .1) +
+  xlab("bp position on chromosome") +
+  ylab("slope mexicana ancestry ~ elevation") +
+  scale_colour_manual(values = c("red", "orange", "skyblue", "grey", "darkgrey")) + 
+  geom_vline(xintercept = qtl9$start + start_chr[start_chr$chr==9, "start_chr"], color = "black", linetype = "dashed") +
+  geom_vline(xintercept = qtl9$end + start_chr[start_chr$chr==9, "start_chr"], color = "black", linetype = "dashed") +
+  geom_abline(slope = 0, intercept = mean(d_simple_bElev$slope_elev), color = "darkgrey", linetype = "dotted") +
+  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
+  theme(legend.position = "none")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_mhl1_wide_color.png", device = "png",
+       height = 3, width = 12, units = "in")
+ggsave("plots/simple_bElev_mex_anc_in_maize_FDR_10_05_01_mvn_sims_mhl1_less_wide_color.png", device = "png",
+       height = 3, width = 9, units = "in")
 
+  
+  
+  
 d_maize_mean_anc %>% # note no sig on low side because simulations exceeded values found in real data (namely, 0)
   left_join(., sites_cum, by = c("chr", "pos")) %>%
   mutate(even_chr = (chr %% 2 == 0)) %>%
@@ -1181,7 +1272,7 @@ d_maize_mean_anc %>% # note no sig on low side because simulations exceeded valu
   theme(legend.position = "none")
 ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide.png", device = "png",
        height = 3, width = 12, units = "in")
-
+mean(simple_bElev_anc$envWeights)
 # hack to color outliers
 d_maize_mean_anc %>% # note no sig on low side because simulations exceeded values found in real data (namely, 0-1)
   left_join(., sites_cum, by = c("chr", "pos")) %>%
@@ -1202,6 +1293,8 @@ d_maize_mean_anc %>% # note no sig on low side because simulations exceeded valu
   theme(legend.position = "none")
 ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_wide_color.png", device = "png",
       height = 3, width = 12, units = "in")
+ggsave("plots/mean_mex_anc_in_maize_FDR_10_05_01_mvn_sims_whole_genome_less_wide_color.png", device = "png",
+       height = 3, width = 9, units = "in")
 
 
 # look at pvalues for bElev instead of bElev directly:
@@ -1372,5 +1465,134 @@ a <- get.venn.partitions(x = list("hi" = 1:10, "low" = -5:3))
 print(a)
 # like phylogenetic least squares
 
+# plot some of the top hits:
+bind_cols(d_simple_bElev) %>%
+  bind_cols(maize_anc) %>%
+  .[c(T, rep(F, 500)), ] %>%
+  filter(inv4m) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             color = significance, group = pos)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/a_few_example_loci_bElev_outliers_inv4m.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
+# more outlier:
+# plot some of the top hits:
+bind_cols(d_simple_bElev) %>%
+  bind_cols(maize_anc) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  filter(inv4m) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             color = significance, group = pos)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/a_few_more_example_loci_bElev_outliers_inv4m.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
+# max vs.  genomewide background
+bind_cols(d_simple_bElev) %>%
+  bind_cols(maize_anc) %>%
+  filter(slope_elev == max(slope_elev)) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             group = pos, color = significance)) +
+  geom_point() +
+  geom_line() +
+  geom_point(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), color = "darkgrey") +
+  geom_line(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), linetype = "dashed", color = "darkgrey") +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/top_outlier_bElev_outliers_inv4m_vs_genomewide.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
 
+
+# plot ancestry in mhl1 region
+bind_cols(d_simple_bElev) %>%
+  bind_cols(maize_anc) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  filter(chr==9 & pos > 109.5*10^6 & pos < 110.5*10^6) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, shape = inv4m, 
+             color = significance, group = pos)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/a_few_more_example_loci_bElev_outliers_mhl1_pops.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
+
+bind_cols(d_simple_bElev) %>%
+  bind_cols(maize_anc) %>%
+  .[c(T, rep(F, 100)), ] %>%
+  filter(chr==9 & pos > 109.5*10^6 & pos < 110.5*10^6) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             color = significance, group = pos)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/a_few_more_example_loci_bElev_outliers_mhl1.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
+
+d %>%
+  filter(meanAlpha_maize == max(meanAlpha_maize)) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             group = pos)) +
+  geom_point(color = "red") +
+  geom_line(color = "red") +
+  geom_point(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), color = "darkgrey") +
+  geom_line(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), linetype = "dashed", color = "darkgrey") +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/top_outlier_loci_high_mexicana.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
+
+d %>%
+  filter(meanAlpha_maize == max(meanAlpha_maize)) %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION, y = mex_freq, shape = inv4m, 
+             group = pos)) +
+  geom_point(color = "red") +
+  geom_line(color = "red") +
+  geom_point(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), color = "darkgrey") +
+  geom_line(aes(y = zAnc_maize$alpha, x = arrange(meta.pops.maize, popN)$ELEVATION), linetype = "dashed", color = "darkgrey") +
+  scale_color_manual(values = c("red", "orange", "skyblue", "darkgrey")) +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset outliers slope anc ~ elevation")
+ggsave(paste0("plots/top_outlier_loci_high_mexicana.png"),
+       device = "png",
+       width = 6, height = 4, units = "in")
 

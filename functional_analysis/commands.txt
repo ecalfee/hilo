@@ -4,6 +4,31 @@
 (III) Do we find evidence of elevation-associated mexicana introgression for genes associated with flowering time?
 
 
+(0) Getting information about all genes.
+I'm using the v4 annotations gff3: Zm00001d.2
+To translate from other models, I downloaded the cross-reference: gene_model_xref_v4.txt. Deleting a few header and tail lines: geneAnnotations/gene_model_xref_v4_from_gramene.txt
+# read that file into R enrichment_analysis.R (note: must use read.csv() or it skips about half the entries!!)
+# used R to interactively print a resulting .bed file with all 45544 autosomal genes:
+results/all_genes.v4.autosomal.sorted.bed
+# got mean mexicana ancestry in maize and mexicana from another output file:
+meanAlpha_maize.bed and meanAlpha_mex.bed (mean ancestry for every snp with an ancestry call)
+# map mean ancestry onto genes:
+functional_analysis$ parallel 'bedtools map -a results/all_genes.v4.autosomal.sorted.bed -b results/meanAlpha_{1}.bed -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > results/all_genes.meanAlpha_{1}.v4.autosomal.sorted.bed' ::: maize mex
+
+
+# Windows analysis around genes: 10kb windows (gene +5kb either side of gene) and 
+# and 20kb windows (gene + 10kb either side)
+# make windows 10kb around all genes:
+functional_analysis$ bedtools slop -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -b 5000 -i results/all_genes.v4.autosomal.sorted.bed > results/all_genes.10kb.v4.autosomal.sorted.bed
+# 20kb:
+functional_analysis$ bedtools slop -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -b 10000 -i results/all_genes.v4.autosomal.sorted.bed > results/all_genes.20kb.v4.autosomal.sorted.bed
+
+# map ancestry onto windows:
+parallel 'bedtools map -a results/all_genes.{2}kb.v4.autosomal.sorted.bed -b results/meanAlpha_{1}.bed -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > results/all_genes.meanAlpha_{1}.{2}kb.v4.autosomal.sorted.bed' ::: maize mex ::: 10 20
+
+# also map slope anc ~ env onto genes and windows:
+functional_analysis$ parallel 'bedtools map -a results/all_genes{1}v4.autosomal.sorted.bed -b ../ZAnc/results/models/pass2_alloMAIZE/maize/simple_bElev_anc_maize.bed -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > results/all_genes.simple_bElev_anc_maize{1}v4.autosomal.sorted.bed' ::: . .10kb. .20kb.
+
 (I) Domestication genes
 Dan is re-doing the domestication scan with Li's maize landraces, looking for sweeps in maize
 For now I can use the cross-pop LD-based domestication candidates from Hufford 2012
@@ -39,6 +64,8 @@ The v4 coordinates are saved as GRMZM2G410783_v4_coord.bed (female Ga2) and AC23
 data/flowering_time/floweringTimeMaizeDong2012.csv
 (c) Navarro 2017. F1 association mapping study 'FOAM GWAS' using landraces across the Americas. 
 (d) I could alternatively use a set of 220 flowering time candidates from Yong-xiang Li 2016 https://onlinelibrary.wiley.com/doi/pdf/10.1111/tpj.13174 from NAM US + NAM CHINA + natural pop AMES (all RILs; ~8.7k total; GWAS). But I think Navarro 2017 is better because it includes variation from the highlands specifically vs. NAMs
+# all combined I am getting 1637 candidate flowering time genes mapped to v4
+# I can do other things later to get more of them (e.g. liftover)
 
 
 # I downloaded the full set of conversions between v3 and all other gene sets (including v4)

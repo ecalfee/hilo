@@ -8,10 +8,12 @@ library(dplyr)
 library(tidyr)
 library(RColorBrewer)
 library(ggplot2)
+library(viridis)
 
 d <- cbind(sites, maize_anc) # need to load sites and maize ancestry from another file
 d$meanAlpha_maize = apply(maize_anc, 1, mean)
 d$meanAlpha_mex = apply(mexicana_anc, 1, mean)
+d$simple_bElev_anc = simple_bElev_anc$envWeights
 # e.g zanc_selection_models.R
 # plot ancestry at candidate incompatibility loci:
 GRMZM2G410783 <- read.table("../data/incompatibility_loci/GRMZM2G410783_v4_coord.bed", stringsAsFactors = F, sep = "\t")
@@ -79,6 +81,38 @@ bind_cols(d, all_anc) %>%
 ggsave("plots/mex_freq_boxplot_genomewide_vs_candidate_incompatibility_AC231426.1_FG002_ind_pops.png",
        height = 6, width = 8, units = "in", device = "png")
 
+# get all genes and make a bed file of sorted autosomal genes on v4
+genes <- read.csv("../data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.genes.only.gff3", 
+                    sep = "\t", # needs to be read as csv for some reason (!)
+                    stringsAsFactors = F)[ , c(1,4,5,9)]
+colnames(genes) <- c("chr", "start", "end", "label")
+genes$id <- sapply(substr(genes$label, 9, 100), function(x) strsplit(x, split = ";")[[1]][1])
+genes$length = genes$end - genes$start + 1
+genes %>% # write bed file with all genes and their positions on v4
+  filter(chr %in% 1:10) %>%
+  mutate(chr = as.numeric(chr))%>%
+  arrange(chr, start) %>%
+  dplyr::select(chr, start, end, id, length) %>%
+  write.table(., "results/all_genes.v4.autosomal.sorted.bed",
+              quote = F, col.names = F, row.names = F, sep = "\t")
+
+# get conversion to other gene models
+# file has all matches of any other model to all the genes in v4 Zm00001d.2
+to_v4_convert <- read.table("../data/refMaize/geneAnnotations/gene_model_xref_v4_from_gramene.txt", 
+                            stringsAsFactors = F, header = T, sep = "\t",
+                            na.strings = c("NA", "<NA>", "")) %>%
+  filter(v4_chr %in% paste0("Chr", 1:10)) # autosomal only
+table(to_v4_convert$v2_gene_model == to_v4_convert$v3_gene_model)
+# convert to v4 list, id column must be ID
+convert2v4 <- function(gene_set, v = "v2_gene_model"){
+  id <- quo(id_col)
+  left_join(gene_set, to_v4_convert, 
+            by = c("ID"=v)) %>%
+    dplyr::select(v4_gene_model) %>%
+    unique()
+} 
+
+# load gene lists for individual pathways:
 # mexicana ancestry around domestication genes
 domestication_genes <- read.table("../data/domestication/gene_model_translation_to_APGv4_Zm00001d.2_hits.txt", stringsAsFactors = F)$V1
 domestication <- data.frame(ID = read.table("../data/domestication/Hufford_2012_domestication_genes_names_only.csv", stringsAsFactors = F, header = F)$V1,
@@ -94,52 +128,7 @@ table(flowering_pathway$geneID %in% flowering_pbe$geneID[flowering_pbe$sum >= 1]
 table(flowering_gwas_male$ID %in% flowering_pbe$geneID)
 table(flowering_gwas_female$ID %in% flowering_pbe$geneID)
 
-# get conversion between coordinates downloaded from maizeGDB
-g3_convert <- read.table("../data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt", 
-                         stringsAsFactors = F, header = T, sep = "\t",
-                         na.strings = c("NA", "<NA>", "")) %>%
-  dplyr::select(c("v3_gene_model", "v3_start", "v3_end", "v3_chr", "v4_gene_model", "B73.Zm00001d.2."))
-genes <- read.table("../data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.genes.only.gff3", 
-                    sep = "\t", 
-                    stringsAsFactors = F)[ , c(1,4,5,9)]
-colnames(genes) <- c("chr", "start", "end", "label")
-genes$id <- sapply(substr(genes$label, 9, 100), function(x) strsplit(x, split = ";")[[1]][1])
-genes$length = genes$end - genes$start + 1
-
-# are my lists of genes in the .gff3? no. wrong gene name version.
-table(flowering_gwas_female$ID %in% genes$id)
-table(flowering_gwas_male$ID %in% genes$id)
-table(flowering_pathway$geneID %in% genes$id)
-table(flowering_pbe$geneID %in% genes$id) # none or on v4 gene sets
-table(domestication$ID %in% genes$id) # none
-
-# get conversion to other gene models
-# oops! I'm not sure what's going on. Why doesn't my gff3 match v4? or match 
-table(genes$id %in% g3_convert$B73.Zm00001d.2.)
-table(genes$id %in% g3_convert$v4_gene_model) 
-# same genes are in both gene models. but going the other way v4_gene_model has extra genes not in .gff3 
-table(g3_convert$v4_gene_model == g3_convert$B73.Zm00001d.2.)
-filter(g3_convert, v4_gene_model != B73.Zm00001d.2.) %>%
-  mutate(match_found = v4_gene_model %in% genes$id) %>%
-  dplyr::select(match_found) %>%
-  table() # the ones that don't match B73.Zm00001d.2. aren't in the .gff3 file either
-filter(g3_convert, v4_gene_model != B73.Zm00001d.2.) %>%
-  dplyr::select(B73.Zm00001d.2.) %>%
-  table() # no entry
-# what is going on? gff3 has only half the genes in B73.Zm00001d.2.
-table(unique(g3_convert$v4_gene_model) %in% genes$id)
-table(unique(g3_convert$B73.Zm00001d.2.) %in% genes$id)
-
-# convert to v4 list, id column must be ID
-convert2v4 <- function(gene_set){
-  id <- quo(id_col)
-  left_join(gene_set, g3_convert, 
-            by = c("ID"="v3_gene_model")) %>%
-    filter(!is.na(B73.Zm00001d.2.)) %>% 
-    dplyr::select(B73.Zm00001d.2.) %>%
-    unique()
-} 
-
+# convert flowering and domestication gene sets to v4
 flowering_pathway2 <- flowering_pathway %>%
   mutate(ID=geneID) %>%
   convert2v4()
@@ -161,31 +150,26 @@ flowering_pbe2_Not_MexHigh <- flowering_pbe %>%
 flowering_gwas_male2 <- convert2v4(flowering_gwas_male)
 flowering_gwas_female2 <- convert2v4(flowering_gwas_female)
 domestication2 <- convert2v4(gene_set = domestication)
-flowering_genes2 <- bind_rows(flowering_pathway2, flowering_pbe2, flowering_gwas_female2, flowering_gwas_male2)$B73.Zm00001d.2. %>%
-  unique(.) # 1637 flowering time genes
+flowering_genes2 <- unlist(c(flowering_pathway2, flowering_pbe2, flowering_gwas_female2, flowering_gwas_male2)) %>%
+  unique(.) # 1568 flowering time genes
 # what percent of the original is that?
 
-table(domestication_genes %in% g3_convert$B73.Zm00001d.2.)
-table(domestication_genes %in% domestication2$B73.Zm00001d.2.)
-table(unique(domestication2$B73.Zm00001d.2.) %in% domestication_genes) # I'm finding more genes. Shouldn't this be the same??
+# why isn't this perfect overlap? Not sure -- I can investigate later
+table(unique(domestication_genes) %in% unique(domestication2$v4_gene_model)) 
+table(unique(domestication2$v4_gene_model) %in% unique(domestication_genes)) # I'm finding more genes. Shouldn't this be the same??
 head(g3_convert[,c("v3_gene_model", "v4_gene_model")])
 domestication_genes[duplicated(domestication_genes)]
 domestication_genes[is.na(domestication_genes)]
-domestication2[duplicated(domestication2$B73.Zm00001d.2),] # need to get rid of duplicates
-# one example
-domestication2[domestication2$B73.Zm00001d.2 == "Zm00001d015767", ]
-genes[genes$id == "Zm00001d015767",]
+domestication2[duplicated(domestication2$v4_gene_model),] # no duplicates
 
-# very few genes don't have hits v3 -> v4 gene models
+# very few genes don't have hits v2 -> v4 gene models
 genes$domestication <- genes$id %in% domestication_genes
-genes$domestication2 <- genes$id %in% domestication2$B73.Zm00001d.2.
-table(domestication_genes %in% genes$id) # about half the domestication genes can be found in the full genes list
-table(domestication2$B73.Zm00001d.2. %in% genes$id) # slightly more included. more genes in general.
-# but still only about half found in genes$id
-# domestication2 has 89 more hits (though missing 10) .. going with that for now
+genes$domestication2 <- genes$id %in% domestication2$v4_gene_model
+table(domestication_genes %in% genes$id) # all but 9 of the domestication genes can be found in the full genes list
+table(domestication2$v4_gene_model %in% genes$id) # all but one found
 table(genes[ , c("domestication", "domestication2")]) 
 lapply(list(flowering_pathway2, flowering_pbe2, flowering_gwas_female2, flowering_gwas_male2),
-       function(x) table(x$B73.Zm00001d.2. %in% genes$id)) # a bit more or less than half, depending on the set
+       function(x) table(x$v4_gene_model %in% genes$id)) # a bit more or less than half, depending on the set
 
 # now I need to get an ancestry approximation for each gene
 get_gene_anc <- function(anc_snps = d, gene, focal_col){
@@ -219,35 +203,38 @@ genes %>%
 
 
 # get mean ancestry for each gene: (VERY SLOW)
-genes$meanAlpha_maize <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_maize"))
-genes$meanAlpha_mex <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_mex"))
+#genes$meanAlpha_maize <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_maize"))
+#genes$meanAlpha_mex <- sapply(1:nrow(genes), function(i) get_gene_anc(anc_snps = d, gene = genes[i,], focal_col = "meanAlpha_mex"))
 
-# after analysing with bedtools (see data/domestication/README.txt), reload into R
-g <- read.table("../data/domestication/all_genes.meanAlpha_mex.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
-g10 <- read.table("../data/domestication/all_genes.meanAlpha_mex.10kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g10) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
-g20 <- read.table("../data/domestication/all_genes.meanAlpha_mex.20kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g20) <- c("chr", "start", "end", "gene", "meanAlpha_mex")
+# after analysing with bedtools (see commands.txt), reload into R
+g <- read.table("results/all_genes.meanAlpha_mex.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g) <- c("chr", "start", "end", "gene", "length", "meanAlpha_mex")
+g10 <- read.table("results/all_genes.meanAlpha_mex.10kb.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10) <- c("chr", "start", "end", "gene", "length", "meanAlpha_mex")
+g20 <- read.table("results/all_genes.meanAlpha_mex.20kb.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g20) <- c("chr", "start", "end", "gene", "length", "meanAlpha_mex")
 
-g_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
-g10_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.10kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g10_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
-g20_maize <- read.table("../data/domestication/all_genes.meanAlpha_maize.20kb.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g20_maize) <- c("chr", "start", "end", "gene", "meanAlpha_maize")
+g_maize <- read.table("results/all_genes.meanAlpha_maize.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g_maize) <- c("chr", "start", "end", "gene", "length", "meanAlpha_maize")
+g10_maize <- read.table("results/all_genes.meanAlpha_maize.10kb.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10_maize) <- c("chr", "start", "end", "gene", "length", "meanAlpha_maize")
+g20_maize <- read.table("results/all_genes.meanAlpha_maize.20kb.v4.autosomal.sorted.bed", header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g20_maize) <- c("chr", "start", "end", "gene", "length", "meanAlpha_maize")
 
 g10_maize %>%
-  mutate(., domestication = gene %in% domestication_genes) %>%
+  mutate(., domestication = ifelse(gene %in% domestication_genes, 
+                                   "domestication genes", 
+                                   "other genes")) %>%
   ggplot(aes(y = meanAlpha_maize, fill = domestication)) +
-  geom_boxplot() +
+  geom_boxplot(aes(middle = mean(meanAlpha_maize))) +
+  scale_fill_viridis_d(begin = .3, end = 1, direction = -1) +
   geom_abline(slope = 0, intercept = mean(d$meanAlpha_maize), 
               linetype = "dotted") +
   ggtitle("mean ancestry in maize pops near genes") +
   xlab("gene type") +
-  ylab("mean mexicana ancestry in gene +/- 5kb")
+  ylab("mean mexicana ancestry in gene +/- 5kb") 
 ggsave("plots/mean_mex_anc_in_maize_near_domestication_genes_10kb.png",
-       height = 8, width = 10, units = "in", device = "png")
+       height = 4, width = 6, units = "in", device = "png")
 
 # can I add error bars to this? Use a permutation test.
 # where under the null of 1 population of samples,
@@ -268,13 +255,13 @@ for (i in 1:iter){
     mean_diff[i] <- mean(shuffled[1:n_domestication]) - mean(shuffled[(n_domestication + 1):n_total]) 
 }
 png("plots/permutation_test_reshuffle_domestication_vs_other_in_maize.png", 
-    height = 6, width = 8, units = "in", res = 300)
+    height = 4, width = 4, units = "in", res = 300)
 hist(mean_diff, freq = F,
      col = "darkgrey",
      main = "permutation (re-shuffling) test of difference in means",
      sub = "mexicana ancestry domestication genes vs. other genes",
      xlim = c(-0.1, 0.1))
-abline(v = observed_diff, col = "blue")
+abline(v = observed_diff, col = "orange", lwd = 2)
 dev.off()
 # ggplot of permutation test:
 
@@ -310,9 +297,10 @@ mutate(g10_maize, meanAlpha_mex = g10$meanAlpha_mex) %>%
 
 
 g10 %>%
-  mutate(., domestication = gene %in% domestication_genes) %>%
+  mutate(., domestication = ifelse(gene %in% domestication_genes, "domestication_gene", "other_gene")) %>%
   ggplot(aes(y = meanAlpha_mex, fill = domestication)) +
-  geom_boxplot() +
+  geom_boxplot(aes(middle = mean(meanAlpha_mex))) +
+  scale_fill_viridis_d(begin = .3, end = 1, direction = -1) +
   geom_abline(slope = 0, intercept = mean(d$meanAlpha_mex), 
               linetype = "dotted") +
   ggtitle("mean ancestry in mexicana pops near genes") +
@@ -326,8 +314,10 @@ g10 %>%
   mutate(., domestication = gene %in% domestication_genes) %>%
   mutate(meanAlpha_maize = g10_maize$meanAlpha_maize) %>%
   mutate(low_outlier_maize = meanAlpha_maize < .05) %>%
-  ggplot(aes(y = meanAlpha_mex, fill = low_outlier_maize & domestication)) +
-  geom_boxplot() +
+  mutate(gene_type = ifelse(low_outlier_maize & domestication, "low outlier in maize and domestication gene", "other gene")) %>%
+  ggplot(aes(y = meanAlpha_mex, fill = gene_type)) +
+  geom_boxplot(aes(middle = mean(meanAlpha_mex))) +
+  scale_fill_viridis_d(begin = .3, end = 1, direction = -1) +
   geom_abline(slope = 0, intercept = mean(d$meanAlpha_mex), 
               linetype = "dotted") +
   ggtitle("mean ancestry in mexicana pops near genes (low = <.05 mex ancestry in maize)") +
@@ -349,30 +339,43 @@ g10 %>%
 table(data.frame(domestication = g10$gene %in% domestication_genes, has_ancestry = is.na(g10$meanAlpha_mex)))
 
 # flowering time
-flowers <- c(flowering_gwas_female2$B73.Zm00001d.2.,
-             flowering_gwas_male2$B73.Zm00001d.2.,
-             flowering_pathway2$B73.Zm00001d.2.,
-             flowering_pbe2$B73.Zm00001d.2.) %>%
-  .[!duplicated(.)]
 g %>%
-  mutate(., domestication = gene %in% flowering_gwas_male2$B73.Zm00001d.2.) %>%
-  ggplot(aes(y = meanAlpha_mex, fill = domestication)) +
-  geom_boxplot() +
+  mutate(., flowering = ifelse(gene %in% flowering_genes2,
+                               "flowering time gene", "other gene")) %>%
+  ggplot(aes(y = meanAlpha_mex, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(meanAlpha_mex))) +
+  scale_fill_viridis_d(begin = .3, end = .5, direction = -1) +
+  geom_abline(slope = 0, intercept = mean(d$meanAlpha_mex), 
+              linetype = "dotted") +
+  ggtitle("mean ancestry in mexicana pops near genes") +
+  xlab("gene type") +
+  ylab("mean mexicana ancestry in gene +/- 5kb")
+# maize
+g10_maize %>%
+  mutate(., flowering = ifelse(gene %in% flowering_genes2,
+                               "flowering time gene", "other gene")) %>%
+  ggplot(aes(y = meanAlpha_maize, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(meanAlpha_maize))) +
+  scale_fill_viridis_d(begin = .3, end = .5, direction = -1) +
   geom_abline(slope = 0, intercept = mean(d$meanAlpha_maize), 
               linetype = "dotted") +
   ggtitle("mean ancestry in maize pops near genes") +
   xlab("gene type") +
   ylab("mean mexicana ancestry in gene +/- 5kb")
 
+
 # flowering time genes & slopes anc ~ elev:
-g10_maize_bElev <- read.table("../data/domestication/all_genes.simple_bElev_anc_maize.10kb.autosomal.sorted.bed", 
+g10_maize_bElev <- read.table("results/all_genes.simple_bElev_anc_maize.10kb.v4.autosomal.sorted.bed", 
                               header = F, stringsAsFactors = F, na.strings = ".")
-colnames(g10_maize_bElev) <- c("chr", "start", "end", "gene", "bElev")
+g10_maize_bElev <- read.table("../data/domestication/all_genes.simple_bElev_anc_maize.20kb.v4.autosomal.sorted.bed", 
+                              header = F, stringsAsFactors = F, na.strings = ".")
+colnames(g10_maize_bElev) <- c("chr", "start", "end", "gene", "length", "bElev")
 g10_maize_bElev %>% # check why slope is NA for some loci
   filter(!is.na(bElev)) %>%
-  mutate(., flowering_time = gene %in% c(flowering_pathway2$B73.Zm00001d.2., flowering_gwas_female2$B73.Zm00001d.2., flowering_gwas_male2$B73.Zm00001d.2.)) %>%
-  ggplot(aes(y = bElev, fill = flowering_time)) +
-  geom_boxplot() +
+  mutate(., flowering = ifelse(gene %in% flowering_genes2,
+                               "flowering time genes", "other genes")) %>%
+  ggplot(aes(y = bElev, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(bElev))) +
   geom_abline(slope = 0, intercept = mean(g10_maize_bElev$bElev, na.rm = T), 
               linetype = "dotted") +
   ggtitle("mean slope ancestry ~ elev in maize near genes") +
@@ -380,6 +383,116 @@ g10_maize_bElev %>% # check why slope is NA for some loci
   ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
 ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_pathway_and_GWAS_10kb.png",
        height = 4, width = 6, units = "in", device = "png")
+# separate by flowering time candidates from GWAS or from pathways or Li's pbe maybe skip for now
+g10_maize_bElev %>% # check why slope is NA for some loci
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering = ifelse(gene %in% flowering_pathway2$v4_gene_model,
+                               "flowering time pathway genes", "other genes")) %>%
+  ggplot(aes(y = bElev, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(bElev))) +
+  geom_abline(slope = 0, intercept = mean(d$simple_bElev_anc, na.rm = T), 
+              linetype = "dotted") +
+  scale_fill_viridis_d(begin = .3, end = .6, direction = -1) +
+  ggtitle("mean slope ancestry ~ elev in maize near genes") +
+  xlab("gene type") +
+  ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
+ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_pathway_10kb.png",
+       height = 4, width = 6, units = "in", device = "png")
+g10_maize_bElev %>% # check why slope is NA for some loci
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering = ifelse(gene %in% c(flowering_gwas_female2$v4_gene_model, 
+                                           flowering_gwas_male2$v4_gene_model),
+                               "flowering time GWAS genes", "other genes")) %>%
+  ggplot(aes(y = bElev, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(bElev))) +
+  geom_abline(slope = 0, intercept = mean(d$simple_bElev_anc, na.rm = T), 
+              linetype = "dotted") +
+  scale_fill_viridis_d(begin = .3, end = .8, direction = -1) +
+  ggtitle("mean slope ancestry ~ elev in maize near genes") +
+  xlab("gene type") +
+  ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
+ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_GWAS_10kb.png",
+       height = 4, width = 6, units = "in", device = "png")
+# plot together:
+g10_maize_bElev %>% # check why slope is NA for some loci
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering = ifelse(gene %in% c(flowering_gwas_female2$v4_gene_model, 
+                                           flowering_gwas_male2$v4_gene_model, flowering_pathway2$v4_gene_model),
+                               ifelse(gene %in% flowering_pathway2$v4_gene_model, "flowering pathway genes (n=38)", "flowering time GWAS genes (n=669)"), "other genes (n=40,345)")) %>%
+  ggplot(aes(y = bElev, fill = flowering)) +
+  geom_boxplot(aes(middle = mean(bElev))) +
+  geom_abline(slope = 0, intercept = mean(d$simple_bElev_anc, na.rm = T), 
+              linetype = "dotted") +
+  scale_fill_viridis_d(begin = .3, end = .8, direction = -1) +
+  ggtitle("mean slope ancestry ~ elev in maize near genes") +
+  xlab("gene type") +
+  ylab("slope anc ~ elev in gene +/- 5kb") # about 376 genes
+ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_path_and_GWAS_10kb.png",
+       height = 4, width = 6, units = "in", device = "png")
+
+
+
+# permutations to test for sig. mean difference
+#tb_flower_path <- 
+g10_maize_bElev %>%
+  mutate(flowering = gene %in% flowering_pathway2$v4_gene_model) %>%
+  mutate(steep_slope = bElev > .0005) %>%
+    ggplot(., aes(x = bElev, fill = flowering)) +
+    geom_histogram() +
+    facet_wrap(~flowering, scales = "free_y")
+g10_maize_bElev %>%
+  mutate(flowering = gene %in% c(flowering_gwas_female2$v4_gene_model, flowering_gwas_male2$v4_gene_model)) %>%
+  mutate(steep_slope = bElev > .0005) %>%
+  ggplot(., aes(x = bElev, fill = flowering)) +
+  geom_histogram() +
+  facet_wrap(~flowering, scales = "free_y")
+
+# permutation test:
+# diff. in means may all be caused by chr4 inversion.
+iter = 100000
+mean_diff_flower_path <- numeric(iter)
+mean_diff_flower_gwas <- numeric(iter)
+g10_maize_bElev_noNA <- g10_maize_bElev %>%
+  filter(!is.na(bElev))
+n_flower_path = sum(g10_maize_bElev_noNA$gene %in% flowering_pathway2$v4_gene_model)
+n_flower_gwas = sum(g10_maize_bElev_noNA$gene %in% c(flowering_gwas_female2$v4_gene_model, flowering_gwas_male2$v4_gene_model))
+n_bElev_total = length(g10_maize_bElev_noNA$gene)
+observed_diff_flower_path = mean(g10_maize_bElev_noNA$bElev[g10_maize_bElev_noNA$gene %in% flowering_pathway2$v4_gene_model]) - 
+  mean(g10_maize_bElev_noNA$bElev[!(g10_maize_bElev_noNA$gene %in% flowering_pathway2$v4_gene_model)])
+observed_diff_flower_gwas = mean(g10_maize_bElev_noNA$bElev[g10_maize_bElev_noNA$gene %in% c(flowering_gwas_female2$v4_gene_model, flowering_gwas_male2$v4_gene_model)]) - 
+  mean(g10_maize_bElev_noNA$bElev[!(g10_maize_bElev_noNA$gene %in% c(flowering_gwas_female2$v4_gene_model, flowering_gwas_male2$v4_gene_model))])
+set.seed(10)
+for (i in 1:iter){
+  shuffled <- sample(x = g10_maize_bElev_noNA$bElev, size = n_bElev_total) # shuffle
+  mean_diff_flower_path[i] <- mean(shuffled[1:n_flower_path]) - mean(shuffled[(n_flower_path + 1):n_bElev_total]) 
+  mean_diff_flower_gwas[i] <- mean(shuffled[1:n_flower_gwas]) - mean(shuffled[(n_flower_gwas + 1):n_bElev_total]) 
+  }
+png("plots/permutation_test_reshuffle_flowering_path_vs_other_in_maize.png", 
+    height = 4, width = 6, units = "in", res = 300)
+hist(mean_diff_flower_path, freq = F,
+     col = "darkgrey",
+     main = paste0("Suffling test of difference in means, p=", 
+                   sum(mean_diff_flower_path >= observed_diff_flower_path)/length(mean_diff_flower_path)),
+     sub = "mexicana ancestry flowering pathway genes vs. other genes")
+abline(v = observed_diff_flower_path, col = viridis(1, begin = .6), lwd = 2)
+dev.off() # pathway def. just small sample size - not sig.
+n_flower_gwas
+n_flower_path
+
+png("plots/permutation_test_reshuffle_flowering_gwas_vs_other_in_maize.png", 
+    height = 4, width = 6, units = "in", res = 300)
+hist(mean_diff_flower_gwas, freq = F,
+     col = "darkgrey",
+     main = paste0("Shuffling test of difference in means, p=", sum(mean_diff_flower_gwas >= observed_diff_flower_gwas)/length(mean_diff_flower_gwas)),
+     sub = "mexicana ancestry flowering gwas hit genes vs. other genes",
+     xlim = c(-10^-4, 10^-4))
+abline(v = observed_diff_flower_gwas, col = viridis(1, begin = .8), lwd = 2)
+dev.off()
+
+# make a table to test for enrichment
+
+
+
 
 g10_maize_bElev %>% # check why slope is NA for some loci
   filter(!is.na(bElev)) %>%
@@ -406,5 +519,25 @@ ggsave("plots/simple_bElev_in_maize_near_flowering_time_genes_all_10kb.png",
 # time pathway and the GWAS results. I can figure out how to think about the pbe from Li later
 
 
-# I'll also check the tails of the distribution:
+# I'll also check the tails of the distribution, but later.
 
+
+
+flwr_inv9 <- g10_maize_bElev %>%
+  filter(!is.na(bElev)) %>%
+  mutate(., flowering = ifelse(gene %in% c(flowering_gwas_female2$v4_gene_model, 
+                                           flowering_gwas_male2$v4_gene_model, flowering_pathway2$v4_gene_model),
+                               ifelse(gene %in% flowering_pathway2$v4_gene_model, "flowering pathway genes (n=38)", "flowering time GWAS genes (n=669)"), "other genes (n=40,345)")) %>%
+  filter(chr == 9) %>%
+  filter(start > 109*10^6) %>%
+  filter(end < 111*10^6)
+table(flwr_inv9$flowering)
+flwr_inv4 <- g10_maize_bElev %>%
+  #filter(!is.na(bElev)) %>%
+  mutate(., flowering = ifelse(gene %in% c(flowering_gwas_female2$v4_gene_model, 
+                                           flowering_gwas_male2$v4_gene_model, flowering_pathway2$v4_gene_model),
+                               ifelse(gene %in% flowering_pathway2$v4_gene_model, "flowering pathway genes (n=38)", "flowering time GWAS genes (n=669)"), "other genes (n=40,345)")) %>%
+  filter(chr == 4) %>%
+  filter(start > 171771502) %>%
+  filter(end < 185951149)
+table(flwr_inv4$flowering)
