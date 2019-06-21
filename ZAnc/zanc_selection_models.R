@@ -1389,6 +1389,10 @@ dev.off()
 
 # calculate FDR thresholds (approx)
 FDRs_zTz_chisq14_approx <- sapply(c(0.01, .05, .1), function(p) min(test_zTz[test_fdr_zTz<p], na.rm = T))
+write.table(data.frame(thresholds = FDRs_zTz_chisq14_approx, FDR = c(0.01, 0.5, 0.1), model = "zTz_chisq14"),
+            "results/FDRs_zTz_chisq14.txt", quote = F, col.names = T, row.names = F, sep = "\t")
+
+
 
 # plot zTz across the maize genome:
 data.frame(sites, zTz = zTz3) %>%
@@ -1432,6 +1436,18 @@ table(zTz3 > FDRs_zTz_chisq14_approx[1], maize_anc_mean > FDRs[1])
 table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1])
 table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights > FDRs_simple_bElev[1])
 table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1], maize_anc_mean > FDRs[1])
+
+# top 1% FDR outliers
+outliers_top01 <- data.frame(zTz = zTz3 > FDRs_zTz_chisq14_approx[1],
+                       pos_Elev = simple_bElev_anc$envWeights > FDRs_simple_bElev[1],
+                       neg_Elev = simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1],
+                       high_mex = maize_anc_mean > FDRs[1]) %>%
+  filter(zTz) %>%
+  apply(., 2, sum) %>%
+  t(.)%>%
+  write.table(., "results/outlier_overlap_zTz.txt", quote = F, col.names = T, row.names = F, sep = "\t")
+
+
 
 for (i in 1:3){
   outliers <- data.frame(zTz = zTz3 > FDRs_zTz_chisq14_approx[i],
