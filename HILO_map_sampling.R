@@ -6,15 +6,15 @@ library(scales)
 library(viridisLite) # colors
 library(geosphere)
 library(ade4) # mantel test for matrix correlations
-
+library(dplyr)
 
 # populations sampled
-d = read.csv("data/PlateNames.csv", header = T, stringsAsFactors = F)
-table(d$Population)
-d[d$Population=="Pururandiro",] # maybe an allopatric pop (?); likely misspelling Puruandiro
-tapply(d$Pop, d$Population, unique)
+#d = read.csv("data/PlateNames.csv", header = T, stringsAsFactors = F)
+#table(d$Population)
+#d[d$Population=="Pururandiro",] # maybe an allopatric pop (?); likely misspelling Puruandiro
+#tapply(d$Pop, d$Population, unique)
 # gps locations for admixed/sympatric populations ** note some locations are tentative (google maps) until I get official gps coordinates
-gps = read.csv("data/admixed_gps.csv", header = T, stringsAsFactors = F)
+#gps = read.csv("data/admixed_gps.csv", header = T, stringsAsFactors = F)
 
 m <- read.table("data/riplasm/gps_and_elevation_for_sample_sites.txt",
                 sep = "\t", header = T) %>%
@@ -78,6 +78,10 @@ plot(SpatialPoints(coords = m[m$zea=="maize", c("LON", "LAT")],
                         add = T, col = "white", pch = 6, cex = 1)
 dev.off() # save. note: some points are so close together it's hard to see
 
+plot(SpatialPoints(coords = m[m$zea=="maize" & m$LOCALITY=="Opopeo", 
+                              c("LON", "LAT")], 
+                   proj4string = CRS("+proj=longlat +datum=WGS84")), 
+     add = T, col = "green", pch = 6, cex = 1)
 
 # use a projection to get distance 'as the crow flies'
 # between two points

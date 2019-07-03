@@ -1154,7 +1154,9 @@ sites_cum <- sites %>%
 
 axis_spacing = sites_cum %>%
   group_by(chr) %>% 
-  summarize(center=( max(pos_cum) + min(pos_cum) ) / 2 )
+  summarize(center=( max(pos_cum) + min(pos_cum) ) / 2,
+            start = min(pos_cum),
+            end = max(pos_cum))
 
 fdr_bElev = data.frame(FDR = rep(c("FDR < 0.01", "FDR < 0.05", "FDR < 0.1"), 2),
                        cutoff = c(FDRs_simple_bElev, FDRs_simple_bElev_neg),
@@ -1611,4 +1613,44 @@ d %>%
 ggsave(paste0("plots/top_outlier_loci_high_mexicana.png"),
        device = "png",
        width = 6, height = 4, units = "in")
+# plotting the numbers I got out of the model for top hits:
+top_ztz_hits <- data.frame(hit = 1:8200,
+                           type = c(rep("high mexicana", 633),
+                                    rep("higher mexicana w/ elev.", 1419),
+                                    rep("lower mexicana w/ elev.", 147),
+                                    rep("Other", (8200-633-1419-147))))
+ggplot(top_ztz_hits, aes(x = type, fill = type)) +
+  #geom_bar(stat = "percent") +
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=scales::percent) +
+  ylab("relative frequencies in zTz outliers") +
+  ggtitle("overlap of top 1% FDR zTz hits and other outliers") +
+  theme(axis.text.x = element_text(angle = 90))
+ggsave("plots/overlap_barplot_ztz_top_and_other_sel_models_top.png",
+       device = "png", height = 6, width = 6)
 
+flwr_hits <- data.frame(
+  chr6_centromere = 52*10^6 + axis_spacing$start[axis_spacing$chr == 6],
+chr3_centromere = 86*10^6 + axis_spacing$start[axis_spacing$chr == 3],
+chr3_inversion = 79*10^6 + axis_spacing$start[axis_spacing$chr == 3],
+chr5_centromere = 105*10^6 + axis_spacing$start[axis_spacing$chr == 5],
+chr4_inv_start = 171771502 + axis_spacing$start[axis_spacing$chr == 4],
+chr4_inv_end = 185951149 + axis_spacing$start[axis_spacing$chr == 4]) %>%
+  tidyr::gather(., "sv", "pos_cum")
+chrom_positions <- axis_spacing %>%
+  dplyr::select(c("chr", "start", "end"))%>%
+  tidyr::gather(., "name", "pos_cum", 2:3) %>%
+  mutate(sv = paste0(chr, "_", name)) %>%
+  bind_rows(., flwr_hits)
+
+chrom_positions %>%
+  ggplot(., aes(x = pos_cum, y = 1, color = sv)) +
+  geom_point()
+ggsave("plots/flower_time_structural_variants.png",
+       device = "png", height = 3, width = 12)
+
+
+# chr6 centromere 52Mb; 29%
+# chr3 86Mb
+# chr5 105Mb
+# chr3 v3. 79Mb - 6Mb inversion??

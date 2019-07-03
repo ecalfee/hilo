@@ -541,3 +541,7 @@ flwr_inv4 <- g10_maize_bElev %>%
   filter(start > 171771502) %>%
   filter(end < 185951149)
 table(flwr_inv4$flowering)
+
+
+
+
