@@ -27,6 +27,25 @@ Our allopatric mexicana population was not sequenced to a high enough depth to a
 
 We assess confidence in our ancestry calls by calculating and comparing divergence to our reference panels in regions with high confidence mexicana or maize ancestry. This is a partially independent assessment from the local ancestry calling because we use all SNPs, **\% more than were used in ancestry\_hmm due to filtering for high LD [see supplemental fig. X for posterior prob. maize <-> mex on x axis and mean divergence on y axis, with separate lines for maize and mexicana .. I could also do this for divergence to specific mexicana groups] \par
 
+\subsection{zTz statistic}
+The zTz statistic is the squared Mahalanobis distance between the observed population ancestry frequencies at a particular locus and the set of ancestry distributions across the whole genome, taking into account covariances caused by shared drift between populations. Our underlying assumption is that most loci are neutral, and therefore the genome-wide distribution represents neutral demographic history. zTz at a locus $l$ is defined 
+$zTz=(anc - \alpha)^{T}K^{-1}(anc - \alpha)$,
+where $anc$ is the vector of population ancestry frequencies, $\alpha$ is the genome-wide mean population ancestry frequency, and $K$ is the ancestry variance-covariance matrix,
+$K = blah blah$.
+
+If ancestry frequencies are independent across populations, all of the off-diagonal elements of K are zero, and the zTz statistic simplifies to the standardized Euclidean distance between observed population ancestries and their genome-wide means. When admixed populations are related to one another through a simple bifurcating tree, e.g. a historical admixed population that has split into two observed present-day populations, the off-diagonal elements of K are proportional to the drift within and between populations, or the branch lengths of that tree. In the more general case, the off-diagonal elements of K capture shared drift between populations as a result of either gene flow or population splits after admixture began. Importantly, by ignoring kinship below the level of ancestry, K only captures shared drift post-admixture, and not population relationships that pre-date admixture, which would otherwise confound tests for selection on ancestry. When the genome-wide ancestry distribution follows a neutral multivariate normal model of drift with $j$ observed populations, zTz is chi-squared distributed with $j$ degrees of freedom. 
+
+We use zTz to identify outlier loci whose observed ancestry frequencies across populations are improbable under neutral demographic history and drift alone, and these are our top candidates for selected loci. 
+
+\subsection{Similarity to other statistics}
+Bayenv, hapflk, pcadapt
+
+\subsection{Extension to test different models of selection}
+
+The zTz statistic only captures a single distance from the neutral model, and as such, offers no information on which populations may be under selection, nor in which direction. Therefore, to test a particular selected locus' fit to different proposed models of selection, we apply methods from linear regression. 
+
+
+
 \subsection{Relationship to phylogenetic contrast}
 The main point of phylogenetic-contrast type methods, like ours, is to reduce Type I errors, or false positives, because correlation between data points that are assumed to be independent inflates the variance in model estimates beyond the assumed variance for confidence intervals and assessing model fit (e.g. slopes in a linear model). However, the slopes are not systematically reduced by applying the rotation or contrast. Both phylogenetic contrast methods and ordinary least squares generate unbiased estimates of the slope, or correlations between the data and an environmental data. For more information, see Rohlf 2006 "A Comment on Phylogenetic Correction" https://www.jstor.org/stable/pdf/4095344.pdf?refreqid=excelsior%3A37b064a12dbf07772d74b3c56e57f54c which sites Pagel 1993 for the 'unbiased estimators' assertion. So, the p-values are better calibrated, but the actual point estimates for the slopes will usually be more accurate in the contrast but could be more accurate for individual cases in the OLS framework (because both have some variance around the true value, so don't over-interpret differences between the two).
 So the question really comes down to, how well calibrated are my p-values using zAnc-style rotations?
