@@ -22,9 +22,9 @@ for r in {1..r_bins};
   do (zcat ../global_ancestry/results/thinnedSNPs/$PREFIX/prunedBy$prunedBy/whole_genome.beagle.gz | head -n 1
   for w in $(cat results/bootstrap/windows_$WIND/r5_recomb$r/boot$i.list)
     # make output DIRECTORY
-    DIR_OUT=results/bootstrap/windows_$WIND/r${r_bins}_recomb$r/$PREFIX
+    do DIR_OUT=results/bootstrap/windows_$WIND/r${r_bins}_recomb$r/$PREFIX
     mkdir -p $DIR_OUT
-    do zcat results/GL_$WIND/$PREFIX/$w.beagle.gz; done) | \
+    zcat results/GL_$WIND/$PREFIX/$w.beagle.gz; done) | \
     gzip > $DIR_OUT/boot$i.beagle.gz;
   done;
 done
