@@ -3,11 +3,11 @@
 #SBATCH -D /home/ecalfee/hilo/genes_r_ancestry
 #SBATCH -J bootstrapGL
 #SBATCH -o /home/ecalfee/hilo/slurm-log/makeBootstrapGLFiles_%A_%a.out
-#SBATCH -t 1:00
+#SBATCH -t 1:00:00
 #SBATCH --mem=8G
-#SBATCH --array=1-100
+#SBATCH --array=0-100
 
-# to run: genes_r_ancestry$ sbatch --array=1-100 --export=PREFIX=pass2_alloMAIZE_PalmarChico,r_bins=5,prunedBy=100,WIND=1cM makeBootstrapGLFiles.sh
+# to run: genes_r_ancestry$ sbatch --array=0-100 --export=PREFIX=pass2_alloMAIZE_PalmarChico,prunedBy=100,WIND=1cM makeBootstrapGLFiles.sh
 
 i=$SLURM_ARRAY_TASK_ID # index of bootstrap
 
@@ -18,14 +18,13 @@ set –o errexit
 set –o nounset
 
 # run shell command
-for r in {1..r_bins};
-  do (zcat ../global_ancestry/results/thinnedSNPs/$PREFIX/prunedBy$prunedBy/whole_genome.beagle.gz | head -n 1
-  for w in $(cat results/bootstrap/windows_$WIND/r5_recomb$r/boot$i.list)
-    # make output DIRECTORY
-    do DIR_OUT=results/bootstrap/windows_$WIND/r${r_bins}_recomb$r/$PREFIX
-    mkdir -p $DIR_OUT
-    zcat results/GL_$WIND/$PREFIX/$w.beagle.gz; done) | \
-    gzip > $DIR_OUT/boot$i.beagle.gz;
-  done;
+for r in {1..5};
+	# make output directory
+	do mkdir -p results/bootstrap/windows_$WIND/r5_recomb$r/$PREFIX;
+  	(zcat ../global_ancestry/results/thinnedSNPs/$PREFIX/prunedBy$prunedBy/whole_genome.beagle.gz | head -n 1;
+  	for w in $(cat results/bootstrap/windows_$WIND/r5_recomb$r/boot$i.list);
+    		do zcat results/GL_$WIND/$PREFIX/$w.beagle.gz; 
+	done) | gzip > results/bootstrap/windows_$WIND/r5_recomb$r/$PREFIX/boot$i.beagle.gz;
 done
+
 echo 'all done!'
