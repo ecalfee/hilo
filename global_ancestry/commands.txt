@@ -118,6 +118,14 @@ Submitted batch job 11281162 - COMPLETED 6.10.19
 
 # Returning to pruning by SNP density, rather than fixed cM distance, to not oversample high r genomic regions
 # Also adding in Palmar Chico parviglumis individuals to distinguish parviglumis from maize ancestry in our mexicana panel
-global_ancestry$ sbatch --export=PREFIX=pass2pass2_alloMAIZE_PalmarChico,N=100 catBeagle_nth.sh
+global_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE_PalmarChico,N=100 catBeagleGL_nth.sh
+Submitted batch job 12920480 - COMPLETED
+global_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,N=100 catBeagleGL_nth.sh
+Submitted batch job 12920481 - COMPLETED
+global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE/prunedBy100 runNGSadmix.sh
+Submitted batch job 12920651 - running 7.23.19
+global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE_PalmarChico/prunedBy100 runNGSadmix.sh
+Submitted batch job 12920657 - running 7.23.19
 
 # TO DO:
+# figure out which recombination windows have sites (use bedtools map or intersect?)

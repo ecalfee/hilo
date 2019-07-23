@@ -7,7 +7,7 @@
 #SBATCH --mem=8G
 
 # to run:
-# sbatch --export=PREFIX=pass2pass2_alloMAIZE_PalmarChico,N=100 catBeagle_nth.sh
+# sbatch --export=PREFIX=pass2_alloMAIZE_PalmarChico,N=100 catBeagleGL_nth.sh
 
 # concatenates beagle genotype likelihood files, skipping headers and only taking 1 in N positions
 startR=0

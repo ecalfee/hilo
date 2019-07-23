@@ -195,5 +195,24 @@ lapply(1:5, function(i)
               paste0("results/r5_bin", i, "_1cM_windows.list"), 
               quote = F, col.names = F, row.names = F)
   )
+
 # I may need to exclude windows with < 5 SNPs or something similar. First get SNPs in windows.
+r_windows_excl <- c("W382") # for now just exclude W382 for having no SNPs
+
+# make 100 bootstrap replicate lists of windows:
+set.seed(100) # set seed for replication
+for (r in 1:5){ # 5 recombination rate quintiles
+  r_windows <- map_pos_1cM$window[map_pos_1cM$bin_r5 == levels(map_pos_1cM$bin_r5)[r]]
+  r_windows_incl <- r_windows[!(r_windows %in% r_windows_excl)]
+  for (b in 1:100){ # 100 bootstrap samples 
+    # (same size = same # windows as original data 
+    # but windows are sampled w/ replacement)
+    write.table(x = sample(x = r_windows_incl,
+                         size = length(r_windows_incl),
+                         replace = T),
+                file = paste0("results/bootstrap/windows_1cM/r5_recomb", r, "/boot", b, ".list"),
+                quote = F, col.names = F, row.names = F, sep = "\t")
+  }
+}
+
 

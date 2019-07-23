@@ -139,6 +139,48 @@ Submitted batch job 11268341-5 RUNNING 6.9.19
 (G) Error from the recombination map -- is 10kb too wide? is the original results robust to excluding areas towards the telomeres on chromosome edges where recombination is poorly estimated?
 
 
+##### Bootstrapping uncertainty around NGSAdmix global ancestry ~ recombination bin results
+# i. used R script to divide the whole genome into 1cM and 0.2cM bins, and assign recombination quintiles to each bin
+define_bootstrap_windows_from_map.R
+This extends the map over any gaps outside the map, using linear interpolation (R approx) and extending the last recombination rate to the end of chromosome
+# then made individual bed files for each recombination window:
+# 1 cM windows
+genes_r_ancestry/results$ for i in $(cut -f4 map_pos_1cM_windows.txt | tail -n +2); do grep -w $i map_pos_1cM_windows.txt > windows_1cM/$i.bed; done
+e.g. results/windows_1cM/W10.bed
+# 0.2 cM windows
+genes_r_ancestry/results$ for i in $(cut -f4 map_pos_0.2cM_windows.txt | tail -n +2); do grep -w $i map_pos_0.2cM_windows.txt > windows_0.2cM/$i.bed; done
+# ii. took every 100th SNP from pass2_alloMAIZE and pass2_alloMAIZE_PalmarChico;
+# saved in results/global_ancestry/$PREFIX/prunedby100/whole_genome.beagle.gz
+# iii. used bedtools to extract overlap between SNPs and regions
+To accomplish this, I use an awk split file; first mapping the window label onto the GL line,
+# then sending lines into each window-named file based on their 1cM window label
+genes_r_ancestry$ zcat ../global_ancestry/results/thinnedSNPs/pass2_alloMAIZE_PalmarChico/prunedBy100/whole_genome.beagle.gz | \
+awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | \
+bedtools map -a stdin -b results/map_pos_1cM_windows.txt -c 4 -o collapse -sorted \
+-g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4- | \
+awk '{print > "results/GL_1cM/pass2_alloMAIZE_PalmarChico/"$NF".txt"}'
+# this is MUCH faster
+# these windows have as many as > 1000 SNPs and as few as 1 SNP
+genes_r_ancestry$ wc -l results/GL_1cM/pass2_alloMAIZE_PalmarChico/*.txt
+# After I will gzip and remove that last field (the window name)
+hilo/genes_r_ancestry$ for i in $(cut -f4 results/map_pos_1cM_windows.txt | tail -n +2); \
+do awk '{NF--; print $0}' results/GL_1cM/pass2_alloMAIZE_PalmarChico/$i.txt | \
+gzip > results/GL_1cM/pass2_alloMAIZE_PalmarChico/$i.beagle.gz; done
+# note: one window must not have any SNPs so that file is empty: results/GL_1cM/pass2_alloMAIZE_PalmarChico/W382.beagle.gz:
+awk: fatal: cannot open file `results/GL_1cM/pass2_alloMAIZE_PalmarChico/W382.txt' for reading (No such file or directory)
+
+# now make resample windows for my bootstraps:
+bootstrap/windows_1cM/r5_recomb1/boot1.list # made using interactive R script define_bootstrap_windows_from_map.R
+bootstrap/windows_1cM/r5_recomb1/pass2_alloMAIZE_PalmarChico/boot1.beagle.gz (with header)
+for r in 1; do for b in {1..2}; \
+do (zcat ../global_ancestry/results/thinnedSNPs/pass2_alloMAIZE_PalmarChico/prunedBy100/whole_genome.beagle.gz | head -n 1; \
+for w in $(cat results/bootstrap/windows_1cM/r5_recomb$r/boot$b.list); \
+do zcat results/GL_1cM/pass2_alloMAIZE_PalmarChico/$w.beagle.gz; \
+done) | gzip > results/bootstrap/windows_1cM/r5_recomb$r/pass2_alloMAIZE_PalmarChico/boot$b.beagle.gz; done; done
+# This is pretty slow, so I put it into a script:
+genes_r_ancestry$ sbatch --array=1-100 --export=PREFIX=pass2_alloMAIZE_PalmarChico,r_bins=5,prunedBy=100,WIND=1cM makeBootstrapGLFiles.sh
+
+
 # TO DO:
 # (2) Compare NGSAdmix mean admixture proportions to f4-ratio statistics genomewide results for each population.
 # (3) Divide genome into .01cM fixed windows. summarise mean f4 for each window.
