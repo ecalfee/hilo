@@ -1,17 +1,19 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
-#SBATCH -D /home/ecalfee/hilo/data
+#SBATCH --partition=med2
+#SBATCH -D /home/ecalfee/hilo/global_ancestry
 #SBATCH -J catGLNth
 #SBATCH -o /home/ecalfee/hilo/slurm-log/catGLNth_%A_%a.out
 #SBATCH -t 10:00:00
 #SBATCH --mem=8G
 
+# to run:
+# sbatch --export=PREFIX=pass2pass2_alloMAIZE_PalmarChico,N=100 catBeagle_nth.sh
+
 # concatenates beagle genotype likelihood files, skipping headers and only taking 1 in N positions
 startR=0
 endR=425
-N=1000
-DIR_GL="geno_lik/merged_pass1_all_alloMaize4Low_16/allVar_depthFilt"
-DIR_OUT="geno_lik/merged_pass1_all_alloMaize4Low_16/prunedBy"$N
+DIR_GL="../variant_sites/results/$PREFIX"
+DIR_OUT="results/thinnedSNPs/$PREFIX/prunedBy$N"
 
 
 # general bash script settings to make sure if any errors in the pipeline fail
@@ -26,4 +28,4 @@ mkdir -p $DIR_OUT
 zcat $DIR_GL/region_$startR.beagle.gz | head -n 1 | gzip > $DIR_OUT/whole_genome.beagle.gz; \
 for (( i=$startR; i<=$endR; i++ )); do zcat $DIR_GL/region_$i.beagle.gz | tail -n +2; done | awk -v N=$N 'NR % N == 0' | gzip >> $DIR_OUT/whole_genome.beagle.gz
 
-echo "done running with cat beagle.gz every $N th position, regions $startN to $endN"
+echo "done running with cat beagle.gz every $N th position, regions $startN to $endN, sample set: $PREFIX"
