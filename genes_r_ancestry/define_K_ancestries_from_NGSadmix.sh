@@ -7,6 +7,7 @@
 #SBATCH --mem=4G
 
 # to run: sbatch --export=PREFIX=pass2_alloMAIZE_PalmarChico,WIND=1cM,K=3 --array=0-100 define_K_ancestries_from_NGSadmix.sh
+BOOT=$SLURM_ARRAY_TASK_ID
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
