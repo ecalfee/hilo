@@ -1,9 +1,9 @@
 #!/bin/bash -l
 #SBATCH --partition=med2
-#SBATCH -D /home/ecalfee/hilo/global_ancestry
+#SBATCH -D /home/ecalfee/hilo/genes_r_ancestry
 #SBATCH -J NGSadmix_boot
 #SBATCH -o /home/ecalfee/hilo/slurm-log/NGSadmix_bootstrap_r_%A_%a.out
-#SBATCH -t 6:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=8G
 #SBATCH -n 1
 #SBATCH --array=0-100
