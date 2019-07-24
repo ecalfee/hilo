@@ -29,13 +29,14 @@ set –o nounset
 
 echo "running NGSadmix"
 for r in {1..5}
-  do echo "recombination bin $i"
+  do echo "recombination bin $r"
   DIR="results/bootstrap/windows_$WIND/r5_recomb$r/$PREFIX"
   GL_FILE="$DIR/boot$i.beagle.gz"
+  mkdir -p "$DIR/K${K}"
   NGSadmix -likes "${GL_FILE}" \
   -K "${K}" -P 1 \
-  -o "${DIR}"/K"${k}"_boot"${i}"
-  echo "created output file: ${DIR}/K${k}_boot${i}"
+  -o "${DIR}"/K"${K}"/boot"${i}"
+  echo "created output file: ${DIR}/K${K}/boot${i}"
 done
 echo "all done!"
 # settings:

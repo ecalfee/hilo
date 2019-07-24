@@ -202,9 +202,9 @@ bedtools makewindows -w 1000 -g ../../data/refMaize/Zea_mays.AFPv4.dna.chr.autos
 genes_r_ancestry$ sbatch --array=0-100 --export=PREFIX=pass2_alloMAIZE_PalmarChico,prunedBy=100,WIND=1cM makeBootstrapGLFiles.sh
 Submitted batch job 12921741 - COMPLETED 7.23.19
 # run NGSAdmix on my bootstrap replicates
-results/bootstrap/windows_1cM/r5_recomb1/pass2_alloMAIZE_PalmarChico
 # (!) be sure to check effects aren't caused by low coverage individuals
-
+genes_r_ancestry$ sbatch --array=0 --export=PREFIX=pass2_alloMAIZE_PalmarChico,K=3,WIND=1cM runNGSadmix_bootstrap_r.sh
+Submitted batch job 12921891
 # TO DO:
 # make script that runs NGSAdmix on my bootstraps for K=3 ancestries and then processes results to tag ancestry maize/mexicana/parviglumis ancestry
 # first run and plot that just for the boot0 (should be same result as previously but with parviglumis added to the mix, so a 3rd ancestry)
