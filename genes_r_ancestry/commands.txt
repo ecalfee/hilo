@@ -210,7 +210,7 @@ genes_r_ancestry$ sbatch --array=1-100 --export=PREFIX=pass2_alloMAIZE_PalmarChi
 Submitted batch job 12921936 - COMPLETED 7.23.19
 # label NGSadmix output by group label ('maize'/'mexicana') and sample ID. I'll add this step into the script above for bootstrap.
 genes_r_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE_PalmarChico,K=3,WIND=1cM --array=0-100 define_K_ancestries_from_NGSadmix.sh
-
+Submitted batch job 12929855
 
 # TO DO:
 # make script that runs NGSAdmix on my bootstraps for K=3 ancestries and then processes results to tag ancestry maize/mexicana/parviglumis ancestry

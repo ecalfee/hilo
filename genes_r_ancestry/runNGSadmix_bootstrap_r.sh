@@ -16,7 +16,7 @@
 # r sets the recombination bin (out of 5)
 
 # set VARIABLES
-i=$SLURM_ARRAY_TASK_ID
+BOOT=$SLURM_ARRAY_TASK_ID
 
 # load module for NGSAdmix
 module load bio
@@ -31,12 +31,14 @@ echo "running NGSadmix"
 for r in {1..5}
   do echo "recombination bin $r"
   DIR="results/bootstrap/windows_$WIND/r5_recomb$r/$PREFIX"
-  GL_FILE="$DIR/boot$i.beagle.gz"
+  GL_FILE="$DIR/boot$BOOT.beagle.gz"
   mkdir -p "$DIR/K${K}"
   NGSadmix -likes "${GL_FILE}" \
   -K "${K}" -P 1 \
-  -o "${DIR}"/K"${K}"/boot"${i}"
-  echo "created output file: ${DIR}/K${K}/boot${i}"
+  -o "${DIR}"/K"${K}"/boot"${BOOT}"
+  echo "created output file: ${DIR}/K${K}/boot${BOOT}"
+  echo "using R to define which ancestry is mexicana"
+  Rscript ./define_K_ancestries.R ${PREFIX} ${r} ${WIND} ${BOOT} ${K}
 done
 echo "all done!"
 # settings:
