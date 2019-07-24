@@ -128,4 +128,3 @@ global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE_PalmarChico/prun
 Submitted batch job 12920657 - running 7.23.19
 
 # TO DO:
-# figure out which recombination windows have sites (use bedtools map or intersect?)

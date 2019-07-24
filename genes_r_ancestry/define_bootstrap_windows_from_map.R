@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(bedr)
 
 rmap = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt", 
                   stringsAsFactors = F, header = F)
@@ -95,7 +96,7 @@ rmap_ext = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt",
                   stringsAsFactors = F, header = T)
 
 
-map_pos_0.2cM <- do.call(rbind,
+map_pos_0.2cM_v0 <- do.call(rbind,
                           lapply(1:10, # for each chromosome
        function(x) data.frame(chr = x,
                               # get spaced cM positions each 0.2cM
@@ -118,19 +119,69 @@ map_pos_0.2cM <- do.call(rbind,
   mutate(window = paste0("w", 1:nrow(.))) %>%
   left_join(., rmap[ , c("chr", "pos_cM", "original")], by = c("chr", "pos_cM")) %>%
   # mark if interval was one of the original 0.2cM windows mapped w/ 2 original markers
-  mutate(original_map0.2markers = sapply(original, isTRUE)) %>%
-  # get quintile bin for recombination rate
+  mutate(original_map0.2markers = sapply(original, isTRUE))
+
+# also get 1cM windows and their mean recombination rates
+map_pos_1cM_v0 <- do.call(rbind,
+                       lapply(1:10, # for each chromosome
+                              function(x) data.frame(chr = x,
+                                                     # get spaced cM positions each 0.2cM
+                                                     # starting with the rounded up cM of bp=1
+                                                     pos_cM = seq(ceiling(5*rmap_ext$pos_cM[first(which(rmap_ext$chr == x))])/5,
+                                                                  rmap_ext$pos_cM[last(which(rmap_ext$chr == x))],
+                                                                  by = 1)) %>%
+                                # get position in bp using linear approximation
+                                mutate(pos_bp = round(approx(x = rmap_ext$pos_cM[rmap_ext$chr == x],
+                                                             y = rmap_ext$pos_bp[rmap_ext$chr == x],
+                                                             xout = pos_cM,
+                                                             method = "linear")$y, 0)) %>%
+                                mutate(start = pos_bp - 1) %>% # bed coordinates start at 0
+                                mutate(end = c(.$start[-1], NA)) %>% # make non-overlapping by ending 1bp short of next start
+                                mutate(width_bp = end - start) %>%
+                                mutate(cM_Mb = 1/(width_bp*10^-6)) %>%
+                                filter(!is.na(end)) # last position just marks end of the last interval, not it's own start
+                       )) %>% 
+  #name intervals, e.g. w9
+  mutate(window = paste0("W", 1:nrow(.))) 
+
+
+# ooops, top 5th of cM windows is a lot smaller than top 5th of genome
+# I want to define quantiles from physical space covered, not proportion windows
+
+# get quantile bin for recombination rate 
+sorted_0.2cM_bins <- map_pos_0.2cM_v0 %>%
+    arrange(cM_Mb) %>%
+    mutate(cum_pos_bp = cumsum(width_bp)) %>%
+    mutate(cum_percentile_bp = cum_pos_bp/max(cum_pos_bp))
+sorted_1cM_bins <- map_pos_1cM_v0 %>%
+  arrange(cM_Mb) %>%
+  mutate(cum_pos_bp = cumsum(width_bp)) %>%
+  mutate(cum_percentile_bp = cum_pos_bp/max(cum_pos_bp))
+breaks_5r_0.2cM <- sapply(seq(0, 1, by = .2), function(x) sorted_0.2cM_bins$cM_Mb[first(which(sorted_0.2cM_bins$cum_percentile_bp >= x))])
+breaks_5r_1cM <- sapply(seq(0, 1, by = .2), function(x) sorted_1cM_bins$cM_Mb[first(which(sorted_1cM_bins$cum_percentile_bp >= x))])
+  
+# label bins in data by their quantile  
+map_pos_0.2cM <- map_pos_0.2cM_v0 %>%
   mutate(bin_r5 = cut(cM_Mb, 
-                      breaks = quantile(.$cM_Mb, p = seq(0, 1, by = .2)),
+                      breaks = breaks_5r_0.2cM, 
                       right = T,
                       include.lowest = T)) %>%
   dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "pos_cM", "original_map0.2markers"))
   
+map_pos_1cM <- map_pos_1cM_v0 %>%
+  mutate(bin_r5 = cut(cM_Mb, 
+                      breaks = breaks_5r_1cM, 
+                      right = T,
+                      include.lowest = T)) %>%
+  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "pos_cM"))
 
 # a little less than half the intervals have 2 original mapped markers:
 table(map_pos_0.2cM$original_map0.2markers)
 table(map_pos_0.2cM$bin_r5)
+table(map_pos_1cM$bin_r5) # similar story but fewer extremes
+# hist quantile differences neighboring windows
 hist(diff(as.integer(map_pos_0.2cM$bin_r5)))
+hist(diff(as.integer(map_pos_1cM$bin_r5)))
 # how spaced are they? can I merge into 1cM regions? 
 # worth doing this broader scale in addition -- it's mostly a centromere/telomere thing
 map_pos_0.2cM %>%
@@ -140,38 +191,6 @@ map_pos_0.2cM %>%
   facet_wrap(~chr)
 ggsave("plots/map_pos_0.2cM_windows_log_recomb_rate.png",
        width = 8, height = 8, units = "in")
-
-# also get 1cM windows and their mean recombination rates
-map_pos_1cM <- do.call(rbind,
-                         lapply(1:10, # for each chromosome
-                                function(x) data.frame(chr = x,
-                                                       # get spaced cM positions each 0.2cM
-                                                       # starting with the rounded up cM of bp=1
-                                                       pos_cM = seq(ceiling(5*rmap_ext$pos_cM[first(which(rmap_ext$chr == x))])/5,
-                                                                    rmap_ext$pos_cM[last(which(rmap_ext$chr == x))],
-                                                                    by = 1)) %>%
-                                  # get position in bp using linear approximation
-                                  mutate(pos_bp = round(approx(x = rmap_ext$pos_cM[rmap_ext$chr == x],
-                                                               y = rmap_ext$pos_bp[rmap_ext$chr == x],
-                                                               xout = pos_cM,
-                                                               method = "linear")$y, 0)) %>%
-                                  mutate(start = pos_bp - 1) %>% # bed coordinates start at 0
-                                  mutate(end = c(.$start[-1], NA)) %>% # make non-overlapping by ending 1bp short of next start
-                                  mutate(width_bp = end - start) %>%
-                                  mutate(cM_Mb = 1/(width_bp*10^-6)) %>%
-                                  filter(!is.na(end)) # last position just marks end of the last interval, not it's own start
-                         )) %>% 
-  #name intervals, e.g. w9
-  mutate(window = paste0("W", 1:nrow(.))) %>%
-  # get quintile bin for recombination rate
-  mutate(bin_r5 = cut(cM_Mb, 
-                      breaks = quantile(.$cM_Mb, p = seq(0, 1, by = .2)),
-                      right = T,
-                      include.lowest = T)) %>%
-  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "pos_cM"))
-# table quantile differences
-table(map_pos_1cM$bin_r5)
-hist(diff(as.integer(map_pos_1cM$bin_r5)))
 map_pos_1cM %>%
   ggplot(., aes(x = pos_cM, y = log(cM_Mb))) +
   geom_point() +
@@ -180,21 +199,11 @@ map_pos_1cM %>%
 ggsave("plots/map_pos_1cM_windows_log_recomb_rate.png",
        width = 8, height = 8, units = "in")
 
-# print diff lists for each quintile
+# print lists for each quantile
 write.table(map_pos_0.2cM, "results/map_pos_0.2cM_windows.txt",
             quote = F, col.names = T, row.names = F, sep = "\t")
 write.table(map_pos_1cM, "results/map_pos_1cM_windows.txt",
             quote = F, col.names = T, row.names = F, sep = "\t")
-lapply(1:5, function(i)
-  write.table(map_pos_0.2cM$window[map_pos_0.2cM$bin_r5 == levels(map_pos_0.2cM$bin_r5)[i]],
-              paste0("results/r5_bin", i, "_0.2cM_windows.list"), 
-              quote = F, col.names = F, row.names = F)
-)
-lapply(1:5, function(i)
-  write.table(map_pos_1cM$window[map_pos_1cM$bin_r5 == levels(map_pos_1cM$bin_r5)[i]],
-              paste0("results/r5_bin", i, "_1cM_windows.list"), 
-              quote = F, col.names = F, row.names = F)
-  )
 
 # I may need to exclude windows with < 5 SNPs or something similar. First get SNPs in windows.
 r_windows_excl <- c("W382") # for now just exclude W382 for having no SNPs
@@ -204,6 +213,10 @@ set.seed(100) # set seed for replication
 for (r in 1:5){ # 5 recombination rate quintiles
   r_windows <- map_pos_1cM$window[map_pos_1cM$bin_r5 == levels(map_pos_1cM$bin_r5)[r]]
   r_windows_incl <- r_windows[!(r_windows %in% r_windows_excl)]
+  # boot0 is the original data/windows:
+  write.table(x = r_windows_incl,
+              file = paste0("results/bootstrap/windows_1cM/r5_recomb", r, "/boot", 0, ".list"),
+              quote = F, col.names = F, row.names = F, sep = "\t")
   for (b in 1:100){ # 100 bootstrap samples 
     # (same size = same # windows as original data 
     # but windows are sampled w/ replacement)
@@ -215,4 +228,39 @@ for (r in 1:5){ # 5 recombination rate quintiles
   }
 }
 
+
+# extra stuff:
+windows_10kb <- read.table("../data/refMaize/windows_10kb/whole_genome.bed",
+                           header = F, sep = "\t", stringsAsFactors = F) %>%
+  data.table::setnames(c("chr", "start", "end", "N_window_10kb"))%>%
+  mutate(chr = as.character(chr))
+windows_1kb <- read.table("../data/refMaize/windows_1kb_whole_genome.bed",
+                           header = F, sep = "\t", stringsAsFactors = F) %>%
+  data.table::setnames(c("chr", "start", "end"))%>%
+  mutate(chr = as.character(chr))
+r_0.2cM_by_10kb_window <- bedr(
+  engine = "bedtools", 
+  input = list(a = windows_10kb, b = mutate(map_pos_0.2cM, chr = as.character(chr))), 
+  method = "map", 
+  params = "-c 5 -o mean -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+  check.chr = F
+) %>%
+  data.table::setnames(c("chr", "start", "end", "N_window_10kb", "mean_cM_Mb")) %>%
+  mutate(mean_cM_Mb = as.numeric(mean_cM_Mb))
+r_0.2cM_by_1kb_window <- bedr(
+  engine = "bedtools", 
+  input = list(a = windows_1kb, b = mutate(map_pos_0.2cM, chr = as.character(chr))), 
+  method = "map", 
+  params = "-c 5 -o mean -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+  check.chr = F
+) %>%
+  data.table::setnames(c("chr", "start", "end", "mean_cM_Mb")) %>%
+  mutate(mean_cM_Mb = as.numeric(mean_cM_Mb))
+
+# quantiles over 10kb windows pretty much match quantiles over bp
+# because these windows are very short compared to changes in recomb. rate
+# but it's more accurate to get quantiles from ind. bp as I do above
+# using cumsum() function (this is best)
+round(quantile(r_0.2cM_by_10kb_window$mean_cM_Mb, na.rm = T), 2)
+round(quantile(r_0.2cM_by_1kb_window$mean_cM_Mb, na.rm = T), 2)
 
