@@ -123,8 +123,8 @@ Submitted batch job 12920480 - COMPLETED
 global_ancestry$ sbatch --export=PREFIX=pass2_alloMAIZE,N=100 catBeagleGL_nth.sh
 Submitted batch job 12920481 - COMPLETED
 global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE/prunedBy100 runNGSadmix.sh
-Submitted batch job 12920651 - running 7.23.19
+Submitted batch job 12920651 - COMPLETED 7.23.19
 global_ancestry$ sbatch -p med2 --export=PREFIX=pass2_alloMAIZE_PalmarChico/prunedBy100 runNGSadmix.sh
-Submitted batch job 12920657 - running 7.23.19
+Submitted batch job 12920657 - COMPLETED 7.23.19
 
 # TO DO:
