@@ -1206,3 +1206,61 @@ data.frame(maize = apply(maize_anc < 0.1 | maize_anc_s <= -2, 1, sum),
 ggsave("plots/hist_shared_low_minor_ancestry_01_or2sd.png",
        height =6, width = 8, units = "in", device = "png")
 
+
+# compare results from NGSAdmix to ancestry_hmm.
+# use same recombination bins at 1cM scale to make
+# this most direct. And bootstrap.
+# (1) get window and recombination rate and recomb. bin
+# for each site in sites (i.e. that has an ancestry call)
+r_sites0 <- sites %>%
+  mutate(start = pos - 1, end = pos) %>%
+  mutate(chr = as.character(chr)) %>%
+  dplyr::select(chr, start, end, pos, major, minor)
+windows_1cM <- read.table("results/map_pos_1cM_windows.txt",
+                          header = T, stringsAsFactors = F,
+                          sep = "\t") %>%
+  mutate(chr = as.character(chr))
+r_sites0_windows <- bedr(
+  engine = "bedtools", 
+  input = list(a = r_sites0, 
+               b = windows_1cM), 
+  method = "map", 
+  params = "-c 4 -o collapse -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+  check.chr = F
+) %>%
+  data.table::setnames(c("chr", "start", "end", "pos", "major", "minor", "window_1cM"))
+table(r_sites0_windows$window_1cM == ".") # a few sites are outside of windows
+r_1cM <- windows_1cM %>%
+  dplyr::rename(window_start = start) %>%
+  dplyr::rename(window_end = end) %>%
+  dplyr::rename(window_start_cM = pos_cM) %>%
+  left_join(r_sites0_windows, .,
+                      by = c("chr", "window_1cM"="window")) %>%
+  mutate(chr = as.integer(chr)) %>%
+  mutate(pos = as.integer(pos)) %>%
+  left_join(., d[ , c("chr", "pos", "pop_meanAlpha_maize", "pop_meanAlpha_mex",
+                      "meanAlpha_maize", "meanAlpha_mex")],
+            by = c("chr", "pos"))
+r2 <- mutate(d_1cM,
+             bin_r5 = factor(bin_r5,
+                             ordered = T,
+                                levels = c("[0.0185,0.0524]", 
+                                           "(0.0524,0.194]",
+                                           "(0.194,0.483]",
+                                           "(0.483,1.09]",
+                                           "(1.09,287]")))
+# (2) plot means across 5 recomb. bins
+r2 %>%
+  ggplot(aes(x = bin_r5, y = meanAlpha_maize)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+r2 %>%
+  ggplot(aes(x = bin_r5, y = meanAlpha_mex)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+# (3) bootstrap
+# to bootstrap, take mean ancestry of each window.
+# then resample windows.
+# note: it could be I'm sampling highest recomb.
+# rate regions within these 1cM blocks.
