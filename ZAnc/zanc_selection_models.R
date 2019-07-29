@@ -2,6 +2,8 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(viridis)
+library(reshape2)
 library(VennDiagram)
 
 # TO DO:
@@ -1097,6 +1099,8 @@ if (rerun_all_models){ # rerun or just reload results
   simple_bElev_anc <- read.table(paste0("results/models/", PREFIX, "/maize/simple_bElev_anc.txt"),
                                  sep = "\t",
                                  stringsAsFactors = F, header = T)
+  simple_bElev_mvn <- read.table(paste0("results/models/", PREFIX, "/maize/simple_bElev_mvn_seed", seed, ".txt"),
+              sep = "\t", stringsAsFactors = F, header = T)
 }
 
 
@@ -1713,3 +1717,199 @@ ggsave("plots/flower_time_structural_variants.png",
 # chr3 86Mb
 # chr5 105Mb
 # chr3 v3. 79Mb - 6Mb inversion??
+
+# QQ plots
+png("plots/QQ_mean_maize_anc_MVN01_data.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(mvn_01_maize_mean, maize_anc_mean, cex = .1,
+       main = "QQ plot mean mexicana ancestry across maize pops",
+       xlab = "mean mex. ancestry in maize MVN (truncated) sims",
+       ylab = "mean mex. ancestry in maize from data")
+abline(a = 0, b = 1, col = "blue")
+#quantile(mvn_01_maize_mean, c(.5, .75, .8, .9, .95, .99, .999))
+#quantile(maize_anc_mean, c(.5, .75, .8, .9, .95, .99, .999))
+abline(v = quantile(mvn_01_maize_mean, c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+# difference of truncating or not
+png("plots/QQ_mean_maize_anc_MVN01_MVN.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(mvn_01_maize_mean, apply(mvn_maize, 1, mean), cex = .1,
+       main = "QQ plot mean mexicana ancestry across maize pops")
+abline(a = 0, b = 1, col = "blue")
+#quantile(mvn_01_maize_mean, c(.5, .75, .8, .9, .95, .99, .999))
+#quantile(maize_anc_mean, c(.5, .75, .8, .9, .95, .99, .999))
+abline(v = quantile(apply(mvn_maize, 1, mean), c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+# slope simple bElev:
+png("plots/QQ_slope_bElev_MVN01_data.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(simple_bElev_mvn$envWeights, simple_bElev_anc$envWeights, cex = .1,
+       main = "QQ plot slope mex anc ~ elev across maize pops",
+       xlab = "slopes (truncated) MVN simulation",
+       ylab = "slopes observed in data")
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(simple_bElev_mvn$envWeights, c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+log10_pvals_simple_bElev_mvn <- log10(simple_bElev_mvn$pval_Env)
+log10_pvals_simple_bElev_mvn[is.na(log10_pvals_simple_bElev_mvn)] <- 0 # some are NA for slope zero
+
+png("plots/QQ_pval_bElev_MVN01_data.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(log10_pvals_simple_bElev_mvn, log10(simple_bElev_anc$pval_Env), cex = .1,
+       main = "QQ plot pval mex anc ~ elev across maize pops",
+       xlab = "log10 pval slope w/ elev (truncated) MVN sim",
+       ylab = "log10 pval slope w/ elev from data")
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(log10_pvals_simple_bElev_mvn, c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+# zTz QQ plots
+png("plots/QQ_zTz_MVN01_chisq.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(#x = qchisq(ppoints(500), df = 14), 
+      x = rchisq(1000000, df = 14),
+       y = zTz3_01_mvn,
+       main = "QQ plot truncated [0,1] mvn sim. zTz vs. chi-sq df =14",
+       cex = .1)
+#qqline(y = zTz3_01_mvn, distribution = function(p) qchisq(p, df = 14),
+#       prob = c(0.25, 0.75), col = "blue")
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(rchisq(100000, df = 14), c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+# non-truncated MVN simulation vs. chisq:
+png("plots/QQ_zTz_MVN_chisq.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(#x = qchisq(ppoints(500), df = 14), 
+  x = rchisq(1000000, df = 14),
+  y = zTz3_mvn,
+  main = "QQ plot untruncated mvn sim. zTz vs. chi-sq df =14",
+  cex = .1)
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(rchisq(100000, df = 14), c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+# QQ plot zTz data vs. chi-sq
+png("plots/QQ_zTz_data_chisq.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(#x = qchisq(ppoints(500), df = 14), 
+  x = rchisq(1000000, df = 14),
+  y = zTz3,
+  main = "QQ plot empirical zTz vs. chi-sq df =14",
+  cex = .1)
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(rchisq(100000, df = 14), c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+# QQ plot zTz data vs. MVN01
+png("plots/QQ_zTz_data_MVN01.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(
+  x = zTz3_01_mvn,
+  y = zTz3,
+  main = "QQ plot empirical zTz vs. MVN truncated [0,1]",
+  cex = .1)
+abline(a = 0, b = 1, col = "blue")
+abline(v = quantile(zTz3_01_mvn, c(.01, .05, .1, .9, .95, .99)),
+       col = c("red", "orange", "skyblue", "skyblue", "orange", "red"))
+legend("topleft", legend = c(.9, .95, .99), col = c("skyblue", "orange", "red"),
+       lty = 1, title = "percentile")
+dev.off()
+
+
+
+# zElev QQ plots
+
+
+# what is causing the deviation from MVN expectation?
+# one thing could be non-normality due to the boundary (or smaller binomial samples)
+
+# this is not the main difference, but even the simulation
+# after truncations isn't a great fit:
+# I could check for different realized K's after the truncation
+zAnc_maize_MVN01 = make_K_calcs(t(mvn_01_maize))
+png("plots/K_matrix_diff_MVN01_data_scatterplot.png",
+    height = 6, width = 8, units = "in", res = 300)
+plot(zAnc_maize$K, zAnc_maize_MVN01$K, cex = 1,
+     main = "comparing K matrix before and after truncation [0,1]",
+     xlab = "empirical var-cov values going into MVN sim",
+     ylab = "var-cov values of sim after truncation",
+     xlim = c(0, .05),
+     ylim = c(0, .05))
+abline(a = 0, b = 1, col = "blue")
+dev.off()
+
+# plot a subtraction of the K matrices:
+melt(zAnc_maize_MVN01$K - zAnc_maize$K) %>%
+  #filter(Var1 != Var2) %>%
+  left_join(., meta.pops[, c("ELEVATION", "pop", "LOCALITY")],
+            by=c("Var1"="pop")) %>%
+  left_join(., meta.pops[, c("ELEVATION", "pop", "LOCALITY")],
+            by=c("Var2"="pop")) %>%
+  ggplot(data = ., aes(reorder(LOCALITY.x, ELEVATION.x), 
+                       y=reorder(LOCALITY.y, ELEVATION.y), 
+                       fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_fill_viridis(begin = 0, end = 1, direction = 1) +  
+  ggtitle("K covariance after truncation minus before") +
+  xlab('Maize pops low -> high elevation') +
+  ylab('Maize pops low -> high elevation')
+ggsave("plots/K_matrix_diff_MVN_01_vs_data.png", 
+       height = 6, width = 8, 
+       units = "in", device = "png")
+
+melt(zAnc_maize$K) %>%
+  #filter(Var1 != Var2) %>%
+  ggplot(data = ., aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_fill_viridis(begin = 0, end = 1, direction = 1) +  
+  ggtitle("K covariance matrix original")
+melt(zAnc_maize_MVN01$K) %>%
+  #filter(Var1 != Var2) %>%
+  ggplot(data = ., aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_fill_viridis(begin = 0, end = 1, direction = 1) +  
+  ggtitle("K covariance matrix original after truncation")
+
+# do the alphas change too? some, yes
+data.frame(MVN01 = zAnc_maize_MVN01$alpha,
+                     empirical = zAnc_maize$alpha,
+                     pop = names(zAnc_maize$alpha)) %>%
+  left_join(., meta.pops, by = "pop") %>%
+  tidyr::gather(., "source", "alpha", c("MVN01", "empirical")) %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = alpha, color = source)) +
+  geom_point() +
+  ggtitle("Effect of truncating MVN at [0,1] on mean pop mex. ancestry") +
+  ylab("Mean mexicana ancestry (alpha)") +
+  xlab("maize population low -> high elevation") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave("plots/alphas_diff_MVN_01_vs_data.png", 
+       height = 6, width = 8, 
+       units = "in", device = "png")
+
+

@@ -17,6 +17,9 @@ min_coverage = 0.05
 K = 2 # K = number of genetic clusters/groups
 K = 3
 K = 4
+
+ancestries <- c("maize", "mexicana", "parviglumis")[1:K]
+
 # starting with pass1 analysis from 1st round of sequencing
 #file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
 PREFIX_METRICS <- "hilo_alloMAIZE_MAIZE4LOW"
@@ -37,6 +40,8 @@ hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T,
 maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
 landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
 seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
+parviglumis <- read.table("../samples/PalmarChico_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
+
 
 # only for using RIMMA0625_small
 #landraces$ID[landraces$ID == "RIMMA0625"] <- "RIMMA0625_small"
@@ -50,10 +55,18 @@ ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.t
 # including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
 metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
 
+# get elevation data
+elev = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+                  stringsAsFactors = F, header = T, sep = "\t")
+
+
 # combine sample meta data
-meta <- bind_rows(hilo, maize4low, landraces) %>%
+meta <- bind_rows(hilo, maize4low, landraces, parviglumis) %>%
   left_join(., metrics, by = "ID") %>%
-  mutate(., group = paste(symp_allo, zea, sep = "_"))
+  mutate(., group = paste(symp_allo, zea, sep = "_")) %>%
+  left_join(., elev, by = c("popN", "zea", "symp_allo", 
+                            "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+  mutate(est_coverage = ifelse(zea == "parviglumis", 10, est_coverage))
 
 # join bams and admix by position (CAUTION - bam list order and admix results MUST MATCH!)
 d <- bind_cols(IDs, admix)  %>%
@@ -61,6 +74,11 @@ d <- bind_cols(IDs, admix)  %>%
   arrange(., popN) %>%
   arrange(., zea) %>%
   arrange(., symp_allo)
+
+# order by elevation and group, filter out low coverage ind's
+d_meta <- d %>%
+  filter(., est_coverage >= min_coverage) %>% # only include individuals with at least .05x coverage
+  .[with(., order(group, ELEVATION)), ]
 
 # for K=2 only, which ancestry anc1 or anc2 is mexicana-like?
 if (K == 2) {
@@ -241,6 +259,7 @@ meta.ind = left_join(d[ , c("ID", "popN", "total_reads_pass", "est_coverage", "g
   .[with(., order(group, ELEVATION)), ]
 # combined with admixture results
 d_meta.ind = left_join(dplyr::select(d, ID, starts_with("anc")), meta.ind, by = "ID")
+
 
 # simple linear model predicting ancestry2 from group and elevation
 d_meta.ind %>%
@@ -523,4 +542,71 @@ freqs_f %>%
 ggsave("plots/fst_by_recomb_bin.png",
        height = 6, width = 12,
        units = "in", device = "png")
+
+# make plots for pruned every 100th SNP:
+K = 2
+PREFIX = "pass2_alloMAIZE"
+IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+ancestries <- c("maize", "mexicana", "parviglumis")[1:K]
+
+
+file_prefix_by100 <- paste0("results/NGSAdmix/", PREFIX, "/prunedBy100/K", K)
+admix_by100 <- read.table(paste0(file_prefix_by100, ".qopt"))
+colnames(admix_by100) <- paste0("anc", 1:K) #c("anc1", "anc2")
+d_by100 <- bind_cols(IDs, admix_by100)  %>%
+  left_join(., meta, by = "ID") %>%
+  arrange(., popN) %>%
+  arrange(., zea) %>%
+  arrange(., symp_allo) %>%
+  filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
+  .[with(., order(group, ELEVATION)), ]
+
+# assign mexicana ancestry
+which_anc_by100 <- data.frame(ancestry = colnames(admix_by100),
+                        ancestry_label = 
+                          sapply(colnames(admix_by100), function(x) 
+                            names(which.max(tapply(d_by100[ , x], d_by100$zea, mean)))),
+                        stringsAsFactors = F)
+
+anc_by100 = d_by100 %>% 
+  tidyr::gather(., "ancestry", "p", colnames(admix_by100)) %>%
+  left_join(., which_anc_by100, by = "ancestry") %>%
+  dplyr::select(-ancestry) %>%
+  tidyr::spread(., ancestry_label, p)
+
+# simple admixture plot:
+anc_by100 %>% 
+  arrange(., popN) %>%
+  tidyr::gather(., "ancestry", "p", ancestries) %>%
+  ggplot(., aes(fill=ancestry, y=p, x=ID)) +
+  geom_bar(stat = "identity", position = "fill") + 
+  facet_wrap(~group)
+
+# plot linear models of ancestry over elevation
+lmZeaElev_by100 <- anc_by100 %>%
+  filter(., symp_allo == "sympatric") %>%
+  lm(data = ., mexicana ~ zea*ELEVATION)
+
+anc_by100 %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = mexicana, color = LOCALITY, size = est_coverage, shape = zea)) +
+  geom_point() +
+  ylab("mexicana ancestry") +
+  geom_abline(intercept = lmZeaElev_by100$coefficients["(Intercept)"] + lmZeaElev_by100$coefficients["zeamexicana"], 
+              slope = lmZeaElev_by100$coefficients["ELEVATION"] + lmZeaElev_by100$coefficients["zeamexicana:ELEVATION"],
+              color = colors_maize2mex[3]) +
+  geom_abline(intercept = lmZeaElev_by100$coefficients["(Intercept)"], 
+              slope = lmZeaElev_by100$coefficients["ELEVATION"],
+              color = colors_maize2mex[2]) +
+  ggtitle("Clines in mexicana ancestry across elevation") +
+  #theme(legend.position="bottom") +
+  labs(color = "Location", shape = "Subspecies")
+ggsave(paste0("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".png"), 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+
+
+
         

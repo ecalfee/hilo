@@ -2,3 +2,11 @@
 data/
 slurm-log/
 plots/
+plots_old/
+*/results/
+*/metrics/
+*.Rhistory
+*.aux
+*.pdf
+*.log
+*.synctex.gz
