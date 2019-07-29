@@ -234,23 +234,25 @@ if (K == 2){
 
 # make NGSadmix plot for poster:
 # get elevation data
-meta = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+meta.pops = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
                  stringsAsFactors = F, header = T, sep = "\t")
-d_meta = left_join(d, meta, by = c("popN", "zea", "symp_allo", 
-                                   "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+meta.ind = left_join(d[ , c("ID", "popN", "total_reads_pass", "est_coverage", "group")], meta.pops, by = "popN") %>%
   filter(., est_coverage >= min_coverage) %>% # only include individuals with at least .05x coverage
   .[with(., order(group, ELEVATION)), ]
+# combined with admixture results
+d_meta.ind = left_join(dplyr::select(d, ID, starts_with("anc")), meta.ind, by = "ID")
+
 # simple linear model predicting ancestry2 from group and elevation
-d_meta %>%
+d_meta.ind %>%
   filter(., symp_allo == "sympatric") %>%
   lm(data = ., anc2 ~ zea + ELEVATION + est_coverage) %>%
   summary(.)
-lmZeaElev <- d_meta %>%
+lmZeaElev <- d_meta.ind %>%
   filter(., symp_allo == "sympatric") %>%
   lm(data = ., anc2 ~ zea*ELEVATION) 
 summary(lmZeaElev)
 # plot linear model predictions for effects of elevation
-d_meta %>%
+d_meta.ind %>%
   filter(., symp_allo == "sympatric") %>%
   ggplot(., aes(x = ELEVATION, y = anc2, color = zea, size = est_coverage)) +
   geom_point() +
@@ -267,7 +269,7 @@ ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation.png",
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
-d_meta %>%
+d_meta.ind %>%
   filter(., symp_allo == "sympatric") %>%
   ggplot(., aes(x = ELEVATION, y = anc2, color = LOCALITY, size = est_coverage)) +
   geom_point() +
@@ -289,7 +291,7 @@ ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_
 png(paste0("plots/", PREFIX, "NGSadmix_K", K, "_over_", min_coverage, "x_coverage_wElevation_for_poster.png"),
     height = 5, width = 8, units = "in", res = 300)
 par(mar=c(4.1,4.1,4.1,4.1))
-bar = d_meta %>%
+bar = d_meta.ind %>%
   #dplyr::select(., colnames(admix)) %>%
   dplyr::select(., rev(colnames(admix))) %>% # reverse order so blue = mexicana
   t(.) %>%
@@ -301,13 +303,13 @@ title(main = "Admixture in highland maize and mexicana",
       ylab=paste0("Ancestry proportion K=", K, " (NGSAdmix)"))
 #title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric Mexicana", 
 #      line = 1)
-text(x = tapply(bar, d_meta$group, mean), par("usr")[3], srt = 60, adj= 1, xpd = TRUE,
-     labels = unique(d_meta$group), cex=0.45)
+text(x = tapply(bar, d_meta.ind$group, mean), par("usr")[3], srt = 60, adj= 1, xpd = TRUE,
+     labels = unique(d_meta.ind$group), cex=0.45)
 #title(xlab=paste("Allopatric Ref.", "Sympatric Maize", "Sympatric Mexicana",
 #      sep = "               |               "),
 #      line = 1)
 par(new = TRUE)
-plot(x = bar, y = d_meta$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
+plot(x = bar, y = d_meta.ind$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
      xlab = "", ylab = "")
 axis(side = 4, at = c(1000, 2000, 3000), 
      tick = T, labels = T, col = "black")
@@ -326,7 +328,7 @@ d_1000 <- bind_cols(pass1_allo4Low, admix_1000)  %>%
   arrange(., zea) %>%
   arrange(., symp_allo) %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
-d_meta_1000 = left_join(d_1000, meta, by = c("popN", "zea", "symp_allo", 
+d_meta.ind_1000 = left_join(d_1000, meta, by = c("popN", "zea", "symp_allo", 
                                    "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
   filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
   .[with(., order(group, ELEVATION)), ]
@@ -336,7 +338,7 @@ d_meta_1000 = left_join(d_1000, meta, by = c("popN", "zea", "symp_allo",
 png(paste0("../plots/NGSadmix_K", K, "_over_0.05x_coverage_wElevation_for_poster_pruned1000.png"),
     height = 5, width = 8, units = "in", res = 300)
 par(mar=c(4.1,4.1,4.1,4.1))
-bar_1000 = d_meta_1000 %>%
+bar_1000 = d_meta.ind_1000 %>%
   select(., colnames(admix_1000)) %>%
   t(.) %>%
   barplot(height = .,
@@ -349,7 +351,7 @@ title(xlab="Allopatric Maize | Allopatric Mexicana | Sympatric Maize | Sympatric
       line = 1)
 
 par(new = TRUE)
-plot(x = bar_1000, y = d_meta$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
+plot(x = bar_1000, y = d_meta.ind$ELEVATION, ylim = c(1000, 3000), axes = F, type = "p", cex = .1, 
      xlab = "", ylab = "")
 axis(side = 4, at = c(1000, 2000, 3000), 
      tick = T, labels = T, col = "black")
@@ -364,7 +366,7 @@ admix_r <- do.call(rbind,
                    lapply(1:5, function(i)
                      read.table(paste0("results/NGSAdmix/", PREFIX, "/recomb_", i,"_1percent/K2.qopt")) %>%
                        bind_cols(IDs, .) %>%
-                       left_join(., meta, by = "ID") %>%
+                       left_join(., meta.ind, by = "ID") %>%
                        arrange(., popN) %>%
                        arrange(., zea) %>%
                        arrange(., symp_allo) %>%
@@ -406,9 +408,27 @@ ggsave("plots/ind_mexicana-like-ancestry_by_recomb_bin_lines.png",
        height = 8, width = 8,
        units = "in", device = "png")
 
+# does the strength of selection against mexicana ancestry seem stronger 
+# for lower elevation populations?
+admix_r %>%
+  dplyr::mutate(est_coverage = ifelse(est_coverage > 2, 2, est_coverage)) %>%
+  filter(est_coverage > 0.05) %>%
+  ggplot(aes(x = recomb_bin, y = mexicana_ancestry, 
+             color = ELEVATION, group = ID)) +
+  geom_line() +
+  #geom_point(aes(size = est_coverage)) +
+  facet_wrap(~group) +
+  ggtitle("individual K=2 NGSAdmix mex-like ancestry estimate by r bin") +
+  xlab("low to high recombination bins (quintiles of 10kb windows)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("plots/ind_mexicana-like-ancestry_by_recomb_bin_lines_colorByElevation.png",
+       height = 8, width = 8,
+       units = "in", device = "png")
+
+# separate pattern by population -- seems to hold across most populations individually
 admix_r %>%
   filter(., est_coverage > 0.05) %>%
-  ggplot(aes(fill = recomb_bin, x = LOCALITY, y = mexicana_ancestry)) +
+  ggplot(aes(fill = recomb_bin, x = reorder(LOCALITY, ELEVATION), y = mexicana_ancestry)) +
   geom_boxplot() +
   facet_wrap(~group) +
   ggtitle("NGSadmix population mex-like ancestry estimates by r bin (boxplot of ind admixture proportions)") +
@@ -431,6 +451,39 @@ ggsave("plots/pop_mexicana-like-ancestry_by_recomb_bin_boxplot.png",
        units = "in", device = "png")
 # hmm .. looks like everyone has more mexicana ancestry in high r windows
 # including mexicana
+
+# remake plot of ancestry ~ elevation for different recombination bins
+admix_r %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = mexicana_ancestry, color = zea, size = est_coverage)) +
+  geom_point() +
+  ylab("mexicana ancestry") +
+  scale_colour_manual(values = colors_maize2mex[2:3]) +
+  geom_smooth(method = "lm", aes(group = zea)) +
+  ggtitle("Higher mexicana ancestry at higher elevations") +
+  facet_wrap(~recomb_bin)
+ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_andByRecombBin.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+# color this plot by LOCALITY
+admix_r %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = mexicana_ancestry, color = LOCALITY, size = est_coverage)) +
+  geom_point() +
+  ylab("mexicana ancestry") +
+  geom_smooth(method = "lm", aes(group = zea), color = "black") +
+  ggtitle("Higher mexicana ancestry at higher elevations") +
+  facet_wrap(~recomb_bin)
+ggsave("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_andByRecombBin_colorByPop.png", 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+
+
+
+
 
 # now look at Fst for the different r bins
 freqs_f <- do.call(rbind,

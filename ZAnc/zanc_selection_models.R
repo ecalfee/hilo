@@ -100,7 +100,8 @@ zTz3_mex <- apply(zAnc3_mex, 1, function(i) t(i) %*% i)
 if (rerun_all_models){ # rerun or just load results of models
   zBeta3_elev_maize <- apply(maize_anc, 1, function(l) # calculate slope for each locus
     zBeta3(ancFreq = l,
-           envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"], 
+           # center elevation
+           envWeights = meta.pops$ELEVATION[meta.pops$zea == "maize"] - mean(meta.pops$ELEVATION[meta.pops$zea == "maize"]), 
            invL = zAnc_maize$InvL, 
            alpha = zAnc_maize$alpha,
            zInt = T)) # has transformed intercept
@@ -117,6 +118,11 @@ if (rerun_all_models){ # rerun or just load results of models
                          stringsAsFactors = F))
 }
 
+# 
+zb3_elev_noncentered <- bind_cols(sites, read.table(paste0("results/models/", PREFIX, "/maize/elevation_noncentered.txt"),
+                                        sep = "\t",
+                                        header = T,
+                                        stringsAsFactors = F))
 
 # threshold Elevation-based selection - 11pops > 1900m experience (equal) selection, 3 lowland pops do not
 if (rerun_all_models){ # rerun or just load results of models
@@ -144,6 +150,26 @@ zb3_elev %>%
   mutate(zTz3 = zTz3) %>%
   ggplot(aes(x = log10(pval_zEnv), y = log10(zTz3), color = zEnv)) +
   geom_point()
+# take subset to plot
+# effect of centering environment should be to just change interpretation of intercept
+# as effect of elevation on mexicana ancestry at the mean of our sampled elevations
+# slope with environment doesn't change
+plot(zb3_elev_noncentered$zEnv[c(T, rep(F, 100))], zb3_elev$zEnv[c(T, rep(F, 100))])
+plot(zb3_elev_noncentered$pval_zEnv[c(T, rep(F, 100))], zb3_elev$pval_zEnv[c(T, rep(F, 100))])
+# intercept of course changes
+plot(zb3_elev_noncentered$zInt[c(T, rep(F, 100))], zb3_elev$zInt[c(T, rep(F, 100))])
+plot(zb3_elev_noncentered$pval_zInt[c(T, rep(F, 100))], zb3_elev$pval_zInt[c(T, rep(F, 100))])
+# centering, as expected, gets rid of strong negative relationship 
+# between estimated intercept and slope with environment
+plot(zb3_elev_noncentered$zInt[c(T, rep(F, 100))], zb3_elev_noncentered$zEnv[c(T, rep(F, 100))])
+plot(zb3_elev$zInt[c(T, rep(F, 100))], zb3_elev$zEnv[c(T, rep(F, 100))])
+# intercept may be more predictive than ~ elevation for a general misfit to the neutral model
+# in particular, high positive intercepts don't fit well
+plot(zTz3[c(T, rep(F, 100))], zb3_elev$zInt[c(T, rep(F, 100))])
+plot(zTz3[c(T, rep(F, 100))], zb3_elev$zEnv[c(T, rep(F, 100))])
+contour(x = zb3_elev$zInt[c(T, rep(F, 100))], # would need to be sorted low to high
+        y = zb3_elev$zEnv[c(T, rep(F, 100))],
+        z = zTz3[c(T, rep(F, 100))]) # doesn't work in r to visualize this way
 
 hist(zTz3)
 # ~zElev individual loci
@@ -210,6 +236,36 @@ if (rerun_all_models){ # rerun or just load results of models
                          header = T,
                          stringsAsFactors = F))
 }
+# compare intercept in elevation model to slope on 'all pops' model. 
+# Why aren't these the same? Is this just fitting error?
+plot(zb3_elev$zInt[c(T, rep(F, 100))], zb3_hmex$zEnv[c(T, rep(F, 100))])
+plot(zb3_elev$pval_zInt[c(T, rep(F, 100))], zb3_hmex$pval_zEnv[c(T, rep(F, 100))])
+# should be strongly negatively correlated
+plot(zb3_elev$sum_sq_res[c(T, rep(F, 100))] - zb3_hmex$sum_sq_res[c(T, rep(F, 100))],
+     zb3_elev$pval_zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black")) # mostly makes sense
+plot(1 - (zb3_elev$sum_sq_res[c(T, rep(F, 100))]/zb3_hmex$sum_sq_res[c(T, rep(F, 100))]),
+     zb3_elev$pval_zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black")) # mostly makes sense
+plot(zb3_hmex$sum_sq_res[c(T, rep(F, 100))] - zTz3[c(T, rep(F, 100))],
+     zb3_hmex$pval_zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+plot(1 - (zb3_hmex$sum_sq_res[c(T, rep(F, 100))]/zTz3[c(T, rep(F, 100))]),
+     zb3_hmex$pval_zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+plot(zb3_elev$sum_sq_res[c(T, rep(F, 100))] - zTz3[c(T, rep(F, 100))],
+     zb3_elev$zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+plot(zb3_elev$sum_sq_res[c(T, rep(F, 100))]-zTz3[c(T, rep(F, 100))],
+     zb3_elev$zInt[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+plot(1 - (zb3_elev$sum_sq_res[c(T, rep(F, 100))]/zTz3[c(T, rep(F, 100))]),
+     zb3_elev$pval_zEnv[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+plot(1 - (zb3_elev$sum_sq_res[c(T, rep(F, 100))]/zTz3[c(T, rep(F, 100))]),
+     zb3_elev$pval_zInt[c(T, rep(F, 100))],
+     col = ifelse(sites$inv4m[c(T, rep(F, 100))], "blue", "black"))
+quantile(zb3_elev$sum_sq_res - zTz3, .01)
 
 png("plots/zb3_hmex_pval_combined.png")
 hist(zb3_hmex$pval_zEnv)
@@ -848,8 +904,11 @@ plot(zb2$sum_sq_res ~ zb3_elev$sum_sq_res) # highly correlated
 cor(zb2$sum_sq_res, zb3_elev$sum_sq_res) # cor = .96
 cor(zb3_elev_int$zEnv, zb3_elev$zEnv) # poorly correlated
 # plot zb3_elev_int$zEnv vs. simple beta elevation
-
-
+plot(zb3_elev$zEnv[c(T, rep(F, 100))], simple_bElev_anc$envWeights[c(T, rep(F, 100))])
+# slopes are similar but pvalues are not ..
+plot(zb3_elev$pval_zEnv[c(T, rep(F, 100))], simple_bElev_anc$pval_Env[c(T, rep(F, 100))])
+plot(zb3_elev$sum_sq_res[c(T, rep(F, 100))], simple_bElev_anc$sum_sq_res[c(T, rep(F, 100))])
+# explanatory power is similar
 
 # make MVN simulations for maize
 n = 100000
