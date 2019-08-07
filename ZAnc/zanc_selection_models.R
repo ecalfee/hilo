@@ -2065,3 +2065,252 @@ ggsave(paste0("plots/a_few_example_loci_high_zTz_maize.png"),
        width = 10, height = 8, units = "in")
 
 
+# try creating a MVBeta (multi-variate beta) using copulas:
+# first get draws from a MVN
+x = rmvnorm(1000, mean = zAnc_maize$alpha, sigma = zAnc_maize$K)
+# then get cumulative distribution for those draws
+u = pnorm(x, zAnc_maize$alpha, sqrt(diag(zAnc_maize$K)))
+set.seed(1) # set seed then get binomial draws that match the quantiles
+# from the simulated normal
+k = qbinom(u, 10, zAnc_maize$alpha)
+colMeans(k)/10 - zAnc_maize$alpha
+#k = qbinom(u, 10, rep(c(.8, .2), 7))
+set.seed(1)
+k1 = t(sapply(1:1000, function(i) qbinom(u[i, ], 10, zAnc_maize$alpha)))
+colMeans(k1)/10 - zAnc_maize$alpha
+b = qbeta(u, #thetas estimated in fit_clines.R
+          shape1 = zAnc_maize$alpha * coef(m1)[15:28],
+          shape2 = (1 - zAnc_maize$alpha) * coef(m1)[1:14])
+d = qbeta(u, 
+          shape1 = 1, 
+          shape2 = 2)
+image(cor(x))
+image(cor(k)) # matches
+image(cor(k1)) # doesn't match -- I'm not sure why. should be the same model?
+image(cor(k)-cor(x))
+image(cor(b))
+image(cor(d))
+a <- prob * theta
+b <- (1 - prob) * theta
+rbeta(n, shape1 = a, shape2 = b)
+
+# try covariance in elevation instead of fitting a linear model
+# (because the linear model doesn't constrain the variance to 1, even though we think drift should be)
+# zAnc3 saves the zAnc scores for all 14 pops (col), and all loci (rows)
+# I want to get one vector zElev (in km elevation):
+meta.pops.maize$ELEVATION_km <- meta.pops.maize$ELEVATION/1000
+zElev_maize_vector <- c(zAnc_maize$InvL %*% meta.pops.maize$ELEVATION_km)
+# center it
+zElev_maize_vector_c <- zElev_maize_vector - mean(zElev_maize_vector)
+# calculate covariance between observed zAnc and zElev for maize pops
+cov_zAnc_zElev_maize <- apply(zAnc3[1:100,], 1, function(row)
+  mean((row - mean(row)) * zElev_maize_vector_c))
+
+# try it with centered elevations:
+# I want to get one vector zElev:
+zElev_maize_vector2 <- zAnc_maize$InvL %*% (meta.pops.maize$ELEVATION_km - mean(meta.pops.maize$ELEVATION_km))
+# center it
+zElev_maize_vector_c2 <- zElev_maize_vector2 - mean(zElev_maize_vector2)
+# calculate covariance between observed zAnc and zElev for maize pops
+cov_zAnc_zElev_maize2 <- apply(zAnc3[1:100,], 1, function(row)
+  mean((row - mean(row)) * zElev_maize_vector_c2))
+
+# try it with a scalar multiplied by elevation:
+# I want to get one vector zElev:
+zElev_maize_vector3 <- zAnc_maize$InvL %*% meta.pops.maize$ELEVATION_km/100
+# center it
+zElev_maize_vector_c3 <- zElev_maize_vector3 - mean(zElev_maize_vector3)
+# calculate covariance between observed zAnc and zElev for maize pops
+cov_zAnc_zElev_maize3 <- apply(zAnc3[1:100,], 1, function(row)
+  mean((row - mean(row)) * zElev_maize_vector_c3))
+
+plot(cov_zAnc_zElev_maize, cov_zAnc_zElev_maize2) # changes relationship to add or subtract from elevation vector
+plot(cov_zAnc_zElev_maize, cov_zAnc_zElev_maize3) # invariant to a scalar multiplication
+
+# test expectations/assumptions with small simulation
+# the simulation is the pop mean before environmental selection
+small_mvn_maize <- mvn_maize[1:1000, ] # just 1000 points
+meta.pops.maize$ELEVATION_km_c <- meta.pops.maize$ELEVATION_km - mean(meta.pops.maize$ELEVATION_km)
+meta.pops.maize$pop_factor <- 1:14
+meta.pops.maize$zElev_c <- zElev_maize_vector_c
+
+# add an allele frequency change that's linear with environment elevation
+small_mvn_maize_elev1 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/5))
+# variation with half the slope with environment
+small_mvn_maize_elev2 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/10))
+# variation where the zero effect of environment is not constrained to be at the mean observed elevation
+small_mvn_maize_elev3 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/5 + 0.1))
+# effect of mean elevation is a slight drop in mexicana ancestry
+small_mvn_maize_elev4 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/5 - 0.1))
+
+
+# put neutral and non-neutral sims together in a list
+sims_maize_elev <- list(small_mvn_maize, small_mvn_maize_elev1, small_mvn_maize_elev2, 
+                        small_mvn_maize_elev3, small_mvn_maize_elev4)
+
+# calculate zAnc for each simulation:
+sims_maize_elev_zAnc <- lapply(sims_maize_elev, function(s)
+  t(apply(s, 1, function(l) zAnc(ancFreq = l,
+                                 invL = zAnc_maize$InvL,
+                                 alpha = zAnc_maize$alpha))))
+# plot null model -- should be N(0,1)
+hist(sims_maize_elev_zAnc[[1]])
+apply(sims_maize_elev_zAnc[[1]], 2, mean) # about 0
+apply(sims_maize_elev_zAnc[[1]], 2, var) # about 1
+
+# calculate covariances:
+sims_maize_elev_covElev <- lapply(sims_maize_elev_zAnc, function(s)
+  apply(s, 1, function(l) mean((l - mean(l)) * zElev_maize_vector_c)))
+sd_zElev_maize_vector_c <- sd(zElev_maize_vector_c)
+hist(sims_maize_elev_covElev[[1]]/sd_zElev_maize_vector_c)
+var(sims_maize_elev_covElev[[1]]/sd_zElev_maize_vector_c)
+mean(sims_maize_elev_covElev[[1]]/sd_zElev_maize_vector_c)
+
+lapply(sims_maize_elev_covElev, mean) # 1-3 look good, 4-5 should equal 2 ideally
+hist(sims_maize_elev_covElev[[2]]/sd_zElev_maize_vector_c)
+hist(sims_maize_elev_covElev[[3]]/sd_zElev_maize_vector_c)
+hist(sims_maize_elev_covElev[[4]]/sd_zElev_maize_vector_c)
+hist(sims_maize_elev_covElev[[5]]/sd_zElev_maize_vector_c)
+
+# ok, so we don't want to assume the mean effect of elevation in our sample is zero,
+# so maybe I can put this back in a linear model and constrain variance on the noise to 1:
+# first fit one linear model with all of the generating data
+# then try to fit it with limited data (just 14 observations at a locus)
+sims_maize_elev_zAnc_d <- lapply(sims_maize_elev_zAnc, function(x)
+  x %>%
+    data.frame(.) %>%
+    data.table::setnames(., meta.pops.maize$pop) %>%
+    tidyr::gather(., "pop", "zAnc") %>%
+    left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop"))
+small_mvn_maize_zAnc_d <- sims_maize_elev_zAnc[[1]] %>%
+  data.frame(.) %>%
+  data.table::setnames(., meta.pops.maize$pop) %>%
+  tidyr::gather(., "pop", "zAnc") %>%
+  left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop")
+small_mvn_maize_zAnc_elev1_d <- sims_maize_elev_zAnc[[2]] %>%
+  data.frame(.) %>%
+  data.table::setnames(., meta.pops.maize$pop) %>%
+  tidyr::gather(., "pop", "zAnc") %>%
+  left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop")
+
+
+# intercept
+zInt = c(zAnc_maize$InvL %*% rep(1, 14))
+
+# run all models:
+# this works as expected -- great!
+m_elev <- lapply(sims_maize_elev_zAnc_d, function(x)
+  map( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt[pop]*b_zInt + zElev_c[pop]*b_zElev,
+      b_zElev ~ dnorm(0, 100),
+      b_zInt ~ dnorm(0, 10)
+    ),
+    data = list(zInt = zInt,
+                zElev_c = zElev_maize_vector_c,
+                zAnc = x$zAnc,
+                pop = x$pop_factor)
+  )
+)
+lapply(m_elev, precis)
+lapply(m_elev, pairs)
+
+cor(zInt, zElev_maize_vector_c) # 'Neutral' covariance and elevation are highly correlated
+# which may mean that a lot of the ancestry covariance is not actually neutral
+
+# can I get estimates for individual loci? I need to label loci in my data
+
+# If I mix these 4 simulations across loci, can I estimate a distribution for b_zElev and b_zInt
+# I could try to force the mean of b_zInt to be zero if that seems useful
+
+# basic mix of 5 sims allowing them to come from a distribution of b_zElev and b_zInt
+mix_sims_maize_elev_zAnc_d <- do.call(rbind, 
+                                      lapply(1:length(sims_maize_elev_zAnc_d), function(i)
+                                        mutate(sims_maize_elev_zAnc_d[[i]], sim = i)))
+
+# model the mixture of 5 sims:
+m_elev_mix <- map( # quadratic approximation of the posterior MAP
+  alist(
+    zAnc ~ dnorm(mean = mu, sd = 1),
+    mu <- zIntercept[pop] * b_zInt[sim] + zElev_c[pop] * b_zElev[sim],
+    
+    # effect of elevation for mean population
+    b_zInt[sim] ~ dnorm(0, 1),
+    
+    # slope of effect of elevation
+    b_zElev[sim] ~ dnorm(0, 10)
+  ),
+  data = list(zIntercept = zInt,
+              zElev_c = zElev_maize_vector_c,
+              zAnc = mix_sims_maize_elev_zAnc_d$zAnc,
+              pop = mix_sims_maize_elev_zAnc_d$pop_factor,
+              sim = mix_sims_maize_elev_zAnc_d$sim)
+)
+precis(m_elev_mix, depth = 2)
+pairs(m_elev_mix)
+
+
+
+mix_sims_maize_elev_zAnc_d2 <- do.call(rbind, 
+                                       lapply(1:length(sims_maize_elev_zAnc_d), function(i)
+                                         mutate(sims_maize_elev_zAnc_d[[i]], sim = i))) %>%
+  dplyr::select(-pop) %>%
+  left_join(., data.frame(zInt = zInt, 
+                          pop_factor = 1:14), by = "pop_factor") %>%
+  rename(pop = pop_factor)
+m_elev_mix_stan <- map2stan( # quadratic approximation of the posterior MAP
+  alist(
+    zAnc ~ dnorm(mean = mu, sd = 1),
+    mu <- zInt * b_zInt[sim] + zElev_c * b_zElev[sim],
+    
+    # effect of elevation for mean population
+    b_zInt[sim] ~ dnorm(0, 1),
+    
+    # slope of effect of elevation
+    b_zElev[sim] ~ dnorm(0, 10)
+  ),
+  data = mix_sims_maize_elev_zAnc_d2,
+  iter = 1000,
+  chains = 2,
+  warmup = 200
+)
+precis(m_elev_mix_stan, depth = 2)
+pairs(m_elev_mix_stan)
+# plot chains to check for convergence
+plot(m_elev_mix_stan, depth = 2)
+
+# model the mixture of 5 sims with stan so it's hierarchical:
+m_elev_mix_hier <- map2stan( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt * b_zInt[sim] + zElev_c * b_zElev[sim],
+      
+      # effect of elevation for mean population
+      b_zInt[sim] ~ dnorm(b_zInt_mu, b_zInt_theta),
+      b_zInt_mu ~ dnorm(0, 1),
+      b_zInt_theta ~ dexp(2),
+      
+      # slope of effect of elevation
+      b_zElev[sim] ~ dnorm(b_zElev_mu, b_zElev_theta),      
+      b_zElev_mu ~ dnorm(0, 1),
+      b_zElev_theta ~ dexp(2)
+    ),
+    data = mix_sims_maize_elev_zAnc_d2,
+    iter = 1000,
+    chains = 2,
+    warmup = 500
+  )
+precis(m_elev_mix_hier)
+precis(m_elev_mix_hier, depth = 2)
+pairs(m_elev_mix_hier)
+# plot chains to check for convergence
+plot(m_elev_mix_hier, depth = 2)
+
+# so this works, given many data points.
+# How well does it do for just the neutral model if we only give each locus 7 data points?
+
+
+# and what if I add truncation? Should I just add a logistic after the linear model, and then mvn error (a bit hacky)
+# truncate my simulation data. Also maybe make an extreme elevation association example data set.
+
