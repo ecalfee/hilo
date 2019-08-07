@@ -9,6 +9,7 @@ library(RColorBrewer)
 library(ggplot2)
 library(bedr)
 library(IRanges)
+library(boot)
 
 # first, load data:
 #source("ZAnc_statistic.R") 
@@ -1251,6 +1252,8 @@ r2 <- mutate(d_1cM,
                                            "(1.09,287]")))
 # (2) plot means across 5 recomb. bins
 r2 %>%
+  group_by(window_1cM, bin_r5) %>%
+  dplyr::summarise(meanAlpha_maize = mean(meanAlpha_maize)) %>%
   ggplot(aes(x = bin_r5, y = meanAlpha_maize)) +
   geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
@@ -1262,5 +1265,77 @@ r2 %>%
 # (3) bootstrap
 # to bootstrap, take mean ancestry of each window.
 # then resample windows.
+# summarise by window:
+r2_wind <- r2 %>%
+  group_by(window_1cM, bin_r5) %>%
+  dplyr::summarise(meanAlpha_maize = mean(meanAlpha_maize),
+                   meanAlpha_mex = mean(meanAlpha_mex))
+# function to obtain mean from the data 
+mean_boot <- function(data, indices) {
+  d <- data[indices] # allows boot to select sample 
+  mean(d)
+}
+boot_maize <- lapply(1:5, function(i)
+                     boot(data = r2_wind$meanAlpha_maize[as.integer(r2_wind$bin_r5) == i & !is.na(r2_wind$bin_r5)], 
+                statistic = mean_boot,
+                R = 1000))
+lapply(boot_maize, plot)
+boot_mex <- lapply(1:5, function(i)
+  boot(data = r2_wind$meanAlpha_mex[as.integer(r2_wind$bin_r5) == i & !is.na(r2_wind$bin_r5)], 
+       statistic = mean_boot,
+       R = 1000))
+lapply(boot_mex, plot)
+
+get_CI <- function(x){
+  ci <- boot.ci(x, conf = .9, type = "basic")
+  return(data.frame(t0 = ci$t0,
+                    conf = ci$basic[1],
+                    low = ci$basic[4],
+                    high = ci$basic[5]))
+}
+CI_maize <- do.call(rbind,
+                    lapply(boot_maize, get_CI)) %>%
+  mutate(bin_r5 = levels(r2_wind$bin_r5)[1:5])
+
+CI_maize %>%
+  ggplot(aes(x = factor(bin_r5, levels = levels(r2_wind$bin_r5)), y = t0)) + 
+  geom_point(data = r2_wind, aes(x = bin_r5, y = meanAlpha_maize, color = bin_r5)) +
+  geom_errorbar(aes(ymin = low, 
+                    ymax = high), 
+                width = .5) +
+  geom_point(pch = 18, size = 1) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  xlab("recombination quintile (low to high r)") +
+  ylab("mexicana ancestry (1 cM windows)") +
+  ggtitle("Ancestry_hmm estimates for maize and 90% bootstrap CI")
+ggsave("plots/ancestry_hmm_mean_ancestry_in_maize_all_bootstrap_90CI.png",
+       width = 8, height = 8, units = "in")
+ggsave("../../hilo_manuscript/figures/ancestry_hmm_mean_ancestry_in_maize_all_bootstrap_90CI.png",
+       width = 6, height = 5, units = "in")
+
+CI_mex <- do.call(rbind,
+                    lapply(boot_mex, get_CI)) %>%
+  mutate(bin_r5 = levels(r2_wind$bin_r5)[1:5])
+
+CI_mex %>%
+  ggplot(aes(x = factor(bin_r5, levels = levels(r2_wind$bin_r5)), y = t0)) + 
+  geom_point(data = r2_wind, aes(x = bin_r5, y = meanAlpha_mex, color = bin_r5)) +
+  geom_errorbar(aes(ymin = low, 
+                    ymax = high), 
+                width = .5) +
+  geom_point(pch = 18, size = 1) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  xlab("recombination quintile (low to high r)") +
+  ylab("mexicana ancestry (1 cM windows)") +
+  ggtitle("Ancestry_hmm estimates for mexicana and 90% bootstrap CI")
+ggsave("plots/ancestry_hmm_mean_ancestry_in_mexicana_all_bootstrap_90CI.png",
+       width = 8, height = 8, units = "in")
+ggsave("../../hilo_manuscript/figures/ancestry_hmm_mean_ancestry_in_mexicana_all_bootstrap_90CI.png",
+       width = 6, height = 5, units = "in")
+
+
 # note: it could be I'm sampling highest recomb.
 # rate regions within these 1cM blocks.
+# make these same plots for the f4 statistic
+# set up f4-type allele frequencies for just andean pop
+# also make plot for the ancestry-mixture linear model
