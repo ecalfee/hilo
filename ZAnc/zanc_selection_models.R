@@ -85,11 +85,12 @@ write.table(zAnc_maize$alpha, "results/zAnc_alpha_maize.txt", sep = "\t", row.na
 zAnc3 <- t(apply(maize_anc, 1, function(l) zAnc(ancFreq = l, 
                                                 invL = zAnc_maize$InvL, 
                                                 alpha = zAnc_maize$alpha)))
+colnames(zAnc3) <- colnames(maize_anc)
 
 zAnc3_mex <- t(apply(mexicana_anc, 1, function(l) zAnc(ancFreq = l, 
                                                        invL = zAnc_mexicana$InvL, 
                                                        alpha = zAnc_mexicana$alpha)))
-
+colnames(zAnc3_mex) <- colnames(mexicana_anc)
 # Null model
 # Now get zTz -- basically the sum of residual errors to the null model
 # zTz
@@ -1911,6 +1912,157 @@ data.frame(MVN01 = zAnc_maize_MVN01$alpha,
 ggsave("plots/alphas_diff_MVN_01_vs_data.png", 
        height = 6, width = 8, 
        units = "in", device = "png")
+
+# plot zb3_elev against simple elevation
+downsample <- c(T, rep(F, 99))
+plot(simple_bElev_anc$envWeights[downsample], 
+     zb3_elev$zEnv[downsample])
+plot(log10(simple_bElev_anc$pval_Env[downsample]), 
+     log10(zb3_elev$pval_zEnv[downsample]))
+zb3_elev_only <- log10(simple_bElev_anc$pval_Env) < -2 &
+  log10(zb3_elev$pval_zEnv) > -1
+simple_elev_only <- log10(simple_bElev_anc$pval_Env) > -1 &
+  log10(zb3_elev$pval_zEnv) < -2
+# plot these:
+bind_cols(maize_anc, sites) %>%
+  left_join(., zb3_elev[ , c("chr", "pos", "zEnv", "zInt", "pval_zEnv")], by = c("chr", "pos")) %>%
+  filter(., zb3_elev_only) %>%
+  .[c(T, rep(F, 1000)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), 
+             y = mex_freq, shape = inv4m, 
+             group = pos,
+             color = zEnv)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset low pvals in zElev but not simple Elev")
+ggsave(paste0("plots/a_few_example_loci_zElev_BUT_NOT_simple_elev.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+bind_cols(maize_anc, sites, simple_bElev_anc) %>%
+  filter(., simple_elev_only) %>%
+  .[c(T, rep(F, 50)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), 
+             y = mex_freq, shape = inv4m, 
+             group = pos,
+             color = envWeights)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset low pvals in simple Elev but not zElev")
+ggsave(paste0("plots/a_few_example_loci_simple_elev_BUT_NOT_zElev.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
+
+# can I use pvalues then from zEnv??
+with(zb3_elev, plot(zEnv[downsample], 
+                    pval_zEnv[downsample]))
+# much higher correlation in slopes than in pvals
+cor(simple_bElev_anc$envWeights, zb3_elev$zEnv)
+cor(log10(simple_bElev_anc$pval_Env), 
+    log10(zb3_elev$pval_zEnv))
+with(zb3_elev, plot(zEnv[downsample], 
+                    log10(pval_zEnv[downsample])))
+with(simple_bElev_anc, plot(envWeights[downsample], 
+                    log10(pval_Env[downsample])))
+png("plots/QQ_pval_simple_bElev_vs_uniform.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(x = runif(10000, 0, 1), 
+       y = simple_bElev_anc$pval_Env,
+       ylab = "pvalues slope simple bElev",
+       main = "QQ plot - pvalues for slope bElev against uniform dist.")
+abline(0, 1, col = "blue")
+dev.off()
+png("plots/QQ_pval_simple_bElev_vs_uniform.png",
+    height = 6, width = 6, units = "in", res = 300)
+qqplot(x = runif(1000, 0, 1), y = zb3_elev$pval_zEnv,
+       ylab = "pvalues slope rotated space zElev",
+       main = "QQ plot - pvalues for slope zElev against uniform dist.")
+abline(0, 1, col = "blue")
+dev.off()
+# QQ plot looks reasonable -- but no enrichment for low p-values
+table(zb3_elev$pval_zEnv < .01)/nrow(zb3_elev)
+table(zb3_elev$pval_zEnv < .001)/nrow(zb3_elev)
+table(zb3_elev$pval_zEnv < .0001)/nrow(zb3_elev)
+# enrichment for low p's but QQ plot doesn't fit null at all
+table(simple_bElev_anc$pval_Env < .01)/nrow(simple_bElev_anc)
+table(simple_bElev_anc$pval_Env < .001)/nrow(simple_bElev_anc)
+table(simple_bElev_anc$pval_Env < .0001)/nrow(simple_bElev_anc)
+
+# ok let's look at a few high slopes and the models fit to them:
+# start with top SNP (in inversion)
+max_slope_elev_i <- which.max(simple_bElev_anc$envWeights)
+max_slope_zelev_i <- which.max(zb3_elev$zEnv)
+# top hit from each model
+simple_bElev_anc[max_slope_elev_i,]
+zb3_elev[max_slope_elev_i,]
+simple_bElev_anc[max_slope_zelev_i,]
+zb3_elev[max_slope_zelev_i,]
+
+# ancestry at top outliers - non-rotated:
+bind_cols(sites, maize_anc)[c(max_slope_elev_i, max_slope_zelev_i), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = ELEVATION,
+             y = mex_freq, 
+             shape = inv4m, 
+             group = pos)) +
+  geom_point(aes(color = LOCALITY)) +
+  #geom_line() +
+  geom_smooth(method = "lm", color = "black") +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("observed ancestry at top outlier with elevation")
+
+meta.pops.z <- left_join(data.frame(pop = names(zAnc_maize$alpha),
+                                    stringsAsFactors = F), 
+                          meta.pops, by = "pop")
+meta.pops.z$zElevation = zAnc_maize$InvL %*% meta.pops.z$ELEVATION
+
+# also plot in rotated space:
+bind_cols(sites, data.frame(zAnc3))[c(max_slope_elev_i, max_slope_zelev_i), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops.z[ , c("pop", "ELEVATION", "LOCALITY", "zElevation")], by = "pop") %>%
+  ggplot(aes(x = zElevation,
+             y = mex_freq, 
+             shape = inv4m, 
+             group = pos)) +
+  geom_point(aes(color = LOCALITY)) +
+  #geom_line() +
+  geom_smooth(method = "lm", color = "black") +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("(rotated) ancestry at top outlier with elevation")
+
+
+
+
+# a few example high zTz outliers:
+bind_cols(maize_anc, sites) %>%
+  mutate(zTz3 = zTz3) %>%
+  filter(., zTz3 > quantile(zTz3, .99)) %>%
+  .[c(T, rep(F, 250)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), 
+             y = mex_freq, shape = inv4m, 
+             group = pos,
+             color = zTz3)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset very high zTz3 outliers")
+ggsave(paste0("plots/a_few_example_loci_high_zTz_maize.png"),
+       device = "png",
+       width = 10, height = 8, units = "in")
 
 
 # try creating a MVBeta (multi-variate beta) using copulas:

@@ -546,6 +546,8 @@ ggsave("plots/fst_by_recomb_bin.png",
 # make plots for pruned every 100th SNP:
 K = 2
 PREFIX = "pass2_alloMAIZE"
+#K = 3
+#PREFIX = "pass2_alloMAIZE_PalmarChico"
 IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 ancestries <- c("maize", "mexicana", "parviglumis")[1:K]
 
@@ -558,7 +560,7 @@ d_by100 <- bind_cols(IDs, admix_by100)  %>%
   arrange(., popN) %>%
   arrange(., zea) %>%
   arrange(., symp_allo) %>%
-  filter(., est_coverage >= .05) %>% # only include individuals with at least .05x coverage
+  filter(., est_coverage >= .1) %>% # only include individuals with at least .05x coverage
   .[with(., order(group, ELEVATION)), ]
 
 # assign mexicana ancestry
@@ -593,15 +595,19 @@ anc_by100 %>%
   geom_point() +
   ylab("mexicana ancestry") +
   geom_abline(intercept = lmZeaElev_by100$coefficients["(Intercept)"] + lmZeaElev_by100$coefficients["zeamexicana"], 
-              slope = lmZeaElev_by100$coefficients["ELEVATION"] + lmZeaElev_by100$coefficients["zeamexicana:ELEVATION"],
-              color = colors_maize2mex[3]) +
+              slope = lmZeaElev_by100$coefficients["ELEVATION"] + lmZeaElev_by100$coefficients["zeamexicana:ELEVATION"]) +
+              #color = colors_maize2mex[3]) +
   geom_abline(intercept = lmZeaElev_by100$coefficients["(Intercept)"], 
-              slope = lmZeaElev_by100$coefficients["ELEVATION"],
-              color = colors_maize2mex[2]) +
+              slope = lmZeaElev_by100$coefficients["ELEVATION"]) +
+              #color = colors_maize2mex[2]) +
   ggtitle("Clines in mexicana ancestry across elevation") +
   #theme(legend.position="bottom") +
   labs(color = "Location", shape = "Subspecies")
 ggsave(paste0("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".png"), 
+       device = "png", 
+       width = 12, height = 8, units = "in",
+       dpi = 200)
+ggsave(paste0("../../hilo_manuscript/figures/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".png"), 
        device = "png", 
        width = 12, height = 8, units = "in",
        dpi = 200)
