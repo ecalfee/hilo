@@ -593,7 +593,8 @@ anc_by100 %>%
   filter(., symp_allo == "sympatric") %>%
   ggplot(., aes(x = ELEVATION, y = mexicana, color = LOCALITY, size = est_coverage, shape = zea)) +
   geom_point() +
-  ylab("mexicana ancestry") +
+  ylab("Proportion mexicana ancestry") +
+  xlab("Elevation (m)") +
   geom_abline(intercept = lmZeaElev_by100$coefficients["(Intercept)"] + lmZeaElev_by100$coefficients["zeamexicana"], 
               slope = lmZeaElev_by100$coefficients["ELEVATION"] + lmZeaElev_by100$coefficients["zeamexicana:ELEVATION"]) +
               #color = colors_maize2mex[3]) +
@@ -602,15 +603,15 @@ anc_by100 %>%
               #color = colors_maize2mex[2]) +
   ggtitle("Clines in mexicana ancestry across elevation") +
   #theme(legend.position="bottom") +
-  labs(color = "Location", shape = "Subspecies")
-ggsave(paste0("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".png"), 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
-ggsave(paste0("../../hilo_manuscript/figures/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".png"), 
-       device = "png", 
-       width = 12, height = 8, units = "in",
-       dpi = 200)
+  labs(color = "Location", shape = "Subspecies", size = "Coverage") +
+  guides(color = FALSE) +
+  theme_classic()
+ggsave(paste0("plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".pdf"), 
+       device = "pdf", 
+       width = 5, height = 4, units = "in")
+ggsave(paste0("../../hilo_manuscript/figures/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_prunedBy100_", PREFIX, "_K", K, ".pdf"), 
+       device = "pdf", 
+       width = 5, height = 4, units = "in")
 
 
 
