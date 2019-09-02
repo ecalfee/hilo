@@ -247,6 +247,17 @@ Submitted batch job 13502780 - WAITING4DEPENDENCY 8.6.19
 genes_r_ancestry$ sbatch --dependency=afterok:13502780 --mem=2G -p med --export=PREFIX=pass2_alloMAIZE,K=2,WIND=1cM --array=0-100 define_K_ancestries_from_NGSadmix.sh
 Submitted batch job 13502811 - WAITING4DEPENDENCY 8.6.19
 
+# do a linear model for ancestry proportions across r bins
+# first I get allele frequencies for combined samples of 5 groups: parv, allo/symp maize/mex
+# see log in within_ancestry_diversity for more details on creating these files
+e.g. hilo/within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE/symp.maize/all_regions_every_100th.freqs.txt
+# and I similarly thinned var.sites to 1/100 SNPs.
+# I have recombination rate data in a bed file for 1cM and 0.2cM resolution. I'll start with 1cM to match NGSAdmix results
+hilo/genes_r_ancestry/results/map_pos_1cM_windows.txt 
+# I will use bedr to combine these data and fit a simple linear model for mexicana ancestry proportion based on recomb rate
+# see linear_model_alpha.R
+
+
 # TO DO:
 # plot f4 stats for binned into 1cM regions
 # do a linear model for ancestry proportion across r bins

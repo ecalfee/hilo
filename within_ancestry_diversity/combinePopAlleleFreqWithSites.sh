@@ -1,10 +1,10 @@
 #!/bin/bash -l
-#SBATCH --partition=bigmemm
+#SBATCH --partition=med2
 #SBATCH -D /home/ecalfee/hilo/within_ancestry_diversity
 #SBATCH -J addSites2Freq
 #SBATCH -o /home/ecalfee/hilo/slurm-log/combinePopAlleleFreqWSites_%A_%a.out
-#SBATCH -t 10:00
-#SBATCH --mem=4G
+#SBATCH -t 5:00
+#SBATCH --mem=2G
 #SBATCH -n 1
 #SBATCH --array=0-425
 
