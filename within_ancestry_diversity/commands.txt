@@ -327,6 +327,23 @@ within_ancestry_diversity$ sbatch --array=0-217 --export=PREFIX=pass2_alloMAIZE,
 Submitted batch job 11275552 - FIX error & rerun:
 Submitted batch job 11276999 - RUNNING 6.10.19
 
+# Take allele freq estimates for each group and combine them with sites file so that all sites are 
+# included (even if NA or no data). This produces .freqs.txt and .nInd files
+within_ancestry_diversity$ sbatch --export="POP=parv,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13868941 - RAN 9.2.19
+within_ancestry_diversity$ sbatch --export="POP=allo.maize,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13868944 - RAN 9.2.19
+within_ancestry_diversity$ sbatch --export="POP=allo.mexicana,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13869409 - RAN 9.2.19
+within_ancestry_diversity$ sbatch --export="POP=symp.mexicana,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13869412 - RAN 9.2.19
+within_ancestry_diversity$ sbatch --export="POP=symp.maize,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13869413 - RAN 9.2.19
+# now reduce this data to a more manageable thinned set of SNPs (~ 500k):
+# thin regions:
+variant_sites/results/pass2_alloMAIZE$ (for i in {0..425}; do cat region_$i.var.sites; done) | awk 'NR % 100 == 0' > all_regions_every_100th.var.sites
+# thin pop allele freqs the same way (so they match -- note these have a header I remove before thinning to 1/100 lines)
+within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE$ for pop in parv symp.maize symp.mexicana allo.maize allo.mexicana; do (for i in {0..425}; do tail -n +2 $pop/region_$i.freqs.txt; done) | awk 'NR % 100 == 0' > $pop/all_regions_every_100th.freqs.txt; done
 
 
 # TO DO:
