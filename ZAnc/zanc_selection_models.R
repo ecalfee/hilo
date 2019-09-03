@@ -2142,11 +2142,13 @@ small_mvn_maize_elev2 <- t(apply(small_mvn_maize, 1, function(row) row + meta.po
 small_mvn_maize_elev3 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/5 + 0.1))
 # effect of mean elevation is a slight drop in mexicana ancestry
 small_mvn_maize_elev4 <- t(apply(small_mvn_maize, 1, function(row) row + meta.pops.maize$ELEVATION_km_c/5 - 0.1))
+# only a mean effect across all samples; no slope with elevation
+small_mvn_maize_elev5 <- t(apply(small_mvn_maize, 1, function(row) row + 0.1))
 
 
 # put neutral and non-neutral sims together in a list
 sims_maize_elev <- list(small_mvn_maize, small_mvn_maize_elev1, small_mvn_maize_elev2, 
-                        small_mvn_maize_elev3, small_mvn_maize_elev4)
+                        small_mvn_maize_elev3, small_mvn_maize_elev4, small_mvn_maize_elev5)
 
 # calculate zAnc for each simulation:
 sims_maize_elev_zAnc <- lapply(sims_maize_elev, function(s)
@@ -2220,6 +2222,149 @@ cor(zInt, zElev_maize_vector_c) # 'Neutral' covariance and elevation are highly 
 # which may mean that a lot of the ancestry covariance is not actually neutral
 
 # can I get estimates for individual loci? I need to label loci in my data
+# just look at the distribution of slopes for the neutral simulation:
+# make each locus it's own data frame:
+small_mvn_maize_zAnc_d <- lapply(1:nrow(sims_maize_elev_zAnc[[1]]), function(i) sims_maize_elev_zAnc[[1]][i, ] %>%
+  t(.) %>%
+  as.data.frame(.) %>%
+  data.table::setnames(., meta.pops.maize$pop) %>%
+  tidyr::gather(., "pop", "zAnc") %>%
+  left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop") %>%
+  mutate(snp = i))
+
+m_elev_ind_neutral_loci <- lapply(small_mvn_maize_zAnc_d, function(x)
+  map( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt[pop]*b_zInt + zElev_c[pop]*b_zElev,
+      b_zElev ~ dnorm(0, 100),
+      b_zInt ~ dnorm(0, 10)
+    ),
+    data = list(zInt = zInt,
+                zElev_c = zElev_maize_vector_c,
+                zAnc = x$zAnc,
+                pop = x$pop_factor)
+  )
+)
+# individual loci are noisy
+m_elev_ind_neutral_loci_coef <- do.call(bind_rows, lapply(m_elev_ind_neutral_loci, function(x) x@coef))
+precis(m_elev_ind_neutral_loci[[1]])
+pairs(m_elev_ind_neutral_loci[[1]])
+
+# a non-neutral scenario:
+small_mvn_maize_zAnc_elev1_d <- lapply(1:nrow(sims_maize_elev_zAnc[[2]]), function(i) sims_maize_elev_zAnc[[2]][i, ] %>%
+                                   t(.) %>%
+                                   as.data.frame(.) %>%
+                                   data.table::setnames(., meta.pops.maize$pop) %>%
+                                   tidyr::gather(., "pop", "zAnc") %>%
+                                   left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop") %>%
+                                   mutate(snp = i))
+
+m_elev_ind_elev1_loci <- lapply(small_mvn_maize_zAnc_elev1_d, function(x)
+  map( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt[pop]*b_zInt + zElev_c[pop]*b_zElev,
+      b_zElev ~ dnorm(0, 100),
+      b_zInt ~ dnorm(0, 10)
+    ),
+    data = list(zInt = zInt,
+                zElev_c = zElev_maize_vector_c,
+                zAnc = x$zAnc,
+                pop = x$pop_factor)
+  )
+)
+# individual loci are really too noisy to detect subtle effects like this.
+m_elev_ind_elev1_loci_coef <- do.call(bind_rows, lapply(m_elev_ind_elev1_loci, function(x) x@coef))
+precis(m_elev_ind_elev1_loci[[1]])
+pairs(m_elev_ind_elev1_loci[[1]])
+# but are the effects in my data actually on this scale or larger effects?
+zAnc3_small <- sample_n(as.data.frame(zAnc3), size = 1000, replace = F) # sample just 1000 loci to get a sense of dist. for outliers
+zAnc3_small_d <- lapply(1:nrow(zAnc3_small), function(i) zAnc3_small[i, ] %>%
+                                         as.data.frame(.) %>%
+                                         data.table::setnames(., meta.pops.maize$pop) %>%
+                                         tidyr::gather(., "pop", "zAnc") %>%
+                                         left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop") %>%
+                                         mutate(snp = i))
+
+m_elev_ind_zAnc3_small_loci <- lapply(zAnc3_small_d, function(x)
+  map( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt[pop]*b_zInt + zElev_c[pop]*b_zElev,
+      b_zElev ~ dnorm(0, 100),
+      b_zInt ~ dnorm(0, 10)
+    ),
+    data = list(zInt = zInt,
+                zElev_c = zElev_maize_vector_c,
+                zAnc = x$zAnc,
+                pop = x$pop_factor)
+  )
+)
+# individual loci are really too noisy to detect subtle effects like this.
+m_elev_ind_zAnc3_small_loci_coef <- do.call(bind_rows, lapply(m_elev_ind_zAnc3_small_loci, function(x) x@coef))
+precis(m_elev_ind_zAnc3_small_loci[[1]])
+pairs(m_elev_ind_zAnc3_small_loci[[1]])
+hist(m_elev_ind_neutral_loci_coef$b_zElev, freq = F)
+hist(m_elev_ind_zAnc3_small_loci_coef$b_zElev, add = T, freq = F, col = alpha("blue", .3))
+hist(m_elev_ind_elev1_loci_coef$b_zElev, add = T, freq = F, col = alpha("green", .3))
+summary(m_elev_ind_neutral_loci_coef$b_zElev)
+summary(m_elev_ind_zAnc3_small_loci_coef$b_zElev)
+summary(m_elev_ind_elev1_loci_coef$b_zElev)
+# this set of 1000 loci pretty much look neutral..but then, maybe they are
+# what happens with our most extreme outlier?
+top_outlier_elev_i <- which(simple_bElev_anc$envWeights == max(simple_bElev_anc$envWeights))
+top_outlier_zAnc3_d <- zAnc3[top_outlier_elev_i, ] %>%
+                          t(.) %>%
+                          as.data.frame(.) %>%
+                          tidyr::gather(., "pop", "zAnc") %>%
+                          left_join(., meta.pops.maize[ , c("pop", "pop_factor", "zElev_c")], by = "pop") %>%
+                          mutate(snp = top_outlier_elev_i)
+
+m_elev_top_outlier_zAnc3 <- map( # quadratic approximation of the posterior MAP
+    alist(
+      zAnc ~ dnorm(mean = mu, sd = 1),
+      mu <- zInt[pop]*b_zInt + zElev_c[pop]*b_zElev,
+      b_zElev ~ dnorm(0, 100),
+      b_zInt ~ dnorm(0, 10)
+    ),
+    data = list(zInt = zInt,
+                zElev_c = zElev_maize_vector_c,
+                zAnc = top_outlier_zAnc3_d$zAnc,
+                pop = top_outlier_zAnc3_d$pop_factor)
+)
+precis(m_elev_top_outlier_zAnc3)
+# arg. this should be a very strong positive slope (!), like .6 or .7.
+# first check that the populatoin order is the same/as expected in the model.
+# then assess other possible problems.
+
+plot(x = meta.pops.maize$ELEVATION[order(meta.pops.maize$ELEVATION)], 
+       y = zAnc3[top_outlier_elev_i, ][order(meta.pops.maize$ELEVATION)],
+       col = "blue",
+       pch = 20)
+points(x = meta.pops.maize$ELEVATION[order(meta.pops.maize$ELEVATION)], 
+     y = meta.pops.maize$alpha_mex[order(meta.pops.maize$ELEVATION)])
+
+points(x = meta.pops.maize$ELEVATION[order(meta.pops.maize$ELEVATION)], 
+       y = maize_anc[top_outlier_elev_i, ][order(meta.pops.maize$ELEVATION)],
+       col = "blue")
+str(meta.pops.maize)
+
+plot(x = zElev_maize_vector[order(zElev_maize_vector)], 
+     y = zAnc3[top_outlier_elev_i, ][order(zElev_maize_vector)],
+     col = "blue",
+     pch = 20)
+
+# caveat: I haven't truncated simulations to [0,1] scale yet -- another factor influencing sensitivity of the test
+plot(x = meta.pops.maize$ELEVATION[order(meta.pops.maize$ELEVATION)], 
+       y = maize_anc[top_outlier_elev_i, ][order(meta.pops.maize$ELEVATION)],
+       col = "blue")
+points(x = meta.pops.maize$ELEVATION[order(meta.pops.maize$ELEVATION)], 
+       y = meta.pops.maize$alpha_mex[order(meta.pops.maize$ELEVATION)])
+# hmm...this very top outlier just doens't look that impressive in the rotated space..
+# partly because it's bounded by [0,1] unrotated, but maybe for other reasons too. I'm sort of at a loss.
+
+
 
 # If I mix these 4 simulations across loci, can I estimate a distribution for b_zElev and b_zInt
 # I could try to force the mean of b_zInt to be zero if that seems useful

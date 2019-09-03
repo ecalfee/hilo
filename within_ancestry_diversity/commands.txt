@@ -344,7 +344,23 @@ Submitted batch job 13869413 - RAN 9.2.19
 variant_sites/results/pass2_alloMAIZE$ (for i in {0..425}; do cat region_$i.var.sites; done) | awk 'NR % 100 == 0' > all_regions_every_100th.var.sites
 # thin pop allele freqs the same way (so they match -- note these have a header I remove before thinning to 1/100 lines)
 within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE$ for pop in parv symp.maize symp.mexicana allo.maize allo.mexicana; do (for i in {0..425}; do tail -n +2 $pop/region_$i.freqs.txt; done) | awk 'NR % 100 == 0' > $pop/all_regions_every_100th.freqs.txt; done
+# do the same for pop35 (Xochimilco) as an alternative non-admixed mexicana pop:
+within_ancestry_diversity$ sbatch --export="POP=pop35,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13887006 - RAN 9.2.19
+# also tripsacum:
+within_ancestry_diversity$ sbatch --export="POP=trip,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13887012 - RAN 9.2.19
+within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE$ for pop in trip pop35; do (for i in {0..425}; do tail -n +2 $pop/region_$i.freqs.txt; done) | awk 'NR % 100 == 0' > $pop/all_regions_every_100th.freqs.txt; done
 
+# And get allele freqs for andean maize as a smaller alterantive non-admixed maize pop:
+within_ancestry_diversity$ ln -s /home/ecalfee/hilo/samples/andes_bams.list results/input/all/pops/andes.list
+# run allele freq calc:
+within_ancestry_diversity$ sbatch -p med2 --mem=24G --export="POP=andes,PREFIX=all,DIR_SITES=../variant_sites/results/pass2_alloMAIZE,ALL" calcAlleleFreqPopByCounts.sh
+Submitted batch job 13888582 - RUNNING 9.2.19
+within_ancestry_diversity$ sbatch --dependency=afterok:13888582 --export="POP=trip,PREFIX=pass2_alloMAIZE" combinePopAlleleFreqWithSites.sh
+Submitted batch job 13888935 - WAITING4DEPENDENCY
+within_ancestry_diversity/results/allele_freq/pass2_alloMAIZE$ for pop in trip pop35; do (for i in {0..425}; do tail -n +2 $pop/region_$i.freqs.txt; done) | awk 'NR % 100 == 0' > $pop/all_regions_every_100th.freqs.txt; done
+WAITING2RUN INTERACTIVELY
 
 # TO DO:
 
