@@ -13,7 +13,7 @@
 
 # this script takes in fastq files with raw paired reads
 # and aligns reads to ab10 fasta (with competitive making to other similar regions)
-# to run: sbatch --array=1 --export=DIR_IN=../data/HILO_raw_reads/TEST,PREFIX_LIST=Jan2019 map_and_filter_reads_ab10.sh
+# to run: sbatch --array=0-113 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads_ab10.sh
 
 # general bash script settings to make sure if any errors in the pipeline fail
 # then it’s a ‘fail’ and it passes all errors to exit and allows no unset variables
@@ -32,7 +32,7 @@ module load picardtools # saves path to loaded versin in $PICARD variable
 echo "working directory: ${PWD}" # print current working directory
 echo "picard path: ${PICARD}"
 
-REF="../data/incompatibility_loci/kinesins.fa"
+REF="../data/ab10/kinesins.fa"
 i=$SLURM_ARRAY_TASK_ID
 ids=($(cat ${DIR_IN}/${PREFIX_LIST}_IDs.list))
 ID=${ids["$i"]}
@@ -57,8 +57,9 @@ echo "running bwa mem for sample ${ID} lane ${LANE} library ${LIBRARY} and sorti
 bwa mem -t 16 -v 3 \
 -R "@RG\tID:${LANE}\tSM:${ID}\tPL:ILLUMINA\tLB:${LIBRARY}\tPU:${ID}.${LANE}" \
 "${REF}" "${FASTQ1}" "${FASTQ2}"  | \
-samtools view -Shu -q 0 - | \
+samtools view -Shu -q 1 - | \
 samtools sort -m 6G -@ 4 -T "${DIR_TMP}" - > "${DIR_OUT}/${ID}.ab10.sort.bam"
+# -q 1 filter only keeps reads that map at all
 
 echo "marking duplicates with PICARD and calculating BAQ with SAMTOOLS"
 java -Xmx6g -jar ${PICARD}/picard.jar MarkDuplicates \

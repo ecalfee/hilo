@@ -67,7 +67,13 @@ filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads/March2018
 Submitted batch job 9297991 - ERROR 2.29.18. Oops misspecified input directory, rerunning:
 filtered_bams$ sbatch --array=0 --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=March2018 map_and_filter_reads.sh
 Submitted batch job 9404408 - COMPLETED 3.5.19 -- HILO80 doesn't exist (ok). HILO71 is the only one with empty bam (being re-done)
-
+# for remapping to ab10 etc. I want the whole list of samples from March 2018
+# made full lists:
+March2018_all_lanes.list
+March2018_all_IDs.list
+March2018_all_libraries.list
+# made symlinks for all IDs into folder March2018_all
+hilo/data/HILO_raw_reads$ parallel 'ln -s $(ls /group/jrigrp6/DanAlignments/{1}/{1}_*_{2}.fq.gz) March2018_all/{1}_{2}.fq.gz' :::: March2018_all_IDs.list ::: 1 2
 
 # Do I have adapter contamination? Let's check..
 hilo_bam_mapped2v4_allContigs$ zgrep --color 'CAAGCAGAAGACGGCATACGAGAT' /group/jrigrp6/DanAlignments/HILO2/HILO2_USPD16082576-K2561_H3HFWCCXY_L7_2.fq.gz # there's some very low level of contamination (just a few reads)

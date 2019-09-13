@@ -16,7 +16,7 @@ meanAlpha_maize.bed and meanAlpha_mex.bed (mean ancestry for every snp with an a
 functional_analysis$ parallel 'bedtools map -a results/all_genes.v4.autosomal.sorted.bed -b results/meanAlpha_{1}.bed -sorted -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > results/all_genes.meanAlpha_{1}.v4.autosomal.sorted.bed' ::: maize mex
 
 
-# Windows analysis around genes: 10kb windows (gene +5kb either side of gene) and 
+# Windows analysis around genes: 10kb windows (gene +5kb either side of gene) and
 # and 20kb windows (gene + 10kb either side)
 # make windows 10kb around all genes:
 functional_analysis$ bedtools slop -g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -b 5000 -i results/all_genes.v4.autosomal.sorted.bed > results/all_genes.10kb.v4.autosomal.sorted.bed
@@ -59,10 +59,10 @@ The v4 coordinates are saved as GRMZM2G410783_v4_coord.bed (female Ga2) and AC23
 
 (III) Flowering time pathway and GWAS hits
 # All flowering time genes are written for v3 gene sets:
-(a) Li Wang's candidate genes. PBE = Population Branch Excess. MH = mexico highland PBE outlier, US is US Southwest, GH is Guatemala HIghland, AN is Andean 
+(a) Li Wang's candidate genes. PBE = Population Branch Excess. MH = mexico highland PBE outlier, US is US Southwest, GH is Guatemala HIghland, AN is Andean
 (b) Dong 2012 pathway analysis using QTL/functional studies and componenets of Arabidopsis pathway (n=48)
 data/flowering_time/floweringTimeMaizeDong2012.csv
-(c) Navarro 2017. F1 association mapping study 'FOAM GWAS' using landraces across the Americas. 
+(c) Navarro 2017. F1 association mapping study 'FOAM GWAS' using landraces across the Americas.
 (d) I could alternatively use a set of 220 flowering time candidates from Yong-xiang Li 2016 https://onlinelibrary.wiley.com/doi/pdf/10.1111/tpj.13174 from NAM US + NAM CHINA + natural pop AMES (all RILs; ~8.7k total; GWAS). But I think Navarro 2017 is better because it includes variation from the highlands specifically vs. NAMs
 # all combined I am getting 1637 candidate flowering time genes mapped to v4
 # I can do other things later to get more of them (e.g. liftover)
@@ -72,23 +72,28 @@ data/flowering_time/floweringTimeMaizeDong2012.csv
 # then I removed extra lines
 hilo$ cat data/refMaize/geneAnnotations/gene_model_xref_v3.txt | tail -n +5 | head -n -4 > data/refMaize/geneAnnotations/gene_model_xref_v3_from_maizeGDB.txt
 
-# I made a bed file of the combined set of genes in the gff, extended it by 5 to 10kb in both directions away from the gene and found the mean ancestry from overlap with the ancestry calls. 
+# I made a bed file of the combined set of genes in the gff, extended it by 5 to 10kb in both directions away from the gene and found the mean ancestry from overlap with the ancestry calls.
 # more details here: ../data/domestication/README.txt
 # all genes sorted, filtered for autosomal:
 hilo/data/domestication/all_genes.autosomal.sorted.bed
 # e.g. adding 5kb either side and finding mean alpha (% mexicana introgression) in maize:
 hilo/data/domestication/meanAlpha_maize.bed
 hilo/data/domestication/all_genes.meanAlpha_maize.10kb.autosomal.sorted.bed
-For flowering time I want to do the same thing but with estimated anc ~ elevation slope instead of mean ancestry. 
+For flowering time I want to do the same thing but with estimated anc ~ elevation slope instead of mean ancestry.
 # so first I need to make a bed file with the slopes from my linear model
 hilo/ZAnc$ tail -n +2 results/models/pass2_alloMAIZE/maize/simple_bElev_anc.txt | cut -f2 | paste ../data/domestication/meanAlpha_maize.bed - | cut -f1-3,5 > results/models/pass2_alloMAIZE/maize/simple_bElev_anc_maize.bed
 # then I map those slope values onto my gene set:
 ../data/domestication$ bedtools map -a all_genes.10kb.autosomal.sorted.bed -b ../../ZAnc/results/models/pass2_alloMAIZE/maize/simple_bElev_anc_maize.bed -sorted -g ../refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -o mean -c 4 > all_genes.simple_bElev_anc_maize.10kb.autosomal.sorted.bed
 # then in R I test if the flowering time genes are significantly different from other genes in their slopes with ancestry
 
+# ab10 meiotic drive on chromosome 10. THIS IS REALLY FAST PER FILE < 30 minutes for most (but not all)
+# I have a hit near this on chromosome 10, so I'm checking with a re-map to
+# a small fasta that has just ab10 meiotic drive locus and similar looking regions from the maize genome
+# for competitive mapping (saved in ../data/ab10/kinesins.fa):
+# First I map the January 2019 samples:
+functional_analysis$ sbatch --array=0-113 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads_ab10.sh
+Submitted batch job 14064986 - RUNNING 9.13.19. Oops I only want to keep reads that map -q 1. Try again:
 
-
-
-
-
-
+# Then I map the earlier March 2018 samples to this locus:
+functional_analysis$ sbatch --array=0-198 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=March2018_all map_and_filter_reads_ab10.sh
+Submitted batch job 14065486 - RUNNING 9.13.19
