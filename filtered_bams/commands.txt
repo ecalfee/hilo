@@ -385,7 +385,7 @@ Submitted batch job 11276647 - RUNNING 6.10.19
 # first make symlinks to the bams
 data/landraces_fromLi/original$ for i in $(head -n 14 ../alloMAIZE_IDs.list); do ln -s $(ls /group/jrigrp4/landraces_v4_fromLi2017/original/$i.bam) $i.bam; done
 # then run bam -> fastq
-filtered_bams$ sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+filtered_bams$ sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq_batch.sh
 
 
 

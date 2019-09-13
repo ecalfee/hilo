@@ -12,11 +12,12 @@
 # where _1 and _2 are the paired reads and _3 is the set of singletons
 # before creating the fastq files, reads must be sorted by query name so pairs are in the same order
 
-# to run: sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq2v4.sh
+# to run: sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq_batch.sh
 
 i=$SLURM_ARRAY_TASK_ID
 ids=($(cat ${DIR_IN}/${ID_file}))
 ID=${ids["$i"]}
+BAM="$ID".bam
 
 # so these .fq files can then be remapped to the APGv4 reference
 mkdir -p "$DIR_IN"/fastq
