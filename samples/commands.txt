@@ -36,6 +36,10 @@ samples$ cat pass2_bams.list alloMAIZE_bams.list > pass2_alloMAIZE_bams.list
 # then I made bam lists:
 samples$ for i in {18..31} {33..35} {360..363} {365..374}; do for j in $(cat pass2_pops/pop"$i"_IDs.list); do echo ../filtered_bams/results/merged/"$j".sort.dedup.baq.bam; done > pass2_pops/pop"$i"_bams.list; done
 samples$ for i in symp.maize symp.mexicana allo.mexicana; do for j in $(cat pass2_pops/"$i"_IDs.list); do echo ../filtered_bams/results/merged/"$j".sort.dedup.baq.bam; done > pass2_pops/"$i"_bams.list; done
+# andes special case (subset of alloMAIZE):
+samples$ tail -n 5 alloMAIZE_IDs.list  > andes_IDs.list
+samples$ tail -n 5 alloMAIZE_bams.list  > andes_bams.list
+
 # make list of pops:
 samples$ for i in symp.maize symp.mexicana allo.mexicana $(for n in {18..31} {33..35} {360..363} {365..374}; do echo pop"$n"; done); do echo "$i"; done > pass2_pops/pop_labels.list
 
