@@ -33,25 +33,6 @@ meta.pops <- read.table(paste0("../global_ancestry/results/NGSAdmix/", PREFIX, "
   left_join(., unique(dplyr::select(hilo, c("popN", "zea", "symp_allo", "RI_ACCESSION", "GEOCTY", "LOCALITY"))), by = c("popN")) %>%
   mutate(pop = paste0("pop", popN))
 
-# ancestry calls
-LOCAL_ANC_SUBDIR="output_noBoot"
-dir_in = paste0("../local_ancestry/results/ancestry_hmm/", PREFIX)
-dir_anc = file.path(dir_in, LOCAL_ANC_SUBDIR, "anc")
-# read in population ancestry input files from calc_genomewide_pop_anc_freq.R
-pop_anc_list = lapply(meta.pops$popN, function(pop) read.table(paste0(dir_anc, "/pop", pop, ".anc.freq"), 
-                                                               stringsAsFactors = F))
-
-# combine population ancestry frequencies into a matrix
-# where rows are populations and columns are snps
-all_anc = do.call(cbind, pop_anc_list)
-colnames(all_anc) <- meta.pops$pop
-rm(pop_anc_list)
-# separate maize and mexicana data
-maize_pops <- unique(meta.pops$pop[meta.pops$zea == "maize"])
-mexicana_pops <- unique(meta.pops$pop[meta.pops$zea == "mexicana"])
-maize_anc <- all_anc[ , maize_pops]
-mexicana_anc <- all_anc[ , mexicana_pops]
-
 # genomic sites information
 # SNPs with ancestry calls
 dir_sites = paste0("../local_ancestry/results/thinnedSNPs/", PREFIX)
@@ -69,11 +50,49 @@ inv$excl_start = inv$start - excl_inv_buffer
 inv$excl_end = inv$end + excl_inv_buffer
 # which sites are within the inversion?
 sites <- mutate(sites, inv4m_1Mb_buffer = (chr == inv$chr[inv$ID=="inv4m"] & 
-                          pos >= inv$excl_start[inv$ID=="inv4m"] & 
-                          pos <= inv$excl_end[inv$ID == "inv4m"]),
+                                             pos >= inv$excl_start[inv$ID=="inv4m"] & 
+                                             pos <= inv$excl_end[inv$ID == "inv4m"]),
                 inv4m = (chr == inv$chr[inv$ID=="inv4m"] & 
-                                      pos >= inv$start[inv$ID=="inv4m"] & 
-                                      pos <= inv$end[inv$ID == "inv4m"])) 
+                           pos >= inv$start[inv$ID=="inv4m"] & 
+                           pos <= inv$end[inv$ID == "inv4m"])) 
+
+
+# ancestry calls
+LOCAL_ANC_SUBDIR="output_noBoot"
+dir_in = paste0("../local_ancestry/results/ancestry_hmm/", PREFIX)
+dir_anc = file.path(dir_in, LOCAL_ANC_SUBDIR, "anc")
+# read in population ancestry input files from calc_genomewide_pop_anc_freq.R
+pop_anc_list = lapply(meta.pops$popN, function(pop) read.table(paste0(dir_anc, "/pop", pop, ".anc.freq"), 
+                                                               stringsAsFactors = F))
+
+# combine population ancestry frequencies into a matrix
+# where rows are populations and columns are snps
+all_anc = do.call(cbind, pop_anc_list)
+colnames(all_anc) <- meta.pops$pop
+rm(pop_anc_list)
+
+# get mean ancestry across individuals sampled (NOT mean of pops)
+maize_pops <- unique(meta.pops$pop[meta.pops$zea == "maize"])
+mexicana_pops <- unique(meta.pops$pop[meta.pops$zea == "mexicana"])
+maize_anc <- all_anc[ , maize_pops]
+mexicana_anc <- all_anc[ , mexicana_pops]
+anc <- sites
+anc$pop_meanAlpha_maize = rowMeans(all_anc[ , maize_pops])
+anc$pop_meanAlpha_mex = rowMeans(all_anc[ , mexicana_pops])
+N_per_pop_mex <- sapply(mexicana_pops, function(pop) unique(meta.pops$n[meta.pops$pop == pop]))
+anc$meanAlpha_mex = t((N_per_pop_mex %*% t(all_anc[ , mexicana_pops]))/sum(N_per_pop_mex))[ , 1]
+N_per_pop_maize <- sapply(mexicana_pops, function(pop) unique(meta.pops$n[meta.pops$pop == pop]))
+anc$meanAlpha_maize = t((N_per_pop_maize %*% t(all_anc[ , maize_pops]))/sum(N_per_pop_maize))[ , 1]
+# file for Jeff
+file4jeff <- left_join(anc, d_simple_bElev,
+                       by = colnames(d_simple_bElev)[1:6]) %>%
+  dplyr::select(c(colnames(d_simple_bElev), "meanAlpha_maize", "meanAlpha_mex")) %>%
+  rename(slope_elev_sig = significance) %>%
+  mutate(meanAlpha_maize = round(meanAlpha_maize, 3),
+         meanAlpha_mex = round(meanAlpha_mex, 3),
+         slope_elev = round(slope_elev, 6))
+write.table(file4jeff, "results/outliers_for_jeff_9.5.19.txt",
+            col.names = T, row.names = F, quote = F, sep= "\t")
 
 # calculations
 zAnc_mexicana = make_K_calcs(t(mexicana_anc))
@@ -1007,6 +1026,9 @@ d_maize_mean_anc <- sites %>%
 d_maize_mean_anc$significance <- cut(d_maize_mean_anc$mean_mexicana_anc_in_maize,
                                      breaks = c(0, FDRs$thresholds, 1), include.lowest = F, 
                                      labels = c("n.s.", "FDR < 0.1", "FDR < 0.05", "FDR < 0.01"))
+# add in mexicana anc in mexicana
+#d_maize_mean_anc$mean_mexicana_anc_in_mexicana = apply(mexcana_anc, 2, mean)
+
 ggplot(d_maize_mean_anc, aes(pos, mean_mexicana_anc_in_maize, color = significance)) +
   geom_point(size = .1) +
   scale_colour_manual(values = c("black", "skyblue", "orange", "red")) + 

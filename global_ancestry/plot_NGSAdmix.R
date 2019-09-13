@@ -68,6 +68,8 @@ meta <- bind_rows(hilo, maize4low, landraces, parviglumis) %>%
                             "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
   mutate(est_coverage = ifelse(zea == "parviglumis", 10, est_coverage))
 
+View(meta[meta$ID %in% landraces$ID, ])
+
 # join bams and admix by position (CAUTION - bam list order and admix results MUST MATCH!)
 d <- bind_cols(IDs, admix)  %>%
   left_join(., meta, by = "ID") %>%
