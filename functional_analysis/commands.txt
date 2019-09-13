@@ -93,7 +93,8 @@ hilo/ZAnc$ tail -n +2 results/models/pass2_alloMAIZE/maize/simple_bElev_anc.txt 
 # First I map the January 2019 samples:
 functional_analysis$ sbatch --array=0-113 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads_ab10.sh
 Submitted batch job 14064986 - RUNNING 9.13.19. Oops I only want to keep reads that map -q 1. Try again:
-
+Submitted batch job 14065897 - RUNNING 9.13.19
 # Then I map the earlier March 2018 samples to this locus:
 functional_analysis$ sbatch --array=0-198 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=March2018_all map_and_filter_reads_ab10.sh
-Submitted batch job 14065486 - RUNNING 9.13.19
+Submitted batch job 14065486 - RUNNING 9.13.19. cancel and retry with map -q 1 filter:
+Submitted batch job 14065785 - RUNNING 9.13.19
