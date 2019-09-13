@@ -3,9 +3,9 @@
 #SBATCH -D /home/ecalfee/hilo/filtered_bams
 #SBATCH -J bam2fq
 #SBATCH -o /home/ecalfee/hilo/slurm-log/bam2fastq_batch_%A_%a.out
-#SBATCH -t 8-00:00:00
-#SBATCH --mem=32G
-#SBATCH -n 16
+#SBATCH -t 12:00:00
+#SBATCH --mem=16G
+#SBATCH -n 2
 
 # this script takes in a bam file and creates 3 fastq files --
 # PREFIX_1.fq.gz PREFIX_2.fq.gz PREFIX_3.fg.gz
@@ -15,7 +15,7 @@
 # to run: sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original,BAM=RIMMA0625_Andean.IndelRealigned.bam bam2fastq_batch.sh
 
 i=$SLURM_ARRAY_TASK_ID
-ids=($(cat ${DIR_IN}/${ID_file}))
+ids=($(cat ${ID_file}))
 ID=${ids["$i"]}
 BAM="$ID".bam
 
