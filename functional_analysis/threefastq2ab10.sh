@@ -13,7 +13,7 @@
 # note: fastq files must be name (query) sorted, so read pairs can be identified
 # after merging aligned bams, the script deduplicates, adds BAQ, and indexes final bam
 
-# to run: sbatch -p bigmemm --array=0-14 --export=ID_DIR=../data/landraces_fromLi,DIR_IN=../data/landraces_fromLi/original/fastq,LANE=alloMAIZE threefastq2ab10.sh
+# to run: sbatch -p bigmemm --array=0-14 --export=ID_DIR=../data/landraces_fromLi,DIR_IN=../data/landraces_fromLi/original/fastq,PREFIX_LIST=alloMAIZE threefastq2ab10.sh
 
 # load bio for samtools and bwa
 module load bio
