@@ -98,3 +98,8 @@ Submitted batch job 14065897 - RUNNING 9.13.19
 functional_analysis$ sbatch --array=0-198 --partition bigmemm --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=March2018_all map_and_filter_reads_ab10.sh
 Submitted batch job 14065486 - RUNNING 9.13.19. cancel and retry with map -q 1 filter:
 Submitted batch job 14065785 - RUNNING 9.13.19
+# for allopatric maize, I have to map back 3 fastqs (3rd is for unpaired reads)
+functional_analysis$ sbatch -p bigmemm --array=0-14 --export=ID_DIR=../data/landraces_fromLi,DIR_IN=../data/landraces_fromLi/original/fastq,LANE=alloMAIZE threefastq2ab10.sh
+
+
+
