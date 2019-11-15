@@ -96,7 +96,7 @@ summary(pos$rate)
 low_quant = .2
 high_quant = .8
 quantile(pos$rate, c(low_quant, high_quant))
-
+quantile(pos$rate, p = seq(0, 1, by = .2))
 # group rates by quantiles for barplots:
 pos$bin_rate = cut(pos$rate, # include full range of depth in cut
                  breaks = quantile(pos$rate, p = seq(0, 1, by = .1)),

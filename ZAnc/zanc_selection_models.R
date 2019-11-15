@@ -6,6 +6,7 @@ library(viridis)
 library(reshape2)
 library(VennDiagram)
 library(ggrastr)
+library(ggupset) # to plot all combinations of outlier sharing across pops
 
 fdr_range = c(0.1, .05, .01)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
@@ -759,6 +760,24 @@ bind_cols(maize_anc, sites) %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ggtitle("subset largest pos. slopes zElev test - with rotated intercept zInt -show pvals")
 
+# top pvals:
+bind_cols(maize_anc, sites) %>%
+  bind_cols(., zb3_elev) %>%
+  filter(., pval_zEnv < .001) %>%
+  .[c(T, rep(F, 10)), ] %>%
+  gather(., "pop", "mex_freq", maize_pops) %>%
+  left_join(., meta.pops[ , c("pop", "ELEVATION", "LOCALITY")], by = "pop") %>%
+  ggplot(aes(x = reorder(LOCALITY, ELEVATION), y = mex_freq, 
+             shape = inv4m, color = log10(pval_zEnv), group = pos)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~chr) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("subset lowest p-vals zElev test - with rotated intercept zInt -show pvals")
+# I think the issue is that steeper slopes aren't good fits because they're really logistic not linear
+# but I don't know that's really true that they're logistic in transformed space.
+
+
 # what do loci look like with higher 
 bind_cols(maize_anc, sites) %>%
   bind_cols(., zb3_over1900m) %>%
@@ -1494,7 +1513,7 @@ FDRs_zTz_chisq14_approx <- data.frame(thresholds = sapply(fdr_range, function(p)
                                       FDR = fdr_range, model = "zTz_chisq14")
 write.table(FDRs_zTz_chisq14_approx,
             "results/FDRs_zTz_chisq14.txt", quote = F, col.names = T, row.names = F, sep = "\t")
-
+FDRs_zTz_chisq14_approx <- read.table("results/FDRs_zTz_chisq14.txt", header = T, sep = "\t", stringsAsFactors = F)
 
 
 # plot zTz across the maize genome:
@@ -1535,53 +1554,38 @@ table(zTz3 > 30)/length(zTz3)
 
 # can I say what % of the top 1% FDR in zTz overlap with top 1% fdr for high mexicana ancestry or for anc ~ elev?
 top1_outliers <- sum(zTz3 > FDRs_zTz_chisq14_approx[1])
-table(zTz3 > FDRs_zTz_chisq14_approx[1], maize_anc_mean > FDRs[1])
-table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1])
-table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights > FDRs_simple_bElev[1])
-table(zTz3 > FDRs_zTz_chisq14_approx[1], simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1], maize_anc_mean > FDRs[1])
+table(zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.01)[["thresholds"]], maize_anc_mean > filter(FDRs, FDR == 0.01)[["thresholds"]])
+table(zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.01)[["thresholds"]], simple_bElev_anc$envWeights < filter(FDRs_simple_bElev, sign == "neg" & FDR == 0.01)[["thresholds"]])
+table(zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.01)[["thresholds"]], simple_bElev_anc$envWeights > filter(FDRs_simple_bElev, sign == "pos" & FDR == 0.01)[["thresholds"]])
+table(zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.01)[["thresholds"]], simple_bElev_anc$envWeights < filter(FDRs_simple_bElev, sign == "neg" & FDR == 0.01)[["thresholds"]], maize_anc_mean > FDRs[1])
 
 # top 1% FDR outliers
-outliers_top01 <- data.frame(zTz = zTz3 > FDRs_zTz_chisq14_approx[1],
-                       pos_Elev = simple_bElev_anc$envWeights > FDRs_simple_bElev[1],
-                       neg_Elev = simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[1],
-                       high_mex = maize_anc_mean > FDRs[1]) %>%
+outliers_top01 <- data.frame(zTz = zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.01)[["thresholds"]],
+                       pos_Elev = simple_bElev_anc$envWeights > filter(FDRs_simple_bElev, sign == "pos" & FDR == 0.01)[["thresholds"]],
+                       neg_Elev = simple_bElev_anc$envWeights < filter(FDRs_simple_bElev, sign == "neg" & FDR == 0.01)[["thresholds"]],
+                       high_mex = maize_anc_mean > filter(FDRs, FDR == 0.01)[["thresholds"]]) %>%
+  mutate(both = high_mex & pos_Elev) %>%
   filter(zTz) %>%
   apply(., 2, sum) %>%
-  t(.)%>%
+  t(.) %>%
+  .[1,]
+outliers_top01 %>%
   write.table(., "results/outlier_overlap_zTz.txt", quote = F, col.names = T, row.names = F, sep = "\t")
 
+outliers_top05 <- data.frame(zTz = zTz3 > filter(FDRs_zTz_chisq14_approx, FDR == 0.05)[["thresholds"]],
+                             pos_Elev = simple_bElev_anc$envWeights > filter(FDRs_simple_bElev, sign == "pos" & FDR == 0.05)[["thresholds"]],
+                             neg_Elev = simple_bElev_anc$envWeights < filter(FDRs_simple_bElev, sign == "neg" & FDR == 0.05)[["thresholds"]],
+                             high_mex = maize_anc_mean > filter(FDRs, FDR == 0.05)[["thresholds"]]) %>%
+  filter(zTz) %>%
+  mutate(both = high_mex & pos_Elev) %>%
+  apply(., 2, sum) %>%
+  t(.) %>%
+  .[1,]
+outliers_top05 %>%
+  write.table(., "results/outlier_overlap_zTz_FRD5.txt", quote = F, col.names = T, row.names = F, sep = "\t")
 
 
-for (i in 1:3){
-  outliers <- data.frame(zTz = zTz3 > FDRs_zTz_chisq14_approx[i],
-                         pos_Elev = simple_bElev_anc$envWeights > FDRs_simple_bElev[i],
-                         neg_Elev = simple_bElev_anc$envWeights < FDRs_simple_bElev_neg[i],
-                         high_mex = maize_anc_mean > FDRs[i])
-  # make venn diagram to visualize outlier overlap
-  png(paste0("plots/outliers_venn_diagram_top_", fdr_range[i], "FDR_overlap.png"), 
-      width = 8, height = 6, units = "in", res = 300)
-  draw.quad.venn(area1 = sum(outliers$zTz),
-                 area2 = sum(outliers$pos_Elev),
-                 area3 = sum(outliers$neg_Elev),
-                 area4 = sum(outliers$high_mex),
-                 n12 = sum(outliers$zTz & outliers$pos_Elev),
-                 n13 = sum(outliers$zTz & outliers$neg_Elev),
-                 n14 = sum(outliers$zTz & outliers$high_mex),
-                 n23 = sum(outliers$pos_Elev & outliers$neg_Elev),
-                 n24 = sum(outliers$pos_Elev & outliers$high_mex),
-                 n34 = sum(outliers$neg_Elev & outliers$high_mex),
-                 n123 = sum(outliers$zTz & outliers$pos_Elev & outliers$neg_Elev),
-                 n124 = sum(outliers$zTz & outliers$pos_Elev & outliers$high_mex),
-                 n134 = sum(outliers$zTz & outliers$neg_Elev & outliers$high_mex),
-                 n234 = sum(outliers$pos_Elev & outliers$neg_Elev & outliers$high_mex),
-                 n1234 = sum(outliers$zTz & outliers$pos_Elev & outliers$neg_Elev & outliers$high_mex),
-                 category = colnames(outliers))
-  dev.off()
-  
-}
 
-a <- get.venn.partitions(x = list("hi" = 1:10, "low" = -5:3))
-print(a)
 # like phylogenetic least squares
 
 # plot some of the top hits:
@@ -1715,11 +1719,11 @@ ggsave(paste0("plots/top_outlier_loci_high_mexicana.png"),
        device = "png",
        width = 6, height = 4, units = "in")
 # plotting the numbers I got out of the model for top hits:
-top_ztz_hits <- data.frame(hit = 1:8200,
-                           type = c(rep("high mexicana", 633),
-                                    rep("higher mexicana w/ elev.", 1419),
-                                    rep("lower mexicana w/ elev.", 147),
-                                    rep("Other", (8200-633-1419-147))))
+top_ztz_hits <- data.frame(hit = 1:outliers_top01[["zTz"]],
+                           type = c(rep("high mexicana", outliers_top01[["high_mex"]]),
+                                    rep("higher mexicana w/ elev.", outliers_top01[["pos_Elev"]]),
+                                    rep("lower mexicana w/ elev.", outliers_top01[["neg_Elev"]]),
+                                    rep("Other", (outliers_top01[["zTz"]] - sum(outliers_top01[c("high_mex", "pos_Elev", "neg_Elev")])))))
 ggplot(top_ztz_hits, aes(x = type, fill = type)) +
   #geom_bar(stat = "percent") +
   geom_bar(aes(y = (..count..)/sum(..count..))) + 
@@ -1729,6 +1733,25 @@ ggplot(top_ztz_hits, aes(x = type, fill = type)) +
   theme(axis.text.x = element_text(angle = 90))
 ggsave("plots/overlap_barplot_ztz_top_and_other_sel_models_top.png",
        device = "png", height = 6, width = 6)
+outliers_top01[["zTz"]]/length(zTz3) #2.7%
+
+top_ztz_hits05 <- data.frame(hit = 1:outliers_top05[["zTz"]],
+                           type = c(rep("high mexicana", outliers_top05[["high_mex"]]),
+                                    rep("higher mexicana w/ elev.", outliers_top05[["pos_Elev"]]),
+                                    rep("lower mexicana w/ elev.", outliers_top05[["neg_Elev"]]),
+                                    rep("Other", (outliers_top05[["zTz"]] - sum(outliers_top05[c("high_mex", "pos_Elev", "neg_Elev")])))))
+ggplot(top_ztz_hits05, aes(x = type, fill = type)) +
+  #geom_bar(stat = "percent") +
+  geom_bar(aes(y = (..count..)/sum(..count..))) + 
+  scale_y_continuous(labels=scales::percent) +
+  ylab("relative frequencies in zTz outliers") +
+  ggtitle("overlap of top 5% FDR zTz hits and other outliers") +
+  theme(axis.text.x = element_text(angle = 90))
+ggsave("plots/overlap_barplot_ztz_top_and_other_sel_models_top_FDR5.png",
+       device = "png", height = 6, width = 6)
+
+
+
 
 flwr_hits <- data.frame(
   chr6_centromere = 52*10^6 + axis_spacing$start[axis_spacing$chr == 6],
@@ -2515,14 +2538,14 @@ ind_pop_outliers_by_chr <- lapply(1:10, function(i)
   filter(chr == i) %>%
   #mutate(color_by = ifelse(significance == "n.s." & (chr %% 2 == 0), 
   #                         "n.s. - even chrom", significance)) %>%
-  ggplot(., aes(pos_cum, anc, color = top_sd2)) + 
+  ggplot(., aes(pos/10^6, anc, color = top_sd2)) + # plot by position on chromosome (Mb), not relative position
   #ggplot(., aes(pos_cum, anc,
   #              color = color_by, show.legend = F)) +
   geom_hline(data = meta.pops.maize, aes(yintercept = mean_mex), linetype = "dashed", alpha = .5) +
   #geom_point_rast(size = .1) +
   geom_point(size = .1) +
   facet_grid(reorder(LOCALITY, desc(ELEVATION)) ~ .) +
-  xlab("position (bp)") +
+  xlab("position (Mbp)") +
   ylab("mexicana ancestry frequency") +
   ggtitle(paste("Chr", i)) +
   ylim(c(0,1)) +
@@ -2573,11 +2596,16 @@ d_maize_anc_pops %>%
                  fill = "darkgrey", alpha = 0.5) +
   theme_classic()
 
-bind_rows(mutate(d_maize_anc_pops, source = "data"),
-          mutate(d_mvn_01_maize_pops, source = "mvn_sim") %>%
-            mutate(inv4m = F)) %>%
+outliers_maize_bypop <- bind_rows(mutate(d_maize_anc_pops, source = "data"),
+                                  mutate(d_mvn_01_maize_pops, source = "mvn_sim") %>%
+                                    mutate(inv4m = F)) %>%
   group_by(chr, pos, source, inv4m) %>%
-  summarise(outlier_pops = sum(top_sd2)) %>%
+  summarise(outlier_pops = sum(top_sd2))
+outliers_maize_bypop %>%
+  group_by(source) %>%
+  summarise(nonoutlier_perc_loci = sum(outlier_pops == 0)/n(),
+            avg_perc_loci_outliers_per_pop = sum(outlier_pops)/n()/14)
+outliers_maize_bypop %>%
   filter(outlier_pops > 0) %>%
   ggplot(., aes(x = outlier_pops, stat(density), fill = source)) +
   geom_histogram(position = "dodge2", alpha = .5, binwidth = 0.5) + 
@@ -2593,7 +2621,7 @@ bind_rows(mutate(d_maize_anc_pops, source = "data"),
   scale_fill_manual(values = cbPalette[c(2,1)], name = NULL, labels = c("observed", "simulated")) +
   theme_classic() +
   xlab("Number of populations with high mexicana ancestry") +
-  ylab("Frequency") +
+  ylab("Density") +
   #theme(legend.position = c(0.8, 0.8)) + # put legend inside plot
   ggtitle("Distribution of shared outliers in maize")
 ggsave("plots/histogram_dist_shared_outliers_maize_sd2.png",
@@ -2640,3 +2668,8 @@ d_mexicana_anc_pops %>%
   summary()
 max(d_mexicana_anc_pops$anc)
 
+
+# TO DO:
+# along with the histogram of distribution of shared outliers, look at all combos
+# of shared peaks -- do they match with geographical proximity and/or elevation?
+# new package to do this: https://github.com/const-ae/ggupset
