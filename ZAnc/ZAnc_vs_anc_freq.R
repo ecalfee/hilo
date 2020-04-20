@@ -6,7 +6,7 @@ library(reshape2)
 library(MASS)
 library(crch) # for censored normal dist.
 
-source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
+source("k_matrix.R") # import useful functions
 
 d <- read.table("results/pass1_maize/pop.ZAnc", stringsAsFactors = F,
                 header = T)

@@ -17,7 +17,7 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 rerun_all_models <- F # rerun or just load results of models
 
 # load external scripts
-source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
+source("k_matrix.R") # import useful functions
 
 # load data 
 PREFIX="pass2_alloMAIZE"

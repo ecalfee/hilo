@@ -14,7 +14,7 @@ args = commandArgs(trailingOnly=TRUE)
 prefix = args[1]
 
 # helper file with some useful functions
-source("../../covAncestry/forqs_sim/k_matrix.R") # import useful functions
+source("k_matrix.R") # import useful functions
 
 # helper function for calculating statistic:
 make_calcs = function(pop_anc){
