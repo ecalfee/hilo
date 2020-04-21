@@ -6,7 +6,7 @@
 #SBATCH -t 6:00:00
 #SBATCH --mem=24G
 
-# to run: sbatch bowtieIndexRef.sh
+# to run: sbatch bowtie_index_ref.sh
 
 # script creates bowtie2 index for reference genome (to use with fastq_screen)
 # general bash script settings to make sure if any errors in the pipeline fail

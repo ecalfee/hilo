@@ -388,7 +388,10 @@ data/landraces_fromLi/original$ for i in $(head -n 14 ../alloMAIZE_IDs.list); do
 filtered_bams$ sbatch --array=0-13 --export=ID_file=../data/landraces_fromLi/alloMAIZE_IDs.list,DIR_IN=../data/landraces_fromLi/original bam2fastq_batch.sh
 Submitted batch job 14067388 - RUNNING 9.13.19
 
-
+# running fastq_screen on new sequences from UCSF novoseq runs
+# need bowtie2 index for reference genome to do screen
+filtered_bams$ sbatch bowtie_index_ref.sh 
+Submitted batch job 20528117
 
 # TO DO: add the flagstat result for RIMMA0625 to the full list of summary stats:
 
