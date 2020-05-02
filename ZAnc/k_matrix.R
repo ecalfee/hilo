@@ -85,7 +85,7 @@ ll_mvn <- function(y, mu, detK, invK){ # here y is a vector of pop ancestry freq
 # precalculate invK = solve(K)
 ML_b <- function(y, alpha, invK, X){
   b = solve(t(X) %*% invK %*% X) %*% t(X) %*% invK %*% (y - alpha)
-  return(b)
+  return(b[,]) # return as a scalar
 }
 
 # AIC with small sample size correction

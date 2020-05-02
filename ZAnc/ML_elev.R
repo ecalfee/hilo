@@ -69,10 +69,15 @@ betas = t(apply(maize_anc, 1, function(y)
 # estimate log likelihood under this MVN model
 detK = det(K) # determinant of K matrix
 logliks <- sapply(1:nrow(maize_anc), function(i)
-                  ll_mvn(maize_anc[i, ], 
-                         mu = alpha + X %*% t(betas[i, ]), # use ML beta estimate calculate expected value
+                  ll_mvn(t(maize_anc[i, ]), # make into a column vector
+                         mu = alpha + X %*% betas[i, ], # use ML beta estimate calculate expected value
                          detK = detK, 
                          invK = invK))
+
+ll_mvn(t(maize_anc[1, ]), 
+       mu = alpha + X %*% betas[1, ], # use ML beta estimate calculate expected value
+       detK = detK, 
+       invK = invK)
 
 fits <- betas %>% # put everything together
   as.data.frame(.) %>%
