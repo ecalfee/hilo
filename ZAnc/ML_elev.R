@@ -76,11 +76,16 @@ logliks <- sapply(1:nrow(maize_anc), function(i)
                          mu = alpha + X %*% betas[i, ], # use ML beta estimate calculate expected value
                          detK = detK, 
                          invK = invK))
+rss <- sapply(1:nrow(maize_anc), function(i)
+  RSS(ancFreq = t(maize_anc[i, ]),
+      mu = alpha + X %*% betas[i, ],
+      invK = invK))
 
 fits <- betas %>% # put everything together
   as.data.frame(.) %>%
   data.table::setnames(c("b0", "b1")) %>%
-  mutate(ll = logliks,
+  mutate(RSS = rss,
+         ll = logliks,
          k = 2,
          n = length(alpha),
          AICc = AICc(ll = ll, k = k, n = n))

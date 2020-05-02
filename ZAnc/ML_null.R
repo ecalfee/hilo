@@ -63,10 +63,17 @@ logliks <- sapply(1:nrow(maize_anc), function(i)
          detK = detK, 
          invK = invK))
 
-fits <- data.frame(ll = logliks,
-         k = 0,
-         n = length(alpha)) %>%
-         mutate(AICc = AICc(ll = ll, k = k, n = n))
+rss <- sapply(1:nrow(maize_anc), function(i)
+  RSS(ancFreq = t(maize_anc[i, ]),
+         mu = alpha,
+         invK = invK))
+
+fits <- data.frame(
+  RSS = rss,
+  ll = logliks,
+  k = 0,
+  n = length(alpha)) %>%
+  mutate(AICc = AICc(ll = ll, k = k, n = n))
 
 write.table(fits,
             paste0("results/models/", PREFIX, "/maize/ML_null.txt"),

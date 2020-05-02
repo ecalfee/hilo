@@ -32,4 +32,7 @@ hilo/ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.b
 # maximum likelihood approach to ancestry ~ b0 + elev_c*bElev
 # running for all maize:
 /media/erin/3TB/Documents/gitErin/hilo/ZAnc$ nohup Rscript ./ML_elev.R &> logs/ML_elev_all_sites.log &
-[1] 10761
+[1] 10895
+# same but null model for all
+ZAnc$ nohup Rscript ./ML_null.R &> logs/ML_null_all_sites.log &
+[2] 10909

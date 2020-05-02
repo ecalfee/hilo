@@ -93,7 +93,12 @@ AICc <- function(ll, k, n){# ll is the log likelihood, k number of estimated par
   2*k - 2*ll + 2*k*(k + 1)/(n - k - 1)
 }
 
-
+# residual sum of squared errors
+# if mu = alpha, this is the Anc_LK statistic
+RSS <- function(ancFreq, mu, invK){
+  rss = t(ancFreq - mu) %*% invK %*% (ancFreq - mu)
+  return(rss[,]) # return as value, not 1x1 matrix
+}
 ##################################################
 # cholesky decomposition in R -- simple example
 
