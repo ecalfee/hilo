@@ -1,9 +1,8 @@
 #!/usr/bin/env Rscript
-# this script calculates maximum likelihood estimate at all loci across
-# maize genome for a linear model with ancestry ~ MVN(mu, K), where mu = alpha + b0 + b1*elev_c;
-# elev_c is the population elevation (in km), centered at the mean elev across pops
-# returns b0 and b1 estimates for each snp
-# plus log likelihood and AICc
+# this script calculates the likelihood under the null model
+# ancestry ~ MVN(mu, K), where mu = alpha;
+# no parameters to estimate
+# returns log likelihood and AICc
 
 # load libraries
 library(dplyr)
@@ -55,38 +54,22 @@ zAnc_maize = make_K_calcs(t(maize_anc))
 alpha = zAnc_maize$alpha
 K = zAnc_maize$K
 invK = solve(K)
-
-# environment
-elev = sapply(names(alpha), function(p)
-  meta.pops$ELEVATION[meta.pops$pop == p]/1000)
-elev_c = elev - mean(elev)
-X = cbind(intercept = 1, elev_c) %>%
-  as.matrix(.)
-
-
-
-# estimate beta for each observed vector of population ancestries
-betas = t(apply(maize_anc, 1, function(y) 
-  ML_b(y = y, alpha = alpha, invK = invK, X = X)))
+detK = det(K) # determinant of K matrix
 
 # estimate log likelihood under this MVN model
-detK = det(K) # determinant of K matrix
 logliks <- sapply(1:nrow(maize_anc), function(i)
-                  ll_mvn(t(maize_anc[i, ]), # make into a column vector
-                         mu = alpha + X %*% betas[i, ], # use ML beta estimate calculate expected value
-                         detK = detK, 
-                         invK = invK))
+  ll_mvn(t(maize_anc[i, ]), # make into a column vector
+         mu = alpha,
+         detK = detK, 
+         invK = invK))
 
-fits <- betas %>% # put everything together
-  as.data.frame(.) %>%
-  data.table::setnames(c("b0", "b1")) %>%
-  mutate(ll = logliks,
-         k = 2,
-         n = length(alpha),
-         AICc = AICc(ll = ll, k = k, n = n))
+fits <- data.frame(ll = logliks,
+         k = 0,
+         n = length(alpha)) %>%
+         mutate(AICc = AICc(ll = ll, k = k, n = n))
 
 write.table(fits,
-            paste0("results/models/", PREFIX, "/maize/ML_elevation.txt"),
+            paste0("results/models/", PREFIX, "/maize/ML_null.txt"),
             sep = "\t",
             quote = F,
             col.names = T, 
