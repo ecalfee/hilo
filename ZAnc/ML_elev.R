@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
-# this script calculates generalized least squares results at all loci across
-# maize genome for a linear model with ancestry ~ b0 + bElev*elev_c
-# where elev_c is the population elevation (in km), centered at the mean elev across pops
-# returns b0 and bElev estimates for each snp
+# this script calculates maximum likelihood estimate at all loci across
+# maize genome for a linear model with ancestry ~ MVN(mu, K), where mu = alpha + b0 + b1*elev_c;
+# elev_c is the population elevation (in km), centered at the mean elev across pops
+# returns b0 and b1 estimates for each snp
+# plus log likelihood and AICc
 
 # load libraries
 library(dplyr)
@@ -74,11 +75,6 @@ logliks <- sapply(1:nrow(maize_anc), function(i)
                          detK = detK, 
                          invK = invK))
 
-ll_mvn(t(maize_anc[1, ]), 
-       mu = alpha + X %*% betas[1, ], # use ML beta estimate calculate expected value
-       detK = detK, 
-       invK = invK)
-
 fits <- betas %>% # put everything together
   as.data.frame(.) %>%
   data.table::setnames(c("b0", "b1")) %>%
@@ -87,7 +83,7 @@ fits <- betas %>% # put everything together
          n = length(alpha),
          AICc = AICc(ll = ll, k = k, n = n))
 
-write.table(betas,
+write.table(fits,
             paste0("results/models/", PREFIX, "/maize/ML_elevation.txt"),
             sep = "\t",
             quote = F,
