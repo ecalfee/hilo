@@ -51,26 +51,24 @@ names(alpha) <- colnames(K)
 #n_sim = 10^5
 n_sim = 10^3 # just quick test
 set.seed(500)
-# mvn (neutral)
-mvn <- mvrnorm(n = n_sim, 
-                         mu = alpha, 
-                         Sigma = K, 
-                         tol = 1e-6, 
-                         empirical = FALSE, 
-                         EISPACK = FALSE)
-# add additional slope with elevation (units = km)
+# elevation (units = km)
 elev = sapply(names(alpha), function(p)
               meta.pops$ELEVATION[meta.pops$pop == p]/1000)
 elev_c = elev - mean(elev)
+# set of slopes (with elevation) and intercepts
+# note that the sel[[1]] is the neutral MVN simulation,
+# and sel[[2]] and sel[[3]] are a shared selection simulation (with no elevation effect)
+# all other simulations have slopes with elevation
 slopes = do.call(c, lapply(c(0, 0.05, 0.5, 5, -0.05, -0.5, -5), rep, 3))
 intercepts = rep(c(0, 0.3, -0.3), 7)
+generating_model = ifelse(intercepts == 0 & slopes == 0, "null",
+                          ifelse(slopes == 0, "allpop", "elevation"))
 sel_names = 1:length(slopes)
 lapply(1:length(slopes), function(i) summary(t(alpha + intercepts[i] + elev_c*slopes[i])))
 sel <- lapply(1:length(slopes), function(i)
   t(apply(mvn, 1, function(x) x + intercepts[i] + elev_c*slopes[i])))
 
 # truncate 0-1 range
-mvn_trunc <- truncate01(mvn)
 sel_trunc <- lapply(sel, truncate01)
 
 # what I really want to do is not a logistic, but add slope, then truncation at 0, 1
@@ -83,49 +81,41 @@ invK = solve(K)
 #  round(., 5)
 # generalized least squares model for population ancestries centered at pop mean ancestry:
 # (y - alpha)
-mvn_betas = t(apply(mvn, 1, function(y) 
-  solve(t(X) %*% invK %*% X) %*% t(X) %*% invK %*% (y - alpha)))
 sel_betas = lapply(sel, function(s)
   t(apply(s, 1, function(y) 
-    solve(t(X) %*% invK %*% X) %*% t(X) %*% invK %*% (y - alpha))))
-mvn_trunc_betas = t(apply(mvn_trunc, 1, function(y) 
-  solve(t(X) %*% invK %*% X) %*% t(X) %*% invK %*% (y - alpha)))
+    ML_b(y, alpha, invK, X))) %>%
+    as.data.frame(.) %>%
+    data.table::setnames(c("b0", "b1")))
+
 sel_trunc_betas = lapply(sel_trunc, function(s)
   t(apply(s, 1, function(y) 
-    solve(t(X) %*% invK %*% X) %*% t(X) %*% invK %*% (y - alpha))))
+    ML_b(y, alpha, invK, X))) %>%
+    as.data.frame(.) %>%
+    data.table::setnames(c("b0", "b1")))
 # plot -- how well did we recover true values without truncation?
 # with truncation?
 # how did alphas fit in? Or do I need to subtract them off first..
 # what is my power in the diff selection schemes to be in empirical top 1% neutral?
 
-mvn_betas %>%
-  as.data.frame(.) %>%
-  data.table::setnames(c("b0", "bElev")) %>%
+sel_betas[[1]] %>%
   pivot_longer(., colnames(.), names_to = "b", values_to = "estimate") %>%
   ggplot(., aes(x = estimate, fill = b)) +
   geom_histogram() +
   facet_wrap(~b, scales = "free_x") +
   ggtitle("MVN null model - no truncation")
-mvn_betas %>%
-  as.data.frame(.) %>%
-  data.table::setnames(c("b0", "bElev")) %>%
-  #pivot_longer(., colnames(.), names_to = "b", values_to = "estimate") %>%
+sel_betas[[1]] %>%
   ggplot(., aes(x = b0, y = bElev)) +
   geom_point() +
   ggtitle("MVN null model - no truncation")
 
 # with truncation:
-mvn_trunc_betas %>%
-  as.data.frame(.) %>%
-  data.table::setnames(c("b0", "bElev")) %>%
+sel_trunc_betas[[1]] %>%
   pivot_longer(., colnames(.), names_to = "b", values_to = "estimate") %>%
   ggplot(., aes(x = estimate, fill = b)) +
   geom_histogram() +
   facet_wrap(~b, scales = "free_x") +
   ggtitle("MVN null model - [0,1]")
-mvn_trunc_betas %>%
-  as.data.frame(.) %>%
-  data.table::setnames(c("b0", "bElev")) %>%
+sel_trunc_betas[[1]] %>%
   ggplot(., aes(x = b0, y = bElev)) +
   geom_point() +
   ggtitle("MVN null model - [0,1]")
@@ -133,8 +123,7 @@ mvn_trunc_betas %>%
 # now show distribution of estimates for selection scenarios
 sel_betas_pretty <- do.call(rbind, 
         lapply(1:length(sel_betas), function(i)
-          as.data.frame(sel_betas[[i]]) %>%
-            data.table::setnames(c("b0", "bElev")) %>%
+            sel_betas[[i]] %>%
             pivot_longer(., colnames(.), names_to = "b", values_to = "estimate") %>%
             mutate(name = sel_names[i],
                    intercept = intercepts[i],
@@ -146,25 +135,24 @@ sel_betas_pretty %>% # top row is the neutral model
   geom_histogram(bins = 100) +
   geom_vline(data = data.frame(name = sel_names,
                                b0 = intercepts,
-                               bElev = slopes) %>%
-               pivot_longer(., c("b0", "bElev"), names_to = "b", values_to = "estimate"),
+                               b1 = slopes) %>%
+               pivot_longer(., c("b0", "b1"), names_to = "b", values_to = "estimate"),
                aes(xintercept = estimate)) +
   facet_grid(name ~ b, scales = "free_x") +
   theme(legend.position = "none") +
-  ggtitle("anc ~ b0 + bElev*elevation - no truncation")
+  ggtitle("anc ~ b0 + b1*elevation - no truncation")
 ggsave("plots/sims_gls_b0_bElev_no_trunc.png",
        height = 10, width = 7, units = "in", dpi = 300)
 
 # power to detect a selected locus at 5% FDR:
-#table(mvn == sel[[1]]) # all True
 # start with extreme scenario 10:
-filter(sel_betas_pretty, b == "bElev") %>%
+filter(sel_betas_pretty, b == "b1") %>%
   group_by(name) %>%
   summarise(max = max(estimate))
 head(sel_betas_pretty$estimate)
 vals_bElev = seq(from = 0, to = 6, by = .01)
-over_null = sapply(vals_bElev, function(x) sum(sel_betas[[1]][ , 2] > x))
-over_10 = sapply(vals_bElev, function(x) sum(sel_betas[[10]][ , 2] > x))
+over_null = sapply(vals_bElev, function(x) sum(sel_betas[[1]][ , "b1"] > x))
+over_10 = sapply(vals_bElev, function(x) sum(sel_betas[[10]][ , "b1"] > x))
 # assume 1% of loci are selected, what's your false-discovery-rate cutoff?
 perc_sel = .01
 FDR_10 = over_null/(over_null + perc_sel * over_10)
@@ -179,26 +167,25 @@ pwr <- function(null_b, sel_b, perc_sel, v, fdr = 0.05){
   p = over_sel[min(which(fdrs < fdr))]
   return(p)
 }
-pwr(null_b = sel_betas[[1]][ , 2], sel_b = sel_betas[[10]][ , 2],
+pwr(null_b = sel_betas[[1]][ , "b1"], sel_b = sel_betas[[10]][ , "b1"],
     perc_sel = 0.01, v = vals_bElev, fdr = 0.05)
-sapply(sel_betas, function(s) pwr(null_b = sel_betas[[1]][ , 2],
-                                  sel_b = s[ , 2],
+sapply(sel_betas, function(s) pwr(null_b = sel_betas[[1]][ , "b1"],
+                                  sel_b = s[ , "b1"],
                                   perc_sel = 0.01,
                                   v = vals_bElev,
                                   fdr = 0.05))
-sapply(sel_trunc_betas, function(s) pwr(null_b = sel_trunc_betas[[1]][ , 2],
-                                  sel_b = s[ , 2],
+sapply(sel_trunc_betas, function(s) pwr(null_b = sel_trunc_betas[[1]][ , "b1"],
+                                  sel_b = s[ , "b1"],
                                   perc_sel = 0.01,
                                   v = vals_bElev,
                                   fdr = 0.05))
 
-# now look at the real data. what are the b0 and bElev estimates genomewide and in inv4m?
+# now look at the real data. what are the b0 and b1 estimates genomewide and in inv4m?
 
 # now with truncation:
 sel_trunc_betas_pretty <- do.call(rbind, 
                             lapply(1:length(sel_trunc_betas), function(i)
-                              as.data.frame(sel_trunc_betas[[i]]) %>%
-                                data.table::setnames(c("b0", "bElev")) %>%
+                              sel_trunc_betas[[i]] %>%
                                 pivot_longer(., colnames(.), names_to = "b", values_to = "estimate") %>%
                                 mutate(name = sel_names[i],
                                        intercept = intercepts[i],
@@ -210,12 +197,12 @@ sel_trunc_betas_pretty %>% # top row is the neutral model
   geom_histogram(bins = 100) +
   geom_vline(data = data.frame(name = sel_names,
                                b0 = intercepts,
-                               bElev = slopes) %>%
-               pivot_longer(., c("b0", "bElev"), names_to = "b", values_to = "estimate"),
+                               b1 = slopes) %>%
+               pivot_longer(., c("b0", "b1"), names_to = "b", values_to = "estimate"),
              aes(xintercept = estimate)) +
   facet_grid(name ~ b, scales = "free_x") +
   theme(legend.position = "none") +
-  ggtitle("anc ~ b0 + bElev*elevation - [0,1]")
+  ggtitle("anc ~ b0 + b1*elevation - [0,1]")
 ggsave("plots/sims_gls_b0_bElev_01_trunc.png",
        height = 10, width = 7, units = "in", dpi = 300)
 
@@ -230,7 +217,7 @@ head(gls_bElev)
 v_bElev <- seq(from = min(gls_bElev$bElev), 
                to = max(gls_bElev$bElev),
                by = .001)
-over_null = sapply(v_bElev, function(x) sum(mvn_trunc_betas[ , 2] > x))/nrow(mvn_trunc_betas)
+over_null = sapply(v_bElev, function(x) sum(sel_trunc_betas[[1]][ , "b1"] > x))/nrow(sel_trunc_betas[[1]])
 over_data = sapply(v_bElev, function(x) sum(gls_bElev$bElev > x))/length(gls_bElev$bElev)
 fdrs = over_null/over_data # expected false-positives rate divided by total positive rate
 plot(1:length(fdrs), fdrs, type = "l")
@@ -296,19 +283,71 @@ sel_trunc_optims = lapply(sel_trunc, function(s)
             invK = invK, params = c("b0", "b1")))))
 
 # good, very close agreement between optim and analytical optimization to find beta
-plot(sel_optims[[1]]$b0 ~ sel_betas[[1]][ ,1])
-plot(sel_trunc_optims[[1]]$b1 ~ sel_trunc_betas[[1]][ ,2])
+plot(sel_optims[[1]]$b0 ~ sel_betas[[1]][ , "b0"])
+plot(sel_trunc_optims[[1]]$b1 ~ sel_trunc_betas[[1]][ , "b1"])
 sapply(1:length(sel_optims), function(i)
-  sum(abs(sel_optims[[i]]$b0 - sel_betas[[i]][ ,1]) < .005)
+  sum(abs(sel_optims[[i]]$b0 - sel_betas[[i]][ , "b0"]) < .005)
 )
 sapply(1:length(sel_optims), function(i)
-  sum(abs(sel_optims[[i]]$b1 - sel_betas[[i]][ , 2]) < .005)
+  sum(abs(sel_optims[[i]]$b1 - sel_betas[[i]][ , "b1"]) < .005)
 )
 sapply(1:length(sel_trunc_optims), function(i) # same with truncation
-  sum(abs(sel_trunc_optims[[i]]$b0 - sel_trunc_betas[[i]][ ,1]) < .005)
+  sum(abs(sel_trunc_optims[[i]]$b0 - sel_trunc_betas[[i]][ , "b0"]) < .005)
 )
 sapply(1:length(sel_trunc_optims), function(i)
-  sum(abs(sel_trunc_optims[[i]]$b1 - sel_trunc_betas[[i]][ ,2]) < .005)
+  sum(abs(sel_trunc_optims[[i]]$b1 - sel_trunc_betas[[i]][ ,"b1"]) < .005)
 )
 
+# merge all sims into one data frame:
+sel_df <- do.call(rbind, lapply(1:length(slopes), function(i)
+  as.data.frame(sel[[i]]) %>%
+                  mutate(l = 1:n_sim,
+                         intercept = intercepts[i],
+                         slope = slopes[i],
+                         generating_model = generating_model[i],
+                         truncated = F)))
+sel_trunc_df <- do.call(rbind, lapply(1:length(slopes), function(i)
+  as.data.frame(sel_trunc[[i]]) %>%
+    mutate(l = 1:n_sim,
+           intercept = intercepts[i],
+           slope = slopes[i],
+           generating_model = generating_model[i],
+           truncated = T)))
 
+# then fit all selection scenarios (takes a while!):
+sel_fits <- c(list(null = fit_null(anc = sel_df[ , names(alpha)], 
+                          alpha = alpha, K = K), 
+                 allpop = fit_sel(anc = sel_df[ , names(alpha)], 
+                                  alpha = alpha, K = K, 
+                                  X = as.matrix(rep(1, length(alpha))), 
+                                  b_names = "b"), 
+                 elevation = fit_sel(anc = sel_df[ , names(alpha)], 
+                                         alpha = alpha, K = K, 
+                                         X = as.matrix(cbind(intercept = 1, elev_c)), 
+                                         b_names = c("b0", "b1"))),
+              lapply(1:length(alpha), function(i)
+                   fit_sel(anc = sel_df[ , names(alpha)], 
+                           alpha = alpha, K = K, 
+                           X = as.matrix(1:length(alpha) == i), 
+                           b_names = "b"))) %>%
+  lapply(., function(x) bind_cols(x, dplyr::select(sel_df, -names(alpha))))
+
+sel_trunc_fits <- c(list(null = fit_null(anc = sel_trunc_df[ , names(alpha)], 
+                                   alpha = alpha, K = K), 
+                   allpop = fit_sel(anc = sel_trunc_df[ , names(alpha)], 
+                                    alpha = alpha, K = K, 
+                                    X = as.matrix(rep(1, length(alpha))), 
+                                    b_names = "b"), 
+                   elevation = fit_sel(anc = sel_trunc_df[ , names(alpha)], 
+                                       alpha = alpha, K = K, 
+                                       X = as.matrix(cbind(intercept = 1, elev_c)), 
+                                       b_names = c("b0", "b1"))),
+              lapply(1:length(alpha), function(i)
+                fit_sel(anc = sel_trunc_df[ , names(alpha)], 
+                        alpha = alpha, K = K, 
+                        X = as.matrix(1:length(alpha) == i), 
+                        b_names = "b"))) %>%
+  lapply(., function(x) bind_cols(x, dplyr::select(sel_trunc_df, -names(alpha))))
+model_names <- c("null", "allpop", "elevation", paste0("onepop", 1:14))
+names(sel_fits) <- model_names
+names(sel_trunc_fits) <- model_names

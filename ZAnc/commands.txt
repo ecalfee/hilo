@@ -36,3 +36,19 @@ hilo/ZAnc$ pr -mt -s$'\t' ../within_ancestry_diversity/results/input/var.sites.b
 # same but null model for all
 ZAnc$ nohup Rscript ./ML_null.R &> logs/ML_null_all_sites.log &
 [2] 10909
+# re-doing locally (will check the same later) to make some plots:
+ZAnc Erin$ nohup Rscript ./ML_elev.R &> logs/ML_elev_all_sites.log
+[1] 11190
+ZAnc Erin$ nohup Rscript ./ML_null.R &> logs/ML_null_all_sites.log &
+[2] 11203
+# each pop -- one pop model:
+ZAnc Erin$ nohup parallel --jobs 4 --noswap --joblog logs/ML_onepop_all_sites.log 'Rscript ./ML_onepop.R {1}' ::: {1..14} &> logs/ML_onepop_all_sites.out &
+[1] 11520 ## oops! no parallel yet on my mac :(
+ZAnc Erin$ for i in {1..14}; do ((wait 5m; Rscript ./ML_onepop.R $i) &> logs/ML_onepop_$i_all_sites.log &); done
+# hmm.. didn't run. no wait 5m on my mac either
+# ran pop1 interactively on mac, then for the rest:
+ZAnc Erin$ (for i in {2..14}; do Rscript ./ML_onepop.R $i; done) &> logs/ML_onepop_2-14_all_sites.log &
+[1] 15350
+# shared selection all pops model:
+ZAnc Erin$ nohup Rscript ./ML_allpop.R &> logs/ML_allpop_all_sites.out &
+[1] 11826

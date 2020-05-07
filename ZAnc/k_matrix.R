@@ -99,6 +99,75 @@ RSS <- function(ancFreq, mu, invK){
   rss = t(ancFreq - mu) %*% invK %*% (ancFreq - mu)
   return(rss[,]) # return as value, not 1x1 matrix
 }
+
+# fit the neutral model
+fit_null <- function(anc, alpha, K){
+  invK = solve(K)
+  detK = det(K) # determinant of K matrix
+  
+  # estimate log likelihood under this MVN model
+  logliks <- sapply(1:nrow(anc), function(i)
+    ll_mvn(t(anc[i, ]), # make into a column vector
+           mu = alpha,
+           detK = detK, 
+           invK = invK))
+  
+  rss <- sapply(1:nrow(anc), function(i)
+    RSS(ancFreq = t(anc[i, ]),
+        mu = alpha,
+        invK = invK))
+  
+  fits <- data.frame(
+    RSS = rss,
+    ll = logliks,
+    k = 0,
+    n = length(alpha)) %>%
+    mutate(AICc = AICc(ll = ll, k = k, n = n))
+  
+  return(fits)
+}
+
+# fit a selection model with environment X:
+fit_sel <- function(anc, alpha, K, X, b_names){
+  # X is a matrix but may only have 1 column (e.g. X = [1,1,1..1]^T)
+  # b_names can be a single value or vector, e.g. "b" or c("b0", "b1")
+  if (!is.matrix(X)){
+    stop("environment X must be a matrix")
+  }
+  invK = solve(K)
+  detK = det(K)
+  
+  # estimate beta for each observed vector of population ancestries
+  betas = apply(anc, 1, function(y) 
+    ML_b(y = y, alpha = alpha, invK = invK, X = X)) %>%
+    as.matrix(.)
+  if (dim(betas)[2] != length(b_names)) betas = t(betas) # fix because for 1D it outputs one way and 2D it outputs a diff way from apply
+  #betas = apply(maize_anc, 1, function(y) 
+  #  ML_b(y = y, alpha = alpha, invK = invK, X = X)) %>%
+  #  as.matrix(.)
+  logliks <- sapply(1:nrow(anc), function(i)
+    ll_mvn(t(anc[i, ]), # make into a column vector
+           mu = alpha + X %*% betas[i, ], # use ML beta estimate calculate expected value
+           detK = detK, 
+           invK = invK))
+  
+  rss <- sapply(1:nrow(anc), function(i)
+    RSS(ancFreq = t(anc[i, ]),
+        mu = alpha + X %*% betas[i, ],
+        invK = invK))
+  
+  fits <- betas %>% # put everything together
+    as.data.frame(.) %>%
+    data.table::setnames(b_names) %>%
+    mutate(RSS = rss,
+           ll = logliks,
+           k = length(b_names), # no error is estimated, free parameters = number of betas
+           n = length(alpha),
+           AICc = AICc(ll = ll, k = k, n = n))
+  return(fits)
+}
+
+
 ##################################################
 # cholesky decomposition in R -- simple example
 
