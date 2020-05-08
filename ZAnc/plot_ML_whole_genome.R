@@ -3,6 +3,9 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(ggpubr)
+library(gridExtra)
+source("../colors.R")
 
 # load data 
 PREFIX="pass2_alloMAIZE"
@@ -27,6 +30,7 @@ sites <- do.call(rbind,
                    read.table(paste0(dir_sites, "/chr", i, ".var.sites"),
                               header = F, stringsAsFactors = F)))
 colnames(sites) <- c("chr", "pos", "major", "minor")
+
 # get inversions:
 inv = read.table("../data/refMaize/inversions/knownInv_v4_coord.txt",
                  stringsAsFactors = F, header = T)
@@ -298,7 +302,8 @@ par(mfrow=c(1,1))
 
 # test multiple cutoffs based on alphas for chi-sq dist against null
 sig_alphas = c(0.05, 0.01, 0.005, 0.001, 0.0005, 0.0001)
-chisq_cv = lapply(1:2, function(k) qchisq(1 - sig_alphas, df = k)) # critical values 
+bonferroni_alphas = sig_alphas/(length(models) - 1) # Bonferroni correction, don't include null in multiple-comparisons count
+chisq_cv = lapply(1:2, function(k) qchisq(1 - bonferroni_alphas, df = k)) # critical values 
 # calculated for 1 or 2 degrees of freedom more than null model
 
 # make barplots for diff cutoffs decide cutoff
@@ -306,26 +311,57 @@ win_models_df2 <- bind_cols(sites, models[[1]]) %>%
   dplyr::select(chr, pos, ll) %>%
   rename(ll_null = ll) %>%
   left_join(win_models_df, ., by = c("chr", "pos")) %>%
-  mutate(lik_ratio = -2*ll_null + 2*ll)
-
-# filter by critical values and make a bunch of plots
-# report what fraction of the genome is an outlier too
-win_models_df %>%
+  mutate(lik_ratio = -2*ll_null + 2*ll) %>%
+  mutate(p = pchisq(lik_ratio, lower.tail = F, df = k)) %>%
+  mutate(p_bonferroni = p*(length(models) - 1)) %>% # correction for multiple testing (count all but null model)
   mutate(effect = ifelse(model == "null", NA, 
                          ifelse(model == "elevation",
                                 ifelse(b1 < 0, "-", "+"),
-                                ifelse(b < 0, "-", "+")))) %>%
-  ggplot(., aes(x = model, fill = effect)) +
-  geom_bar(aes(y = ..count../sum(..count..))) +
+                                ifelse(b < 0, "-", "+"))))
+
+# filter by critical values and make a bunch of plots
+# summarise data that would go into barplots
+win_models_freq <- do.call(rbind, lapply(sig_alphas, function(a)
+  win_models_df2 %>%
+  filter(., p_bonferroni < a) %>%
+  dplyr::group_by(., model, effect) %>%
+  summarise(count = n()) %>%
+  ungroup() %>%
+  mutate(freq = count/sum(count),
+         alpha = a)))
+
+# plot all together
+p_wins_barplot_facet_alpha <- ggplot(win_models_freq, aes(x = model, fill = effect)) +
+  geom_bar(aes(y = freq), stat = "identity") +
   theme_classic() +
   ylab("Frequency") +
-  xlab("Model with lowest AICc") +
-  theme(axis.text.x = element_text(angle = 90)) +
-  labs(fill = "Direction\nof effect")
-ggsave("../../hilo_manuscript/figures/model_wins_barplot.png",
-       plot = p_model_wins,
-       height = 4, width = 5.2, 
+  xlab("Best model") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  labs(fill = "Direction\nof effect") +
+  facet_wrap(~alpha, nrow = 3) +
+  scale_fill_manual(values = col_pos_neg)
+
+# report what fraction of the genome is an outlier too
+p_sig_alphas <- win_models_freq %>% # make log10 scale
+  group_by(alpha) %>%
+  summarise(count = sum(count)) %>%
+  mutate(prop_sig = count/nrow(sites)) %>%
+  ggplot(., aes(x = -log10(alpha), y = prop_sig * 100)) +
+  geom_point() +
+  ylab("% of loci sig. outliers") +
+  ylim(c(0,15)) +
+  xlab(expression("-log"[10]~alpha)) +
+  #scale_x_reverse()+ 
+  theme_light()
+# grob graphs together
+p_wins_alpha = grid.arrange(ncol = 2, 
+             grobs = list(p_wins_barplot_facet_alpha + ggtitle("A"), 
+                          p_sig_alphas + ggtitle("B")),
+             widths = c(5,3))
+
+ggsave(paste0("../../hilo_manuscript/figures/model_wins_barplot_alphas.png"),
+       p_wins_alpha,
+       height = 5, width = 7.5, 
        units = "in", dpi = 300, 
        device = "png")
-
 

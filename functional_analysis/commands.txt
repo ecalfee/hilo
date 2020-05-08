@@ -103,4 +103,8 @@ functional_analysis$ sbatch -p bigmemm --array=0-14 --export=ID_DIR=../data/land
 Submitted batch job 14112708 - RUNNING 9.17.19
 # TO DO: call variants and do a PCA of ab10 region for all samples. check correlation with maize vs. mexicana ancestry calls for that region.
 
-
+# report overall mean mexicana ancestry in maize and mexicana across the genome
+# as a bed file, where ancestry calls are extended into tracts going midway to the next call.
+# (gave to Dan May 8 2020 to compare to domestication scan)
+(base) Erins-MacBook-Air:hilo Erin$ cut -f4 functional_analysis/results/meanAlpha_maize.bed | paste local_ancestry/results/thinnedSNPs/pass2_alloMAIZE/tracts.bed - > functional_analysis/results/meanAlpha_maize_tracts.bed
+(base) Erins-MacBook-Air:hilo Erin$ cut -f4 functional_analysis/results/meanAlpha_mex.bed | paste local_ancestry/results/thinnedSNPs/pass2_alloMAIZE/tracts.bed - > functional_analysis/results/meanAlpha_mex_tracts.bed

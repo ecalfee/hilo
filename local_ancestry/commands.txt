@@ -96,4 +96,5 @@ ancestry_hmm$ for j in HILO207 HILO41 HILO218 HILO42; do for i in 0.05 0.1 0.5 1
 ancestry_hmm$ for i in 0.05 0.1 0.5 1 1.5; do mkdir -p downsampled_"$i"x/output_noBoot/anc; scp -P 2022 -r ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/downsampled_"$i"x/output_noBoot/anc/* downsampled_"$i"x/output_noBoot/anc/.; done; done
 # Plot results in plot_sensitivity_to_coverage.R
 
-
+# created 'tracts' out of local ancestry sites by extending calls midway to the adjacent calls
+Erins-MacBook-Air:hilo/local_ancestry Erin$ Rscript ancestry_sites_to_tracts.R pass2_alloMAIZE
