@@ -1,0 +1,47 @@
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - ccb-sb # for r-ggrastr
+dependencies:
+  - bioconda::snakemake-minimal =5.4.5
+  - python =3.6
+  - r-base =3.6.2
+  - r-tidyverse
+  - r-ggpubr
+  - r-gridextra
+  - r-reshape2
+  - r-scales
+  - r-corrplot
+  - r-poibin
+  - r-viridis
+  - r-ggupset
+  - r-ggrastr
+  - r-bedr
+  - r-boot
+  - r-rcolorbrewer
+  - r-zoo
+  - r-rgbif
+  - r-quantreg
+  - r-data.table
+  - r-reader
+  - jinja2 =2.10
+  - networkx =2.1
+  - matplotlib =2.2.3
+  - graphviz =2.38.0
+  - bcftools =1.9
+  - samtools =1.9
+  - htslib =1.9
+  - bwa =0.7.17
+  - pysam =0.15.0
+  - FastQC =0.11.6
+  - fastq-screen =0.14.0
+  - bowtie2 =2.3.0
+  - seqtk =1.3
+  - bedtools =2.29.0
+
+  # external dependencies:
+  # ancestry_hmm_v0.94 # note version
+  # angsd =0.932 # comes with htslib 1.10.2 and is linked to that library
+  # picard =2.7.1 path to picard-tools-2.7.1/ loaded as $PICARD
+  # and JAVA 1.8 to run picard MarkDuplicates
