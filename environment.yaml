@@ -40,7 +40,6 @@ dependencies:
   - r-data.table
   - r-reader
 
-
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
   # angsd =0.932 # comes with htslib 1.10.2 and is linked to that library
