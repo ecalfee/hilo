@@ -71,6 +71,13 @@ models <- lapply(1:length(model_names), function(i)
                     model_names[i], ".txt"),
              header = T, sep = "\t") %>%
     mutate(model = model_names[i]))
+model_names2 <- factor(c("Null", "All Populations", "Elevation", 
+                  filter(meta.pops, zea == "maize")$LOCALITY),
+                  levels = c("Null", "All Populations", "Elevation", 
+                             filter(meta.pops, zea == "maize") %>%
+                               arrange(., ELEVATION) %>% 
+                               .$LOCALITY))
+
 
 # I am unsure how to do model weights
 # but I can start with the 'winning' model
@@ -88,7 +95,8 @@ wins_genome
 models_df <- do.call(bind_rows, lapply(1:length(models),
                                        function(i)
                                          bind_cols(sites, models[[i]]) %>%
-                                         mutate(model = model_names[i])))
+                                         mutate(model = model_names[i],
+                                                model_name = model_names2[i])))
 win_models_df <- models_df %>%
   arrange(chr, pos, AICc) %>%
   filter(!duplicated(paste0(chr, pos))) # keep only lowest AIC for each locus
@@ -98,7 +106,7 @@ p_model_wins <- win_models_df %>%
                          ifelse(model == "elevation",
                                 ifelse(b1 < 0, "-", "+"),
                                 ifelse(b < 0, "-", "+")))) %>%
-  ggplot(., aes(x = model, fill = effect)) +
+  ggplot(., aes(x = model_name, fill = effect)) +
   geom_bar(aes(y = ..count../sum(..count..))) +
   theme_classic() +
   ylab("Frequency") +
@@ -309,7 +317,7 @@ chisq_cv = lapply(1:2, function(k) qchisq(1 - bonferroni_alphas, df = k)) # crit
 # make barplots for diff cutoffs decide cutoff
 win_models_df2 <- bind_cols(sites, models[[1]]) %>%
   dplyr::select(chr, pos, ll) %>%
-  rename(ll_null = ll) %>%
+  dplyr::rename(ll_null = ll) %>%
   left_join(win_models_df, ., by = c("chr", "pos")) %>%
   mutate(lik_ratio = -2*ll_null + 2*ll) %>%
   mutate(p = pchisq(lik_ratio, lower.tail = F, df = k)) %>%
@@ -324,14 +332,15 @@ win_models_df2 <- bind_cols(sites, models[[1]]) %>%
 win_models_freq <- do.call(rbind, lapply(sig_alphas, function(a)
   win_models_df2 %>%
   filter(., p_bonferroni < a) %>%
-  dplyr::group_by(., model, effect) %>%
+  dplyr::group_by(., model, model_name, effect) %>%
   summarise(count = n()) %>%
   ungroup() %>%
   mutate(freq = count/sum(count),
          alpha = a)))
 
 # plot all together
-p_wins_barplot_facet_alpha <- ggplot(win_models_freq, aes(x = model, fill = effect)) +
+p_wins_barplot_facet_alpha <- ggplot(win_models_freq, 
+                                     aes(x = model_name, fill = effect)) +
   geom_bar(aes(y = freq), stat = "identity") +
   theme_classic() +
   ylab("Frequency") +

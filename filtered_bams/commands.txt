@@ -122,6 +122,18 @@ mv results/Jan2019_6/HILO201.sort.dedup.baq.bam* results/backup/. # save as back
 hilo/filtered_bams$ sbatch --array=0,93,113 -p med2 --mem=54G --export=DIR_IN=../data/HILO_raw_reads,PREFIX_LIST=Jan2019 map_and_filter_reads.sh
 Submitted batch job 9457315 - COMPLETED 3.5.19
 
+# HILO PASS3 - APRIL 2020 Adding in new data from novaseq:
+# First making symlink to rename logically:
+hilo$ parallel --jobs 1 'ln -s /group/jrigrp10/ErinHilo/data/MTPJRI0{2}/{1}_S*_L00*_R{3}_001.fastq.gz \
+data/HILO_raw_reads/April2020_{2}/{1}_{3}.fq.gz' \
+::::+ data/HILO_raw_reads/April2020_IDs.list \
+:::+ $(cut -c11- data/HILO_raw_reads/April2020_lanes.list)  \
+::: 1 2
+
+
+
+
+
 
 # PARVIGLUMIS - PALMAR CHICO POPULATION:
 # getting large well-mixed parviglumis population to use as unadmixed sister group to allo maize
@@ -390,7 +402,7 @@ Submitted batch job 14067388 - RUNNING 9.13.19
 
 # running fastq_screen on new sequences from UCSF novoseq runs
 # need bowtie2 index for reference genome to do screen
-filtered_bams$ sbatch bowtie_index_ref.sh 
+filtered_bams$ sbatch bowtie_index_ref.sh
 Submitted batch job 20528117
 
 # TO DO: add the flagstat result for RIMMA0625 to the full list of summary stats:
