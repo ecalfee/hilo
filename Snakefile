@@ -87,7 +87,7 @@ rule samtools_index:
 		"samtools index {input}"
 
 # now merge any bams for IDs with multiple sequencing runs
-# TODO:
+# TO-DO:
 # load hilo ID's from a file into an array
 # load lanes into an array also
 # make 2 test fastq sets _1 and _2 (very small). put in data/HILO_raw_reads/
