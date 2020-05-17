@@ -9,7 +9,7 @@ pools <- do.call(rbind,
                                                   stringsAsFactors = F)[,1:7] %>%
                           mutate(., lane = p) %>%
                           filter(!(Library.name=="")))) %>%
-  rename(ID = Library.name) %>%
+  dplyr::rename(ID = Library.name) %>%
   separate(data = ., col = sample_name, sep = "_", c("popN", "family"), extra = "merge") %>%
   mutate(popN = as.integer(popN)) %>%
   dplyr::select(c("ID", "Adapter", "lane", "plate_number", "popN", "family"))
@@ -28,7 +28,91 @@ meta <- pools %>%
   mutate(., symp_allo = ifelse(popN %in% c(20, 22, 33), "allopatric", "sympatric")) %>%
   dplyr::arrange(ID)
 
+# add sequencing round
+seq_round <- read.table("../data/HILO_raw_reads/merged_all.list",
+                        header = F, stringsAsFactors = F) %>%
+  data.table::setnames(c("ID", "seq_lane", "library")) 
+seq_round2 <- seq_round %>%
+  bind_cols(., filter(pools, !(ID == "HILO80" & lane == 2))) %>%
+  dplyr::rename(p7 = Adapter,
+                fam_ind = family) %>%
+  dplyr::mutate(instrument_model = "Illumina HiSeq 4000", # add sequencing machine
+                sample_name = ID,
+                incl_excl = ifelse((ID == 80 | plate_number == "plate2"), 
+                                   "excl_label_error", NA), # mark excluded samples
+                fam_ind = stringr::str_trim(fam_ind, side = "both"), # trim white space
+                family = stringr::str_sub(fam_ind, 1, 1),
+                pop_fam = paste(popN, family, sep = "_"),# I arbitrarily assign x and xi to these individuals -- tissue was not saved
+                ind = ifelse(duplicated(pop_fam) & !(duplicated(ID)), "x", "xi") # will be NA if no number
+                ) # now add RIMME/RIMMA.
+# basic checks:
+seq_round2 %>%
+  group_by(pop_fam) %>%
+  summarise(ids = length(unique(ID)),
+            inds = length(unique(ind))) %>%
+  filter(ids != 1 | inds != 1) # check -- good, some families are repeated but have multiple individual ids
+seq_round2 %>%
+  group_by(ID) %>%
+  summarise(inds = length(unique(paste(pop_fam, ind)))) %>%
+  filter(inds != 1) # check -- good, each ID has only 1 unique pop_fam_ind identifier
+table(seq_round$ID == seq_round$ID1) # good
+unique(paste0(seq_round2$seq_lane, "_", seq_round2$lane)) # good lanes 1-5 were March2018, 7-8 were Jan2019
+
+# add in latest novaseq sequencing data
+april2020 <- read.table("../data/HILO_raw_reads/April2020_all.list", stringsAsFactor = F,
+                        header = F) %>%
+  data.table::setnames(c("ID", "seq_lane", "library")) %>%
+  left_join(.,
+                     read.table("../samples/april2020_meta_from_Taylor.txt", 
+                                header = T, stringsAsFactors = F),
+                     by = "ID") %>%
+  mutate(rimme = stringr::str_sub(pop_family, 1, 9),
+         family = stringr::str_sub(pop_family, -1, -1),
+         popN = as.integer(stringr::str_sub(pop_family, -4, -2)),
+         lane = ifelse(seq_lane == "April2020_1", 9, 10),
+         plate = ifelse(seq_lane == "April2020_1", "regrow_1", "regrow_alpha"),
+         instrument_model = "Illumina HiSeq 6000")
+backup <- read.table("get_tissue_5.28.19.txt", header = T, stringsAsFactors = F,
+                     sep = "\t") %>%
+  dplyr::rename(tissue_collection_plate = plate) %>%
+  mutate(well = paste0(letter, number)) %>% # just check that it matches. then make 1-> i and 2->ii
+  mutate(plate = ifelse(tissue_collection_plate == "alpha", 
+                        "regrow_alpha", "regrow_1"))
+novaseq <- backup %>%
+  dplyr::mutate(family = stringr::str_sub(family, 1, 1)) %>%
+  dplyr::select(RI_ACCESSION, plate, well, popN, family, tissue_collection_plate,
+                ind2seq, regrow_batch) %>%
+  full_join(., april2020, by = c("well", "plate", "RI_ACCESSION"="rimme", "popN", "family")) %>%
+  dplyr::filter(!is.na(ID)) %>%
+  mutate(ind = ifelse(ind2seq == 1, "i", "ii"))
+
+# all plates
+all_libraries <- seq_round2 %>%
+  dplyr::rename(plate = plate_number) %>%
+  mutate(RI_ACCESSION = ifelse(popN < 100, paste0("RIMME0", popN),
+                               paste0("RIMMA", popN))) %>%
+  bind_rows(., novaseq) %>%
+  mutate(platform = "ILLUMINA",
+         library_ID = paste0(sample_name, "_L", stringr::str_pad(lane, width = 3, "left", pad = "0"))) %>%
+  dplyr::select(ID, RI_ACCESSION, popN, family, ind, incl_excl, library_ID, library, lane, seq_lane, plate, p7, well, regrow_batch, platform, instrument_model)
+
+# basic checks:
+all_libraries %>%
+  mutate(pop_fam = paste(popN, family, sep = "_")) %>%
+  group_by(pop_fam) %>%
+  summarise(ids = length(unique(ID)),
+            inds = length(unique(ind))) %>%
+  filter(ids != inds)# check -- good, some families are repeated but have multiple individual ids
+
+
 # add in germplasm data from JRI for all projects ("riplasm").
+
+# write out full file
+# get list of all the file names from farm
+# 
+# check how I did file merging previously from multiple bams -- 
+# do I need to do this or should I just ditch the very low coverage one? (or both)
+
 # RIMMA is hilo maize and RIMME is hilo mex. This just gives me metadata for each population..(e.g. lat/long)
 riplasm <- read.csv("../data/riplasm/riplasm.csv", stringsAsFactors = F, header = T) %>%
   mutate(., prefix = substr(RI_ACCESSION, 1, 5)) %>%
