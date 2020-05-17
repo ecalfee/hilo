@@ -1,6 +1,7 @@
 rule all:
     input:
-        ["results/TEST/a.sort.dedup.baq.bam.bai", "results/TEST/b.sort.dedup.baq.bam.bai"]
+        "results/TEST/a.sort.dedup.baq.bam.bai",
+        "results/TEST/b.sort.dedup.baq.bam.bai"
         #"plots/quals.svg"
 
 ref="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -39,7 +40,7 @@ rule bwa_map:
     #log:
     #    "logs/bwa_map/{ID}_{LANE}.log"
     #benchmark:# record memory usage and time
-#        "benchmarks/{ID}_{LANE}.bwa_map.txt"
+    #   "benchmarks/{ID}_{LANE}.bwa_map.txt"
     shell:
         "(bwa mem -R '{params.rg}' -t {threads} -v 3 {input} | "
         "samtools view -Shu -) > {output} 2> {log}"
@@ -47,17 +48,17 @@ rule bwa_map:
 
 #4 threads. tmp directory
 rule samtools_sort:
-	input:
-		"results/{LANE}/{ID}.bam"
-	output:
-		"results/{LANE}/{ID}.sort.bam"
+    input:
+        "results/{LANE}/{ID}.bam"
+    output:
+        "results/{LANE}/{ID}.sort.bam"
     #log:
     #    "logs/samtools_sort/{ID}_{LANE}.log"
     shell:
         "mkdir -p /scratch/ecalfee/sorting_reads/{wildcards.ID}_{wildcards.LANE};"
-		"samtools sort -m {mem} -@ {threads} "
+        "samtools sort -m {mem} -@ {threads} "
         "-T /scratch/ecalfee/sorting_reads/{wildcards.ID}_{wildcards.LANE} "
-		"-O bam {input} > {output}"
+        "-O bam {input} > {output}"
 
 rule remove_duplicates:
     input:
@@ -79,12 +80,12 @@ rule remove_duplicates:
         "samtools view -bS -q 30 - > {results.bam}"
 
 rule samtools_index:
-	input:
-		"results/{LANE}/{ID}.sort.dedup.baq.bam"
-	output:
-		"results/{LANE}/{ID}.sort.dedup.baq.bam.bai"
-	shell:
-		"samtools index {input}"
+    input:
+        "results/{LANE}/{ID}.sort.dedup.baq.bam"
+    output:
+        "results/{LANE}/{ID}.sort.dedup.baq.bam.bai"
+    shell:
+        "samtools index {input}"
 
 # now merge any bams for IDs with multiple sequencing runs
 # TO-DO:
