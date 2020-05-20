@@ -32,9 +32,9 @@ rule all:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
         expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids),
-        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html",
-        "metrics/picard/" + prefix + "_summary/multiqc_report.html",
-        "metrics/flagstat/" + prefix + "_summary/multiqc_report.html"
+        "metrics/fastQC/multiqc/multiqc_report.html",
+        "metrics/picard/multiqc/multiqc_report.html",
+        "metrics/flagstat/multiqc/multiqc_report.html"
         #"results/TEST/a.sort.dedup.baq.bam.bai",
         #"results/TEST/b.sort.dedup.baq.bam.bai"
     params:
@@ -175,18 +175,17 @@ rule multiQC_fastQC:
         expand(["metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
                 "metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
     output:
-        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html"
+        "metrics/fastQC/multiqc/multiqc_report.html"
         #"fastQC/multiqc_report.html"
     params:
-        p = "med2",
-        prefix_out = "metrics/fastQC/" + prefix + "_summary"
+        p = "med2"
     resources:
         time_min = 30,
         mem = 2
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc {input} -o {params.prefix_out}"
+        "multiqc metrics/fastQC -o metrics/fastQC/multiqc"
 
 
 #rule fastq_screen:
@@ -221,30 +220,28 @@ rule multiQC_flagstat:
     input:
         expand("metrics/flagstat/{LANE}/{ID}.flagstat", zip, LANE=lanes, ID=ids)
     output:
-        "metrics/flagstat/" + prefix + "_summary/multiqc_report.html"
+        "metrics/flagstat/multiqc/multiqc_report.html"
     params:
-        p = "med2",
-        prefix_out = "metrics/flagstat/" + prefix + "_summary"
+        p = "med2"
     resources:
         time_min = 30,
         mem = 2
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc {input} -o {params.prefix_out}"
+        "multiqc metrics/flagstat -o metrics/flagstat/multiqc"
 
 rule multiQC_picard:
     input:
         expand("metrics/picard/{LANE}/{ID}.metrics.txt", zip, LANE=lanes, ID=ids)
     output:
-        "metrics/picard/" + prefix + "_summary/multiqc_report.html"
+        "metrics/picard/multiqc/multiqc_report.html"
     params:
-        p = "med2",
-        prefix_out = "metrics/picard/" + prefix + "_summary"
+        p = "med2"
     resources:
         time_min = 30,
         mem = 2
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc {input} -o {params.prefix_out}"
+        "multiqc metrics/picard -o metrics/picard/multiqc"
