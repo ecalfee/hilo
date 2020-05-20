@@ -1,10 +1,12 @@
 jobs: 100
 use-conda: true
 rerun-incomplete: true
+keep-going: true
+restart-times: 3
 shadow-prefix: "/scratch/ecalfee"
 latency-wait: 60
 max-jobs-per-second: 10
-cluster: "sbatch -p {params.p} --time={resources.time_min} --mem={resources.mem}G --cpus-per-task={threads} --job-name={rule}.{wildcards} -o snake_logs/{rule}.{wildcards}.%j.out -e snake_logs/{rule}.{wildcards}.%j.err" 
+cluster: "sbatch -p {params.p} --time={resources.time_min} --mem={resources.mem}G --cpus-per-task={threads} --job-name={rule}.{wildcards} -o snake_logs/{rule}.{wildcards}.%j.out -e snake_logs/{rule}.{wildcards}.%j.err"
 default-resources: [time_min=240, mem=8]
 # note: this file must be symbolically linked to where snakemake expects profiles:
 # ln -s /home/ecalfee/hilo/slurm-profile.yaml /home/ecalfee/.config/snakemake/slurm/config.yaml

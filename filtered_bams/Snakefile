@@ -74,8 +74,8 @@ rule bwa_map:
     shadow:
         "minimal"
     resources:
-        time_min = 6*24*60,
-        mem = 64
+        time_min = lambda wildcards, attempt: attempt * 24 * 60,
+        mem = lambda wildcards, attempt: attempt * 24
     threads:
         16
     shell:
@@ -100,11 +100,11 @@ rule samtools_sort:
     threads:
         4
     resources:
-        time_min = 3*24*60,
+        time_min = lambda wildcards, attempt: attempt * 12 * 60,
         mem = 32
     shell:
         "mkdir -p tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} &&"
-        "samtools sort -m 8G -@ {threads} "
+        "samtools sort -m 6G -@ {threads} "
         "-T tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} "
         "-O bam {input} > {output};"
         "rm -r tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE}"
@@ -125,7 +125,7 @@ rule remove_duplicates:
         "minimal"
     # shadow minimal should make the temporary directory on the --shadow-prefix location, i.e. set to local node storage
     resources:
-        time_min = 1*24*60,
+        time_min = lambda wildcards, attempt: attempt * 8 * 60,
         mem = 8
     # java 1.8 and picard-tools 2.7.1 loaded from cluster
     # note: I only filter mapQ > 1 at this step, though in downstream analyses often use a more stringent threshold mapQ > 30
@@ -209,12 +209,12 @@ rule samtools_flagstat:
         "metrics/flagstat/{LANE}/{ID}.flagstat"
     params:
         p = "med2"
-    threads:
-        4
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 4 * 60
     conda:
         "../envs/environment.yaml"
     shell:
-        "samtools flagstat -@ {threads} {input} > {output}"
+        "samtools flagstat {input} > {output}"
 
 rule multiQC_flagstat:
     input:
