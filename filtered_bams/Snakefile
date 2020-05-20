@@ -1,0 +1,178 @@
+import pandas as pd
+
+workdir: "filtered_bams/"
+
+wildcard_constraints:
+    ID="[A-Za-z0-9]+"
+
+ref = "../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+fai = ref + ".fai"
+
+prefix = "TEST"
+# list of sample IDs
+ids = pd.read_csv("../data/HILO_raw_reads/" + prefix + "_IDs.list")
+# list of lanes for sample IDs above
+lanes = pd.read_csv("../data/HILO_raw_reads/" + prefix + "_lanes.list")
+
+# dictionary mapping lanes to library names
+libraries_dict = {"April2020_1": "April2020",
+		"April2020_2": "April2020",
+		"March2018": "March2018",
+		"Jan2019_6": "March2018",
+		"Jan2019_7": "March2018",
+		"Jan2019_8": "March2018",
+		"TEST": "TEST_LIBRARY"
+		
+}
+
+rule all:
+    input:
+        # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
+        expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids)
+        #"results/TEST/a.sort.dedup.baq.bam.bai",
+        #"results/TEST/b.sort.dedup.baq.bam.bai"
+    params:
+        p="med2"
+    resources:
+        time_min=5,
+        mem=2
+        #"plots/quals.svg"
+
+# align fastq to maize reference AGPv4 official release using bwa mem
+rule index_ref:
+    input:
+        ref
+        #"../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+    output:
+        fai
+        #"../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai"
+    params:
+        p="med2"
+    conda:
+        "../envs/environment.yaml"
+    #log:
+    #    "logs/index_ref_bwa.log"
+    shell:
+        "bwa index {input}"
+
+
+# LIBRARY WILDCARD?
+rule bwa_map:
+    input:
+        ref=ref,
+        #ref=config["ref"],
+        fai=fai,
+        #ref="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa",
+        #fai="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
+        fq1="/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        fq2="/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+    output:
+        #temp("results/{LANE}/{ID}.bam") # unsorted tmp bams are deleted once consuming jobs are completed
+        "results/{LANE}/{ID}.bam"
+    params:
+        #rg="@RG\\tID:{LANE}\\tSM:{ID}\\tPL:ILLUMINA\\tLB:{LIBRARY}\\tPU:{ID}.{LANE}"
+        rg=lambda wildcards: "@RG\\tID:{LANE}\\tSM:{ID}\\tPL:ILLUMINA\\tLB:" + libraries_dict[wildcards.LANE] + "\\tPU:{ID}.{LANE}",
+        #rg=lambda wildcards: libraries_dict[wildcards.LANE]
+        p="bigmemm"
+    #log:
+    #    "logs/bwa_map/{ID}_{LANE}.log"
+    #benchmark:# record memory usage and time
+    #   "benchmarks/{ID}_{LANE}.bwa_map.txt"
+    conda:
+        "../envs/environment.yaml"
+    shadow:
+        "minimal"
+    resources:
+        time_min=6*24*60, 
+        mem=64
+    threads: 
+        16
+    shell:
+        "(bwa mem -R '{params.rg}' -t {threads} -v 3 {input.ref} {input.fq1} {input.fq2} | "
+        "samtools view -Shu -) > {output}"
+
+
+#4 threads. tmp directory
+rule samtools_sort:
+    input:
+        "results/{LANE}/{ID}.bam"
+    output:
+        "results/{LANE}/{ID}.sort.bam"
+    params:
+        p="bigmemm"
+    #log:
+    #    "logs/samtools_sort/{ID}_{LANE}.log"
+    conda:
+        "../envs/environment.yaml"
+    shadow:
+        "minimal"
+    threads:
+        4
+    resources:
+        time_min=3*24*60, 
+        mem=32
+    shell:
+        "mkdir -p tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} &&"
+        "samtools sort -m 8G -@ {threads} "
+        "-T tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} "
+        "-O bam {input} > {output};"
+        "rm -r tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE}"
+
+rule remove_duplicates:
+    input:
+        ref=ref,
+        fai=fai,
+        #ref="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa",
+        #fai="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
+        bam="results/{LANE}/{ID}.sort.bam"
+    output:
+        bam="results/{LANE}/{ID}.sort.dedup.baq.bam",
+        metrics="metrics/{LANE}/{ID}.metrics.txt"
+    #log:
+    #    "logs/remove_duplicates/{ID}_{LANE}.log"
+    params:
+        p="med2"
+    conda:
+        "../envs/environment.yaml"
+    shadow:
+        "minimal"
+    # shadow minimal should make the temporary directory on the --shadow-prefix location, i.e. set to local node storage
+    resources:
+        time_min=1*24*60,
+        mem=8
+    # java 1.8 and picard-tools 2.7.1 loaded from cluster
+    # note: I only filter mapQ > 1 at this step, though in downstream analyses often use a more stringent threshold mapQ > 30
+    shell:
+        "module load java &&"
+        "module load picardtools/2.7.1 &&"
+        "mkdir -p tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} &&"
+        "java -Xmx6g -jar ${{PICARD}}/picard.jar MarkDuplicates "
+        "INPUT= {input.bam} OUTPUT=/dev/stdout QUIET=true "
+        "TMP_DIR=tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} "
+        "METRICS_FILE={output.metrics} | "
+        "samtools calmd -SArE --reference {input.ref} - | "
+        "samtools view -bS -q 1 - > {output.bam} &&"
+        "rm -r tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE}"
+        # remove temporary directory at the end
+
+rule samtools_index:
+    input:
+        "results/{LANE}/{ID}.sort.dedup.baq.bam"
+    output:
+        "results/{LANE}/{ID}.sort.dedup.baq.bam.bai"
+    params:
+        p="med2"
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "samtools index {input}"
+
+# now merge any bams for IDs with multiple sequencing runs
+# TO-DO:
+# load hilo ID's from a file into an array
+# load lanes into an array also
+# make 2 test fastq sets _1 and _2 (very small). put in data/HILO_raw_reads/
+# put this snakemake file within filtered_bams and run from that working directory.
+# make snake_logs directory within filtered_bams
+# activate conda environment. try to run the snakemake. make dag.
+# figure out if I can activate environment before calling slurm (unlikely) or test activating with --use-conda for each rule or universally, e.g. in submit.json
