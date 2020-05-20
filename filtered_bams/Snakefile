@@ -6,8 +6,8 @@ wildcard_constraints:
 ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
-prefix = "April2020"
-#prefix = "TEST"
+#prefix = "April2020"
+prefix = "TEST"
 
 # list of sample IDs
 with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
@@ -185,7 +185,7 @@ rule multiQC_fastQC:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc metrics/fastQC -o metrics/fastQC/multiqc"
+        "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc"
 
 
 #rule fastq_screen:
@@ -229,7 +229,7 @@ rule multiQC_flagstat:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc metrics/flagstat -o metrics/flagstat/multiqc"
+        "multiqc -f metrics/flagstat -o metrics/flagstat/multiqc"
 
 rule multiQC_picard:
     input:
@@ -244,4 +244,4 @@ rule multiQC_picard:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc metrics/picard -o metrics/picard/multiqc"
+        "multiqc -f metrics/picard -o metrics/picard/multiqc"
