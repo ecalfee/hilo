@@ -1,18 +1,20 @@
-import pandas as pd
-
 workdir: "filtered_bams/"
 
 wildcard_constraints:
-    ID="[A-Za-z0-9]+"
+    ID = "[A-Za-z0-9]+"
 
-ref = "../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
+#prefix = "April2020"
 prefix = "TEST"
+
 # list of sample IDs
-ids = pd.read_csv("../data/HILO_raw_reads/" + prefix + "_IDs.list")
+with open("data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
+    ids = f.read().splitlines()
 # list of lanes for sample IDs above
-lanes = pd.read_csv("../data/HILO_raw_reads/" + prefix + "_lanes.list")
+with open("data/HILO_raw_reads/" + prefix + "_lanes.list") as f:
+    lanes = f.read().splitlines()
 
 # dictionary mapping lanes to library names
 libraries_dict = {"April2020_1": "April2020",
@@ -21,70 +23,108 @@ libraries_dict = {"April2020_1": "April2020",
 		"Jan2019_6": "March2018",
 		"Jan2019_7": "March2018",
 		"Jan2019_8": "March2018",
-		"TEST": "TEST_LIBRARY"
-		
+		"TEST": "TEST_LIBRARY"		
 }
+# reads 1 and 2 in paired sets, e.g. _1.fq.gz
+reads = ["1", "2"]
 
 rule all:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
-        expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids)
+        expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids),
+        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html",
+        "metrics/picard/" + prefix + "_summary/multiqc_report.html",
+        "metrics/flagstat/" + prefix + "_summary/multiqc_report.html"
         #"results/TEST/a.sort.dedup.baq.bam.bai",
         #"results/TEST/b.sort.dedup.baq.bam.bai"
     params:
-        p="med2"
+        p = "med2"
     resources:
-        time_min=5,
-        mem=2
+        time_min = 5,
+        mem = 2
         #"plots/quals.svg"
 
-# align fastq to maize reference AGPv4 official release using bwa mem
 rule index_ref:
     input:
         ref
-        #"../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
     output:
         fai
-        #"../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai"
     params:
-        p="med2"
+        p = "med2"
     conda:
         "../envs/environment.yaml"
-    #log:
-    #    "logs/index_ref_bwa.log"
     shell:
         "bwa index {input}"
 
+# run quality checks on fastq files
+rule fastQC:
+    input:
+        "../data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz" 
+    output:
+        "metrics/fastQC/{LANE}/{ID}_{READ}_fastqc.html"
+    params:
+        p = "med2"
+    threads:
+        4
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
 
-# LIBRARY WILDCARD?
+
+rule multiQC_fastQC:
+    input: 
+        expand(["metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
+                "metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
+    output:
+        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html"
+        #"fastQC/multiqc_report.html"
+    params:
+        p = "med2",
+        prefix_out = "metrics/fastQC/" + prefix + "_summary"
+    resources:
+        time_min = 30,
+        mem = 2
+    conda: 
+        "../envs/environment.yaml"
+    shell: 
+        "multiqc {input} -o {params.prefix_out}"
+
+
+#rule fastq_screen:
+#    input:
+#        "../data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz"
+#    output:
+#        "fastq_screen/results/{LANE}/{ID}_1"
+#    conda:
+#        "../envs/environment.yaml"
+#    params:
+#        p="low"
+#        config_file="/home/ecalfee/hilo/filtered_bams/fastq_screen/fastq_screen_maize.conf"
+#        out_dir="fastq_screen/results/{LANE}"
+#    shell:
+#        fastq_screen --aligner BOWTIE2 --conf {config_file} --outdir {out_dir} {input}
+
+
 rule bwa_map:
     input:
-        ref=ref,
-        #ref=config["ref"],
-        fai=fai,
-        #ref="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa",
-        #fai="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
-        fq1="/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
-        fq2="/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+        ref = ref,
+        fai = fai,
+        fq1 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        fq2 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
     output:
-        #temp("results/{LANE}/{ID}.bam") # unsorted tmp bams are deleted once consuming jobs are completed
-        "results/{LANE}/{ID}.bam"
+        temp("results/{LANE}/{ID}.bam")
     params:
         #rg="@RG\\tID:{LANE}\\tSM:{ID}\\tPL:ILLUMINA\\tLB:{LIBRARY}\\tPU:{ID}.{LANE}"
-        rg=lambda wildcards: "@RG\\tID:{LANE}\\tSM:{ID}\\tPL:ILLUMINA\\tLB:" + libraries_dict[wildcards.LANE] + "\\tPU:{ID}.{LANE}",
-        #rg=lambda wildcards: libraries_dict[wildcards.LANE]
-        p="bigmemm"
-    #log:
-    #    "logs/bwa_map/{ID}_{LANE}.log"
-    #benchmark:# record memory usage and time
-    #   "benchmarks/{ID}_{LANE}.bwa_map.txt"
+        rg = lambda wildcards: "@RG\\tID:" + wildcards.LANE + "\\tSM:" + wildcards.ID + "\\tPL:ILLUMINA\\tLB:" + libraries_dict[wildcards.LANE] + "\\tPU:" + wildcards.ID + "." wildcards.LANE,
+        p = "bigmemm"
     conda:
         "../envs/environment.yaml"
     shadow:
         "minimal"
     resources:
-        time_min=6*24*60, 
-        mem=64
+        time_min = 6*24*60, 
+        mem = 64
     threads: 
         16
     shell:
@@ -92,16 +132,13 @@ rule bwa_map:
         "samtools view -Shu -) > {output}"
 
 
-#4 threads. tmp directory
 rule samtools_sort:
     input:
         "results/{LANE}/{ID}.bam"
     output:
-        "results/{LANE}/{ID}.sort.bam"
+        temp("results/{LANE}/{ID}.sort.bam")
     params:
-        p="bigmemm"
-    #log:
-    #    "logs/samtools_sort/{ID}_{LANE}.log"
+        p = "bigmemm"
     conda:
         "../envs/environment.yaml"
     shadow:
@@ -109,8 +146,8 @@ rule samtools_sort:
     threads:
         4
     resources:
-        time_min=3*24*60, 
-        mem=32
+        time_min = 3*24*60, 
+        mem = 32
     shell:
         "mkdir -p tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} &&"
         "samtools sort -m 8G -@ {threads} "
@@ -120,26 +157,22 @@ rule samtools_sort:
 
 rule remove_duplicates:
     input:
-        ref=ref,
-        fai=fai,
-        #ref="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa",
-        #fai="../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai",
-        bam="results/{LANE}/{ID}.sort.bam"
+        ref = ref,
+        fai = fai,
+        bam = "results/{LANE}/{ID}.sort.bam"
     output:
-        bam="results/{LANE}/{ID}.sort.dedup.baq.bam",
-        metrics="metrics/{LANE}/{ID}.metrics.txt"
-    #log:
-    #    "logs/remove_duplicates/{ID}_{LANE}.log"
+        bam = "results/{LANE}/{ID}.sort.dedup.baq.bam",
+        metrics = "metrics/picard/{LANE}/{ID}.metrics.txt"
     params:
-        p="med2"
+        p = "med2"
     conda:
         "../envs/environment.yaml"
     shadow:
         "minimal"
     # shadow minimal should make the temporary directory on the --shadow-prefix location, i.e. set to local node storage
     resources:
-        time_min=1*24*60,
-        mem=8
+        time_min = 1*24*60,
+        mem = 8
     # java 1.8 and picard-tools 2.7.1 loaded from cluster
     # note: I only filter mapQ > 1 at this step, though in downstream analyses often use a more stringent threshold mapQ > 30
     shell:
@@ -161,18 +194,54 @@ rule samtools_index:
     output:
         "results/{LANE}/{ID}.sort.dedup.baq.bam.bai"
     params:
-        p="med2"
+        p = "med2"
     conda:
         "../envs/environment.yaml"
     shell:
         "samtools index {input}"
 
-# now merge any bams for IDs with multiple sequencing runs
-# TO-DO:
-# load hilo ID's from a file into an array
-# load lanes into an array also
-# make 2 test fastq sets _1 and _2 (very small). put in data/HILO_raw_reads/
-# put this snakemake file within filtered_bams and run from that working directory.
-# make snake_logs directory within filtered_bams
-# activate conda environment. try to run the snakemake. make dag.
-# figure out if I can activate environment before calling slurm (unlikely) or test activating with --use-conda for each rule or universally, e.g. in submit.json
+rule samtools_flagstat:
+    input:
+        "results/{LANE}/{ID}.sort.dedup.baq.bam"
+    output:
+        "metrics/flagstat/{LANE}/{ID}.flagstat"
+    params:
+        p = "med2"
+    threads:
+        4
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "samtools flagstat -@ {threads} {input} > {output}"
+
+rule multiQC_flagstat:
+    input:
+        expand("metrics/flagstat/{LANE}/{ID}.flagstat", zip, LANE=lanes, ID=ids)
+    output:
+        "metrics/flagstat/" + prefix + "_summary/multiqc_report.html"
+    params:
+        p = "med2",
+        prefix_out = "metrics/flagstat/" + prefix + "_summary"
+    resources:
+        time_min = 30,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "multiqc {input} -o {params.prefix_out}"
+
+rule multiQC_picard:
+    input:
+        expand("metrics/picard/{LANE}/{ID}.metrics.txt", zip, LANE=lanes, ID=ids)
+    output:
+        "metrics/picard/" + prefix + "_summary/multiqc_report.html"
+    params:
+        p = "med2",
+        prefix_out = "metrics/picard/" + prefix + "_summary"
+    resources:
+        time_min = 30,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "multiqc {input} -o {params.prefix_out}"
