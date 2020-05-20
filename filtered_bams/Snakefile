@@ -10,10 +10,10 @@ fai = ref + ".fai"
 prefix = "TEST"
 
 # list of sample IDs
-with open("data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
+with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
     ids = f.read().splitlines()
 # list of lanes for sample IDs above
-with open("data/HILO_raw_reads/" + prefix + "_lanes.list") as f:
+with open("../data/HILO_raw_reads/" + prefix + "_lanes.list") as f:
     lanes = f.read().splitlines()
 
 # dictionary mapping lanes to library names
