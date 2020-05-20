@@ -80,7 +80,7 @@ rule bwa_map:
         16
     shell:
         #"(bwa mem -R '{params.rg}' | "
-        "(bwa mem -R '@RG\\tID:{wildcards.LANE}\\tSM:{wildcards.ID}\\tPL:ILLUMINA\\tLB:{params.lib}\\tPU:{wildcards.ID}.{wildcards.LANE}' | "
+        "(bwa mem -R '@RG\\tID:{wildcards.LANE}\\tSM:{wildcards.ID}\\tPL:ILLUMINA\\tLB:{params.lib}\\tPU:{wildcards.ID}.{wildcards.LANE}' "
         "-t {threads} -v 3 {input.ref} {input.fq1} {input.fq2} | "
 
         "samtools view -Shu -) > {output}"
