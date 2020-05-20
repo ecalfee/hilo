@@ -19,7 +19,7 @@ set –o errexit
 set –o nounset
 
 # load python 2 from bio module
-module load bio
+module load bio #python/2.7.15
 
 # run PCAngsd
 mkdir -p "$DIR_OUT"

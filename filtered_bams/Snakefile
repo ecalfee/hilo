@@ -23,7 +23,7 @@ libraries_dict = {"April2020_1": "April2020",
 		"Jan2019_6": "March2018",
 		"Jan2019_7": "March2018",
 		"Jan2019_8": "March2018",
-		"TEST": "TEST_LIBRARY"		
+		"TEST": "TEST_LIBRARY"
 }
 # reads 1 and 2 in paired sets, e.g. _1.fq.gz
 reads = ["1", "2"]
@@ -56,56 +56,6 @@ rule index_ref:
     shell:
         "bwa index {input}"
 
-# run quality checks on fastq files
-rule fastQC:
-    input:
-        "../data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz" 
-    output:
-        "metrics/fastQC/{LANE}/{ID}_{READ}_fastqc.html"
-    params:
-        p = "med2"
-    threads:
-        4
-    conda:
-        "../envs/environment.yaml"
-    shell:
-        "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
-
-
-rule multiQC_fastQC:
-    input: 
-        expand(["metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
-                "metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
-    output:
-        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html"
-        #"fastQC/multiqc_report.html"
-    params:
-        p = "med2",
-        prefix_out = "metrics/fastQC/" + prefix + "_summary"
-    resources:
-        time_min = 30,
-        mem = 2
-    conda: 
-        "../envs/environment.yaml"
-    shell: 
-        "multiqc {input} -o {params.prefix_out}"
-
-
-#rule fastq_screen:
-#    input:
-#        "../data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz"
-#    output:
-#        "fastq_screen/results/{LANE}/{ID}_1"
-#    conda:
-#        "../envs/environment.yaml"
-#    params:
-#        p="low"
-#        config_file="/home/ecalfee/hilo/filtered_bams/fastq_screen/fastq_screen_maize.conf"
-#        out_dir="fastq_screen/results/{LANE}"
-#    shell:
-#        fastq_screen --aligner BOWTIE2 --conf {config_file} --outdir {out_dir} {input}
-
-
 rule bwa_map:
     input:
         ref = ref,
@@ -116,19 +66,23 @@ rule bwa_map:
         temp("results/{LANE}/{ID}.bam")
     params:
         #rg="@RG\\tID:{LANE}\\tSM:{ID}\\tPL:ILLUMINA\\tLB:{LIBRARY}\\tPU:{ID}.{LANE}"
-        rg = lambda wildcards: "@RG\\tID:" + wildcards.LANE + "\\tSM:" + wildcards.ID + "\\tPL:ILLUMINA\\tLB:" + libraries_dict[wildcards.LANE] + "\\tPU:" + wildcards.ID + "." wildcards.LANE,
+        #rg = lambda wildcards: "@RG\\tID:" + wildcards.LANE + "\\tSM:" + wildcards.ID + "\\tPL:ILLUMINA\\tLB:" + libraries_dict[wildcards.LANE] + "\\tPU:" + wildcards.ID + "." wildcards.LANE,
+        lib = lambda wildcards: libraries_dict[wildcards.LANE],
         p = "bigmemm"
     conda:
         "../envs/environment.yaml"
     shadow:
         "minimal"
     resources:
-        time_min = 6*24*60, 
+        time_min = 6*24*60,
         mem = 64
-    threads: 
+    threads:
         16
     shell:
-        "(bwa mem -R '{params.rg}' -t {threads} -v 3 {input.ref} {input.fq1} {input.fq2} | "
+        #"(bwa mem -R '{params.rg}' | "
+        "(bwa mem -R '@RG\\tID:{wildcards.LANE}\\tSM:{wildcards.ID}\\tPL:ILLUMINA\\tLB:{params.lib}\\tPU:{wildcards.ID}.{wildcards.LANE}' | "
+        "-t {threads} -v 3 {input.ref} {input.fq1} {input.fq2} | "
+
         "samtools view -Shu -) > {output}"
 
 
@@ -146,7 +100,7 @@ rule samtools_sort:
     threads:
         4
     resources:
-        time_min = 3*24*60, 
+        time_min = 3*24*60,
         mem = 32
     shell:
         "mkdir -p tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE} &&"
@@ -199,6 +153,55 @@ rule samtools_index:
         "../envs/environment.yaml"
     shell:
         "samtools index {input}"
+
+# run quality checks and metrics
+rule fastQC:
+    input:
+        "../data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz"
+    output:
+        "metrics/fastQC/{LANE}/{ID}_{READ}_fastqc.html"
+    params:
+        p = "med2"
+    threads:
+        4
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
+
+
+rule multiQC_fastQC:
+    input:
+        expand(["metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
+                "metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
+    output:
+        "metrics/fastQC/" + prefix + "_summary/multiqc_report.html"
+        #"fastQC/multiqc_report.html"
+    params:
+        p = "med2",
+        prefix_out = "metrics/fastQC/" + prefix + "_summary"
+    resources:
+        time_min = 30,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "multiqc {input} -o {params.prefix_out}"
+
+
+#rule fastq_screen:
+#    input:
+#        "../data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz"
+#    output:
+#        "fastq_screen/results/{LANE}/{ID}_1"
+#    conda:
+#        "../envs/environment.yaml"
+#    params:
+#        p="low"
+#        config_file="/home/ecalfee/hilo/filtered_bams/fastq_screen/fastq_screen_maize.conf"
+#        out_dir="fastq_screen/results/{LANE}"
+#    shell:
+#        fastq_screen --aligner BOWTIE2 --conf {config_file} --outdir {out_dir} {input}
 
 rule samtools_flagstat:
     input:
