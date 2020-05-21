@@ -4,8 +4,9 @@ rerun-incomplete: true
 keep-going: true
 restart-times: 2
 shadow-prefix: "/scratch/ecalfee"
-latency-wait: 60
+latency-wait: 120
 max-jobs-per-second: 10
+max-status-checks-per-second: 0.5
 #cluster-status: "./farm-status.py"
 cluster: "sbatch --parsable -p {params.p} --time={resources.time_min} --mem={resources.mem}G --cpus-per-task={threads} --job-name={rule}.{wildcards} -o snake_logs/{rule}.{wildcards}.%j.out -e snake_logs/{rule}.{wildcards}.%j.err"
 default-resources: [time_min=240, mem=8]
