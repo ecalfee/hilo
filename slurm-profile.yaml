@@ -6,7 +6,7 @@ restart-times: 2
 shadow-prefix: "/scratch/ecalfee"
 latency-wait: 60
 max-jobs-per-second: 10
-cluster-status: "./farm-status.py"
+#cluster-status: "./farm-status.py"
 cluster: "sbatch --parsable -p {params.p} --time={resources.time_min} --mem={resources.mem}G --cpus-per-task={threads} --job-name={rule}.{wildcards} -o snake_logs/{rule}.{wildcards}.%j.out -e snake_logs/{rule}.{wildcards}.%j.err"
 default-resources: [time_min=240, mem=8]
 # note: this profile file must be symbolically linked to where snakemake expects profiles:
