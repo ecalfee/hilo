@@ -1,0 +1,241 @@
+# HMMM.... BENCHMARKS:
+# how can I log how a task is doing??
+--cluster-status ./status.py
+# see example here: https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html
+a 2.4G file only took 7hrs (24304seconds) real time, and 101 hrs (364921sec) cpu time
+that's using 16 threads.
+Max memory was <14G
+
+what do I expect for samtools??
+
+# HOW DO I STOP AND RESTART SNAKEMAKE?
+# Can I restart failed jobs with double time and double memory? yes, done.
+# I want to log cluster-status. skip for now.
+OUT_OF_MEMORY CANCELLED STOPPED TIMEOUT FAILED
+PENDING RUNNING COMPLETED COMPLETING SUSPENDED
+--parsable #within cluster call . skip for now.
+--cluster-status ./status.py #in profile
+# test with a task that should run out of memory (give way too little)
+# test also with a task that should run out of time (too little time)
+# and some that should run through, but take a min or two
+--max-status-checks-per-second 0.2
+
+# can memory take in file size?
+snakemake -n --quiet # will just print final summary
+
+
+# I CANCELLED MY SCREEN SNAKEMAKE JOB WITH THESE PROCESSES LEFT TO RUN:
+21567559   bigmemm bwa_map.  ecalfee  R     8:53:03      1 16  64G    bigmem8
+21567566   bigmemm bwa_map.  ecalfee  R     1:41:03      1 16  64G    bigmem3
+21567565   bigmemm bwa_map.  ecalfee  R     1:52:03      1 16  64G    bigmem7
+21567563   bigmemm bwa_map.  ecalfee  R     3:58:50      1 16  64G    bigmem6
+21567562   bigmemm bwa_map.  ecalfee  R     6:41:59      1 16  64G    bigmem7
+21567573   bigmemm bwa_map.  ecalfee  R       14:04      1 16  64G    bigmem8
+21567568   bigmemm bwa_map.  ecalfee  R     1:00:06      1 16  64G    bigmem5
+21567569   bigmemm bwa_map.  ecalfee  R     1:00:06      1 16  64G    bigmem4
+21567570   bigmemm bwa_map.  ecalfee  R     1:00:06      1 16  64G    bigmem4
+21567571   bigmemm bwa_map.  ecalfee  R     1:00:06      1 16  64G    bigmem4
+21567572   bigmemm bwa_map.  ecalfee  R     1:00:06      1 16  64G    bigmem4
+21567567   bigmemm bwa_map.  ecalfee  R     1:04:13      1 16  64G    bigmem8
+21582116      med2 remove_d  ecalfee  R        6:37      1 3   8G     c6-89
+21581372   bigmemm samtools  ecalfee  R        6:37      1 4   32G    bigmem8
+
+# TEST WITH a & b again. TEST UPDATED SNAKECODE
+
+
+
+
+
+
+# testing snakemake pipeline
+# make a very small dataset with 2 fastqs:
+ecalfee@c6-93:~/hilo/data/HILO_raw_reads$ zcat April2020_1/HILO312_1.fq.gz | head -n 800 | gzip > TEST/a_1.fq.gz
+ecalfee@c6-93:~/hilo/data/HILO_raw_reads$ zcat April2020_1/HILO312_2.fq.gz | head -n 800 | gzip > TEST/a_2.fq.gz
+ecalfee@c6-93:~/hilo/data/HILO_raw_reads$ zcat April2020_1/HILO355_1.fq.gz | head -n 800 | gzip > TEST/b_1.fq.gz
+ecalfee@c6-93:~/hilo/data/HILO_raw_reads$ zcat April2020_1/HILO355_2.fq.gz | head -n 800 | gzip > TEST/b_2.fq.gz
+all_files = ["TEST/a.sort.dedup.baq.bam.bai", "TEST/b.sort.dedup.baq.bam.bai"]
+
+# useful commands for conda environments:
+# to list available environments
+conda info -e
+# to create conda environment (only do with -p 2022)
+#conda create --name hilo-env --file environment.yaml
+# to update conda environment: (only do when ssh'd into -p 2022)
+#conda env update --name hilo-env --file envs/environment.yaml --prune
+# to list packages and versions for hilo-env
+#source activate hilo-env #activate
+#conda list # list packages
+#conda deactivate hilo-env # de-activate
+
+
+
+# slurm nodes vs. tasks per node vs. cpus
+# cores vs. nodes vs. tasks: https://docs.ycrc.yale.edu/clusters-at-yale/job-scheduling/resource-requests/
+multi-process program = multiple tasks (--ntasks)
+multi-threaded program = multiple cores, 1 task (--cpus-per-task)
+
+e.g. running samtools sort with 8 threads:
+https://hcc.unl.edu/docs/applications/app_specific/bioinformatics_tools/data_manipulation_tools/samtools/running_samtools_commands/
+#SBATCH --nodes=1 -N
+#SBATCH --ntasks-per-node=8  -n
+
+# running bowtie2 with 16 threads.
+#SBATCH --cpus-per-task=16 -c
+
+
+# GREAT RESOURCE FOR SNAKEMAKE: http://garthkong.com/snakemake-resources/
+# GREAT RESOURCE ON SNAKEMAKE FOR CLUSTER: https://www.sichong.site/2020/02/25/snakemake-and-slurm-how-to-manage-workflow-with-resource-constraint-on-hpc/
+How to get an email for failed jobs: --mail-type {cluster.email_type} --mail-user {cluster.email}
+# HOW TO USE DICTIONARIES TO MAP 1 SAMPLE TO MULTIPLE FILES: https://www.jakevc.com/posts/2019/07/snakemake-examples/
+# HOW TO USE SUBWORKFLOWS: https://lachlandeer.github.io/snakemake-econ-r-tutorial/subworkflows-divide-and-conquer.html#subworkflow-basics
+# DAVIS FARM USE OF SLURM AND PROFILES: http://bluegenes.github.io/posts/
+# useful for later: merging files: (caution! this isn't docs for the most up-to-date snakemake)
+"Here is an example where you want to merge N files together, but if N == 1 a symlink will do." https://snakemake.readthedocs.io/en/v3.9.1/project_info/faq.html
+
+
+--shadow-prefix=/scratch/<username>
+--use-conda
+--number of submissions to slurm at a time etc.
+shadow: "minimal"
+# minimal only symlinks all the input files .. so make sure they are all the rule needs to access to run!
+
+# TO-DO: get it to run, then make a .profile for basic slurm setup, check still runs
+I made a profile for slurm: mkdir -p ~/.config/snakemake/slurm
+nano ~/.config/snakemake/slurm/config.yaml
+jobs: 100
+cluster: sbatch
+use-conda: true
+# TO RUN WITH THIS PROFILE:
+snakemake --profile slurm
+# COOL -- ADD MORE MEMORY BASED ON ATTEMPT # https://snakemake.readthedocs.io/en/stable/snakefiles/rules.html
+
+hmm...maybe resources can only take specific values (but seems not to be the case with high_mem_mb)
+
+# then add additional quality check rules.
+fast_QC
+fastq_screen
+samtools file information
+
+# mark temporary output files
+# then get your list of files 2 run. show DAG. start running.
+
+
+
+snakemake -n # dry--run. could be along list!
+snakemake -n --quiet # gives just a summary if there are LOTS of files
+snakemake --dag **blah blah**
+
+# don't want to see all the file paths, just the rules?
+snakemake --rulegraph | dot -Tsvg > ruleGraph.svg
+
+
+module load bio3
+source activate hilo-env
+snakemake results/TEST/b.bam --jobs 2 --cluster-config submit.json --cluster "sbatch -p {cluster.p} --mem {cluster.mem} --cpus-per-task {cluster.cpus-per-task} --time {cluster.time} --job-name {cluster.name} -e {cluster.e} -o {cluster.o}"
+
+# ok in bash not main node
+hilo$ srun --mem 8G -p med2 -t 2:00:00 --pty bash
+source activate hilo-env
+snakemake results/TEST/b.sort.bam --jobs 2 --cluster-config submit.json --cluster "sbatch -p {cluster.p} --mem {cluster.mem} --cpus-per-task {cluster.cpus-per-task} --time {cluster.time} --job-name {cluster.name} -e {cluster.e} -o {cluster.o}"
+
+
+# create a snakemake copy of the environment.
+ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+module load conda3
+source activate hilo-env
+hilo$ snakemake -n all --use-conda --create-envs-only
+Building DAG of jobs...
+Conda environment ../envs/environment.yaml will be created.
+hilo$ snakemake all --use-conda --create-envs-only
+
+
+
+# anytime you update the conda environment:
+ssh -p 2022 ecalfee@farm.cse.ucdavis.edu
+cd hilo
+hilo$ module load conda3
+hilo$ conda env update --name hilo-env --file envs/environment.yaml --prune
+hilo$ source activate hilo-env
+hilo$ snakemake all --use-conda --conda-create-envs-only --cores 1
+hilo$ conda deactivate
+hilo$ exit  # now log out of farm and re-log in without -p 2022 to run snakemake
+
+# to run pipeline:
+ start screen.
+ screen -S snake
+ snakemake all --profile slurm
+[detached from 21715.snake] # hmm. things didn't run b/c low priority. also accidentally put screen on an sru nso lost it after I cancelled ind stalled jobs
+
+# check after a bit if it ran through .. any errors?
+# look at multiqc reports and library in bam file. samtools View bam
+# then change TEST to your prefix. Commit DAG and simplified DAG.
+# update GIT.
+# Look at DAG. Look at simplified DAG. Then run all.
+snakemake --dag all | dot -Tsvg > dag.svg
+snakemake all --profile slurm
+[detached from 32676.snake_run] # it's running in screen now
+
+
+# argh, can't use this to parse wildcards in my 'profile', oh well: print(*{wildcards}.values(), sep = ".")
+
+
+
+
+
+### ok so my original memory/time estimates were really high, possibly preventing my jobs from being scheduled efficiently. I added more dynamic memory with 3 total attempts for failed jobs and less intense status checking to reduce impact to farm (once every 2 sec)
+### I cancelled original running snakemake process, but only had to cancel 1 individual job (let others scheduled run until complete).
+### now running pipeline again:
+ecalfee@farm:~/hilo$ screen -r 32676.snake_run
+[detached from 32676.snake_run] 8.20.20 11pm
+# two jobs got hung up (suspended). So I cancelled them. but snakemake doesn't seem to be rescheduling them.
+ecalfee@farm:~$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      21613385   bigmemm bwa_map.  ecalfee  S     1:55:54      1 16  24G    bigmem3
+      21612650   bigmemm bwa_map.  ecalfee  S     2:34:50      1 16  24G    bigmem3
+ecalfee@farm:~$ screen -ls
+There is a screen on:
+	32676.snake_run	(05/19/2020 10:57:41 PM)	(Detached)
+1 Socket in /run/screen/S-ecalfee.
+ecalfee@farm:~$ scancel 21613385 21612650
+ecalfee@farm:~$ screen -r 32676.snake_run
+# HILO306 and HILO317 are the ones that got hung up and need to be rerun. I will also check what would need to be rerun if I included all the older files too.
+
+# first make combined list with all samples except those affected by label errors:
+(hilo-env) ecalfee@c6-97:~/hilo/data/HILO_raw_reads$ (cut -f1 merged_all.list; cat April2020_IDs.list) > Combined_IDs.list
+(hilo-env) ecalfee@c6-97:~/hilo/data/HILO_raw_reads$ (cut -f3 merged_all.list; cat April2020_libraries.list) > Combined_libraries.list
+~/hilo/data/HILO_raw_reads$ (cut -f2 merged_all.list; cat April2020_lanes.list) > Combined_lanes.list
+
+# I had to rename the picard and fastQC reports to get snake to recognize samples were added: multiqc_report.html.backup
+# I need to simlink the fastqs for March2018 and simlink (or just copy over) all of the mark duplicate metrics from previous runs to the correct directory.
+snakemake -n --quiet all --profile slurm
+# to keep directory naming consistent for snakemake to find files, I created symlinks for all March2018 fastqs into the March2018/ directory, not just March2018_all/
+# only HILO71 was previously symlinked into this directory
+(hilo-env) ecalfee@c6-97:~/hilo/data/HILO_raw_reads$ parallel 'ln -s $(ls /group/jrigrp6/DanAlignments/{1}/{1}_*_{2}.fq.gz) March2018/{1}_{2}.fq.gz' :::: March2018_all_IDs.list ::: 1 2
+<<gnu parallel message>>
+ln: failed to create symbolic link 'March2018/HILO71_1.fq.gz': File exists
+ln: failed to create symbolic link 'March2018/HILO71_2.fq.gz': File exists
+parallel 'ln -s $(ls /group/jrigrp6/DanAlignments/{1}/{1}_*_{2}.fq.gz) March2018/{1}_{2}.fq.gz' :::: March2018_all_IDs.list ::: 1 2
+
+# updated time-stamp for symbolic links to show snakemake these files are current:
+(hilo-env) hilo$ parallel 'ln -s $(ls /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/metrics/hilo_{1}.metrics.txt) filtered_bams/metrics/picard/March2018/HILO{1}.metrics.txt' ::: {1..70} {72..79} {81..200}
+hilo$ parallel 'unlink filtered_bams/results/March2018/HILO{1}.sort.dedup.baq.bam; ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_{1}.sort.dedup.baq.bam filtered_bams/results/March2018/HILO{1}.sort.dedup.baq.bam; ' ::: {1..70} {72..79} {81..200}
+hilo$ parallel 'unlink filtered_bams/results/March2018/HILO{1}.sort.dedup.baq.bam.bai; ln -s /home/ecalfee/hilo/data/hilo_bam_mapped2v4_allContigs/results/hilo_{1}.sort.dedup.baq.bam.bai filtered_bams/results/March2018/HILO{1}.sort.dedup.baq.bam.bai; ' ::: {1..70} {72..79} {81..200}
+
+# good! now snakemake doesn't want to remake these files anymore :)
+(hilo-env) ecalfee@c6-97:~/hilo$ snakemake -n --quiet all --profile slurm
+Job counts:
+	count	jobs
+	1	all
+	2	bwa_map
+	1004	fastQC
+	1	multiQC_fastQC
+	1	multiQC_flagstat
+	1	multiQC_picard
+	2	remove_duplicates
+	315	samtools_flagstat
+	2	samtools_index
+	2	samtools_sort
+	1331
+# now I will stop and restart snakemake on my screen instance:
+snakemake all --profile slurm
+# running: [detached from 32676.snake_run]
