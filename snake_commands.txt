@@ -239,3 +239,24 @@ Job counts:
 # now I will stop and restart snakemake on my screen instance:
 snakemake all --profile slurm
 # running: [detached from 32676.snake_run]
+# all ran fine except HILO1 b/c fastq_1 for that file appears to have been truncated!
+hilo$ less filtered_bams/snake_logs/fastQC.ID\=HILO1\,LANE\=March2018\,READ\=1.21816*err
+...
+Approx 95% complete for HILO1_1.fq.gz
+Failed to process file HILO1_1.fq.gz
+uk.ac.babraham.FastQC.Sequence.SequenceFormatException: Ran out of data in the middle of a fastq entry.  Your file is probably truncated
+ecalfee@c6-97:~/hilo$ zcat data/HILO_raw_reads/March2018/HILO1_1.fq.gz | wc -l
+gzip: data/HILO_raw_reads/March2018/HILO1_1.fq.gz: unexpected end of file
+24590717
+(hilo-env) ecalfee@c6-97:~/hilo$ zcat data/HILO_raw_reads/March2018/HILO1_2.fq.gz | wc -l
+33132348
+# When iplant is back online I can check if we have a backup. Looks like truncation likely happened after mapping/deduplication etc. so all the reads may be there somewhere.
+# for now I will just do a 'touch' placeholder for that fastQC file so I can finish snakemake.
+hilo$ touch filtered_bams/metrics/fastQC/March2018/HILO1_1_fastqc.html
+hilo$ snakemake -n --quiet all --profile slurm
+Job counts:
+	count	jobs
+	1	all
+	1	multiQC_fastQC
+	2
+snakemake all --profile slurm
