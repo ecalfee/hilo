@@ -231,13 +231,15 @@ rule samtools_flagstat:
         "metrics/flagstat/{LANE}/{ID}.flagstat"
     params:
         p = "med2"
+    threads:
+        4
     resources:
-        time_min = lambda wildcards, attempt: attempt * 4 * 60
+        time_min = lambda wildcards, attempt: attempt * 6 * 60
     conda:
         "../envs/environment.yaml"
     # only count reads with mapping quality >= 30
     shell:
-        "samtools view -q 30 -b {input} | samtools flagstat -  > {output}"
+        "samtools view -q 30 -b {input} | samtools flagstat -@ {threads} -  > {output}"
 
 rule multiQC_flagstat:
     input:
