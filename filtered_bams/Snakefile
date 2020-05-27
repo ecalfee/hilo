@@ -203,7 +203,7 @@ rule multiQC_fastQC:
         p = "med2"
     resources:
         time_min = 2*60,
-        mem = 2
+        mem = 8
     conda:
         "../envs/environment.yaml"
     shell:
@@ -250,7 +250,7 @@ rule multiQC_flagstat:
         p = "med2"
     resources:
         time_min = 60,
-        mem = 2
+        mem = 8
     conda:
         "../envs/environment.yaml"
     shell:
@@ -265,7 +265,7 @@ rule multiQC_picard:
         p = "med2"
     resources:
         time_min = 60,
-        mem = 2
+        mem = 8
     conda:
         "../envs/environment.yaml"
     shell:
