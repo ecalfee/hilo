@@ -260,3 +260,28 @@ Job counts:
 	1	multiQC_fastQC
 	2
 snakemake all --profile slurm
+# ran out of time. Increased max time to 2hrs. Will rerun when I fix the dedup step also here:
+# in my original MarkDuplicates I didn't actually remove duplicates. I add a rule rm_duplicates using samtools flag 0x0400
+# then to use that rule I rename my prior output HILO*.sort.mrkdup.baq.bam.
+# note this only applies to the April2020 data. previous data had duplicates removed during MarkDuplicates (can see in flagstat):
+hilo/filtered_bams/results/April2020_1$ for i in {300..395}; do mv HILO$i.sort.dedup.baq.bam HILO$i.sort.mrkdup.baq.bam; done
+hilo/filtered_bams/results/April2020_1$ for i in {300..395}; do touch HILO$i.sort.mrkdup.baq.bam; done
+hilo/filtered_bams/results/April2020_2$ for i in {396..488}; do mv HILO$i.sort.dedup.baq.bam HILO$i.sort.mrkdup.baq.bam; done
+hilo/filtered_bams/results/April2020_2$ for i in {396..488}; do touch HILO$i.sort.mrkdup.baq.bam; done
+# now running snakemake all for 'Combined' samples again on screen:
+snakemake all -n --quiet --profile slurm
+Job counts:
+	count	jobs
+	1	all
+	1	multiQC_fastQC
+	1	multiQC_flagstat
+	189	rm_duplicates
+	189	samtools_flagstat
+	189	samtools_index
+	570
+
+# following up on truncated HILO1 -- Dan replaced with original file from /group/jrigrp6/DanAlignments/HILO1/*_1.fq.gz. I should now re-do mapping for HILO1.
+# checking checksums for all other files that the ones I used from DanAlignments are identical to the originals
+ecalfee@bigmem3:~/hilo$ for i in {1..200}; do md5sum /group/jrigrp6/DanAlignments/HILO$i/*.fq.gz > data/HILO_raw_reads/MD5_checksums/March2018/HILO$i_MD5.txt; done
+# original checksums are here: /group/jrigrp6/RILAB_data/HILO/raw_data/HILO1/MD5.txt
+# now I can do a file difference check: (except I only want to check the 1st column)
