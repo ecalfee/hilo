@@ -282,6 +282,35 @@ Job counts:
 
 # following up on truncated HILO1 -- Dan replaced with original file from /group/jrigrp6/DanAlignments/HILO1/*_1.fq.gz. I should now re-do mapping for HILO1.
 # checking checksums for all other files that the ones I used from DanAlignments are identical to the originals
-ecalfee@bigmem3:~/hilo$ for i in {1..200}; do md5sum /group/jrigrp6/DanAlignments/HILO$i/*.fq.gz > data/HILO_raw_reads/MD5_checksums/March2018/HILO$i_MD5.txt; done
+ecalfee@bigmem3:~/hilo$ for i in {1..200}; do md5sum /group/jrigrp6/DanAlignments/HILO"$i"/*.fq.gz > data/HILO_raw_reads/MD5_checksums/March2018/HILO"$i"_MD5.txt; done
+# ugh..I just put this into a short script to submit to sbatch instead:
+hilo$ sbatch scripts/check_md5sums.sh
+Submitted batch job 21891631
 # original checksums are here: /group/jrigrp6/RILAB_data/HILO/raw_data/HILO1/MD5.txt
 # now I can do a file difference check: (except I only want to check the 1st column)
+hilo$ for i in {1..79} {81..200}; do diff <(cut -f1 /group/jrigrp6/RILAB_data/HILO/raw_data/HILO"$i"/MD5.txt -d" ") <(cut -f1 data/HILO_raw_reads/MD5_checksums/March2018/HILO"$i"_MD5.txt -d" "); done
+# great! just HILO1 had a truncated file. I will remap HILO1 which snakemake detected automatically because the fastq_1 was updated by Dan:
+I also fixed samtools_flagstat rule to read the bam properly with - in the pipe, so all 190 of those are also running too for April2020 sequences.
+Job counts:
+	count	jobs
+	1	all
+	1	bwa_map
+	2	fastQC
+	1	mark_duplicates
+	1	multiQC_fastQC
+	1	multiQC_flagstat
+	1	multiQC_picard
+	1	rm_duplicates
+	190	samtools_flagstat
+	1	samtools_index
+	1	samtools_sort
+	201
+[detached from 32676.snake_run]  5.26.20 9pm
+# annoyingly TIMEOUT (CANCELLED) wasn't caught by slurm as a job failure, so it didn't try again. I will up time manually and run again:
+# e.g. output files:
+'filtered_bams/snake_logs/samtools_flagstat.ID=HILO428,LANE=April2020_2.21898239.err'
+'filtered_bams/snake_logs/samtools_flagstat.ID=HILO428,LANE=April2020_2.21898239.out'
+# so I added threads and 2 hours (now 6 hrs total) for initial samtools flagstat run -- HILO301, HILO305, HILO428:
+[detached from 32676.snake_run] #May 27, 9:30am. Finished super fast (not sure what caused TIMEOUT earlier)
+
+# I need to update my backup using irsync
