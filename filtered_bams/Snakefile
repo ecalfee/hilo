@@ -146,8 +146,6 @@ rule mark_duplicates:
 
 rule rm_duplicates:
     input:
-        ref = ref,
-        fai = fai,
         bam = "results/{LANE}/{ID}.sort.mrkdup.baq.bam"
     output:
         bam = "results/{LANE}/{ID}.sort.dedup.baq.bam"
@@ -164,7 +162,7 @@ rule rm_duplicates:
     # note: I do not filter mapping quality beyond mapQ > 1 at this step, though in downstream analyses often use a more stringent threshold mapQ > 30
     # remove the duplicates marked by picard markduplicates (equivalent to doing this in previous step within MarkDuplicates)
     shell:
-        "samtools view -F 0x0400 -b {input} > {output}
+        "samtools view -F 0x0400 -b {input} > {output}"
 
 rule samtools_index:
     input:
@@ -204,7 +202,7 @@ rule multiQC_fastQC:
     params:
         p = "med2"
     resources:
-        time_min = 30,
+        time_min = 2*60,
         mem = 2
     conda:
         "../envs/environment.yaml"
@@ -237,7 +235,8 @@ rule samtools_flagstat:
         time_min = lambda wildcards, attempt: attempt * 4 * 60
     conda:
         "../envs/environment.yaml"
-    shell: # only count reads with mapping quality >= 30
+    # only count reads with mapping quality >= 30
+    shell:
         "samtools view -q 30 -b {input} | samtools flagstat  > {output}"
 
 rule multiQC_flagstat:
@@ -248,7 +247,7 @@ rule multiQC_flagstat:
     params:
         p = "med2"
     resources:
-        time_min = 30,
+        time_min = 60,
         mem = 2
     conda:
         "../envs/environment.yaml"
@@ -263,7 +262,7 @@ rule multiQC_picard:
     params:
         p = "med2"
     resources:
-        time_min = 30,
+        time_min = 60,
         mem = 2
     conda:
         "../envs/environment.yaml"
