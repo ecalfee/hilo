@@ -237,7 +237,7 @@ rule samtools_flagstat:
         "../envs/environment.yaml"
     # only count reads with mapping quality >= 30
     shell:
-        "samtools view -q 30 -b {input} | samtools flagstat  > {output}"
+        "samtools view -q 30 -b {input} | samtools flagstat -  > {output}"
 
 rule multiQC_flagstat:
     input:

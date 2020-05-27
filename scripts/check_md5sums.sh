@@ -3,7 +3,7 @@
 #SBATCH -D /home/ecalfee/hilo
 #SBATCH -J md5_fq
 #SBATCH -o /home/ecalfee/hilo/slurm-log/check_md5sums_%A_%a.out
-#SBATCH -t 10:00
+#SBATCH -t 30:00
 #SBATCH --mem=4G
 #SBATCH --array=1-200
 
