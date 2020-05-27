@@ -207,7 +207,7 @@ rule multiQC_fastQC:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc --ignore TEST/"
+        "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc --dirs --ignore TEST/"
 
 
 #rule fastq_screen:
@@ -254,7 +254,7 @@ rule multiQC_flagstat:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc -f metrics/flagstat -o metrics/flagstat/multiqc --ignore TEST/"
+        "multiqc -f metrics/flagstat -o metrics/flagstat/multiqc --dirs --ignore TEST/"
 
 rule multiQC_picard:
     input:
@@ -269,4 +269,4 @@ rule multiQC_picard:
     conda:
         "../envs/environment.yaml"
     shell:
-        "multiqc -f metrics/picard -o metrics/picard/multiqc --ignore TEST/"
+        "multiqc -f metrics/picard -o metrics/picard/multiqc --dirs --ignore TEST/"

@@ -290,6 +290,7 @@ Submitted batch job 21891631
 # now I can do a file difference check: (except I only want to check the 1st column)
 hilo$ for i in {1..79} {81..200}; do diff <(cut -f1 /group/jrigrp6/RILAB_data/HILO/raw_data/HILO"$i"/MD5.txt -d" ") <(cut -f1 data/HILO_raw_reads/MD5_checksums/March2018/HILO"$i"_MD5.txt -d" "); done
 # great! just HILO1 had a truncated file. I will remap HILO1 which snakemake detected automatically because the fastq_1 was updated by Dan:
+# I need to update my iplant backup using irsync - COMPLETED.
 I also fixed samtools_flagstat rule to read the bam properly with - in the pipe, so all 190 of those are also running too for April2020 sequences.
 Job counts:
 	count	jobs
@@ -312,5 +313,12 @@ Job counts:
 'filtered_bams/snake_logs/samtools_flagstat.ID=HILO428,LANE=April2020_2.21898239.out'
 # so I added threads and 2 hours (now 6 hrs total) for initial samtools flagstat run -- HILO301, HILO305, HILO428:
 [detached from 32676.snake_run] #May 27, 9:30am. Finished super fast (not sure what caused TIMEOUT earlier)
-
-# I need to update my backup using irsync
+# rerun multiqc ignoring test bams:
+hilo$ snakemake multiQC_picard multiQC_flagstat multiQC_fastQC -f -n --quiet --profile slurm
+Job counts:
+	count	jobs
+	1	multiQC_fastQC
+	1	multiQC_flagstat
+	1	multiQC_picard
+	3
+(hilo-env) ecalfee@c6-97:~/hilo$ snakemake multiQC_picard multiQC_flagstat multiQC_fastQC -f --profile slurm
