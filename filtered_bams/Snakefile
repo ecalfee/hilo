@@ -68,8 +68,6 @@ rule trimmomatic:
         # reads where trimming entirely removed the mate
         r1_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_1.fq.gz",
         r2_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_2.fq.gz"
-    log:
-        "logs/trimmomatic/{sample}.log"
     params:
         # list of trimmers (see manual)
         trimmer=["TRAILING:3", "MINLEN:30"],
