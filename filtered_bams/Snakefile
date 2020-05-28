@@ -7,8 +7,8 @@ ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 #prefix = "April2020"
-#prefix = "TEST"
-prefix = "Combined"
+prefix = "TEST"
+#prefix = "Combined"
 
 # list of sample IDs
 with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
@@ -35,7 +35,8 @@ rule all:
         expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids),
         "metrics/fastQC/multiqc/multiqc_report.html",
         "metrics/picard/multiqc/multiqc_report.html",
-        "metrics/flagstat/multiqc/multiqc_report.html"
+        "metrics/flagstat/multiqc/multiqc_report.html",
+        "metrics/fastQC_trimmed/multiqc/multiqc_report.html"
         #"results/TEST/a.sort.dedup.baq.bam.bai",
         #"results/TEST/b.sort.dedup.baq.bam.bai"
     params:
@@ -60,8 +61,8 @@ rule index_ref:
 # trim out adapter contamination
 rule trimmomatic:
     input:
-        r1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz", # fastq1
-        r2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+        r1 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        r2 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
     output:
         r1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz",
         r2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz",
@@ -220,6 +221,20 @@ rule fastQC:
     shell:
         "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
 
+rule fastQC_trimmed:
+    input:
+        "../data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
+    output:
+        "metrics/fastQC_trimmed/{LANE}/{ID}_{READ}_fastqc.html"
+    params:
+        p = "med2"
+    threads:
+        4
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "fastqc -o metrics/fastQC_trimmed/{wildcards.LANE} -t {threads} {input}"
+
 
 rule multiQC_fastQC:
     input:
@@ -238,6 +253,24 @@ rule multiQC_fastQC:
     shell:
         "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc --dirs --ignore TEST/"
 
+
+rule multiQC_fastQC_trimmed:
+    input:
+        expand(["metrics/fastQC_trimmed/{LANE}/{ID}_1_fastqc.html",
+                "metrics/fastQC_trimmed/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
+    output:
+        "metrics/fastQC_trimmed/multiqc/multiqc_report.html"
+        #"fastQC/multiqc_report.html"
+    params:
+        p = "med2"
+    resources:
+        time_min = 2*60,
+        mem = 8
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        #"multiqc -f metrics/fastQC_trimmed -o metrics/fastQC_trimmed/multiqc --dirs --ignore TEST/"
+        "multiqc -f metrics/fastQC_trimmed -o metrics/fastQC_trimmed/multiqc --dirs"
 
 #rule fastq_screen:
 #    input:
