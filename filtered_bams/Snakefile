@@ -33,9 +33,9 @@ rule all:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
         expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids),
-        "metrics/fastQC/multiqc/multiqc_report.html",
-        "metrics/picard/multiqc/multiqc_report.html",
-        "metrics/flagstat/multiqc/multiqc_report.html",
+        #"metrics/fastQC/multiqc/multiqc_report.html",
+        #"metrics/picard/multiqc/multiqc_report.html",
+        #"metrics/flagstat/multiqc/multiqc_report.html",
         "metrics/fastQC_trimmed/multiqc/multiqc_report.html"
         #"results/TEST/a.sort.dedup.baq.bam.bai",
         #"results/TEST/b.sort.dedup.baq.bam.bai"
@@ -71,14 +71,14 @@ rule trimmomatic:
         r2_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_2.fq.gz"
     params:
         # list of trimmers (see manual)
-        trimmer=["TRAILING:3", "MINLEN:30"],
-        #trimmer=["ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:2:TRUE", "MINLEN:30"],
+        #trimmer=["TRAILING:3", "MINLEN:30"],
+        trimmer=["ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:2:TRUE", "MINLEN:30"],
         # optional parameters
         extra="",
         compression_level="-9",
         p = "bigmemm"
-    shadow:
-        "minimal"
+#    shadow:
+#        "minimal"
     resources:
         time_min = lambda wildcards, attempt: attempt * 24 * 60,
         mem = lambda wildcards, attempt: attempt * 24
@@ -223,7 +223,7 @@ rule fastQC:
 
 rule fastQC_trimmed:
     input:
-        "../data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
+        "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
     output:
         "metrics/fastQC_trimmed/{LANE}/{ID}_{READ}_fastqc.html"
     params:
