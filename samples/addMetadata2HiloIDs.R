@@ -2,6 +2,7 @@
 library(dplyr)
 library(tidyr)
 library(rgbif) # for elevation data
+source("../colors.R")
 
 # ID and population labels:
 pools <- do.call(rbind,
@@ -89,11 +90,11 @@ novaseq <- backup %>%
 # all plates
 all_libraries <- seq_round2 %>%
   dplyr::rename(plate = plate_number) %>%
-  mutate(RI_ACCESSION = ifelse(popN < 100, paste0("RIMME0", popN),
-                               paste0("RIMMA", popN))) %>%
+  mutate(RI_ACCESSION = paste0(ifelse(popN < 100, "RIMME", "RIMMA"),
+                               stringr::str_pad(popN, width = 4, "left", pad = "0"))) %>%
   bind_rows(., novaseq) %>%
   mutate(platform = "ILLUMINA",
-         library_ID = paste0(sample_name, "_L", stringr::str_pad(lane, width = 3, "left", pad = "0"))) %>%
+         library_ID = paste0(ID, "_L", stringr::str_pad(lane, width = 3, "left", pad = "0"))) %>%
   dplyr::select(ID, RI_ACCESSION, popN, family, ind, incl_excl, library_ID, library, lane, seq_lane, plate, p7, well, regrow_batch, platform, instrument_model)
 
 # basic checks:
@@ -367,3 +368,88 @@ reseq <- hilo %>%
   mutate(est_coverage = ifelse(ID == "HILO80" | plate_number == "plate2", 0, est_coverage)) %>%
   dplyr::select("RI_ACCESSION", "family", "zea", "symp_allo", "ID", "LOCALITY", "plate_number", "est_coverage") %>%
   unique()
+
+flagstat <- read.table("../filtered_bams/metrics/flagstat/multiqc/multiqc_data/multiqc_samtools_flagstat.txt",
+           header = T, stringsAsFactors = F, sep = "\t") %>%
+  tidyr::separate(Sample, into = c("metrics", "flagstat", "seq_lane", "ID"),
+                  sep = " \\| ") %>%
+  dplyr::select(c("ID", "seq_lane", "total_passed")) %>%
+  dplyr::rename(reads_q30 = total_passed)
+  # divide sample into multiple columns, add population info, sort etc., ID exclusions
+hilo2 <- left_join(all_libraries, flagstat, by = c("ID", "seq_lane")) %>%
+  mutate(est_coverage = reads_q30*150/(ref_genome_size)) %>% # ~2.1*10^9 is the genome seq for the roughly 2.4Gb genome. this will be a slight underestimate since not all of the genome is mappable
+  dplyr::filter(is.na(incl_excl)) %>%
+  left_join(., dplyr::group_by(., ID) %>%
+              dplyr::summarise(n_seq = n(), 
+                               est_coverage_combined = sum(est_coverage)), # if I merge reads
+            by = "ID") %>%
+  left_join(., dplyr::group_by(., RI_ACCESSION, popN, family) %>%
+              dplyr::summarise(best_ind = ind[which.max(est_coverage_combined)]),
+            by = c("RI_ACCESSION", "popN", "family")) %>%
+  arrange(desc(est_coverage_combined)) %>%
+  mutate(best = (ind == best_ind),
+         too_low = est_coverage_combined < .05,
+         keep = best & !too_low)
+hilo2 %>%
+  filter(!duplicated(ID)) %>% # don't count samples twice
+  dplyr::select(best, too_low) %>%
+  table(.)
+
+hilo2 %>%
+  left_join(., gps) %>%
+  filter(!duplicated(ID)) %>%
+  filter(keep) %>%
+  dplyr::group_by(popN, zea, symp_allo, LOCALITY, ELEVATION, RI_ACCESSION) %>%
+  dplyr::summarise(pop_n = n(),
+                   total_pop_depth = sum(est_coverage_combined)) %>%
+  View(.)
+hilo2 %>%
+  left_join(., gps) %>%
+  filter(!duplicated(ID)) %>%
+  filter(keep) %>%
+  filter(est_coverage_combined >=0.5) %>%
+  filter(symp_allo == "sympatric") %>%
+  dplyr::group_by(popN, zea, symp_allo, LOCALITY, ELEVATION, RI_ACCESSION) %>%
+  dplyr::summarise(pop_n = n(),
+                   total_pop_depth = sum(est_coverage_combined)) %>%
+  dplyr::ungroup() %>%
+  dplyr::summarise(min_n = min(pop_n),
+                   max_n = max(pop_n),
+                   tot_n = sum(pop_n))
+hilo2 %>%
+  left_join(., gps) %>%
+  filter(!duplicated(ID)) %>%
+  filter(keep) %>%
+  filter(symp_allo == "allopatric") %>%
+  summarise(n = n(),
+            total_depth = sum(est_coverage_combined))
+
+
+p_seq_counts <- hilo2 %>%
+  left_join(., gps, by = c("RI_ACCESSION", "popN")) %>%
+  filter(!duplicated(ID)) %>%
+  mutate(coverage = cut(est_coverage_combined, 
+                        breaks = c(0, 0.05, 0.5, 10)
+                        )) %>%
+  filter(keep) %>%
+  ggplot(., aes(alpha = coverage,
+                fill = zea,
+                x = LOCALITY)) +
+  geom_bar() +
+  labs(fill = "Zea", x = "Population", y = "# Individuals") +
+  scale_alpha_discrete(range = c(.6, 1),
+                       name = "Coverage",
+                       labels = c(expression("x "<" 0.5"), expression("x ">=" 0.5"))) +
+  scale_fill_manual(values = col_maize_mex_parv) +
+  facet_grid(zea~.) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
+        #axis.title.x = "Population")
+ggsave("../../hilo_manuscript/figures/p_seq_counts.png",
+       p_seq_counts,
+       height = 4, width = 5.4, units = "in",
+       device = png)
+hilo2 %>%
+  filter(keep) %>%
+  dplyr::summarise(min = min(est_coverage_combined),
+    max = max(est_coverage_combined))
