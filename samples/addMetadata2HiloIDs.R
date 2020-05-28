@@ -446,9 +446,9 @@ p_seq_counts <- hilo2 %>%
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
         #axis.title.x = "Population")
 ggsave("../../hilo_manuscript/figures/p_seq_counts.png",
-       p_seq_counts,
+       plot = p_seq_counts,
        height = 4, width = 5.4, units = "in",
-       device = png)
+       device = "png")
 hilo2 %>%
   filter(keep) %>%
   dplyr::summarise(min = min(est_coverage_combined),

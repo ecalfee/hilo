@@ -57,12 +57,43 @@ rule index_ref:
     shell:
         "bwa index {input}"
 
+# trim out adapter contamination
+rule trimmomatic:
+    input:
+        r1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        r2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+    output:
+        r1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz",
+        r2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz",
+        # reads where trimming entirely removed the mate
+        r1_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_1.fq.gz",
+        r2_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_2.fq.gz"
+    log:
+        "logs/trimmomatic/{sample}.log"
+    params:
+        # list of trimmers (see manual)
+        trimmer=["TRAILING:3", "MINLEN:30"],
+        #trimmer=["ILLUMINACLIP:NexteraPE-PE.fa:2:30:10:2:TRUE", "MINLEN:30"],
+        # optional parameters
+        extra="",
+        compression_level="-9",
+        p = "bigmemm"
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 24 * 60,
+        mem = lambda wildcards, attempt: attempt * 24
+    threads:
+        16
+    wrapper:
+        "0.59.1/bio/trimmomatic/pe"
+
 rule bwa_map:
     input:
         ref = ref,
         fai = fai,
-        fq1 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
-        fq2 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+        fq1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        fq2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz" # fastq2
     output:
         temp("results/{LANE}/{ID}.bam")
     params:
