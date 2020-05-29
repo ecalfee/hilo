@@ -156,7 +156,8 @@ cd hilo
 hilo$ module load conda3
 hilo$ conda env update --name hilo-env --file envs/environment.yaml --prune
 hilo$ source activate hilo-env
-hilo$ snakemake all --use-conda --conda-create-envs-only --cores 1
+hilo$ snakemake all --profile slurm --conda-create-envs-only
+#(use -n above if you just want to see which environments will be created)
 hilo$ conda deactivate
 hilo$ exit  # now log out of farm and re-log in without -p 2022 to run snakemake
 
@@ -322,3 +323,36 @@ Job counts:
 	1	multiQC_picard
 	3
 (hilo-env) ecalfee@c6-97:~/hilo$ snakemake multiQC_picard multiQC_flagstat multiQC_fastQC -f --profile slurm
+
+# testing trimmomatic:
+hilo$ snakemake -f /home/ecalfee/hilo/data/HILO_trimmed_reads/TEST/a_1.fq.gz --profile slurm
+# added TRUE . now seeing if it successfully removes adapters from the small test sets of reads:
+snakemake metrics/fastQC_trimmed/multiqc/multiqc_report.html --profile slurm
+# looks good on fastQC report!
+
+# I made an alternative 'some' rule to the 'all' rule to just make trimmed_reads multiQC report and do bwa -> sorting reads. ack! in testing it removes temporary output file. So I get rid of the temp for now.
+# first tested with just TEST/a.fq and b.fq. Now running with Combined sample:
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        502     bwa_map
+        1004    fastQC_trimmed
+        1       multiQC_fastQC_trimmed
+        502     samtools_sort
+        1       some
+        502     trimmomatic
+        2512
+snakemake some --profile slurm
+[detached from 32676.snake_run] # May 28, 2020 11:39pm
+
+# I will have to decide later whether I want to cap base quality scores with BAQ, so I don't dedup yet in this run:
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+	count	jobs
+	1	all
+	502	bwa_map
+	1004	fastQC_trimmed
+	1	multiQC_fastQC_trimmed
+	502	samtools_sort
+	502	trimmomatic
+	2512
