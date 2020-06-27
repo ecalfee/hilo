@@ -24,6 +24,7 @@ libraries_dict = {"April2020_1": "April2020",
 		"Jan2019_6": "March2018",
 		"Jan2019_7": "March2018",
 		"Jan2019_8": "March2018",
+        "Maize55": "Maize55",
 		"TEST": "TEST_LIBRARY"
 }
 # reads 1 and 2 in paired sets, e.g. _1.fq.gz
@@ -32,11 +33,12 @@ reads = ["1", "2"]
 rule all:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
-        expand("results/{LANE}/{ID}.sort.dedup.baq.bam.bai", zip, LANE=lanes, ID=ids),
-        "metrics/fastQC/multiqc/multiqc_report.html",
+        expand("results/{LANE}/{ID}.sort.dedup.bam.bai", zip, LANE=lanes, ID=ids),
+        #"metrics/fastQC/multiqc/multiqc_report.html",
+        #"metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "metrics/picard/multiqc/multiqc_report.html",
-        "metrics/flagstat/multiqc/multiqc_report.html",
-        "metrics/fastQC_trimmed/multiqc/multiqc_report.html"
+        "metrics/flagstat/multiqc/multiqc_report.html"
+
     params:
         p = "med2"
     resources:
@@ -46,6 +48,7 @@ rule all:
 # alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
+        "metrics/fastQC/multiqc/multiqc_report.html",
         "metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         expand("results/{LANE}/{ID}.sort.bam", zip, LANE=lanes, ID=ids)
     params:
@@ -124,8 +127,7 @@ rule samtools_sort:
     input:
         "results/{LANE}/{ID}.bam"
     output:
-        "results/{LANE}/{ID}.sort.bam"
-        #temp("results/{LANE}/{ID}.sort.bam")
+        temp("results/{LANE}/{ID}.sort.bam")
     params:
         p = "bigmemm"
     conda:
@@ -150,7 +152,7 @@ rule mark_duplicates:
         fai = fai,
         bam = "results/{LANE}/{ID}.sort.bam"
     output:
-        bam = temp("results/{LANE}/{ID}.sort.dedup.baq.bam"),
+        bam = "results/{LANE}/{ID}.sort.dedup.bam",
         metrics = "metrics/picard/{LANE}/{ID}.metrics.txt"
     params:
         p = "med2"
@@ -173,16 +175,15 @@ rule mark_duplicates:
         "REMOVE_DUPLICATES=true "
         "TMP_DIR=tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} "
         "METRICS_FILE={output.metrics} | "
-        "samtools calmd -SArE --reference {input.ref} - | "
         "samtools view -bS -q 1 - > {output.bam} &&"
         "rm -r tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE}"
         # remove temporary directory at the end
 
 rule samtools_index:
     input:
-        "results/{LANE}/{ID}.sort.dedup.baq.bam"
+        "results/{LANE}/{ID}.sort.dedup.bam"
     output:
-        "results/{LANE}/{ID}.sort.dedup.baq.bam.bai"
+        "results/{LANE}/{ID}.sort.dedup.bam.bai"
     params:
         p = "med2"
     conda:
@@ -254,7 +255,7 @@ rule multiQC_fastQC_trimmed:
 
 rule samtools_flagstat:
     input:
-        "results/{LANE}/{ID}.sort.dedup.baq.bam"
+        "results/{LANE}/{ID}.sort.dedup.bam"
     output:
         "metrics/flagstat/{LANE}/{ID}.flagstat"
     params:

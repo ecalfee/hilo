@@ -356,3 +356,64 @@ Job counts:
 	502	samtools_sort
 	502	trimmomatic
 	2512
+
+# snakemake seemed frozen from log on Jun 4, so I did CTRL+C:
+Terminating processes on user request, this might take some time.
+Will exit after finishing currently running jobs.
+Complete log: /home/ecalfee/hilo/.snakemake/log/2020-05-28T233738.667066.snakemake.log
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       bwa_map
+        4       fastQC_trimmed
+        1       multiQC_fastQC_trimmed
+        1       samtools_sort
+        1       some
+        1       trimmomatic
+        9
+# REMINDER, HOW TO USE SCREEN: https://linuxize.com/post/how-to-use-linux-screen/
+# ok, restarting these failed jobs (can't determined why they failed from logs, so could be random)
+hilo$ snakemake some --profile slurm # RUNNING 6.25.2020
+CRTL+A D
+[detached from 32676.snake_run]
+
+
+TEST ANGSD MIXING BAMS FROM GENOMES WITH DIFF SORT ORDERS:
+# take 10 maize from hilo
+# and 10 maize from Palmar Chico maize pop
+
+# are the number of SNPs reasonable? Are they all at 50% freq?
+hilo/test$ angsd -out test_10JRI_10alloMAIZE -r 1:100000000-100010000 -ref ../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa -bam maize_10JRI_10alloMAIZE.bams -remove_bads 1 -minMapQ 30 -minQ 20 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -P 1 -doMajorMinor 2 -checkBamHeaders 0
+hilo/test$ samtools view -bs 42.001 /home/jri/projects/ibd/JRIAL1/data/JRIAL1-2_srt_dedup.bam > small_JRIAL1-2_srt_dedup.bam
+# index this bam
+# try to run test2.bams -- has small_JRIAL1-2_srt_dedup.bam and some hilo's
+hilo/test$ angsd -out test2 -r 2:100000000-110000000 -ref ../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa -bam test2.bams -remove_bads 1 -minMapQ 30 -minQ 20 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -P 1 -doMajorMinor 2 -checkBamHeaders 0
+# again but without this 1 bam from palmar chico = test2b:
+angsd -out test2b -r 2:100000000-110000000 -ref ../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa -bam test2b.bams -remove_bads 1 -minMapQ 30 -minQ 20 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -P 1 -doMajorMinor 2 -checkBamHeaders 0
+
+# then re-sort according to the my genome
+hilo/test$ samtools sort -m 6G -@ 1 -T tmp -O bam small_JRIAL1-2_srt_dedup.bam > small_JRIAL1-2_srt_dedup.resorted.bam
+# and try to run test3 -- has small_JRIAL1-2_srt_dedup.resorted.bam and some hilo's
+# the resulting SNP files should be the same from these two approaches if it's working
+hilo/test$ angsd -out test3 -r 2:100000000-110000000 -ref ../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa -bam test3.bams -remove_bads 1 -minMapQ 30 -minQ 20 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -P 1 -doMajorMinor 2 -checkBamHeaders 1
+
+# hmm...still headers don't match. Try picard ReorderSam:
+module load java
+module load picardtools/2.7.1
+java -Xmx6g -jar $PICARD/picard.jar ReorderSam \
+INPUT= small_JRIAL1-2_srt_dedup.bam OUTPUT=small_JRIAL1-2_srt_dedup.reordered.bam \
+REFERENCE=../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa
+test4.bams has the reordered bam file:
+samtools index small_JRIAL1-2_srt_dedup.reordered.bam
+hilo/test$ angsd -out test4 -r 2:100000000-110000000 -ref ../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa -bam test4.bams -remove_bads 1 -minMapQ 30 -minQ 20 -doCounts 1 -minMaf 0.05 -doMaf 8 -GL 1 -doGlf 2 -P 1 -doMajorMinor 2
+# runs just fine without checking bam headers ..
+# maize palmar chico needs to run ReorderSam (above) + dedup marked dups + filter to mapQ>=1
+hilo/test$ samtools view -bF 0x400 -q 1 small_JRIAL1-2_srt_dedup.bam | samtools flagstat -
+# ok actually I don't want to copy these all over (> 2T). As long as I just use autosomes, the order is the same in bams, so angsd should work with -checkBamHeaders flag
+# BUT I do need to make sure to use the -removeBads 1 and -mapQ 30 and -baq 2 in ANGSD because these files
+# have no pre-computed baq and only actually mark (not remove) duplicate reads
+
+# make symlinks for all maize 55 data to the
+hilo/filtered_bams/results/Maize55$ for i in {1..55}; do ln -s /home/jri/projects/ibd/JRIAL1/data/JRIAL1-"$i"_srt_dedup.bam MAIZ"$i".sort.dedup.bam; done
+
+# rerun snakemake
