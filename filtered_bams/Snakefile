@@ -1,7 +1,10 @@
+from collections import defaultdict
+
 workdir: "filtered_bams/"
 
 wildcard_constraints:
-    ID = "[A-Za-z0-9]+"
+    ID = "[A-Za-z0-9]+",
+    LANE = "[A-Za-z0-9_]+"
 
 ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
