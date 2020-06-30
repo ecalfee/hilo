@@ -413,7 +413,22 @@ hilo/test$ samtools view -bF 0x400 -q 1 small_JRIAL1-2_srt_dedup.bam | samtools 
 # BUT I do need to make sure to use the -removeBads 1 and -mapQ 30 and -baq 2 in ANGSD because these files
 # have no pre-computed baq and only actually mark (not remove) duplicate reads
 
-# make symlinks for all maize 55 data to the
+# make symlinks for all maize 55 data to the filtered bams folders
 hilo/filtered_bams/results/Maize55$ for i in {1..55}; do ln -s /home/jri/projects/ibd/JRIAL1/data/JRIAL1-"$i"_srt_dedup.bam MAIZ"$i".sort.dedup.bam; done
 
-# rerun snakemake
+# rerun snakemake to dedup all hilo and then index everything, incl. maize 55
+# note that maize55 I got pre-mapped (w/ bwa) and duplicates marked, but all reads included (even unmapped)
+screen -r 32676.snake_run
+(IN SCREEN:)
+Job counts:
+	count	jobs
+	1	all
+	502	mark_duplicates
+	1	multiQC_flagstat
+	557	samtools_flagstat
+	557	samtools_index
+	1618
+hilo$ snakemake all --profile slurm
+CTRL+A+D (detached screen. June 26, 2020 11:55pm)
+
+# TO DO: merge bams for the same individual. Make list of all included bams/IDs. Then call SNPs.

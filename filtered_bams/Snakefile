@@ -25,15 +25,22 @@ libraries_dict = {"April2020_1": "April2020",
 		"Jan2019_7": "March2018",
 		"Jan2019_8": "March2018",
         "Maize55": "Maize55",
-		"TEST": "TEST_LIBRARY"
+		"TEST": "TEST_LIBRARY",
+        "TEST2": "TEST2_LIBRARY"
 }
+# make dictionary with a list of lanes for each id
+merge_dict = defaultdict(list)
+for i, id in enumerate(ids):
+    merge_dict[id].append(lanes[i])
+
 # reads 1 and 2 in paired sets, e.g. _1.fq.gz
 reads = ["1", "2"]
 
 rule all:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
-        expand("results/{LANE}/{ID}.sort.dedup.bam.bai", zip, LANE=lanes, ID=ids),
+        expand(["results/merged/{ID}.sort.dedup.bam",
+                "results/merged/{ID}.sort.dedup.bam.bai"], zip, ID=list(merge_dict.keys())),
         #"metrics/fastQC/multiqc/multiqc_report.html",
         #"metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "metrics/picard/multiqc/multiqc_report.html",
@@ -190,6 +197,33 @@ rule samtools_index:
         "../envs/environment.yaml"
     shell:
         "samtools index {input}"
+
+# merge multiple bams for the same HILO sample (only a subset of samples were run on multiple lanes)
+def bams2merge(wildcards):
+    return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = dict[wildcards.ID], ID = wildcards.ID)
+def bais2merge(wildcards):
+    return expand("results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = dict[wildcards.ID], ID = wildcards.ID)
+
+rule merge_bams:
+    input:
+        bams = bams2merge,
+        bais = bais2merge
+
+    output:
+        bam = "results/merged/{ID}.sort.dedup.bam",
+        bai = "results/merged/{ID}.sort.dedup.bam.bai"
+    run:
+        if len(input.bams) > 1:
+            print("merging files")
+            shell("samtools merge {output.bam} {input.bams}")
+            shell("sleep 5s")
+            shell("samtools index {output.bam}")
+
+        else:
+            shell("ln -s " + os.getcwd() + "/{input.bams} {output.bam}")
+            shell("sleep 5s")
+            shell("ln -s " + os.getcwd() + "/{input.bais} {output.bai}")
+
 
 # run quality checks and metrics
 rule fastQC:
