@@ -432,3 +432,4 @@ hilo$ snakemake all --profile slurm
 CTRL+A+D (detached screen. June 26, 2020 11:55pm)
 
 # TO DO: merge bams for the same individual. Make list of all included bams/IDs. Then call SNPs.
+snakemake all -n --profile slurm

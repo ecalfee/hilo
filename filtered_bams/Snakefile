@@ -1,16 +1,18 @@
 from collections import defaultdict
+import os
 
-workdir: "filtered_bams/"
+workdir: path_hilo + "filtered_bams/"
 
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
-    LANE = "[A-Za-z0-9_]+"
+    LANE = "[April2020_?|March2018|Jan2019_?|TEST|TEST2]"
 
-ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+#ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 #prefix = "April2020"
-#prefix = "TEST"
+#prefix = "TEST2"
 prefix = "Combined"
 
 # list of sample IDs
@@ -41,9 +43,10 @@ reads = ["1", "2"]
 
 rule all:
     input:
-        # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
         expand(["results/merged/{ID}.sort.dedup.bam",
                 "results/merged/{ID}.sort.dedup.bam.bai"], zip, ID=list(merge_dict.keys())),
+        #expand(["results/{LANE}/{ID}.sort.dedup.bam",
+        #        "results/{LANE}/{ID}.sort.dedup.bam.bai"], zip, LANE=lanes, ID=ids),
         #"metrics/fastQC/multiqc/multiqc_report.html",
         #"metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "metrics/picard/multiqc/multiqc_report.html",
@@ -82,14 +85,14 @@ rule index_ref:
 # trim out adapter contamination
 rule trimmomatic:
     input:
-        r1 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
-        r2 = "/home/ecalfee/hilo/data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+        r1 = path_hilo + "data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        r2 = path_hilo + "data/HILO_raw_reads/{LANE}/{ID}_2.fq.gz" # fastq2
     output:
-        r1 = temp("/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz"),
-        r2 = temp("/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz"),
+        r1 = temp(path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz"),
+        r2 = temp(path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz"),
         # reads where trimming entirely removed the mate
-        r1_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_1.fq.gz",
-        r2_unpaired = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_2.fq.gz"
+        r1_unpaired = path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_1.fq.gz",
+        r2_unpaired = path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_unpaired_2.fq.gz"
     params:
         # list of trimmers (see manual)
         trimmer=["ILLUMINACLIP:/share/apps/Trimmomatic-0.36/adapters/NexteraPE-PE.fa:2:30:10:2:TRUE", "MINLEN:30"],
@@ -111,8 +114,8 @@ rule bwa_map:
     input:
         ref = ref,
         fai = fai,
-        fq1 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz", # fastq1
-        fq2 = "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz" # fastq2
+        fq1 = path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_1.fq.gz", # fastq1
+        fq2 = path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_2.fq.gz" # fastq2
     output:
         temp("results/{LANE}/{ID}.bam")
     params:
@@ -203,18 +206,23 @@ rule samtools_index:
 
 # merge multiple bams for the same HILO sample (only a subset of samples were run on multiple lanes)
 def bams2merge(wildcards):
-    return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = dict[wildcards.ID], ID = wildcards.ID)
+    return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 def bais2merge(wildcards):
-    return expand("results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = dict[wildcards.ID], ID = wildcards.ID)
+    return expand("results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 
 rule merge_bams:
+#I need equivalent of r's paste in python to create input list of file names from ID
     input:
+        # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
         bams = bams2merge,
         bais = bais2merge
-
     output:
         bam = "results/merged/{ID}.sort.dedup.bam",
         bai = "results/merged/{ID}.sort.dedup.bam.bai"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
     run:
         if len(input.bams) > 1:
             print("merging files")
@@ -223,9 +231,9 @@ rule merge_bams:
             shell("samtools index {output.bam}")
 
         else:
-            shell("ln -s " + os.getcwd() + "/{input.bams} {output.bam}")
+            shell("ln -s " + path_hilo + "filtered_bams/{input.bams} {output.bam}")
             shell("sleep 5s")
-            shell("ln -s " + os.getcwd() + "/{input.bais} {output.bai}")
+            shell("ln -s " + path_hilo + "filtered_bams/{input.bais} {output.bai}")
 
 
 # run quality checks and metrics
