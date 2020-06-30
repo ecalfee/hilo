@@ -12,8 +12,8 @@ ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 #prefix = "April2020"
-#prefix = "TEST2"
-prefix = "Combined"
+prefix = "TEST2"
+#prefix = "Combined"
 
 # list of sample IDs
 with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
@@ -209,6 +209,8 @@ def bams2merge(wildcards):
     return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 def bais2merge(wildcards):
     return expand("results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
+def count_bams(wildcards):
+    return len(merge_dict[wildcards.ID])
 
 rule merge_bams:
 #I need equivalent of r's paste in python to create input list of file names from ID
@@ -220,21 +222,25 @@ rule merge_bams:
         bam = "results/merged/{ID}.sort.dedup.bam",
         bai = "results/merged/{ID}.sort.dedup.bam.bai"
     params:
-        p = "med2"
+        p = "med2",
+        n_input_bams = count_bams,
+        path = path_hilo + "filtered_bams/"
     conda:
         "../envs/environment.yaml"
-    run:
-        if len(input.bams) > 1:
-            print("merging files")
-            shell("samtools merge {output.bam} {input.bams}")
-            shell("sleep 5s")
-            shell("samtools index {output.bam}")
-
-        else:
-            shell("ln -s " + path_hilo + "filtered_bams/{input.bams} {output.bam}")
-            shell("sleep 5s")
-            shell("ln -s " + path_hilo + "filtered_bams/{input.bais} {output.bai}")
-
+    shell:
+        """
+        if [ {params.n_input_bams} -gt 1 ]; then
+                echo 'merging files n={params.n_input_bams}'
+                samtools merge {output.bam} {input.bams}
+                sleep 5s
+                samtools index {output.bam}
+        else
+                echo 'no merge required -- creating symlink to file'
+                ln -s {params.path}{input.bams} {output.bam}
+                sleep 5s
+                ln -s {params.path}{input.bais} {output.bai}
+        fi
+        """
 
 # run quality checks and metrics
 rule fastQC:
