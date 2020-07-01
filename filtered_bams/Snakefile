@@ -1,19 +1,18 @@
 from collections import defaultdict
 import os
 
-workdir: path_hilo + "filtered_bams/"
+workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
 wildcard_constraints:
-    ID = "[A-Za-z0-9]+",
-    LANE = "[April2020_?|March2018|Jan2019_?|TEST|TEST2]"
+    ID = "[A-Za-z0-9]+"
 
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 #prefix = "April2020"
-prefix = "TEST2"
-#prefix = "Combined"
+#prefix = "TEST2"
+prefix = "Combined"
 
 # list of sample IDs
 with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
@@ -43,12 +42,10 @@ reads = ["1", "2"]
 
 rule all:
     input:
-        expand(["results/merged/{ID}.sort.dedup.bam",
-                "results/merged/{ID}.sort.dedup.bam.bai"], zip, ID=list(merge_dict.keys())),
-        #expand(["results/{LANE}/{ID}.sort.dedup.bam",
-        #        "results/{LANE}/{ID}.sort.dedup.bam.bai"], zip, LANE=lanes, ID=ids),
-        #"metrics/fastQC/multiqc/multiqc_report.html",
-        #"metrics/fastQC_trimmed/multiqc/multiqc_report.html",
+        expand(["merged_bams/{ID}.sort.dedup.bam",
+                "merged_bams/{ID}.sort.dedup.bam.bai"], zip, ID=list(merge_dict.keys())),
+        "metrics/fastQC/multiqc/multiqc_report.html",
+        "metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "metrics/picard/multiqc/multiqc_report.html",
         "metrics/flagstat/multiqc/multiqc_report.html"
 
@@ -180,15 +177,15 @@ rule mark_duplicates:
     # java 1.8 and picard-tools 2.7.1 loaded from cluster
     # note: I only filter mapQ > 1 at this step, though in downstream analyses often use a more stringent threshold mapQ > 30
     shell:
-        "module load java &&"
-        "module load picardtools/2.7.1 &&"
-        "mkdir -p tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} &&"
+        "module load java && "
+        "module load picardtools/2.7.1 && "
+        "mkdir -p tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} && "
         "java -Xmx6g -jar ${{PICARD}}/picard.jar MarkDuplicates "
         "INPUT= {input.bam} OUTPUT=/dev/stdout QUIET=true "
         "REMOVE_DUPLICATES=true "
         "TMP_DIR=tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE} "
         "METRICS_FILE={output.metrics} | "
-        "samtools view -bS -q 1 - > {output.bam} &&"
+        "samtools view -bS -q 1 - > {output.bam} && "
         "rm -r tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE}"
         # remove temporary directory at the end
 
@@ -204,7 +201,7 @@ rule samtools_index:
     shell:
         "samtools index {input}"
 
-# merge multiple bams for the same HILO sample (only a subset of samples were run on multiple lanes)
+# merge multiple bams for the same HILO sample (only a subset of samples were sequenced on multiple lanes and therefore need to be merged)
 def bams2merge(wildcards):
     return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 def bais2merge(wildcards):
@@ -213,21 +210,20 @@ def count_bams(wildcards):
     return len(merge_dict[wildcards.ID])
 
 rule merge_bams:
-#I need equivalent of r's paste in python to create input list of file names from ID
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
-        bams = bams2merge,
+        bams = bams2merge, # this is a function that produces the variable-length list of input files using the ID wildcard
         bais = bais2merge
     output:
-        bam = "results/merged/{ID}.sort.dedup.bam",
-        bai = "results/merged/{ID}.sort.dedup.bam.bai"
+        bam = "merged_bams/{ID}.sort.dedup.bam", #note: not results/merged/ID.sort.dedup.bam because then 'merged' gets confused for a LANE wildcard value
+        bai = "merged_bams/{ID}.sort.dedup.bam.bai"
     params:
         p = "med2",
         n_input_bams = count_bams,
         path = path_hilo + "filtered_bams/"
     conda:
         "../envs/environment.yaml"
-    shell:
+    shell: # merge if multiple bams, else create a symlink for single bam
         """
         if [ {params.n_input_bams} -gt 1 ]; then
                 echo 'merging files n={params.n_input_bams}'
@@ -259,7 +255,7 @@ rule fastQC:
 
 rule fastQC_trimmed:
     input:
-        "/home/ecalfee/hilo/data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
+        path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
     output:
         "metrics/fastQC_trimmed/{LANE}/{ID}_{READ}_fastqc.html"
     params:
