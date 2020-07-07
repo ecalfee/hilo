@@ -430,6 +430,19 @@ Job counts:
 	1618
 hilo$ snakemake all --profile slurm
 CTRL+A+D (detached screen. June 26, 2020 11:55pm)
+# ran fine. Now I merge bams for the same individual. Syntax here in snakemake is a bit tricky. shell only (not run) is required to use conda
+snakemake all -n --profile slurm
+# running test case with a/b files 6.30.2020. Oops next time don't test with multiQC reports (will inclue a & b test files in there too)
+screen -r 32676.snake_run
+[detached from 32676.snake_run]
+# oops. merge bams not just for the sample cases:
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        520     merge_bams
+        521
+(hilo-env) ecalfee@farm:~/hilo$ snakemake all --profile slurm # running 7.7.2020
 
-# TO DO: merge bams for the same individual. Make list of all included bams/IDs. Then call SNPs.
+TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.
 snakemake all -n --profile slurm
