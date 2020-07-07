@@ -213,7 +213,7 @@ write.table(included, "../samples/HILO_meta.txt", col.names = T, row.names = F,
 hilo_ids = included$ID
 write.table(hilo_ids, "../samples/HILO_ids.list",
             col.names = F, row.names = F, quote = F, sep= "\t")
-hilo_bams = paste0("../filtered_bams/merged_bams/", hilo_ids, ".sort.dedup.bam")
+hilo_bams = paste0("filtered_bams/merged_bams/", hilo_ids, ".sort.dedup.bam")
 write.table(hilo_bams, 
             "../samples/HILO_bams.list",
             col.names = F, row.names = F, quote = F, sep= "\t")
@@ -222,7 +222,7 @@ write.table(hilo_bams,
 maize55_ids = paste0("MAIZE", 1:55)
 write.table(maize55_ids, "../samples/MAIZE55_ids.list",
             col.names = F, row.names = F, quote = F, sep= "\t")
-maize55_bams = paste0("../filtered_bams/results/Maize55/", maize55_ids, ".sort.dedup.bam")
+maize55_bams = paste0("filtered_bams/results/Maize55/", maize55_ids, ".sort.dedup.bam")
 write.table(maize55_bams, "../samples/MAIZE55_bams.list",
             col.names = F, row.names = F, quote = F, sep= "\t")
 
