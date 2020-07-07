@@ -1,8 +1,8 @@
 # pipeline to call SNPs
-workdir: path_hilo + "variant_sites/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
+#workdir: path_hilo + "variant_sites/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
-name_all = "HILO_MAIZE55"
-#name_all = "TEST"
+#name_all = "HILO_MAIZE55"
+name_all = "TEST"
 
 # rule to get random regions from the genome
 # rule to get bams list of included samples
@@ -13,10 +13,10 @@ rule calc_depth:
         bams = path_hilo + "samples/" + name_all + "_bams.list",
         regions = path_hilo + "data/refMaize/random_regions/N1000.L100.regions"
     output:
-        "results/depthCov/N1000.L100.regions/" + name_all + ".Q20.depthGlobal"
+        "variant_sites/results/depthCov/N1000.L100.regions/" + name_all + ".Q20.depthGlobal"
     params:
         p = "bigmemm",
-        out_prefix = "results/depthCov/N1000.L100.regions/" + name_all + ".Q20"
+        out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/" + name_all + ".Q20"
 #    conda:
 #        "../envs/environment.yaml"
     shadow:
@@ -31,6 +31,7 @@ rule calc_depth:
         "-rf {input.regions} "
         "-bam {input.bams} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
-        "-doCounts 1 -doDepth 1 -maxDepth 10000"
-
+        "-doCounts 1 -doDepth 1 -maxDepth 10000 "
+	"-checkBamHeaders 0"
+# note: maize55 have different order of bams, but only after all the autosomes, so we ignore bam header differences in all angsd calls
 # calculate total depth from the .Q20.depthGlobal file to use as input for 2x depth 
