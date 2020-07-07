@@ -11,8 +11,8 @@ ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 #prefix = "April2020"
-prefix = "TEST2"
-#prefix = "Combined"
+#prefix = "TEST2"
+prefix = "Combined"
 
 # list of sample IDs
 with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
