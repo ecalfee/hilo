@@ -444,5 +444,26 @@ Job counts:
         521
 (hilo-env) ecalfee@farm:~/hilo$ snakemake all --profile slurm # running 7.7.2020
 
+# calculating depth for minQ > 20:
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n calc_depth --profile slurm
+Building DAG of jobs...
+Job counts:
+        count   jobs
+        1       calc_depth
+        1
+
+[Tue Jul  7 01:46:57 2020]
+rule calc_depth:
+    input: ../samples/HILO_MAIZE55_bams.list, /home/ecalfee/hilo/data/refMaize/random_regions/N1000.L100.regions
+    output: results/depthCov/N1000.L100.regions/HILO_MAIZE55.Q20.depthGlobal
+    jobid: 0
+    threads: 4
+    resources: time_min=720, mem=32
+# make output directory for logs!
+mkdir variant_sites/snake_logs
+# now run:
+snakemake calc_depth --profile slurm
+
+
 TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.
 snakemake all -n --profile slurm

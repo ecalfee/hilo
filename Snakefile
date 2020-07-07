@@ -6,4 +6,5 @@ ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 
 include: "filtered_bams/Snakefile"
+
 include: "variant_sites/Snakefile"
