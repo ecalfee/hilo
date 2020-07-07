@@ -2,7 +2,7 @@
 workdir: path_hilo + "variant_sites/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
 name_all = "HILO_MAIZE55"
-#name_all = TEST_ab
+#name_all = "TEST"
 
 # rule to get random regions from the genome
 # rule to get bams list of included samples
@@ -10,15 +10,15 @@ name_all = "HILO_MAIZE55"
 # calculate depth of sequencing coverage for the combined sample, only including bases meeting minQ >20
 rule calc_depth:
     input:
-        bams = "../samples/" + name_all + "_bams.list"
-        regions = path_hilo + "/data/refMaize/random_regions/N1000.L100.regions"
+        bams = path_hilo + "samples/" + name_all + "_bams.list",
+        regions = path_hilo + "data/refMaize/random_regions/N1000.L100.regions"
     output:
         "results/depthCov/N1000.L100.regions/" + name_all + ".Q20.depthGlobal"
     params:
-        p = "bigmemm"
+        p = "bigmemm",
         out_prefix = "results/depthCov/N1000.L100.regions/" + name_all + ".Q20"
-    conda:
-        "../envs/environment.yaml"
+#    conda:
+#        "../envs/environment.yaml"
     shadow:
         "minimal"
     threads:
