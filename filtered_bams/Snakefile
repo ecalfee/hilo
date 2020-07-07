@@ -6,10 +6,6 @@ workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to crea
 wildcard_constraints:
     ID = "[A-Za-z0-9]+"
 
-#ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
-ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
-fai = ref + ".fai"
-
 #prefix = "April2020"
 #prefix = "TEST2"
 prefix = "Combined"
