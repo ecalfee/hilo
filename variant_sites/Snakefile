@@ -1,4 +1,5 @@
-# pipeline to call SNPs
+## variant_sites/Snakefile: pipeline to call SNPs
+
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
@@ -6,15 +7,8 @@ workdir: path_hilo
 with open("samples/" + prefix_all + "_bams.list") as f:
     all_bams = f.read().splitlines()
 
-# make a dictionary of 5Mb regions
-regions_dict = {}
-with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
-    for line in f:
-        row = line.split("\t")
-        # one key, value dictionary entry per region, e.g. regions_dict[6] = 1:30000000-34999999 for region 6
-        regions_dict["region_" + row[3]] = row[0] + ":" + row[1] + "-" + row[2]
 
-# make chromosome file (with lengths) from reference genome
+## get_chr_lengths: make chromosome file (with lengths) from reference genome
 rule get_chr_lengths:
     input:
         fai
@@ -30,10 +24,9 @@ rule get_chr_lengths:
     shell: # 10 chromosomes = first 10 scaffolds in the reference index .fai
         "cut -f1,2 {input} | head -n 10 | grep -v 't' > {output}"
 
-
-# generate a set of random regions in the maize reference genome
-# N = 1000 regions, each length L = 100 bp, sorted by genomic position
-# generate regions and sort by chrom and position within chrom and then format chr:start-end
+## get_random_regions: generate a set of random regions in the maize reference genome
+## N = 1000 regions, each length L = 100 bp, sorted by genomic position
+## generate regions and sort by chrom and position within chrom and then format chr:start-end
 rule get_random_regions:
     input:
         ref_chr
@@ -58,7 +51,7 @@ rule get_random_regions:
         """
 
 
-# calculate depth of sequencing coverage for the combined sample, only including bases meeting minQ >20
+## calc_depth: calculate depth of sequencing coverage for the combined sample, only including bases meeting minQ >20
 rule calc_depth:
     input:
         bams = all_bams, # all input bams
@@ -101,7 +94,7 @@ rule calc_depth:
 #    for line in f:
 #        row = line.split("\t")
 
-# identify variant sites in combined sampled across all autosomes
+## call_SNPs: identify variant sites in combined sampled across all autosomes
 rule call_SNPs:
     input:
         bams = all_bams, # all input bams
@@ -143,7 +136,7 @@ rule call_SNPs:
         "-setMaxDepth {params.max_depth} "
         "-checkBamHeaders 0"
 
-# for every region of the genome, make a .var.sites file with variant sites information for each SNP
+## make_sites_file: for every region of the genome, make a .var.sites file with variant sites information for each SNP
 rule make_sites_file:
     input:
         "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz"
@@ -164,6 +157,24 @@ rule make_sites_file:
         angsd sites index {output.sites}
         """
 
+## calc_rmap_pos: uses a cubic spline fit to estimate the cM position for every site according to the Ogut 2015 genetic map
+rule calc_rmap_pos:
+    input:
+        rmap = rmap,
+        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
+    output:
+        rpos = "variant_sites/results/" + prefix_all + "/{REGION}.rpos"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    conda:
+        "envs/environment.yaml"
+    script:
+        "calc_rpos.R"
 
 
 # # to uncomment code below: cmd + /

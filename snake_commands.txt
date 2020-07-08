@@ -471,7 +471,15 @@ Job counts:
         1       all
         426     call_SNPs
         427
-# running 7.7.2020 6pm 
+# running 7.7.2020 6pm . oops typo didn't work. trying again:
+snakemake -n --quiet all  --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     call_SNPs
+        426     make_sites_file
+        853
+
 
 
 TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.

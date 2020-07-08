@@ -4,10 +4,14 @@ import numpy as np
 #configfile: "config.yaml"
 path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on the local machine
 
+# reference genome
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fai = ref + ".fai"
 ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
+
+# recombination map
+rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
 
 # all fastq/samples sequenced
 #prefix_bams = "April2020"
@@ -15,8 +19,8 @@ ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 prefix_bams = "Combined"
 
 # all bams included in combined sample (est_coverage > 0.05x)
-prefix_all = "HILO_MAIZE55"
-#prefix_all = "TEST"
+#prefix_all = "HILO_MAIZE55"
+prefix_all = "TEST"
 
 # all bams for local ancestry inference (est_coverage > 0.5x)
 
@@ -24,11 +28,20 @@ prefix_all = "HILO_MAIZE55"
 include: "filtered_bams/Snakefile"
 include: "variant_sites/Snakefile"
 
-# main rule to run all workflows
+# make a dictionary of 5Mb regions across the genome
+regions_dict = {}
+with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
+    for line in f:
+        row = line.split("\t")
+        # one key, value dictionary entry per region, e.g. regions_dict[6] = 1:30000000-34999999 for region 6
+        regions_dict["region_" + row[3]] = row[0] + ":" + row[1] + "-" + row[2]
+
+
+## all:  main rule to run all workflows
 rule all:
     input:
         # SNP set
-        expand("variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
+        expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
                 REGION=list(regions_dict.keys())),
         # bam metrics files
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
@@ -47,10 +60,11 @@ rule all:
 
 
 
-# alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
+## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
         # SNP set for 1 scaffold
+        "variant_sites/results/" + prefix_all + "/region_1.rpos",
         "variant_sites/results/" + prefix_all + "/region_1.var.sites"
     params:
         p = "med2"
