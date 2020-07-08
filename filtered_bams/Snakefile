@@ -6,15 +6,11 @@ workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to crea
 wildcard_constraints:
     ID = "[A-Za-z0-9]+"
 
-#prefix = "April2020"
-#prefix = "TEST2"
-prefix = "Combined"
-
 # list of sample IDs
-with open("../data/HILO_raw_reads/" + prefix + "_IDs.list") as f:
+with open("../data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
     ids = f.read().splitlines()
 # list of lanes for sample IDs above
-with open("../data/HILO_raw_reads/" + prefix + "_lanes.list") as f:
+with open("../data/HILO_raw_reads/" + prefix_bams + "_lanes.list") as f:
     lanes = f.read().splitlines()
 
 # dictionary mapping lanes to library names
@@ -35,33 +31,6 @@ for i, id in enumerate(ids):
 
 # reads 1 and 2 in paired sets, e.g. _1.fq.gz
 reads = ["1", "2"]
-
-rule all:
-    input:
-        expand(["merged_bams/{ID}.sort.dedup.bam",
-                "merged_bams/{ID}.sort.dedup.bam.bai"], zip, ID=list(merge_dict.keys())),
-        "metrics/fastQC/multiqc/multiqc_report.html",
-        "metrics/fastQC_trimmed/multiqc/multiqc_report.html",
-        "metrics/picard/multiqc/multiqc_report.html",
-        "metrics/flagstat/multiqc/multiqc_report.html"
-
-    params:
-        p = "med2"
-    resources:
-        time_min = 5,
-        mem = 2
-
-# alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
-rule some:
-    input:
-        "metrics/fastQC/multiqc/multiqc_report.html",
-        "metrics/fastQC_trimmed/multiqc/multiqc_report.html",
-        expand("results/{LANE}/{ID}.sort.bam", zip, LANE=lanes, ID=ids)
-    params:
-        p = "med2"
-    resources:
-        time_min = 5,
-        mem = 2
 
 rule index_ref:
     input:

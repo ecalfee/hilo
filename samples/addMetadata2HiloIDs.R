@@ -269,3 +269,27 @@ ggsave("../../hilo_manuscript/figures/p_seq_counts.png",
        height = 4, width = 5.4, units = "in",
        device = "png")
 
+# what is a reasonable cut-off for % of individuals with coverage to call a SNP?
+# under a basic poisson model, what % of individuals typically have data for any SNP?
+# just HILO
+sims <- sapply(1:10000, function(i) sum(rpois(n = length(included$est_coverage), 
+      lambda = included$est_coverage) > 0)/length(included$est_coverage))
+# with an estimated loss of coverage for not meeting quality > 20
+sims2 <- sapply(1:10000, function(i) sum(rpois(n = length(included$est_coverage), 
+                                               lambda = included$est_coverage*2/3) > 0)/length(included$est_coverage))
+# with overdispersion (negative binomial)
+sims3 <- sapply(1:10000, function(i) sum(rnbinom(n = length(included$est_coverage),
+                                                 size = 1,
+                                                 mu = included$est_coverage*2/3) > 0)/length(included$est_coverage))
+
+# also including MAIZE
+sims_w55 <- (sims*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
+
+sims2_w55 <- (sims2*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
+
+sims3_w55 <- (sims3*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
+# table(sims2_w55 > 0.5)/length(sims2_w55)
+# about 3.5% of the genome approximately has < 50% coverage across sampled individuals
+# if we assume poisson. But with overdispersion it's potentially a lot more
+# hist(sims3_w55)
+# > 40% of individuals should be most of the genome that has regular mapping even with overdispersion

@@ -462,7 +462,8 @@ rule calc_depth:
 # make output directory for logs!
 mkdir variant_sites/snake_logs
 # now run:
-snakemake calc_depth --profile slurm
+hilo$ snakemake calc_depth --profile slurm # didn't work. Now I've fixed the working directory issue (always just points to hilo/ for variant_sites Snakemake)
+hilo$ snakemake calc_depth --profile slurm # 7.7.2020 RUNNING: Submitted job 0 with external jobid '24113628'
 
 
 TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.

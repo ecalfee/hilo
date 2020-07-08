@@ -2,12 +2,60 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-prefix_all = "HILO_MAIZE55"
-#prefix_all = "TEST"
-
 # list of combined sample bams
 with open("samples/" + prefix_all + "_bams.list") as f:
     all_bams = f.read().splitlines()
+
+# make a dictionary of 5Mb regions
+regions_dict = {}
+with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
+    for line in f:
+        row = line.split("\t")
+        # one key, value dictionary entry per region, e.g. regions_dict[6] = 1:30000000-34999999 for region 6
+        regions_dict["region_" + row[3]] = row[0] + ":" + row[1] + "-" + row[2]
+
+# make chromosome file (with lengths) from reference genome
+rule get_chr_lengths:
+    input:
+        fai
+    output:
+        ref_chr
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 10,
+        mem = 2
+    shell: # 10 chromosomes = first 10 scaffolds in the reference index .fai
+        "cut -f1,2 {input} | head -n 10 | grep -v 't' > {output}"
+
+
+# generate a set of random regions in the maize reference genome
+# N = 1000 regions, each length L = 100 bp, sorted by genomic position
+# generate regions and sort by chrom and position within chrom and then format chr:start-end
+rule get_random_regions:
+    input:
+        ref_chr
+    output:
+        "data/refMaize/random_regions/N1000.L100.regions"
+    params:
+        p = "med2",
+        seed = 720 # random seed
+    conda:
+        "../envs/environment.yaml"
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 1 * 60,
+        mem = 2
+    shell:
+        """
+        bedtools random -g {input} \
+        -n 1000 -l 100 -seed {params.seed} | \
+        sort -nbk1,1 -nbk2,2 | \
+        awk '{{print $1"\:"$2"-"$3}}' > {output}
+        """
 
 
 # calculate depth of sequencing coverage for the combined sample, only including bases meeting minQ >20
@@ -24,13 +72,10 @@ rule calc_depth:
         out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20"
     shadow:
         "minimal"
-    threads:
-        4
     resources:
         time_min = lambda wildcards, attempt: attempt * 12 * 60,
         mem = 32
     shell:
-        "echo $PWD && "
         "angsd -out {params.out_prefix} "
         "-rf {input.regions} "
         "-bam {input.bam_list} "
@@ -39,6 +84,64 @@ rule calc_depth:
 	    "-checkBamHeaders 0"
 # note: maize55 have different order of bams, but only after all the autosomes, so we ignore bam header differences in all angsd calls
 # calculate total depth from the .Q20.depthGlobal file to use as input for 2x depth
+
+# # divide genome into 5Mb regions
+# rule print_depth:
+#     input:
+#         depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal"
+#     params:
+#         #min_ind = lambda wildcards, input: input.depth + "------hi!"
+#         #min_ind = lambda wildcards, input: len(open(input.depth).readline().strip().split("\t")),
+#         # calculate 2.5x the mean depth
+#         max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
+#     shell:
+#         "echo maximum depth: {params.max_depth}"
+
+#with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
+#    for line in f:
+#        row = line.split("\t")
+
+# identify variant sites in combined sampled across all autosomes
+rule call_SNPs:
+    input:
+        bams = all_bams, # all input bams
+        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
+        bam_list = "samples/" + prefix_all + "_bams.list",
+        ref = ref,
+        fai = fai,
+        depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal"
+    output: # outputs minor allele freq. file and beagle GL file
+        mafs = "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz",
+        gl = "variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz"
+    params:
+        p = "bigmemm",
+        region = lambda wildcards: regions_dict[wildcards.REGION],
+        out_prefix = lambda wildcards: "variant_sites/results/" + prefix_all + "/" + wildcards.REGION,
+        min_ind = 150, # a little less than 40% of the total sample (including ind's < 0.5x coverage that won't get ancestry calls)
+        # calculate 2.5x the mean depth
+        max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
+    shadow:
+        "minimal"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 16
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-rf {params.region} "
+        "-ref {input.ref} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 "
+        "-minMapQ 30 -minQ 20 "
+        "-doMajorMinor 2 "
+        "-doCounts 1 -minMaf 0.05 -doMaf 8 "
+        "-GL 1 -doGlf 2 "
+        "-minInd {params.min_ind} "
+        "-P 2 "
+        "-baq 2"
+        "-setMaxDepth {params.max_depth} "
+        "-checkBamHeaders 0"
 
 
 
