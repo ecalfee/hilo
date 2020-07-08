@@ -26,22 +26,22 @@ last_cM = NA
 for (j in 1:nrow(regions)){
   chr = regions$chr[j] # each region spans only 1 chromosome
   n = regions$region_n[j] # which region
-  rpos_file = paste0("variant_sites/results/", prefix_all, "/region_", regions$region_n[j], ".rpos")
+  rpos_file = paste0("variant_sites/results/", prefix_all, "/region_", n, ".rpos")
   rpos = read.table(rpos_file, 
                     header = F, sep = "\t", stringsAsFactors = F)
   # which positions to keep?
   keep = rep(F, length(rpos))
   for (i in 1:length(rpos)){
-    if (last_chr != sites$chr[i] | rpos[i] - last_cM >= min_cM){
+    if (last_chr != chr | rpos[i] - last_cM >= min_cM){
       # keep site if far enough apart (or on a new chromosome)
       keep[i] <- T
       # update last chromosome and cM position for a kept site
-      last_chr <- sites$chr[i]
+      last_chr <- chr
       last_cM <- rpos[i]
     }
   }
   # thin gl file:
-  gl_file = paste0("variant_sites/results/", prefix_all, "/region_", regions$region_n[j], ".beagle.gz")
+  gl_file = paste0("variant_sites/results/", prefix_all, "/region_", n, ".beagle.gz")
   thin_gl = read.table(gzfile(gl_file),
                   check.names = F, # no checknames because there are repeated header values in beagle format
                   header = T, stringsAsFactors = F, 

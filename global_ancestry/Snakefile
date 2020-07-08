@@ -8,10 +8,13 @@ workdir: path_hilo
 rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
         gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
+        #REGION = ["region_0", "region_1", "region_300"]),
         REGION=list(regions_dict.keys())),
         rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+        #REGION = ["region_0", "region_1", "region_300"]),
         REGION=list(regions_dict.keys())),
         regions = "data/refMaize/divide_5Mb/ALL_regions.list"
+        #regions = "test/TEST2_regions.list"
     output: # thinned GL file for whole genome
         gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
@@ -28,78 +31,3 @@ rule thin_GL_4PCA:
     script:
         "thin_GL_4PCA.R"
 
-## make_sites_file: for every region of the genome, make a .var.sites file with variant sites information for each SNP
-rule make_sites_file:
-    input:
-        "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz"
-    output: # outputs minor allele freq. file and beagle GL file
-        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
-        sites_index = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx"
-    params:
-        p = "med2"
-    shadow:
-        "minimal"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
-        mem = lambda wildcards, attempt: attempt * 2
-    shell:
-        """
-        zcat {input} | awk '$1 != "chromo" {{print $1 "\t" $2 "\t" $3 "\t" $4}}' > {output.sites}
-        sleep 2s
-        angsd sites index {output.sites}
-        """
-
-## calc_rmap_pos: uses a cubic spline fit to estimate the cM position for every site according to the Ogut 2015 genetic map
-rule calc_rmap_pos:
-    input:
-        rmap = rmap,
-        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
-    output:
-        rpos = "variant_sites/results/" + prefix_all + "/{REGION}.rpos"
-    params:
-        p = "med2"
-    shadow:
-        "minimal"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
-        mem = lambda wildcards, attempt: attempt * 2
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "calc_rpos.R"
-
-
-# # to uncomment code below: cmd + /
-# # define function to get list of input bams
-# def get_all_bams(wildcards):
-#     with open(path_hilo + expand("samples/{ALL}_bams.list", ALL = wildcards.ALL)) as f:
-#         bams = f.read().splitlines()
-#     return bams
-
-# rule calc_depth2:
-#     input:
-#         bams = get_all_bams,
-#         bam_list = path_hilo + "samples/{ALL}_bams.list",
-#         regions = path_hilo + "data/refMaize/random_regions/N1000.L100.regions"
-#     output:
-#         "variant_sites/results/depthCov/N1000.L100.regions/{ALL}.Q20.depthGlobal"
-#     params:
-#         p = "bigmemm",
-#         out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/{wildcards.ALL}.Q20"
-# #    conda:
-# #        "../envs/environment.yaml"
-#     shadow:
-#         "shallow"
-#     threads:
-#         4
-#     resources:
-#         time_min = lambda wildcards, attempt: attempt * 12 * 60,
-#         mem = 32
-#     shell:
-#         "echo $PWD && "
-#         "angsd -out {params.out_prefix} "
-#         "-rf {input.regions} "
-#         "-bam {input.bam_list} "
-#         "-remove_bads 1 -minMapQ 30 -minQ 20 "
-#         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
-# 	    "-checkBamHeaders 0"

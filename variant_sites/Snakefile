@@ -172,7 +172,7 @@ rule calc_rmap_pos:
         time_min = lambda wildcards, attempt: attempt * 15,
         mem = lambda wildcards, attempt: attempt * 2
     conda:
-        "envs/environment.yaml"
+        "../envs/environment.yaml"
     script:
         "calc_rpos.R"
 
@@ -210,4 +210,4 @@ rule calc_rmap_pos:
 #         "-bam {input.bam_list} "
 #         "-remove_bads 1 -minMapQ 30 -minQ 20 "
 #         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
-# 	    "-checkBamHeaders 0"
+#         "-checkBamHeaders 0"

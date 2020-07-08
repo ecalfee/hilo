@@ -19,14 +19,15 @@ rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
 prefix_bams = "Combined"
 
 # all bams included in combined sample (est_coverage > 0.05x)
-#prefix_all = "HILO_MAIZE55"
-prefix_all = "TEST"
+prefix_all = "HILO_MAIZE55"
+#prefix_all = "TEST"
 
 # all bams for local ancestry inference (est_coverage > 0.5x)
 
 # snakemake sub-workflows
 include: "filtered_bams/Snakefile"
 include: "variant_sites/Snakefile"
+include: "global_ancestry/Snakefile"
 
 # make a dictionary of 5Mb regions across the genome
 regions_dict = {}
@@ -52,6 +53,8 @@ rule all:
         expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
                 "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
                 zip, ID=list(merge_dict.keys()))
+        # thinned GL for PCA analysis # ADD COMMA!
+        #"global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
         p = "med2"
     resources:
@@ -64,8 +67,9 @@ rule all:
 rule some:
     input:
         # SNP set for 1 scaffold
-        "variant_sites/results/" + prefix_all + "/region_1.rpos",
-        "variant_sites/results/" + prefix_all + "/region_1.var.sites"
+        #"variant_sites/results/" + prefix_all + "/region_1.rpos",
+        #"variant_sites/results/" + prefix_all + "/region_1.var.sites"
+        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
         p = "med2"
     resources:
