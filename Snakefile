@@ -24,8 +24,7 @@ prefix_all = "HILO_MAIZE55"
 include: "filtered_bams/Snakefile"
 include: "variant_sites/Snakefile"
 
-
-
+# main rule to run all workflows
 rule all:
     input:
         # SNP set

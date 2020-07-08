@@ -143,6 +143,28 @@ rule call_SNPs:
         "-setMaxDepth {params.max_depth} "
         "-checkBamHeaders 0"
 
+# for every region of the genome, make a .var.sites file with variant sites information for each SNP
+rule make_sites_file:
+    input:
+        "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz"
+    output: # outputs minor allele freq. file and beagle GL file
+        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
+        sites_index = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        """
+        zcat {input} | awk '$1 != "chromo" {{print $1 "\t" $2 "\t" $3 "\t" $4}}' > {output.sites}
+        sleep 2s
+        angsd sites index {output.sites}
+        """
 
 
 
