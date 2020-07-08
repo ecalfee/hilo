@@ -24,11 +24,6 @@ prefix_all = "HILO_MAIZE55"
 
 # all bams for local ancestry inference (est_coverage > 0.5x)
 
-# snakemake sub-workflows
-include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
-
 # make a dictionary of 5Mb regions across the genome
 regions_dict = {}
 with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
@@ -37,6 +32,11 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
         # one key, value dictionary entry per region, e.g. regions_dict[6] = 1:30000000-34999999 for region 6
         regions_dict["region_" + row[3]] = row[0] + ":" + row[1] + "-" + row[2]
 
+
+# snakemake sub-workflows
+include: "filtered_bams/Snakefile"
+include: "variant_sites/Snakefile"
+include: "global_ancestry/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -52,9 +52,11 @@ rule all:
         # all bams
         expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
                 "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
-                zip, ID=list(merge_dict.keys()))
-        # thinned GL for PCA analysis # ADD COMMA!
-        #"global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+                zip, ID=list(merge_dict.keys())),
+        # global ancestry analysis: thinned GL, PCA and NGSAdmix
+        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
+        "global_ancestry/results/PCA" + prefix_all + "/whole_genome.cov",
+        "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
     params:
         p = "med2"
     resources:
@@ -70,6 +72,17 @@ rule some:
         #"variant_sites/results/" + prefix_all + "/region_1.rpos",
         #"variant_sites/results/" + prefix_all + "/region_1.var.sites"
         "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+
+## test: for running test files
+rule test:
+    input:
+        "test/whole_genome.beagle.gz",
+        "test/whole_genome.cov"
     params:
         p = "med2"
     resources:

@@ -480,6 +480,45 @@ Job counts:
         426     make_sites_file
         853
 
+# most but not all call_SNPs completed. none of the make_sites_file rule was successful.
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n --quiet all --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     calc_rmap_pos
+        116     call_SNPs
+        426     make_sites_file
+        969
+# testing 1 file:
+hilo$ snakemake variant_sites/results/HILO_MAIZE55/region_1.rpos --profile slurm
+Job counts:
+        count   jobs
+        1       calc_rmap_pos
+        1       make_sites_file
+        2
+# worked great. Doing 2 more files so I can also test my regions script:
+hilo$ snakemake variant_sites/results/HILO_MAIZE55/region_0.rpos variant_sites/results/HILO_MAIZE55/region_300.rpos --profile slurm
+# testing regions script with just 0, 1, 300 regions for now (need to change back in global_ancestry/Snakefile!!)
+snakemake -n --quiet some --profile slurm
+Job counts:
+        count   jobs
+        1       some
+        1       thin_GL_4PCA
+        2
+No rule to produce variant_sites/results/HILO_MAIZE55/region_3.mafs.gz (if you use input functions make sure that they don't raise unexpected exceptions).
+# ok thin_GL_4PCA still has issues (troubleshoot on mac). but re-running the failed jobs from call_SNPs for now:
+hilo$ snakemake -n --quiet all --profile slurm --jobs 200
+Job counts:
+        count   jobs
+        1       all
+        423     calc_rmap_pos
+        116     call_SNPs
+        423     make_sites_file
+        963
+(hilo-env) ecalfee@farm:~/hilo$ snakemake all --profile slurm --jobs 200 # running 7.8.2020 all on medium priority but increased max to 200 jobs
+[detached from 32676.snake_run] # ack! not sure what the deal is with farm but I won't use --jobs to override again (maybe overrides all defaults too?? like pinging the server? or could be completely unrelated)
+# testing locally with a subset of regions. Need to specify --use-conda to run in updated conda environment
+ Erins-MacBook-Air:hilo Erin$ snakemake test --use-conda
 
 
 TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.

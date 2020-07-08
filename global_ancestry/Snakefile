@@ -8,13 +8,10 @@ workdir: path_hilo
 rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
         gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
-        #REGION = ["region_0", "region_1", "region_300"]),
         REGION=list(regions_dict.keys())),
         rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        #REGION = ["region_0", "region_1", "region_300"]),
         REGION=list(regions_dict.keys())),
         regions = "data/refMaize/divide_5Mb/ALL_regions.list"
-        #regions = "test/TEST2_regions.list"
     output: # thinned GL file for whole genome
         gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
@@ -31,3 +28,108 @@ rule thin_GL_4PCA:
     script:
         "thin_GL_4PCA.R"
 
+## test_thin_GL_4PCA: rule to test thinning of beagle GL files using just a small subset of genomic regions
+rule test_thin_GL_4PCA:
+    input: # input all GL files, corresponding rpos files, and the master list of all regions
+        gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
+        REGION = ["region_0", "region_1", "region_300"]),
+        rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+        REGION = ["region_0", "region_1", "region_300"]),
+        regions = "test/TEST2_regions.list"
+    output: # thinned GL file for whole genome
+        gl = "test/whole_genome.beagle.gz"
+    params:
+        p = "med2",
+        prefix_all = prefix_all,
+        min_cM = 0.01 # minimum spacing
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 4
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "thin_GL_4PCA.R"
+
+## run_PCAngsd: calculate covariance matrix from genotype likelihood file using PCAngsd
+rule run_PCAngsd:
+    input:
+        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+    output:
+        cov = "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov"
+    params:
+        p = "med2",
+        prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        4
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        """
+        pcangsd \
+        -beagle {input.gl} \
+        -threads {threads} -iter 100 \
+        -minMaf 0 -admix \
+        -o {params.prefix_out}
+        """
+
+
+## run_NGSAdmix: estimates admixture proportions from genotype likelihood file using NGSAdmix
+rule run_NGSAdmix:
+    input:
+        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+    output:
+        admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
+    params:
+        p = "med2",
+        k = 2,
+        prefix_out = lambda wildcards, output: os.path.splitext(output.admix)[0] # output file without .cov extension
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        """
+        NGSadmix -likes {input.gl} \
+        -K {params.k} -P {threads} \
+        -o {params.prefix_out}
+        """
+
+
+## test_PCAngsd: test using smaller file (subset of genomic regions) to calculate covariance matrix from genotype likelihood file using PCAngsd
+rule test_PCAngsd:
+    input:
+        gl = "test/whole_genome.beagle.gz"
+    output: # thinned GL file for whole genome
+        cov = "test/whole_genome.cov"
+    params:
+        p = "med2",
+        prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        4
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        """
+        pcangsd \
+        -beagle {input.gl} \
+        -threads {threads} -iter 100 \
+        -minMaf 0 -admix \
+        -o {params.prefix_out}
+        """

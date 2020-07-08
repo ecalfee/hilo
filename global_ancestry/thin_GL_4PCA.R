@@ -1,14 +1,20 @@
 #!/usr/bin/env Rscript
 library(dplyr)
 library(tidyr)
+library(data.table)
 
 # load variables from Snakefile
 prefix_all = snakemake@params[["prefix_all"]]
-min_cM = snakemake@params[["min_cM"]]
+min_cM = as.numeric(snakemake@params[["min_cM"]])
 file_out = snakemake@output[["gl"]]
-
 regions_file = snakemake@input[["regions"]]
-# regions_file = "data/refMaize/divide_5Mb/ALL_regions.list"
+
+# # to test:
+# setwd("~/Documents/gitErin/hilo")
+# prefix_all = "HILO_MAIZE55"
+# min_cM = 0.01
+# file_out = "test/whole_genome.beagle.gz"
+# regions_file= "test/TEST2_regions.list"
 
 regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
@@ -28,7 +34,7 @@ for (j in 1:nrow(regions)){
   n = regions$region_n[j] # which region
   rpos_file = paste0("variant_sites/results/", prefix_all, "/region_", n, ".rpos")
   rpos = read.table(rpos_file, 
-                    header = F, sep = "\t", stringsAsFactors = F)
+                    header = F, sep = "\t", stringsAsFactors = F)$V1
   # which positions to keep?
   keep = rep(F, length(rpos))
   for (i in 1:length(rpos)){
@@ -42,15 +48,27 @@ for (j in 1:nrow(regions)){
   }
   # thin gl file:
   gl_file = paste0("variant_sites/results/", prefix_all, "/region_", n, ".beagle.gz")
-  thin_gl = read.table(gzfile(gl_file),
-                  check.names = F, # no checknames because there are repeated header values in beagle format
-                  header = T, stringsAsFactors = F, 
-                  sep = "\t")[keep, ] # keep only a subset of rows
   
+  thin_gl <- data.table::fread(gl_file)[keep, ] # keep only a subset of rows
+
   # concat thinned GL's to output file (compressed)
-  write.table(thin_gl, gzfile(file_out),
-              append = n > 0,
-              col.names = n == 0, # only write column names if it's region 0
-              quote = F, sep = "\t",
-              col.names = T, row.names = F)
+  data.table::fwrite(thin_gl, 
+                     file_out,
+                     sep = "\t", quote = F, 
+                     compress = "gzip",
+                     row.names = F,
+                     col.names = (n == 0),
+                     append = (n > 0))
+  
+  # # fread is a faster version of read.table and write.table
+  # thin_gl = read.table(gzfile(gl_file),
+  #                      check.names = F, # no checknames because there are repeated header values in beagle format
+  #                      header = T, stringsAsFactors = F, 
+  #                      sep = "\t")[keep, ] # keep only a subset of rows
+  # 
+  # write.table(thin_gl, gzfile(file_out),
+  #             append = (n > 0), # if region 0 (first region) start new file, otherwise append
+  #             col.names = (n == 0), # only write column names if it's region 0
+  #             row.names = F,
+  #             quote = F, sep = "\t")
 }

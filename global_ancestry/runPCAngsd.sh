@@ -19,7 +19,7 @@ set –o errexit
 set –o nounset
 
 # load python 2 from bio module
-module load bio #python/2.7.15
+module load bio #loads python/2.7.15 and other python dependencies for pcangsd, e.g. numba
 
 # run PCAngsd
 mkdir -p "$DIR_OUT"
