@@ -81,7 +81,7 @@ rule calc_depth:
         "-bam {input.bam_list} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
-	    "-checkBamHeaders 0"
+        "-checkBamHeaders 0"
 # note: maize55 have different order of bams, but only after all the autosomes, so we ignore bam header differences in all angsd calls
 # calculate total depth from the .Q20.depthGlobal file to use as input for 2x depth
 
@@ -129,7 +129,7 @@ rule call_SNPs:
         mem = lambda wildcards, attempt: attempt * 16
     shell:
         "angsd -out {params.out_prefix} "
-        "-rf {params.region} "
+        "-r {params.region} "
         "-ref {input.ref} "
         "-bam {input.bam_list} "
         "-remove_bads 1 "
@@ -139,7 +139,7 @@ rule call_SNPs:
         "-GL 1 -doGlf 2 "
         "-minInd {params.min_ind} "
         "-P 2 "
-        "-baq 2"
+        "-baq 2 "
         "-setMaxDepth {params.max_depth} "
         "-checkBamHeaders 0"
 
@@ -154,8 +154,6 @@ rule make_sites_file:
         p = "med2"
     shadow:
         "minimal"
-    threads:
-        2
     resources:
         time_min = lambda wildcards, attempt: attempt * 15,
         mem = lambda wildcards, attempt: attempt * 2

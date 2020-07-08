@@ -28,8 +28,7 @@ include: "variant_sites/Snakefile"
 rule all:
     input:
         # SNP set
-        expand(["variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz",
-                "variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz"], # multiext("some/plot", ".pdf", ".svg", ".png")
+        expand("variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
                 REGION=list(regions_dict.keys())),
         # bam metrics files
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
@@ -52,7 +51,7 @@ rule all:
 rule some:
     input:
         # SNP set for 1 scaffold
-        "variant_sites/results/" + prefix_all + "/region_1.mafs.gz"
+        "variant_sites/results/" + prefix_all + "/region_1.var.sites"
     params:
         p = "med2"
     resources:
