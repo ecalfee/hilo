@@ -33,13 +33,13 @@ rule all:
                 "variant_sites/results/" + prefix_all + "/region_{REGION_N}.beagle.gz"], # multiext("some/plot", ".pdf", ".svg", ".png")
                 REGION_N=list(regions_dict.keys())),
         # bam metrics files
-        "metrics/fastQC/multiqc/multiqc_report.html",
-        "metrics/fastQC_trimmed/multiqc/multiqc_report.html",
-        "metrics/picard/multiqc/multiqc_report.html",
-        "metrics/flagstat/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
         # all bams
-        expand(["merged_bams/{ID}.sort.dedup.bam",
-                "merged_bams/{ID}.sort.dedup.bam.bai"],
+        expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
+                "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
                 zip, ID=list(merge_dict.keys()))
     params:
         p = "med2"

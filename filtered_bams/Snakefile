@@ -1,16 +1,16 @@
 from collections import defaultdict
 import os
 
-workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
+#workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
 wildcard_constraints:
     ID = "[A-Za-z0-9]+"
 
 # list of sample IDs
-with open("../data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
+with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
     ids = f.read().splitlines()
 # list of lanes for sample IDs above
-with open("../data/HILO_raw_reads/" + prefix_bams + "_lanes.list") as f:
+with open("data/HILO_raw_reads/" + prefix_bams + "_lanes.list") as f:
     lanes = f.read().splitlines()
 
 # dictionary mapping lanes to library names
@@ -40,7 +40,7 @@ rule index_ref:
     params:
         p = "med2"
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "bwa index {input}"
 
@@ -84,7 +84,7 @@ rule bwa_map:
         lib = lambda wildcards: libraries_dict[wildcards.LANE],
         p = "bigmemm"
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shadow:
         "minimal"
     resources:
@@ -100,13 +100,13 @@ rule bwa_map:
 
 rule samtools_sort:
     input:
-        "results/{LANE}/{ID}.bam"
+        "filtered_bams/results/{LANE}/{ID}.bam"
     output:
-        temp("results/{LANE}/{ID}.sort.bam")
+        temp("filtered_bams/results/{LANE}/{ID}.sort.bam")
     params:
         p = "bigmemm"
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shadow:
         "minimal"
     threads:
@@ -125,14 +125,14 @@ rule mark_duplicates:
     input:
         ref = ref,
         fai = fai,
-        bam = "results/{LANE}/{ID}.sort.bam"
+        bam = "filtered_bams/results/{LANE}/{ID}.sort.bam"
     output:
-        bam = "results/{LANE}/{ID}.sort.dedup.bam",
-        metrics = "metrics/picard/{LANE}/{ID}.metrics.txt"
+        bam = "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam",
+        metrics = "filtered_bams/metrics/picard/{LANE}/{ID}.metrics.txt"
     params:
         p = "med2"
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shadow:
         "minimal"
     # shadow minimal should make the temporary directory on the --shadow-prefix location, i.e. set to local node storage
@@ -156,21 +156,21 @@ rule mark_duplicates:
 
 rule samtools_index:
     input:
-        "results/{LANE}/{ID}.sort.dedup.bam"
+        "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam"
     output:
-        "results/{LANE}/{ID}.sort.dedup.bam.bai"
+        "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam.bai"
     params:
         p = "med2"
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "samtools index {input}"
 
 # merge multiple bams for the same HILO sample (only a subset of samples were sequenced on multiple lanes and therefore need to be merged)
 def bams2merge(wildcards):
-    return expand("results/{LANE}/{ID}.sort.dedup.bam", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
+    return expand("filtered_bams/results/{LANE}/{ID}.sort.dedup.bam", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 def bais2merge(wildcards):
-    return expand("results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
+    return expand("filtered_bams/results/{LANE}/{ID}.sort.dedup.bam.bai", LANE = merge_dict[wildcards.ID], ID = wildcards.ID)
 def count_bams(wildcards):
     return len(merge_dict[wildcards.ID])
 
@@ -180,14 +180,14 @@ rule merge_bams:
         bams = bams2merge, # this is a function that produces the variable-length list of input files using the ID wildcard
         bais = bais2merge
     output:
-        bam = "merged_bams/{ID}.sort.dedup.bam", #note: not results/merged/ID.sort.dedup.bam because then 'merged' gets confused for a LANE wildcard value
-        bai = "merged_bams/{ID}.sort.dedup.bam.bai"
+        bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam", #note: not results/merged/ID.sort.dedup.bam because then 'merged' gets confused for a LANE wildcard value
+        bai = "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"
     params:
         p = "med2",
         n_input_bams = count_bams,
-        path = path_hilo + "filtered_bams/"
+        path = path_hilo
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell: # merge if multiple bams, else create a symlink for single bam
         """
         if [ {params.n_input_bams} -gt 1 ]; then
@@ -206,15 +206,15 @@ rule merge_bams:
 # run quality checks and metrics
 rule fastQC:
     input:
-        "../data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz"
+        "data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz"
     output:
-        "metrics/fastQC/{LANE}/{ID}_{READ}_fastqc.html"
+        "filtered_bams/metrics/fastQC/{LANE}/{ID}_{READ}_fastqc.html"
     params:
         p = "med2"
     threads:
         4
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
 
@@ -222,54 +222,54 @@ rule fastQC_trimmed:
     input:
         path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
     output:
-        "metrics/fastQC_trimmed/{LANE}/{ID}_{READ}_fastqc.html"
+        "filtered_bams/metrics/fastQC_trimmed/{LANE}/{ID}_{READ}_fastqc.html"
     params:
         p = "med2"
     threads:
         4
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "fastqc -o metrics/fastQC_trimmed/{wildcards.LANE} -t {threads} {input}"
 
 
 rule multiQC_fastQC:
     input:
-        expand(["metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
-                "metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
+        expand(["filtered_bams/metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
+                "filtered_bams/metrics/fastQC/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
     output:
-        "metrics/fastQC/multiqc/multiqc_report.html"
+        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html"
     params:
         p = "med2"
     resources:
         time_min = 2*60,
         mem = 8
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc --dirs --ignore TEST/"
 
 rule multiQC_fastQC_trimmed:
     input:
-        expand(["metrics/fastQC_trimmed/{LANE}/{ID}_1_fastqc.html",
-                "metrics/fastQC_trimmed/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
+        expand(["filtered_bams/metrics/fastQC_trimmed/{LANE}/{ID}_1_fastqc.html",
+                "filtered_bams/metrics/fastQC_trimmed/{LANE}/{ID}_2_fastqc.html"], zip, LANE=lanes, ID=ids)
     output:
-        "metrics/fastQC_trimmed/multiqc/multiqc_report.html"
+        "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html"
     params:
         p = "med2"
     resources:
         time_min = 2*60,
         mem = 8
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "multiqc -f metrics/fastQC_trimmed -o metrics/fastQC_trimmed/multiqc --dirs --ignore TEST/"
 
 rule samtools_flagstat:
     input:
-        "results/{LANE}/{ID}.sort.dedup.bam"
+        "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam"
     output:
-        "metrics/flagstat/{LANE}/{ID}.flagstat"
+        "filtered_bams/metrics/flagstat/{LANE}/{ID}.flagstat"
     params:
         p = "med2"
     threads:
@@ -277,37 +277,37 @@ rule samtools_flagstat:
     resources:
         time_min = lambda wildcards, attempt: attempt * 6 * 60
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     # only count reads with mapping quality >= 30
     shell:
         "samtools view -q 30 -b {input} | samtools flagstat -@ {threads} -  > {output}"
 
 rule multiQC_flagstat:
     input:
-        expand("metrics/flagstat/{LANE}/{ID}.flagstat", zip, LANE=lanes, ID=ids)
+        expand("filtered_bams/metrics/flagstat/{LANE}/{ID}.flagstat", zip, LANE=lanes, ID=ids)
     output:
-        "metrics/flagstat/multiqc/multiqc_report.html"
+        "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html"
     params:
         p = "med2"
     resources:
         time_min = 60,
         mem = 8
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "multiqc -f metrics/flagstat -o metrics/flagstat/multiqc --dirs --ignore TEST/"
 
 rule multiQC_picard:
     input:
-        expand("metrics/picard/{LANE}/{ID}.metrics.txt", zip, LANE=lanes, ID=ids)
+        expand("filtered_bams/metrics/picard/{LANE}/{ID}.metrics.txt", zip, LANE=lanes, ID=ids)
     output:
-        "metrics/picard/multiqc/multiqc_report.html"
+        "filtered_bams/metrics/picard/multiqc/multiqc_report.html"
     params:
         p = "med2"
     resources:
         time_min = 60,
         mem = 8
     conda:
-        "../envs/environment.yaml"
+        "envs/environment.yaml"
     shell:
         "multiqc -f metrics/picard -o metrics/picard/multiqc --dirs --ignore TEST/"
