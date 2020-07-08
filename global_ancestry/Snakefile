@@ -24,7 +24,7 @@ rule thin_GL_4PCA:
         time_min = lambda wildcards, attempt: attempt * 6 * 60,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
-        "envs/environment.yaml"
+        "../envs/environment.yaml"
     script:
         "thin_GL_4PCA.R"
 
@@ -64,7 +64,7 @@ rule calc_rmap_pos:
         time_min = lambda wildcards, attempt: attempt * 15,
         mem = lambda wildcards, attempt: attempt * 2
     conda:
-        "envs/environment.yaml"
+        "../envs/environment.yaml"
     script:
         "calc_rpos.R"
 
