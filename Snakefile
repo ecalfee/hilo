@@ -55,7 +55,7 @@ rule all:
                 zip, ID=list(merge_dict.keys())),
         # global ancestry analysis: thinned GL, PCA and NGSAdmix
         "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        "global_ancestry/results/PCA" + prefix_all + "/whole_genome.cov",
+        "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov",
         "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
     params:
         p = "med2"
