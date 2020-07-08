@@ -29,9 +29,9 @@ include: "variant_sites/Snakefile"
 rule all:
     input:
         # SNP set
-        expand(["variant_sites/results/" + prefix_all + "/region_{REGION_N}.mafs.gz",
-                "variant_sites/results/" + prefix_all + "/region_{REGION_N}.beagle.gz"], # multiext("some/plot", ".pdf", ".svg", ".png")
-                REGION_N=list(regions_dict.keys())),
+        expand(["variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz",
+                "variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz"], # multiext("some/plot", ".pdf", ".svg", ".png")
+                REGION=list(regions_dict.keys())),
         # bam metrics files
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
