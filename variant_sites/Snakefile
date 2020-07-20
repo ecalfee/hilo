@@ -164,8 +164,8 @@ rule index_sites_file:
     params:
         p = "med2"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = 15,
+        mem = 2
     shell:
         "angsd sites index {input}"
 
@@ -196,7 +196,7 @@ rule allo_freqs:
         bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
         sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
         idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
-        bin = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
+        bin = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.bin",
         bam_list = "samples/ALL_byPop/{GROUP}_bams.list",
         ref = ref,
         fai = fai
