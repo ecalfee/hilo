@@ -384,12 +384,10 @@ rule plot_total_samples:
         colors = "colors.R"
     output:
         "filtered_bams/plots/p_seq_counts.png",
-        "../hilo_manuscript/figures/p_seq_counts.png"
+        "../hilo_manuscript/figures/p_seq_counts.png" # note: no shadow
     params:
         p = "med2",
         wd = "filtered_bams"
-    shadow:
-        "minimal"
     resources:
         time_min = 15,
         mem = 2

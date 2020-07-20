@@ -1,11 +1,12 @@
 #!/usr/bin/env Rscript
-
+# working directory is hilo/
 # this script takes in filtered bam metrics and
 # makes lists of included samples to use as input for other analyses
 library(dplyr)
 library(tidyr)
-setwd(snakemake@params[["wd"]]) # set working directory to the path where this script is, hilo/filtered_bams/
-load("../samples/HILO_MAIZE55_meta.RData") # sample metadata, including estimated sequence coverage
+# load sample metadata, including estimated sequence coverage
+#load("samples/HILO_MAIZE55_meta.RData") 
+load(snakemake@input[["meta"]])
 
 # write ID and bam files by group/population
 # all individuals included
@@ -17,12 +18,12 @@ meta_bams <- meta %>%
 for (g in unique(meta_bams$group)){
   filter(meta_bams, group == g) %>%
     dplyr::select(ID) %>%
-    write.table(., paste0("../samples/ALL_byPop/", g, "_ids.list"), 
+    write.table(., paste0("samples/ALL_byPop/", g, "_ids.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
   filter(meta_bams, group == g) %>%
     dplyr::select(bam) %>%
-    write.table(., paste0("../samples/ALL_byPop/", g, "_bams.list"), 
+    write.table(., paste0("samples/ALL_byPop/", g, "_bams.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
 }
@@ -30,12 +31,12 @@ for (g in unique(meta_bams$group)){
 for (p in unique(meta_bams$popN)){
   filter(meta_bams, popN == p) %>%
     dplyr::select(ID) %>%
-    write.table(., paste0("../samples/ALL_byPop/pop", p, "_ids.list"), 
+    write.table(., paste0("samples/ALL_byPop/pop", p, "_ids.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
   filter(meta_bams, popN == p) %>%
     dplyr::select(bam) %>%
-    write.table(., paste0("../samples/ALL_byPop/pop", p, "_bams.list"), 
+    write.table(., paste0("samples/ALL_byPop/pop", p, "_bams.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
 }
@@ -46,12 +47,12 @@ for (p in unique(meta_bams$popN)){
 for (g in unique(meta_bams$group)){
   filter(meta_bams, group == g, est_coverage >= 0.5) %>%
     dplyr::select(ID) %>%
-    write.table(., paste0("../samples/Over0.5x_byPop/", g, "_ids.list"), 
+    write.table(., paste0("samples/Over0.5x_byPop/", g, "_ids.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
   filter(meta_bams, group == g, est_coverage >= 0.5) %>%
     dplyr::select(bam) %>%
-    write.table(., paste0("../samples/Over0.5x_byPop/", g, "_bams.list"), 
+    write.table(., paste0("samples/Over0.5x_byPop/", g, "_bams.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
 }
@@ -59,12 +60,12 @@ for (g in unique(meta_bams$group)){
 for (p in unique(meta_bams$popN)){
   filter(meta_bams, popN == p, est_coverage >= 0.5) %>%
     dplyr::select(ID) %>%
-    write.table(., paste0("../samples/Over0.5x_byPop/pop", p, "_ids.list"), 
+    write.table(., paste0("samples/Over0.5x_byPop/pop", p, "_ids.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
   filter(meta_bams, popN == p, est_coverage >= 0.5) %>%
     dplyr::select(bam) %>%
-    write.table(., paste0("../samples/Over0.5x_byPop/pop", p, "_bams.list"), 
+    write.table(., paste0("samples/Over0.5x_byPop/pop", p, "_bams.list"), 
                 col.names = F, row.names = F,
                 sep = "\t", quote = F)
 }

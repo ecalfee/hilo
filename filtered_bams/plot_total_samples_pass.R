@@ -1,15 +1,22 @@
 #!/usr/bin/env Rscript
-
+# working directory is hilo/
 # this script summarises filtered bam metrics and creates a
 # plot of samples that pass minimum coverage threshold
 
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-
-setwd(snakemake@params[["wd"]]) # set working directory to the path where this script is, hilo/filtered_bams/
-source("../colors.R") # colors for plots
-load("../samples/HILO_MAIZE55_meta.RData") # sample metadata, including estimated sequence coverage
+# get colors for plot
+# source(colors.R)
+source(snakemake@input[["colors"]])
+# load sample metadata, including estimated sequence coverage
+# load("samples/HILO_MAIZE55_meta.RData")
+load(snakemake@input[["meta"]])
+# plots out
+# png_local = "filtered_bams/plots/p_seq_counts.png"
+# png_manuscript = "../hilo_manuscript/figures/p_seq_counts.png"
+png_local = snakemake@input[["png_local"]]
+png_manuscript = snakemake@input[["png_manuscript"]]
 
 # plot total included samples per population
 p_seq_counts <- meta %>%
@@ -30,11 +37,9 @@ p_seq_counts <- meta %>%
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
 #p_seq_counts
-ggsave("../../hilo_manuscript/figures/p_seq_counts.png",
-       plot = p_seq_counts,
-       height = 4, width = 5.4, units = "in",
-       device = "png")
-ggsave("plots/p_seq_counts.png",
-       plot = p_seq_counts,
-       height = 4, width = 5.4, units = "in",
-       device = "png")
+for (file in c(png_local, png_manuscript)){
+  ggsave(file,
+         plot = p_seq_counts,
+         height = 4, width = 5.4, units = "in",
+         device = "png")
+}
