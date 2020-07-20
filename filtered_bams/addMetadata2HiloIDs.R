@@ -207,6 +207,7 @@ included <- hilo2 %>%
   group_by(ID, popN, family, ind, RI_ACCESSION, zea, symp_allo, group, GEOCTY, LOCALITY, ELEVATION, LAT, LON) %>%
   summarise(reads_q30 = sum(reads_q30),
             est_coverage = sum(est_coverage)) %>%
+  ungroup(.) %>%
   arrange(as.numeric(substr(ID, 5, 8))) # arrange by hilo ID
 write.table(included, "../samples/HILO_meta.txt", col.names = T, row.names = F,
             sep = "\t", quote = F)
@@ -247,6 +248,7 @@ meta <- bind_rows(included %>%
                                       popN = 1000, # just a place holder, not a real RIMME/RIMMA pop number
                                       stringsAsFactors = F) %>%
                     left_join(., flagstat, by = "ID") %>% # add flagstat info for maize55
+                    dplyr::select(-seq_lane) %>%
                     mutate(est_coverage = reads_q30*150/(ref_genome_size)))
 write.table(meta, "../samples/HILO_MAIZE55_meta.txt", col.names = T, row.names = F,
             sep = "\t", quote = F)
