@@ -15,8 +15,8 @@ load(snakemake@input[["meta"]])
 # plots out
 # png_local = "filtered_bams/plots/p_seq_counts.png"
 # png_manuscript = "../hilo_manuscript/figures/p_seq_counts.png"
-png_local = snakemake@input[["png_local"]]
-png_manuscript = snakemake@input[["png_manuscript"]]
+png_local = snakemake@output[["png_local"]]
+png_manuscript = snakemake@output[["png_manuscript"]]
 
 # plot total included samples per population
 p_seq_counts <- meta %>%
@@ -37,8 +37,8 @@ p_seq_counts <- meta %>%
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
 #p_seq_counts
-for (file in c(png_local, png_manuscript)){
-  ggsave(file,
+for (png_file in c(png_local, png_manuscript)){
+  ggsave(png_file,
          plot = p_seq_counts,
          height = 4, width = 5.4, units = "in",
          device = "png")

@@ -583,7 +583,10 @@ Job counts:
 # now running 'all'
 [detached from 32676.snake_run] # Jul 19, 11:33pm
 # looks like all allopatric mexicana ran overnight but there was a problem with bam file lists for allopatic maize. fixing now:
-
+hilo$ snakemake -f list_total_samples --profile slurm
+1 of 1 steps (100%) done
+# now using 'touch' to avoid re-doing all allopatric mexicana (just want to re-do maize)
+# and fixed small typo in plot_total_samples_pass.R (should work now)
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 
