@@ -140,9 +140,8 @@ rule call_SNPs:
 rule make_sites_file:
     input:
         "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz"
-    output: # outputs minor allele freq. file and beagle GL file
-        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
-        sites_index = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx"
+    output:
+        "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
     params:
         p = "med2"
     shadow:
@@ -152,10 +151,24 @@ rule make_sites_file:
         mem = lambda wildcards, attempt: attempt * 2
     shell:
         """
-        zcat {input} | awk '$1 != "chromo" {{print $1 "\t" $2 "\t" $3 "\t" $4}}' > {output.sites}
-        sleep 2s
-        angsd sites index {output.sites}
+        zcat {input} | awk '$1 != "chromo" {{print $1 "\t" $2 "\t" $3 "\t" $4}}' > {output}
         """
+
+## index_sites_file: index sites file (list of SNPs) for angsd
+rule index_sites_file:
+    input:
+        "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
+    output: # outputs minor allele freq. file and beagle GL file
+        idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
+        bin = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.bin"
+    params:
+        p = "med2"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "angsd sites index {input}"
+
 
 ## calc_rmap_pos: uses a cubic spline fit to estimate the cM position for every site according to the Ogut 2015 genetic map
 rule calc_rmap_pos:
@@ -183,6 +196,7 @@ rule allo_freqs:
         bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
         sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
         idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
+        bin = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
         bam_list = "samples/ALL_byPop/{GROUP}_bams.list",
         ref = ref,
         fai = fai

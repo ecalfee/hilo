@@ -84,7 +84,7 @@ rule some:
         #"variant_sites/results/" + prefix_all + "/region_1.rpos",
         #"variant_sites/results/" + prefix_all + "/region_1.var.sites"
         "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=["allopatric_mexicana"], REGION=["region_150"])
+        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=["allopatric_mexicana"], REGION=["region_120"])
     params:
         p = "med2"
     resources:
