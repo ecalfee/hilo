@@ -118,7 +118,7 @@ rule plot_NGSAdmix:
     input:
         admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
     output:
-        png = "global_ancestry/plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_" + PREFIX +"_K" + K + ".png"
+        png = "global_ancestry/plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_" + prefix_all +"_K" + K + ".png"
     params:
         p = "med2",
         k = 2
