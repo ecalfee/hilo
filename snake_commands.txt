@@ -560,12 +560,38 @@ Job counts:
 	1	test_thin_GL_4PCA
 	3
 
+# got script to run to make lists of input files by population,
+# but still can't get plotting script to work for just counts (not sure why -- will check)
+# now running test of getting allopatric allele frequencies (to thin sites for local ancestry)
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       allo_freqs
+        1       list_total_samples
+        1       some
+        3
+# ok now that I fixed angsd indexing (needs .bin file too) the example in 'some' did run.
+# will try running all of the regions to get MAF for allopatric references
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        851     allo_freqs
+        424     index_sites_file
+        1       plot_total_samples
+        1277
+# now running 'all'
+[detached from 32676.snake_run] # Jul 19, 11:33pm
+# looks like all allopatric mexicana ran overnight but there was a problem with bam file lists for allopatic maize. fixing now:
 
-TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.
-snakemake all -n --profile slurm
+
+# NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 
 # (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
+- yes, working on allopatric allele frequencies now
+# (0.5) Why doesn't the counts plot work??
 # (1) Get NGSAdmix and PCA basic plots 2 work interactively.
 # (2) Get to run on Snakemake. (must include other R meta file)
 # (3) Get included individuals to run local ancestry inference
+# Done. I made these byPop files.
 # (4) Set up to run all pops local ancestry inference
