@@ -67,7 +67,8 @@ rule all:
         "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
         "filtered_bams/plots/p_seq_counts.png",
         expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
-        expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"])
+        expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
+        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys()))
     params:
         p = "med2"
     resources:
@@ -82,7 +83,8 @@ rule some:
         # SNP set for 1 scaffold
         #"variant_sites/results/" + prefix_all + "/region_1.rpos",
         #"variant_sites/results/" + prefix_all + "/region_1.var.sites"
-        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
+        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=["allopatric_mexicana"], REGION=["region_150"])
     params:
         p = "med2"
     resources:

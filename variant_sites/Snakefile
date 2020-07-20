@@ -176,6 +176,44 @@ rule calc_rmap_pos:
     script:
         "calc_rpos.R"
 
+## allo_freqs: estimates the minor allele frequency at all SNPs for allopatric maize and mexicana
+rule allo_freqs:
+    input:
+        bams = all_bams, # all input bams
+        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
+        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
+        idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
+        bam_list = "samples/ALL_byPop/{GROUP}_bams.list",
+        ref = ref,
+        fai = fai
+    output:
+        mafs = "variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz"
+    params:
+        p = "med2",
+        region = lambda wildcards: regions_dict[wildcards.REGION],
+        out_prefix = lambda wildcards: "variant_sites/results/popFreq/" + wildcards.GROUP + "/" + wildcards.REGION
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 16
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-r {params.region} "
+        "-sites {input.sites} "
+        "-ref {input.ref} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 "
+        "-minMapQ 30 -minQ 20 "
+        "-doMajorMinor 3 "
+        "-doCounts 1 -doMaf 8 "
+        "-P 2 "
+        "-baq 2"
+
 
 # # to uncomment code below: cmd + /
 # # define function to get list of input bams
