@@ -11,7 +11,11 @@ load(snakemake@input[["meta"]])
 # write ID and bam files by group/population
 # all individuals included
 meta_bams <- meta %>%
-  mutate(bam = paste0("filtered_bams/merged_bams/", ID, ".sort.dedup.bam"))
+  mutate(bam = ifelse(dataset == "HILO",
+                      paste0("filtered_bams/merged_bams/", ID, ".sort.dedup.bam"),
+                      ifelse(dataset == "MAIZE55",
+                             paste0("filtered_bams/results/Maize55/", ID, ".sort.dedup.bam"),
+                             NA)))
 # allopatric_maize, sympatric_maize etc.
 for (g in unique(meta_bams$group)){
   filter(meta_bams, group == g) %>%

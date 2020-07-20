@@ -587,14 +587,26 @@ hilo$ snakemake -f list_total_samples --profile slurm
 1 of 1 steps (100%) done
 # now using 'touch' to avoid re-doing all allopatric mexicana (just want to re-do maize)
 # and fixed small typo in plot_total_samples_pass.R (should work now)
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     allo_freqs
+        1       plot_total_samples
+        428
+        # RUNNING 7.20.20 11:37am
+
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
-
-# (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
-- yes, working on allopatric allele frequencies now
-# (0.5) Why doesn't the counts plot work??
+# TO DO:
+# RUNNING (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
+      - yes, working on allopatric allele frequencies now
+      # (0.5) Why doesn't the counts plot work??
 # (1) Get NGSAdmix and PCA basic plots 2 work interactively.
 # (2) Get to run on Snakemake. (must include other R meta file)
-# (3) Get included individuals to run local ancestry inference
-# Done. I made these byPop files.
-# (4) Set up to run all pops local ancestry inference
+# DONE (3) Get included individuals to run local ancestry inference
+        # Done. I made these byPop files.
+# (4) Filter SNPs for local ancestry inference (1 chromosome at a time? 1 region?)
+# (5) Set up to run all pops local ancestry inference
+
+# (For supplement: Add parviglumis & re-call SNPs & do PCAngsd and NGSAdmix with 3 ancestries)
