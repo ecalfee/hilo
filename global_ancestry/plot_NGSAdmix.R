@@ -3,7 +3,9 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(broom)
 library(RColorBrewer)# for color palette
+load("../samples/HILO_MAIZE55_meta.RData") # metadata in same order as samples in admixture
 # standard colors and labels for plots
 blues = brewer.pal(n = 9, name = "Blues")[c(6,8)]
 yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
@@ -11,36 +13,53 @@ colors_maize2mex = c(yellows, blues)
 labels_maize2mex = c("allopatric_maize", "sympatric_maize", "sympatric_mexicana", "allopatric_mexicana")
 colorsK = c(colors_maize2mex[c(4,1)], brewer.pal(n = 9, name = "YlOrRd")[6], brewer.pal(n=9, name = "YlGn")[6])
 
-# minimum coverage to include in ancestry_hmm
-min_coverage = 0.05
+# load variables from Snakefile
+K = snakemake@params[["k"]]
+admix_file = as.numeric(snakemake@input[["admix"]])
+png_out = snakemake@output[["png"]]
 
-K = 2 # K = number of genetic clusters/groups
-K = 3
-K = 4
+# TO DO:
+# list of included individuals for local ancestry inferences
+# (actually this list of included should come from other script)
+# and that other script should be added to Snakefile!
+# output file for ancestry proportions:
+
+# to load interactively:
+
+##admix_file = paste0("global_ancestry/results/NGSAdmix/", prefix_all, "/K2.qopt")
+# K = 2
+# admix_file = "../test/K2.qopt"
+# admix_file = "results/NGSAdmix/HILO_MAIZE55/K2.qopt"
+# png_out = "../test/ngsadmix_elev.png"
+# png_out = "plots/ngsadmix_elev.png"
+
+
 
 ancestries <- c("maize", "mexicana", "parviglumis")[1:K]
+admix <- read.table(admix_file)
+colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
+
 
 # starting with pass1 analysis from 1st round of sequencing
 #file_prefix = paste0("../data/geno_lik/merged_pass1_all_alloMaize4Low_16/thinnedPCA/NGSAdmix/K", K)
-PREFIX_METRICS <- "hilo_alloMAIZE_MAIZE4LOW"
-PREFIX <- "pass2_alloMAIZE"
-file_prefix <- paste0("results/NGSAdmix/", PREFIX, "/K", K)
-admix <- read.table(paste0(file_prefix, ".qopt"))
-colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
-out_dir <- paste0("results/NGSAdmix/", PREFIX)
+# PREFIX_METRICS <- "hilo_alloMAIZE_MAIZE4LOW"
+# PREFIX <- "pass2_alloMAIZE"
+# file_prefix <- paste0("results/NGSAdmix/", PREFIX, "/K", K)
+
+#out_dir <- paste0("results/NGSAdmix/", PREFIX)
 
 # get metadata for individuals included in NGSadmix analysis
 #pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F, 
 #                             header = T, sep = "\t")
 
-IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
-metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX_METRICS, ".flagstat.total"), header = F, stringsAsFactors = F)
-colnames(metrics) <- c("ID", "total_reads_pass")
-hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
-maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
-landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
-seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
-parviglumis <- read.table("../samples/PalmarChico_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
+# IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+# metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX_METRICS, ".flagstat.total"), header = F, stringsAsFactors = F)
+# colnames(metrics) <- c("ID", "total_reads_pass")
+# hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
+# maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
+# landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
+# seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
+# parviglumis <- read.table("../samples/PalmarChico_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
 
 
 # only for using RIMMA0625_small
@@ -49,38 +68,39 @@ parviglumis <- read.table("../samples/PalmarChico_meta.txt", stringsAsFactors = 
 # a rough coverage estimate is number of reads passing filtering * 150bp/read
 # divided by total area they could map to in maize reference genome v4
 
-# size of reference genome reads are mapped to
-ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai", 
-                                  stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
-# including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
-metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
-
-# get elevation data
-elev = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
-                  stringsAsFactors = F, header = T, sep = "\t")
-
-
-# combine sample meta data
-meta <- bind_rows(hilo, maize4low, landraces, parviglumis) %>%
-  left_join(., metrics, by = "ID") %>%
-  mutate(., group = paste(symp_allo, zea, sep = "_")) %>%
-  left_join(., elev, by = c("popN", "zea", "symp_allo", 
-                            "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
-  mutate(est_coverage = ifelse(zea == "parviglumis", 10, est_coverage))
-
-View(meta[meta$ID %in% landraces$ID, ])
+# # size of reference genome reads are mapped to
+# ref_genome_size <- sum(read.table("../data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa.fai", 
+#                                   stringsAsFactors = F)$V2) # V2 is the size of each chromosome mapped to,
+# # including parts I won't analyze on the Pt and Mt and scaffolds not assigned to chromosomes (but reads would pass Q filters there too)
+# metrics$est_coverage = round(metrics$total_reads_pass*150/ref_genome_size, 4)
+# 
+# # get elevation data
+# elev = read.table("../data/riplasm/gps_and_elevation_for_sample_sites.txt",
+#                   stringsAsFactors = F, header = T, sep = "\t")
+# 
+# 
+# # combine sample meta data
+# meta <- bind_rows(hilo, maize4low, landraces, parviglumis) %>%
+#   left_join(., metrics, by = "ID") %>%
+#   mutate(., group = paste(symp_allo, zea, sep = "_")) %>%
+#   left_join(., elev, by = c("popN", "zea", "symp_allo", 
+#                             "RI_ACCESSION", "GEOCTY", "LOCALITY")) %>%
+#   mutate(est_coverage = ifelse(zea == "parviglumis", 10, est_coverage))
+# 
+# View(meta[meta$ID %in% landraces$ID, ])
 
 # join bams and admix by position (CAUTION - bam list order and admix results MUST MATCH!)
-d <- bind_cols(IDs, admix)  %>%
-  left_join(., meta, by = "ID") %>%
+d <- bind_cols(meta, admix)  %>%
   arrange(., popN) %>%
   arrange(., zea) %>%
-  arrange(., symp_allo)
+  arrange(., symp_allo) %>%
+  mutate(group = paste(symp_allo, zea, sep = "_")) %>%
+  arrange(., group, ELEVATION)
 
-# order by elevation and group, filter out low coverage ind's
-d_meta <- d %>%
-  filter(., est_coverage >= min_coverage) %>% # only include individuals with at least .05x coverage
-  .[with(., order(group, ELEVATION)), ]
+# # order by elevation and group, filter out low coverage ind's
+# d_meta <- d %>%
+#   filter(., est_coverage >= min_coverage) %>% # only include individuals with at least .05x coverage
+#   .[with(., order(group, ELEVATION)), ]
 
 # for K=2 only, which ancestry anc1 or anc2 is mexicana-like?
 if (K == 2) {
@@ -615,7 +635,46 @@ ggsave(paste0("../../hilo_manuscript/figures/lm_predict_NGSadmix_proportion_mexi
        device = "pdf", 
        width = 5, height = 4, units = "in")
 
-
-
-
-        
+lm_maize = filter(d, group == "sympatric_maize") %>%
+  with(., lm(anc2 ~ ELEVATION))
+lm_mex = filter(d, group == "sympatric_mexicana") %>%
+  with(., lm(anc2 ~ ELEVATION))
+glance(lm_maize)
+summary(lm_mex)
+coef(lm_mex)
+summary(lm_maize)
+p_symp_elev <- d %>%
+  dplyr::mutate(., mexicana = anc2) %>%
+  filter(., symp_allo == "sympatric") %>%
+  ggplot(., aes(x = ELEVATION, y = mexicana, color = LOCALITY, 
+                size = est_coverage, shape = zea)) +
+  geom_point() +
+  ylab("Proportion mexicana ancestry") +
+  xlab("Elevation (m)") +
+  #facet_wrap(~ symp_allo) +
+  geom_abline(intercept = c(coef(lm_mex)[1], coef(lm_maize)[1]), 
+              slope = c(coef(lm_mex)[2], coef(lm_maize)[2])) +
+  ggtitle("Clines in mexicana ancestry across elevation") +
+  theme(legend.position="bottom") +
+  labs(color = "Location", shape = "Subspecies", size = "Coverage") +
+  #guides(color = FALSE) +
+  theme_classic()
+ggsave(filename = png_out,
+       plot = p_symp_elev,
+       device = "png", height = 8, width = 12, units = "in", dpi = 300)
+p_allo_elev <- d %>%
+  dplyr::mutate(., mexicana = anc2,
+                est_coverage = ifelse(is.na(est_coverage), 30, est_coverage)) %>%
+  filter(., symp_allo == "allopatric") %>%
+  ggplot(., aes(x = LOCALITY, y = mexicana, color = LOCALITY, 
+                size = log(est_coverage), shape = zea)) +
+  geom_jitter() +
+  ylab("Proportion mexicana ancestry") +
+  xlab("Location") +
+  ggtitle("Clines in mexicana ancestry across elevation") +
+  theme(legend.position="bottom") +
+  labs(color = "Location", shape = "Subspecies", size = "log(Coverage)") +
+  theme_classic()
+ggsave(filename = "../test/ngsadmix_allo.png",
+       plot = p_allo_elev,
+       device = "png", height = 8, width = 12, units = "in", dpi = 300)

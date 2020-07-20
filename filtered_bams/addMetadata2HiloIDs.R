@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 # made new script that links metadata to hilo ID using updated ID-population link from Anne 8.8.18
 library(dplyr)
 library(tidyr)
@@ -184,7 +185,8 @@ hilo2 <- left_join(all_libraries, flagstat, by = c("ID", "seq_lane")) %>%
   mutate(best = (ind == best_ind),
          too_low = est_coverage_combined < .05, # exclude if < 0.05x coverage
          keep = best & !too_low) %>%
-  left_join(., gps, by = c("popN", "RI_ACCESSION")) # add pop information
+  left_join(., gps, by = c("popN", "RI_ACCESSION")) %>% # add pop information
+  mutate(group = paste(symp_allo, zea, sep = "_"))
 # how many samples are excluded vs. successfully resequenced with a replacement?
 # hilo2 %>%
 #   filter(!duplicated(ID)) %>% # don't count samples twice
@@ -202,12 +204,13 @@ hilo2 <- left_join(all_libraries, flagstat, by = c("ID", "seq_lane")) %>%
 # included samples:
 included <- hilo2 %>%
   filter(keep) %>%
-  group_by(ID, popN, family, ind, RI_ACCESSION, zea, symp_allo, GEOCTY, LOCALITY, ELEVATION, LAT, LON) %>%
+  group_by(ID, popN, family, ind, RI_ACCESSION, zea, symp_allo, group, GEOCTY, LOCALITY, ELEVATION, LAT, LON) %>%
   summarise(reads_q30 = sum(reads_q30),
             est_coverage = sum(est_coverage)) %>%
   arrange(as.numeric(substr(ID, 5, 8))) # arrange by hilo ID
 write.table(included, "../samples/HILO_meta.txt", col.names = T, row.names = F,
             sep = "\t", quote = F)
+
 
 # write out included IDs and bams
 hilo_ids = included$ID
@@ -233,6 +236,22 @@ write.table(c(hilo_bams, maize55_bams), "../samples/HILO_MAIZE55_bams.list",
             col.names = F, row.names = F, quote = F, sep= "\t")
 
 
+# add metadata file that includes allopatric maize
+meta <- bind_rows(included %>%
+                    mutate(dataset = "HILO"),
+                           data.frame(ID = maize55_ids, zea = "maize", 
+                                      symp_allo = "allopatric", GEOCTY = "Mexico",
+                                      group = "allopatric_maize",
+                                      LOCALITY = "Palmar Chico",
+                                      dataset = "MAIZE55",
+                                      popN = 1000, # just a place holder, not a real RIMME/RIMMA pop number
+                                      stringsAsFactors = F) %>%
+                    left_join(., flagstat, by = "ID") %>% # add flagstat info for maize55
+                    mutate(est_coverage = reads_q30*150/(ref_genome_size)))
+write.table(meta, "../samples/HILO_MAIZE55_meta.txt", col.names = T, row.names = F,
+            sep = "\t", quote = F)
+save(list = c("meta"), file = "../samples/HILO_MAIZE55_meta.RData")
+
 # write out fastq files & sequencing meta data for included samples:
 fastq_info2 <- hilo2 %>%
   filter(keep) %>%
@@ -246,50 +265,3 @@ fastq_info2 <- hilo2 %>%
   arrange(as.numeric(substr(ID, 5, 8)), lane) # arrange by hilo ID
 write.table(fastq_info2, "../samples/HILO_fastq_metadata.txt",
             col.names = T, row.names = F, sep = "\t")
-
-p_seq_counts <- included %>%
-  mutate(coverage = cut(est_coverage, 
-                        breaks = c(0, 0.05, 0.5, 10)
-                        )) %>%
-  ggplot(., aes(alpha = coverage,
-                fill = zea,
-                x = LOCALITY)) +
-  geom_bar() +
-  labs(fill = "Zea", x = "Population", y = "# Individuals") +
-  scale_alpha_discrete(range = c(.6, 1),
-                       name = "Coverage",
-                       labels = c(expression("x "<" 0.5"), expression("x ">=" 0.5"))) +
-  scale_fill_manual(values = col_maize_mex_parv) +
-  facet_grid(zea~.) +
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
-#p_seq_counts
-ggsave("../../hilo_manuscript/figures/p_seq_counts.png",
-       plot = p_seq_counts,
-       height = 4, width = 5.4, units = "in",
-       device = "png")
-
-# what is a reasonable cut-off for % of individuals with coverage to call a SNP?
-# under a basic poisson model, what % of individuals typically have data for any SNP?
-# just HILO
-sims <- sapply(1:10000, function(i) sum(rpois(n = length(included$est_coverage), 
-      lambda = included$est_coverage) > 0)/length(included$est_coverage))
-# with an estimated loss of coverage for not meeting quality > 20
-sims2 <- sapply(1:10000, function(i) sum(rpois(n = length(included$est_coverage), 
-                                               lambda = included$est_coverage*2/3) > 0)/length(included$est_coverage))
-# with overdispersion (negative binomial)
-sims3 <- sapply(1:10000, function(i) sum(rnbinom(n = length(included$est_coverage),
-                                                 size = 1,
-                                                 mu = included$est_coverage*2/3) > 0)/length(included$est_coverage))
-
-# also including MAIZE
-sims_w55 <- (sims*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
-
-sims2_w55 <- (sims2*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
-
-sims3_w55 <- (sims3*length(included$est_coverage)+55)/(length(included$est_coverage) + 55)
-# table(sims2_w55 > 0.5)/length(sims2_w55)
-# about 3.5% of the genome approximately has < 50% coverage across sampled individuals
-# if we assume poisson. But with overdispersion it's potentially a lot more
-# hist(sims3_w55)
-# > 40% of individuals should be most of the genome that has regular mapping even with overdispersion

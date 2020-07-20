@@ -22,7 +22,15 @@ prefix_bams = "Combined"
 prefix_all = "HILO_MAIZE55"
 #prefix_all = "TEST"
 
-# all bams for local ancestry inference (est_coverage > 0.5x)
+# groups
+groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
+allo_groups = ["allopatric_maize", "allopatric_mexicana"]
+
+# sympatric populations
+sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
+"pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35",
+"pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
+"pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
 
 # make a dictionary of 5Mb regions across the genome
 regions_dict = {}
@@ -82,7 +90,8 @@ rule some:
 rule test:
     input:
         "test/whole_genome.beagle.gz",
-        "test/whole_genome.cov"
+        #"test/whole_genome.cov"
+        "test/K2.qopt"
     params:
         p = "med2"
     resources:

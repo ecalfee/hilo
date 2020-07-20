@@ -311,3 +311,58 @@ rule multiQC_picard:
         "envs/environment.yaml"
     shell:
         "multiqc -f metrics/picard -o metrics/picard/multiqc --dirs --ignore TEST/"
+
+rule add_metadata:
+   input:
+       "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
+        "data/HILO_raw_reads/merged_all.list",
+        "data/HILO_raw_reads/April2020_all.list",
+        "samples/april2020_meta_from_Taylor.txt",
+        "samples/get_tissue_5.28.19.txt",
+        "data/riplasm/riplasm.csv",
+        fai,
+        "colors.R"
+   output:
+       "samples/HILO_MAIZE55_meta.RData",
+       "samples/gps_and_elevation_for_sample_sites.txt",
+       "samples/HILO_meta.txt",
+       "samples/HILO_ids.list",
+       "samples/HILO_bams.list",
+       "samples/MAIZE55_ids.list",
+       "samples/MAIZE55_bams.list",
+       "samples/HILO_MAIZE55_ids.list",
+       "samples/HILO_MAIZE55_bams.list",
+       "samples/HILO_MAIZE55_meta.txt",
+       "samples/HILO_MAIZE55_meta.RData",
+       "samples/HILO_fastq_metadata.txt"
+   params:
+       p = "med2"
+   shadow:
+       "minimal"
+   resources:
+       time_min = lambda wildcards, attempt: attempt * 15,
+       mem = lambda wildcards, attempt: attempt * 2
+   conda:
+       "../envs/environment.yaml"
+   script:
+       "addMetadata2HiloIDs.R"
+
+rule sum_total_samples:
+    input:
+        "samples/HILO_MAIZE55_meta.RData",
+        "colors.R"
+    output:
+        "filtered_bams/plots/p_seq_counts.png",
+        expand("samples/"{SUBSET}"_byPop/"{GROUP}"_"{LIST_TYPE}".list", GROUP = groups, LIST_TYPE = ["ids", "bams"], SUBSET = ["ALL", "Over0.5x"]),
+        expand("samples/"{SUBSET}"_byPop/"{POP}"_"{LIST_TYPE}".list", POP = sympatric_pops, LIST_TYPE = ["ids", "bams"], SUBSET = ["ALL", "Over0.5x"])
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "total_samples_pass.R"
