@@ -44,7 +44,7 @@ rule index_ref:
     shell:
         "bwa index {input}"
 
-# trim out adapter contamination
+## trimmomatic: trims out adapter contamination
 rule trimmomatic:
     input:
         r1 = path_hilo + "data/HILO_raw_reads/{LANE}/{ID}_1.fq.gz", # fastq1
@@ -72,6 +72,7 @@ rule trimmomatic:
     wrapper:
         "0.59.1/bio/trimmomatic/pe"
 
+## bwa_map: maps (trimmed) reads to reference genome
 rule bwa_map:
     input:
         ref = ref,
@@ -97,7 +98,7 @@ rule bwa_map:
         "-t {threads} -v 3 {input.ref} {input.fq1} {input.fq2} | "
         "samtools view -Shu -) > {output}"
 
-
+## samtools_sort: sorts bams by position
 rule samtools_sort:
     input:
         "filtered_bams/results/{LANE}/{ID}.bam"
@@ -121,6 +122,7 @@ rule samtools_sort:
         "-O bam {input} > {output};"
         "rm -r tmp_sorting_reads/{wildcards.ID}_{wildcards.LANE}"
 
+## mark_duplicates: marks and removes duplicate reads using PICARD
 rule mark_duplicates:
     input:
         ref = ref,
@@ -154,6 +156,7 @@ rule mark_duplicates:
         "rm -r tmp_dedup_reads/{wildcards.ID}_{wildcards.LANE}"
         # remove temporary directory at the end
 
+## samtools_index: makes index for bam file
 rule samtools_index:
     input:
         "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam"
@@ -174,6 +177,7 @@ def bais2merge(wildcards):
 def count_bams(wildcards):
     return len(merge_dict[wildcards.ID])
 
+## merge_bams: merges bams for the same sample library sequenced on multiple lanes
 rule merge_bams:
     input:
         # zip in expand is like :::+ in gnu parallel (doesn't create all combinations of inputs)
@@ -203,7 +207,7 @@ rule merge_bams:
         fi
         """
 
-# run quality checks and metrics
+## fastQC: runs fastQC quality checks and metrics on raw reads (fastq files)
 rule fastQC:
     input:
         "data/HILO_raw_reads/{LANE}/{ID}_{READ}.fq.gz"
@@ -218,6 +222,7 @@ rule fastQC:
     shell:
         "fastqc -o metrics/fastQC/{wildcards.LANE} -t {threads} {input}"
 
+## fastQC_trimmed: runs fastQC quality checks and metrics on reads after trimming (trimmed fastq files)
 rule fastQC_trimmed:
     input:
         path_hilo + "data/HILO_trimmed_reads/{LANE}/{ID}_{READ}.fq.gz"
@@ -232,7 +237,7 @@ rule fastQC_trimmed:
     shell:
         "fastqc -o metrics/fastQC_trimmed/{wildcards.LANE} -t {threads} {input}"
 
-
+## multiQC_fastQC: creates summary report of fastQC
 rule multiQC_fastQC:
     input:
         expand(["filtered_bams/metrics/fastQC/{LANE}/{ID}_1_fastqc.html",
@@ -249,6 +254,7 @@ rule multiQC_fastQC:
     shell:
         "multiqc -f metrics/fastQC -o metrics/fastQC/multiqc --dirs --ignore TEST/"
 
+## multiQC_fastQC_trimmed: creates summary report of fastQC_trimmed
 rule multiQC_fastQC_trimmed:
     input:
         expand(["filtered_bams/metrics/fastQC_trimmed/{LANE}/{ID}_1_fastqc.html",
@@ -265,6 +271,7 @@ rule multiQC_fastQC_trimmed:
     shell:
         "multiqc -f metrics/fastQC_trimmed -o metrics/fastQC_trimmed/multiqc --dirs --ignore TEST/"
 
+## samtools_flagstat: counts reads passing mapping quality > 30
 rule samtools_flagstat:
     input:
         "filtered_bams/results/{LANE}/{ID}.sort.dedup.bam"
@@ -282,6 +289,7 @@ rule samtools_flagstat:
     shell:
         "samtools view -q 30 -b {input} | samtools flagstat -@ {threads} -  > {output}"
 
+## multiQC_flagstat: creates summary report of samtools_flagstat
 rule multiQC_flagstat:
     input:
         expand("filtered_bams/metrics/flagstat/{LANE}/{ID}.flagstat", zip, LANE=lanes, ID=ids)
@@ -297,6 +305,7 @@ rule multiQC_flagstat:
     shell:
         "multiqc -f metrics/flagstat -o metrics/flagstat/multiqc --dirs --ignore TEST/"
 
+## multiQC_fastQC: creates summary report of PICARD mark duplicates
 rule multiQC_picard:
     input:
         expand("filtered_bams/metrics/picard/{LANE}/{ID}.metrics.txt", zip, LANE=lanes, ID=ids)
@@ -312,6 +321,7 @@ rule multiQC_picard:
     shell:
         "multiqc -f metrics/picard -o metrics/picard/multiqc --dirs --ignore TEST/"
 
+## add_metadata: link sample IDs with associated metadata (e.g. population, elevation)
 # rule add_metadata:
 # note: did not run this with snakemake (ran interactively b/c would have re-run a bunch of files.)
 #    input:
@@ -347,12 +357,11 @@ rule multiQC_picard:
 #    script:
 #        "addMetadata2HiloIDs.R"
 
-rule sum_total_samples:
+## list_total_samples: makes lists of included samples (IDs & bams) by population at 0.05x threshold ("samples/ALL_byPop") and 0.5x threshold ("samples/Over0.5x_byPop")
+rule list_total_samples:
     input:
-        meta = "samples/HILO_MAIZE55_meta.RData",
-        colors = "colors.R"
+        meta = "samples/HILO_MAIZE55_meta.RData"
     output:
-        "filtered_bams/plots/p_seq_counts.png",
         expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
         expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"])
     params:
@@ -361,9 +370,30 @@ rule sum_total_samples:
     shadow:
         "minimal"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = 15,
+        mem = 2
     conda:
         "../envs/environment.yaml"
     script:
-        "total_samples_pass.R"
+        "list_total_samples_pass.R"
+
+## plot_total_samples: plots the number of samples successfully sequenced per population
+rule plot_total_samples:
+    input:
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        colors = "colors.R"
+    output:
+        "filtered_bams/plots/p_seq_counts.png",
+        "../hilo_manuscript/figures/p_seq_counts.png"
+    params:
+        p = "med2",
+        wd = "filtered_bams"
+    shadow:
+        "minimal"
+    resources:
+        time_min = 15,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "plot_total_samples_pass.R"
