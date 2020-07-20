@@ -11,7 +11,7 @@ library(ggplot2)
 #meta_file = snakemake@input[["colors"]]
 #colors_file = "../colors.R" 
 #meta_file = "../samples/HILO_MAIZE55_meta.RData"
-setwd(snakemake@params[["wd"]]) # set working directory to the path where this script is
+setwd(snakemake@params[["wd"]]) # set working directory to the path where this script is, hilo/filtered_bams/
 source("../colors.R") # colors for plots
 load("../samples/HILO_MAIZE55_meta.RData") # sample metadata, including estimated sequence coverage
 
