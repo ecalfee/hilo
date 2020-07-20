@@ -519,7 +519,53 @@ Job counts:
 [detached from 32676.snake_run] # ack! not sure what the deal is with farm but I won't use --jobs to override again (maybe overrides all defaults too?? like pinging the server? or could be completely unrelated)
 # testing locally with a subset of regions. Need to specify --use-conda to run in updated conda environment
  Erins-MacBook-Air:hilo Erin$ snakemake test --use-conda
+# can't update my conda environment on mac because of linux-ony pcangsd install :( but it runs on farm so ok
+
+# rerunning several files because 'regions_dict' wasn't found (I think it doesn't freeze the Snakefile even when running..)
+hilo$ snakemake -n --quiet all --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        392     calc_rmap_pos
+        1       call_SNPs
+        339     make_sites_file
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        736
+hilo$ snakemake all --profile slurm # running 7.8.2020
+[detached from 32676.snake_run]
+
+TO DO: make snakemake rules for all of the pcangsd and ngsadmix plots that you want
+# NGSAdmix proportion by elevation, a PCA plot. I'll need metadata for the new maize.
+# You can use the very short combined GL file as a template.
+
+# made a file with half of the regions:
+ecalfee@c6-89:~/hilo$ awk -v N=2 '(NR + 1) % N == 0' data/refMaize/divide_5Mb/ALL_regions.list > data/refMaize/divide_5Mb/HALF_regions.list
+ecalfee@c6-89:~/hilo$ grep 'region_361' data/refMaize/divide_5Mb/HALF_regions.list # problem region that hasn't finished isn't included
+ecalfee@c6-89:~/hilo$ head data/refMaize/divide_5Mb/HALF_regions.list
+# just picked a small set of regions for a test file (downloading now from farm to laptop):
+hilo Erin$ for i in 0 1 50 51 100 101 150 151 200 201 250 251 300 301 350 351 400 401; do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/variant_sites/results/HILO_MAIZE55/region_$i.beagle.gz variant_sites/results/HILO_MAIZE55/.; done
+# running test on mac for just these few regions:
+(hilo-env) Erins-MacBook-Air:hilo Erin$ snakemake test
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 1
+Rules claiming more threads will be scaled down.
+Unlimited resources: mem, time_min
+Job counts:
+	count	jobs
+	1	test
+	1	test_NGSAdmix
+	1	test_thin_GL_4PCA
+	3
 
 
 TO DO: Make list of all included bams/IDs based on minimum coverage. Then call SNPs.
 snakemake all -n --profile slurm
+
+# (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
+# (1) Get NGSAdmix and PCA basic plots 2 work interactively.
+# (2) Get to run on Snakemake. (must include other R meta file)
+# (3) Get included individuals to run local ancestry inference
+# (4) Set up to run all pops local ancestry inference

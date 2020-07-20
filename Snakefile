@@ -64,7 +64,8 @@ rule all:
         # global ancestry analysis: thinned GL, PCA and NGSAdmix
         "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
         "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov",
-        "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
+        "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
+        "filtered_bams/plots/p_seq_counts.png"
     params:
         p = "med2"
     resources:
