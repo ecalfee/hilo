@@ -323,7 +323,6 @@ rule add_metadata:
         fai,
         "colors.R"
    output:
-       "samples/HILO_MAIZE55_meta.RData",
        "samples/gps_and_elevation_for_sample_sites.txt",
        "samples/HILO_meta.txt",
        "samples/HILO_ids.list",
