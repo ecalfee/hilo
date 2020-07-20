@@ -313,6 +313,7 @@ rule multiQC_picard:
         "multiqc -f metrics/picard -o metrics/picard/multiqc --dirs --ignore TEST/"
 
 # rule add_metadata:
+# note: did not run this with snakemake (ran interactively b/c would have re-run a bunch of files.)
 #    input:
 #        "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
 #         "data/HILO_raw_reads/merged_all.list",

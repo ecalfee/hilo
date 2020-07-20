@@ -6,8 +6,13 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-source("../colors.R") # colors for plots
-load("../samples/HILO_MAIZE55_meta.RData") # sample metadata, including estimated sequence coverage
+
+colors_file = snakemake@input[["colors"]]
+meta_file = snakemake@input[["colors"]]
+#colors_file = "../colors.R" 
+#meta_file = "../samples/HILO_MAIZE55_meta.RData"
+source(colors_file) # colors for plots
+load(meta_file) # sample metadata, including estimated sequence coverage
 
 # plot total included samples per population
 p_seq_counts <- meta %>%
