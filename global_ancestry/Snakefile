@@ -3,30 +3,37 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-## thin_GL_4PCA: thins sites in beagle genotype likelihood files for all regions to >0.01cM spacing (~10kb)
+## thin_GL_4PCA: thins sites in beagle genotype likelihood files for all regions to every 100th SNP
 ## and returns one concatenated GL file for input to PCAngsd and NGSadmix
 rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
         gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
-        REGION=list(regions_dict.keys())),
-        rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        REGION=list(regions_dict.keys())),
-        regions = "data/refMaize/divide_5Mb/ALL_regions.list"
+        REGION=list(regions_dict.keys()))
+        #rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+        #REGION=list(regions_dict.keys())),
+        #regions = "data/refMaize/divide_5Mb/ALL_regions.list"
     output: # thinned GL file for whole genome
         gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
         p = "med2",
-        prefix_all = prefix_all,
-        min_cM = 0.01 # minimum spacing
-    shadow:
-        "minimal"
+        N = 100, # keep every 100th SNP
+        first = 0, # first region
+        last = len(regions_dict) - 1 # last region
+        dir_in = "variant_sites/results/" + prefix_all
     resources:
         time_min = lambda wildcards, attempt: attempt * 6 * 60,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
-    script:
-        "thin_GL_4PCA.R"
+    shell:
+        #"thin_GL_4PCA.R"
+        """
+        # concatenate header from first file with every Nth SNP from each subsequent file
+        zcat {params.dir_in}/region_{params.first}.beagle.gz | head -n 1 | gzip > {output.gl}
+        for (( i={params.first}; i<={params.last}; i++ ))
+        do zcat {params.dir_in}/region_$i.beagle.gz | tail -n +2
+        done | awk -v N={params.N} 'NR % N == 0' | gzip >> {output.gl}
+        """
 
 ## test_thin_GL_4PCA: rule to test thinning of beagle GL files using just a small subset of genomic regions
 rule test_thin_GL_4PCA:
