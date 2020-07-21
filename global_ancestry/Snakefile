@@ -144,8 +144,7 @@ rule plot_NGSAdmix:
         png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
         png_structure = "global_ancestry/plots/structure_K2.png" # lm output file?
     params:
-        p = "med2",
-        k = 2
+        p = "med2"
     shadow:
          "minimal"
     conda:
@@ -168,8 +167,7 @@ rule plot_PCAngsd:
         png_pc56 = "global_ancestry/plots/pc56.png"
         # add PCA that includes parviglumis?
     params:
-        p = "med2",
-        k = 2
+        p = "med2"
     shadow:
          "minimal"
     conda:

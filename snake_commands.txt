@@ -604,7 +604,16 @@ Job counts:
         426     allo_freqs
         1       plot_total_samples
         428 # RUNNING 7.20.20 12:30pm
-
+# these jobs finished. adding PCA plots and running rule 'all' again:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_NGSAdmix
+        1       plot_PCAngsd
+        1       plot_total_samples
+        1       results_NGSAdmix
+        5 # runnning 7.20.20 9pm
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

@@ -50,17 +50,17 @@ include: "global_ancestry/Snakefile"
 rule all:
     input:
         # SNP set
-        expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-                REGION=list(regions_dict.keys())),
+        #expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+        #        REGION=list(regions_dict.keys())),
         # bam metrics files
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
         "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
         # all bams
-        expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
-                "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
-                zip, ID=list(merge_dict.keys())),
+        #expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
+        #        "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
+        #        zip, ID=list(merge_dict.keys())),
         # global ancestry analysis: thinned GL, PCA and NGSAdmix
         "global_ancestry/plots/pca.png",
         "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
