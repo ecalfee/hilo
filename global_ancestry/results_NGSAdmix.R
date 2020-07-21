@@ -11,7 +11,7 @@ library(broom)
 # load variables from Snakefile
 K = snakemake@params[["k"]]
 # K = 2
-admix_file = as.numeric(snakemake@input[["admix"]])
+admix_file = snakemake@input[["admix"]]
 # admix_file = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2.qopt"
 alphas_out = snakemake@output[["alphas"]]
 # alphas_out = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_symp_pop.txt"
