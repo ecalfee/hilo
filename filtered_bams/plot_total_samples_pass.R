@@ -7,7 +7,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 # get colors for plot
-# source(colors.R)
+# source("colors.R")
 source(snakemake@input[["colors"]])
 # load sample metadata, including estimated sequence coverage
 # load("samples/HILO_MAIZE55_meta.RData")

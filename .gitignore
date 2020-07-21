@@ -10,3 +10,8 @@ plots_old/
 *.pdf
 *.log
 *.synctex.gz
+*.xlsx
+*.svg
+samples/ALL_byPop/
+samples/Over0.5x_byPop/
+scripts/

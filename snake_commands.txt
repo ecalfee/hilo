@@ -595,6 +595,15 @@ Job counts:
         1       plot_total_samples
         428
         # RUNNING 7.20.20 11:37am
+# oops still not finding correct MAIZE55 bams. Fixed list of bams. re-did list_total_samples and 'touch' for allopatric mexicana mafs.gz files.
+hilo$ snakemake -n all --quiet --profile slurm
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     allo_freqs
+        1       plot_total_samples
+        428 # RUNNING 7.20.20 12:30pm
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

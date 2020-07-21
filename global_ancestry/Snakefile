@@ -113,30 +113,73 @@ rule run_NGSAdmix:
         -o {params.prefix_out}
         """
 
-## plot_NGSAdmix: plots results of NGSAdmix
-rule plot_NGSAdmix:
+## results_NGSAdmix: extracts results of NGSAdmix from output files, summarise by pop and individual
+rule results_NGSAdmix:
     input:
-        admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
+        admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
+        meta = "samples/HILO_MAIZE55_meta.RData"
     output:
-        png = "global_ancestry/plots/lm_predict_NGSadmix_proportion_mexicana-like_by_elevation_colored_by_pop_" + prefix_all +"_K2.png"
+        alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
+        ind = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
     params:
         p = "med2",
         k = 2
-    # shadow:
-    #     "minimal"
-    # conda:
-    #     "../envs/environment.yaml"
-    # threads:
-    #     2
-    # resources:
-    #     time_min = lambda wildcards, attempt: attempt * 6 * 60,
-    #     mem = lambda wildcards, attempt: attempt * 8
-    # #script:
-    #     """
-    #     NGSadmix -likes {input.gl} \
-    #     -K {params.k} -P {threads} \
-    #     -o {params.prefix_out}
-    #     """
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "results_NGSAdmix.R"
+
+## plot_NGSAdmix: plots results of NGSAdmix
+rule plot_NGSAdmix:
+    input:
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        colors = "colors.R",
+        k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
+    output:
+        png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
+        png_structure = "global_ancestry/plots/structure_K2.png" # lm output file?
+    params:
+        p = "med2",
+        k = 2
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "plot_NGSAdmix.R"
+
+## plot_PCAngsd: plots genomewide PCA from genetic covariance matrix estimated by PCAngsd
+rule plot_PCAngsd:
+    input:
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        colors = "colors.R",
+        cov = "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov"
+    output:
+        png_pca = "global_ancestry/plots/pca.png",
+        png_pc34 = "global_ancestry/plots/pc34.png",
+        png_pc56 = "global_ancestry/plots/pc56.png"
+        # add PCA that includes parviglumis?
+    params:
+        p = "med2",
+        k = 2
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "plot_PCAngsd.R"
+
 
 ## test_PCAngsd: test using smaller file (subset of genomic regions) to calculate covariance matrix from genotype likelihood file using PCAngsd
 rule test_PCAngsd:

@@ -11,22 +11,22 @@ yellows = brewer.pal(n = 9, name = "YlOrBr")[c(4,6)]
 colors_maize2mex = c(yellows, blues)
 colors_alphabetical = colors_maize2mex[c(1,4,2,3)] # allo maize, allo mex, symp maize, symp mex
 
-PREFIX <- "pass2_alloMAIZE_PalmarChico"
-#PREFIX <- "pass2_alloMAIZE"
+#PREFIX <- "pass2_alloMAIZE_PalmarChico"
+PREFIX <- "pass2_alloMAIZE"
 #PREFIX <- "duplicates"
 #PREFIX <- "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small_and_duplicates"
 PREFIX_metrics <- "hilo_alloMAIZE_MAIZE4LOW"
 ids_dup = unlist(lapply(data.frame(ID = read.table(paste0("../samples/duplicates_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F),
                         function(x) rep(x, 2)))
-ids_merged = read.table(paste0("../samples/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
+ids_merged = read.table(paste0("../samples/old/", "hilo_alloMAIZE_MAIZE4LOW_RIMMA0625_small", "_IDs.list"), header = F, stringsAsFactors = F)$V1
 #IDs = data.frame(ID = c(ids_merged, ids_dup))
 #PREFIX <- "missing268-276_hilo_alloMAIZE_MAIZE4LOW"
-IDs <- data.frame(ID = read.table(paste0("../samples/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
+IDs <- data.frame(ID = read.table(paste0("../samples/old/", PREFIX, "_IDs.list"), header = F, stringsAsFactors = F)$V1, stringsAsFactors = F)
 metrics <- read.table(paste0("../filtered_bams/metrics/", PREFIX_metrics, ".flagstat.total"), header = F, stringsAsFactors = F)
 colnames(metrics) <- c("ID", "total_reads_pass")
 hilo <- read.table("../samples/hilo_meta.txt", stringsAsFactors = F, header = T, sep = "\t")
-maize4low <- read.table("../samples/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
-landraces <- read.table("../samples/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
+maize4low <- read.table("../samples/old/MAIZE4LOW_meta.txt", stringsAsFactors = F, header = T)
+landraces <- read.table("../samples/old/alloMAIZE_meta.txt", stringsAsFactors = F, header = T)
 seq_Jan2019 <- read.table("../data/HILO_raw_reads/Jan2019_IDs.list", stringsAsFactors = F, header = F)$V1
 
 # elevation
@@ -55,7 +55,7 @@ meta <- bind_rows(hilo, maize4low, landraces) %>%
 sum(meta$est_coverage < .025)
 
 # which individuals are included in 'pass2'?
-pass2 <- read.table("../samples/pass2_IDs.list", stringsAsFactors = F, header = F)$V1
+pass2 <- read.table("../samples/old/pass2_IDs.list", stringsAsFactors = F, header = F)$V1
 
 # just plot numbers for pass2:
 for (i in c(0, 0.25, 0.5, 1)) {
@@ -254,7 +254,7 @@ n = 4 # make small dataframe w/ only first n eigenvectors
 pca_small <- data.frame(pca$vectors[ , 1:n])
 colnames(pca_small) = paste0("PC", 1:n)
 # rounded eigen values
-PC_var_explained = round(pca$values, 2)
+PC_var_explained = round(pca$values/sum(pca$values)*100, 2)
 
 #IDs <- data.frame(ID = sapply(IDs, function(x) rep(x, 2)))
 # quick plot of new data:
@@ -262,8 +262,9 @@ d <- bind_cols(IDs, pca_small) %>%
   left_join(., meta, by = "ID")
 d %>%
   filter(., ID %in% seq_Jan2019 | (symp_allo == "allopatric" & zea == "maize")) %>%
-  ggplot(., aes(x = -PC1, y = PC2, color = group,
-                size = est_coverage)) +
+  ggplot(., aes(x = -PC1, y = PC2,
+                #size = est_coverage,
+                color = group)) +
   geom_point(alpha = .5) +
   scale_colour_manual(values = colors_alphabetical) +
   xlab(paste0("PC1 (", PC_var_explained[1], "%)")) +
@@ -357,7 +358,7 @@ n = 4 # make small dataframe w/ only first n eigenvectors
 pca_small2 <- data.frame(pca2$vectors[ , 1:n])
 colnames(pca_small2) = paste0("PC", 1:n)
 # rounded eigen values
-PC_var_explained2 = round(pca2$values, 2)
+PC_var_explained2 = round(pca2$values/sum(pca2$values)*100, 2)
 #1:291
 d2 <- data.frame(ID = IDs[1:291,], pca_small2, stringsAsFactors = F) %>%
   left_join(., meta, by = "ID")
@@ -386,7 +387,7 @@ pca_old <- eigen(cov_data_old) # take PCA of covariance matrix
 pca_small_old <- data.frame(pca_old$vectors[ , 1:n])
 colnames(pca_small_old) = paste0("PC", 1:n)
 # rounded eigen values
-PC_var_explained_old = round(pca_old$values, 2)
+PC_var_explained_old = round(pca_old$values/sum(pca_old$values)*100, 2)
 pass1_allo4Low <- read.table("../data/pass1_allo4Low_ids.txt", stringsAsFactors = F,
                              header = T, sep = "\t")
 # join bams and first 10 PCs of covariance PCA data by position (CAUTION - bam list order and admix results MUST MATCH!)
@@ -461,7 +462,7 @@ d_1000 <- bind_cols(pass1_allo4Low, pca_small_1000)  %>%
   mutate(., group = paste(symp_allo, zea, sep = "_"))
 
 # rounded eigen values
-PC_var_explained_1000 = round(pca_1000$values, 2)
+PC_var_explained_1000 = round(pca_1000$values/sum(pca_1000$values)*100, 2)
 
 # plot first PC's
 # PC1 and 2, all no filter
@@ -827,7 +828,7 @@ n = 4 # make small dataframe w/ only first n eigenvectors
 pca_small_inv4m <- data.frame(pca_inv4m$vectors[ , 1:n])
 colnames(pca_small_inv4m) = paste0("PC", 1:n)
 # rounded eigen values
-PC_var_explained_inv4m = round(pca_inv4m$values, 2)
+PC_var_explained_inv4m = round(pca_inv4m$values/sum(pca_inv4m$values)*100, 2)
 
 #IDs <- data.frame(ID = sapply(IDs, function(x) rep(x, 2)))
 # quick plot of new data:
