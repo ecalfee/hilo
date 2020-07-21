@@ -12,6 +12,13 @@ plots_old/
 *.synctex.gz
 *.xlsx
 *.svg
+*.snakemake
 samples/ALL_byPop/
 samples/Over0.5x_byPop/
+samples/planting/
 scripts/
+test/
+filtered_bams/merged_bams
+labwork/
+*/old
+*/logs
