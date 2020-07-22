@@ -132,7 +132,7 @@ rule results_NGSAdmix:
     script:
          "results_NGSAdmix.R"
 
-## plot_NGSAdmix: plots results of NGSAdmix
+## plot_NGSAdmix: plots results of NGSAdmix and produces table with linear model output for cline in mexicana ancestry with elevation
 rule plot_NGSAdmix:
     input:
         meta = "samples/HILO_MAIZE55_meta.RData",
@@ -140,7 +140,8 @@ rule plot_NGSAdmix:
         k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
     output:
         png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
-        png_structure = "global_ancestry/plots/structure_K2.png" # lm output file?
+        png_structure = "global_ancestry/plots/structure_K2.png",
+        lm_tex = "global_ancestry/tables/lm_elevation.tex"
     params:
         p = "med2"
     shadow:

@@ -7,13 +7,16 @@ library(tidyr)
 library(ggplot2)
 library(broom)
 library(viridis)
+library(xtable)
 
 # load variables from snakemake
-# get output plot filenames
+# get output plot and table filenames
 png_elev = snakemake@output[["png_elev"]]
 # png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png"
 png_structure = snakemake@output[["png_structure"]]
 # png_structure = "global_ancestry/plots/structure_K2.png"
+lm_tex = snakemake@output[["lm_tex"]]
+# lm_tex = "global_ancestry/tables/lm_elevation.tex"
 
 # get colors for plot
 # source("colors.R")
@@ -45,7 +48,7 @@ p_structure <- d_admix2 %>%
 ggsave(png_structure, 
         plot = p_structure, 
         device = "png", 
-        width = 7.5, height = 4, units = "in",
+        width = 5.4, height = 3, units = "in",
         dpi = 300)
 
 lm_maize = filter(d_admix2, group == "sympatric_maize") %>%
@@ -57,7 +60,21 @@ lm_mex = filter(d_admix2, group == "sympatric_mexicana") %>%
 #glance(lm_mex)
 #summary(lm_maize)
 
-# print linear model output to a file?
+lm_table <- bind_rows(mutate(broom::tidy(lm_mex), subspecies = "maize"),
+                      mutate(broom::tidy(lm_mex), subspecies = "mexicana")) %>%
+  dplyr::select(subspecies, term, estimate, std.error, statistic, p.value)
+
+# print linear model output to a file
+print(xtable(lm_table,
+             caption = "\\color{Gray} \\textbf{Elevational ancestry clines} Effect of elevation (m) on genomewide proportion \\texit{mexicana} ancestry in sympatric maize and \\textit{mexicana}",
+             label = "anova_lat_clines",
+             type = "latex",
+             #display = c("f", "s", "s", "g", "g", "g", "g"),
+             digits = c(1, 1, 1, -2, -2, 2, -2),
+             latex.environments = NULL),
+      include.rownames = F,
+      file = lm_tex)
+
 
 p_symp_elev <- d_admix2 %>%
   filter(., symp_allo == "sympatric") %>%

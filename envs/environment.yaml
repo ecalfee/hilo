@@ -19,7 +19,7 @@ dependencies:
   - pysam =0.15.0
   - htslib =1.9
   - FastQC =0.11.6
-  - multiqc =1.7 
+  - multiqc =1.7
   - fastq-screen =0.14.0
   - bowtie2 =2.3.5
   - seqtk =1.3
@@ -43,6 +43,7 @@ dependencies:
   - r-quantreg =5.55
   - r-data.table =1.12.8
   - r-reader =1.0.6
+  - r-xtable =1.8_4
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
