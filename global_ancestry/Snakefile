@@ -20,7 +20,8 @@ rule thin_GL_4PCA:
         N = 100, # keep every 100th SNP
         first = 0, # first region
         last = 1, #len(regions_dict) - 1, # last region
-        dir_in = "variant_sites/results/" + prefix_all
+        #dir_in = "variant_sites/results/" + prefix_all
+        prefix_all = prefix_all
     resources:
         #time_min = lambda wildcards, attempt: attempt * 6 * 60,
         #mem = lambda wildcards, attempt: attempt * 4
@@ -31,20 +32,8 @@ rule thin_GL_4PCA:
     shadow:
         "minimal"
     shell:
-        """
-        zcat variant_sites/results/HILO_MAIZE55/region_0.beagle.gz | head -n 1 > {output.gl}
-        """
-        #zcat test.gz | head -n 1 | gzip > {output.gl}
-        #echo 'hi everyone!' | gzip > {output.gl}
-        #"zcat {params.dir_in}/region_{params.first}.beagle.gz | head -n 1 > {output.gl}"
-        #"thin_GL_4PCA.R"
-        # concatenate header from first file with every Nth SNP from each subsequent file
-        #"zcat {params.dir_in}/region_{params.first}.beagle.gz | head -n 1 | gzip > {output.gl}"
-        #for i in {{{params.first}..{params.last}}}
-            #do zcat {params.dir_in}/region_$i.beagle.gz | tail -n +2
-        #    do echo "$i"
-        #done
-        #done | awk -v N={params.N} 'NR % N == 0' | gzip >> {output.gl}
+        "./thin_GL_4PCA {params.N} {params.first} {params.last} {params.prefix_all}"
+
 
 ## test_thin_GL_4PCA: rule to test thinning of beagle GL files using just a small subset of genomic regions
 rule test_thin_GL_4PCA:
