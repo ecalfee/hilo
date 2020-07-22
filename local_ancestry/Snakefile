@@ -1,0 +1,42 @@
+## variant_sites/Snakefile: pipeline to call SNPs
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+
+## thin_AIMs: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high freq difference between them
+rule thin_AIMs:
+    input:
+        # input minor allele freq files for allopatric maize and mexicana
+        maize_maf = expand("variant_sites/results/popFreq/allopatric_maize/{REGION}.mafs.gz",
+        REGION=list(regions_dict.keys())),
+        mex_maf = expand("variant_sites/results/popFreq/allopatric_mexicana/{REGION}.mafs.gz",
+        REGION=list(regions_dict.keys())),
+        # variant sites too
+        sites = expand("variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
+        REGION=list(regions_dict.keys())),
+        # and recombination positions (in cM)
+        rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+        REGION=list(regions_dict.keys())),
+        # master list of all regions
+        regions = "data/refMaize/divide_5Mb/ALL_regions.list"
+    output:
+        # outputs 1 sites file for the whole genome and a corresponding recombination distance file
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        # difference in Morgans between positions (1st position on any chromosome = 0)
+        rdiff = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.rdiff"
+    params:
+        p = "med2",
+        prefix_all = prefix_all,
+        min_cM = 0.001, # minimum spacing
+        min_n_maize = 44, # i.e. 90% of individuals have data (44/55). 95% of SNPs have this much data for maize.
+        min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana. 
+    shadow:
+        "minimal"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 4
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "thin_sites_4HMM.R"
