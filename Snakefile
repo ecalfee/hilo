@@ -42,8 +42,8 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 
 # snakemake sub-workflows
-include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
+#include: "filtered_bams/Snakefile"
+#include: "variant_sites/Snakefile"
 include: "global_ancestry/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -74,7 +74,7 @@ rule all:
     params:
         p = "med2"
     resources:
-        time_min = 5,
+        time_min = 15,
         mem = 2
 
 
