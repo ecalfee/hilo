@@ -627,20 +627,18 @@ Job counts:
         1       run_PCAngsd
         1       thin_GL_4PCA
         7 # running 7.21.20 6:25pm
-# every Nth is not working:
-#zcat variant_sites/results/HILO_MAIZE55/region_0.beagle.gz | head -n 1 > {output.gl}
-#"""
-#zcat test.gz | head -n 1 | gzip > {output.gl}
-#echo 'hi everyone!' | gzip > {output.gl}
-#"zcat {params.dir_in}/region_{params.first}.beagle.gz | head -n 1 > {output.gl}"
-#"thin_GL_4PCA.R"
-# concatenate header from first file with every Nth SNP from each subsequent file
-#"zcat {params.dir_in}/region_{params.first}.beagle.gz | head -n 1 | gzip > {output.gl}"
-#for i in {{{params.first}..{params.last}}}
-    #do zcat {params.dir_in}/region_$i.beagle.gz | tail -n +2
-#    do echo "$i"
-#done
-#done | awk -v N={params.N} 'NR % N == 0' | gzip >> {output.gl}
+# every Nth is not working in Snakefile. made it's own script and rerunnig:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_NGSAdmix
+        1       plot_PCAngsd
+        1       results_NGSAdmix
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        7 # running 7.21.20 12:36am
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

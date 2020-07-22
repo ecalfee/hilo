@@ -53,15 +53,17 @@ p12 = d %>%
   xlab(paste0("PC1 (", round(PC_var_explained[1], 2), "%)")) +
   ylab(paste0("PC2 (", round(PC_var_explained[2], 2), "%)")) +
   theme_classic() +
-  geom_point(aes(color = group, 
-                 shape = group,
-                 size = log10(est_coverage)), 
-             alpha = 0.5) +
+  geom_point(aes(color = group,
+                 #size = log10(est_coverage), # checked lower coverage samples aren't outliers
+                 alpha = group,
+                 shape = group
+                 )) +
+  scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
   scale_color_manual(values = col_group_zea, labels = zea_group_labels) +
   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
-  scale_size_continuous(breaks = -2:3, labels = paste0(10^(-2:3), "x")) +
-  labs(color = "Zea", shape = "Zea", size = "Coverage")
-#p12
+  #scale_size_continuous(breaks = -2:1, range = c(.05, 7), labels = paste0(10^(-2:1), "x")) +
+  labs(color = "Zea", shape = "Zea", alpha = "Zea")
+p12
 ggsave(png_pca, 
        plot = p12, 
        device = "png", 
@@ -75,12 +77,11 @@ p34 = d %>%
   theme_classic() +
   geom_point(aes(color = group, 
                  shape = group,
-                 size = log10(est_coverage)), 
-             alpha = 0.5) +
+                 alpha = group)) +
+  scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
   scale_color_manual(values = col_group_zea, labels = zea_group_labels) +
   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
-  scale_size_continuous(breaks = -2:3, labels = paste0(10^(-2:3), "x")) +
-  labs(color = "Zea", shape = "Zea", size = "Coverage")
+  labs(color = "Zea", shape = "Zea", alpha = "Zea")
 #p34
 ggsave(png_pc34, 
        plot = p34, 
@@ -94,12 +95,11 @@ p56 = d %>%
   theme_classic() +
   geom_point(aes(color = group, 
                  shape = group,
-                 size = log10(est_coverage)), 
-             alpha = 0.5) +
+                 alpha = group)) +
+  scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
   scale_color_manual(values = col_group_zea, labels = zea_group_labels) +
   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
-  scale_size_continuous(breaks = -2:3, labels = paste0(10^(-2:3), "x")) +
-  labs(color = "Zea", shape = "Zea", size = "Coverage")
+  labs(color = "Zea", shape = "Zea", alpha = "Zea")
 p56
 ggsave(png_pc56, 
        plot = p56, 

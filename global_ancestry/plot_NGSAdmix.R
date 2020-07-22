@@ -45,7 +45,7 @@ p_structure <- d_admix2 %>%
 ggsave(png_structure, 
         plot = p_structure, 
         device = "png", 
-        width = 5, height = 3, units = "in",
+        width = 7.5, height = 4, units = "in",
         dpi = 300)
 
 lm_maize = filter(d_admix2, group == "sympatric_maize") %>%
