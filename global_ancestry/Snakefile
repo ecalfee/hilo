@@ -9,30 +9,21 @@ rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
         gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
         REGION=list(regions_dict.keys()))
-        #rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        #REGION=list(regions_dict.keys())),
-        #regions = "data/refMaize/divide_5Mb/ALL_regions.list"
     output: # thinned GL file for whole genome
-        #gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
-        gl = "test.beagle.gz"
+        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
     params:
         p = "med2",
         N = 100, # keep every 100th SNP
         first = 0, # first region
-        last = 1, #len(regions_dict) - 1, # last region
-        #dir_in = "variant_sites/results/" + prefix_all
+        last = len(regions_dict) - 1, # last region
         prefix_all = prefix_all
     resources:
-        #time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        #mem = lambda wildcards, attempt: attempt * 4
-        time_min = 5,
-        mem = 6
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
-    shadow:
-        "minimal"
     shell:
-        "./thin_GL_4PCA {params.N} {params.first} {params.last} {params.prefix_all}"
+        "./global_ancestry/thin_GL_4PCA.sh {params.N} {params.first} {params.last} {params.prefix_all}"
 
 
 ## test_thin_GL_4PCA: rule to test thinning of beagle GL files using just a small subset of genomic regions
