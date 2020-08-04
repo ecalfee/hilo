@@ -8,7 +8,7 @@ rule define_1cM_windows:
     input:
         rmap_ext
     output:
-        "variant_sites/results/map_pos_1cM_windows.txt
+        "variant_sites/results/map_pos_1cM_windows.txt"
     params:
         p = "med2"
     shadow:
@@ -57,7 +57,7 @@ rule make_bed_file_for_windows:
         expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM)
         #"ancestry_by_r/results/BED_1cM/{WINDOW}.bed"
     params:
-        p = "med2"
+        p = "med2",
         prefix_all = prefix_all
     shadow:
          "minimal"
@@ -112,13 +112,13 @@ rule make_bed_file_for_windows:
 # then sending lines into each window-named file based on their 1cM window label
 rule find_SNPs_in_window:
     input:
-        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
-        bed = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed"
+        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
+        bed = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
         genome = ref_chr
     output:
         "ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz"
     params:
-        p = "med2"
+        p = "med2",
         prefix_all = prefix_all
     shadow:
          "minimal"
@@ -155,12 +155,12 @@ rule find_SNPs_in_window:
 rule make_bootstrap_GL_file:
     input:
         gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        sample = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list"
+        sample = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
         expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
     output:
         "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz"
     params:
-        p = "med2"
+        p = "med2",
         prefix_all = prefix_all
     shadow:
          "minimal"
@@ -172,9 +172,9 @@ rule make_bootstrap_GL_file:
     shell:
         """
         (zcat {input.gl} | head -n 1;
-      	for w in $(cat {input.sample});
-        		do zcat results/GL_1cM/{params.prefix_all}/$w.beagle.gz | tail -n +2;
-    	done) | gzip > {output}
+        for w in $(cat {input.sample});
+            do zcat results/GL_1cM/{params.prefix_all}/$w.beagle.gz | tail -n +2;
+        done) | gzip > {output}
         """
 
 
