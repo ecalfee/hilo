@@ -31,7 +31,7 @@ with open("ancestry_by_r/results/map_pos_1cM_windows.txt", "r") as read_obj:
 ## sample_bootstrap_1cM: makes bootstrap (i.e. with replacement) samples of 1cM windows within recombination rate quintiles
 rule sample_bootstrap_1cM:
     input:
-        windows = "variant_sites/results/map_pos_1cM_windows.txt
+        windows = "variant_sites/results/map_pos_1cM_windows.txt"
     output:
         expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{b}.list",
         r = [1, 2, 3, 4, 5], b = list(range(0,101))) # 5 recombination rate quintiles, '0' for original sample and 1-100 bootstrap samples
@@ -116,7 +116,7 @@ rule find_SNPs_in_window:
         bed = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed"
         genome = ref_chr
     output:
-        "ancestry_by_r/results/GL_1cM/{params.prefix_all}/{WINDOW}.beagle.gz"
+        "ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz"
     params:
         p = "med2"
         prefix_all = prefix_all

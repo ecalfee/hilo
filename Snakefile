@@ -14,7 +14,6 @@ ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 # recombination map
 rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
 rmap_ext = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
-r_quintiles = [1, 2, 3, 4, 5]
 
 # all fastq/samples sequenced
 #prefix_bams = "April2020"
@@ -75,7 +74,11 @@ rule all:
         "filtered_bams/plots/p_seq_counts.png",
         expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
         expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
-        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys()))
+        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
+        #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
+        expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{b}.list",
+        r = [1, 2, 3, 4, 5], b = list(range(0,101))),
+        expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:
