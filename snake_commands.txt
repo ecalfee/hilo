@@ -657,7 +657,12 @@ Job counts:
 
 # HMMM... the cubic spline "hyman" extrapolates out to some negative recombination map distances (!).
 # I am calculating rpos based on linear approximation from the extended map, and saving old files in ls variant_sites/results/HILO_MAIZE55/splines_old/
-
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     calc_rmap_pos
+        427 # running 8.3.2020 10pm
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
