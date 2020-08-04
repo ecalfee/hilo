@@ -156,6 +156,7 @@ cd hilo
 hilo$ module load conda3
 hilo$ conda env update --name hilo-env --file envs/environment.yaml --prune
 hilo$ source activate hilo-env
+hilo$ snakemake -n all --profile slurm --conda-create-envs-only
 hilo$ snakemake all --profile slurm --conda-create-envs-only
 #(use -n above if you just want to see which environments will be created)
 hilo$ conda deactivate
@@ -639,6 +640,25 @@ Job counts:
         1       run_PCAngsd
         1       thin_GL_4PCA
         7 # running 7.21.20 12:36am
+# rerunning with slight adjustments to plots:
+hilo$ snakemake -n plot_PCAngsd plot_NGSAdmix --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       plot_NGSAdmix
+        1       plot_PCAngsd
+        2 # 7.22.20 10:15am
+# added latex table output (updated conda environment for r-xtable) and re-running again:
+hilo$ snakemake -n -f plot_PCAngsd plot_NGSAdmix --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       plot_NGSAdmix
+        1       plot_PCAngsd
+        2 # running 7.22.20 11:20am
+
+# HMMM... the cubic spline "hyman" extrapolates out to some negative recombination map distances (!).
+# I am calculating rpos based on linear approximation from the extended map, and saving old files in ls variant_sites/results/HILO_MAIZE55/splines_old/
+
+
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

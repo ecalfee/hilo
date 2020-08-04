@@ -63,7 +63,7 @@ p12 = d %>%
   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
   #scale_size_continuous(breaks = -2:1, range = c(.05, 7), labels = paste0(10^(-2:1), "x")) +
   labs(color = "Zea", shape = "Zea", alpha = "Zea")
-p12
+#p12
 ggsave(png_pca, 
        plot = p12, 
        device = "png", 
@@ -106,3 +106,78 @@ ggsave(png_pc56,
        device = "png", 
        width = 5.4, height = 3.5, units = "in",
        dpi = 200)
+
+# ------------------------------------------------------------------------------- #
+# some extra plots:
+# PCs colored by pop
+# p12_color <- d %>%
+#   arrange(., ELEVATION) %>%
+#   arrange(., !is.na(ELEVATION)) %>%
+#   mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
+#   ggplot(., aes(PC1, PC2)) + 
+#   xlab(paste0("PC1 (", round(PC_var_explained[1], 2), "%)")) +
+#   ylab(paste0("PC2 (", round(PC_var_explained[2], 2), "%)")) +
+#   theme_classic() +
+#   geom_point(aes(color = LOCALITY,
+#                  alpha = group,
+#                  shape = group
+#   )) +
+#   scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
+#   scale_color_viridis_d(direction = -1, option = "viridis") +
+#   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
+#   labs(color = "Location", shape = "Zea", alpha = "Zea") +
+#   theme(legend.box = "horizontal") 
+# 
+# ggsave("global_ancestry/plots/pca_colorbypop.png", 
+#          plot = p12_color, 
+#          device = "png", 
+#          width = 7.5, height = 6, units = "in",
+#          dpi = 200)
+# 
+# p34_color <- d %>%
+#   arrange(., ELEVATION) %>%
+#   arrange(., !is.na(ELEVATION)) %>%
+#   mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
+#   ggplot(., aes(PC3, PC4)) + 
+#   xlab(paste0("PC3 (", round(PC_var_explained[3], 2), "%)")) +
+#   ylab(paste0("PC4 (", round(PC_var_explained[4], 2), "%)")) +
+#   theme_classic() +
+#   geom_point(aes(color = LOCALITY,
+#                  alpha = group,
+#                  shape = group
+#   )) +
+#   scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
+#   scale_color_viridis_d(direction = -1, option = "viridis") +
+#   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
+#   labs(color = "Location", shape = "Zea", alpha = "Zea") +
+#   theme(legend.box = "horizontal") 
+# 
+# ggsave("global_ancestry/plots/pc34_colorbypop.png", 
+#        plot = p34_color, 
+#        device = "png", 
+#        width = 7.5, height = 6, units = "in",
+#        dpi = 200)
+# 
+# p56_color <- d %>%
+#   arrange(., ELEVATION) %>%
+#   arrange(., !is.na(ELEVATION)) %>%
+#   mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
+#   ggplot(., aes(PC5, PC6)) + 
+#   xlab(paste0("PC5 (", round(PC_var_explained[5], 2), "%)")) +
+#   ylab(paste0("PC6 (", round(PC_var_explained[6], 2), "%)")) +
+#   theme_classic() +
+#   geom_point(aes(color = LOCALITY,
+#                  alpha = group,
+#                  shape = group
+#   )) +
+#   scale_alpha_manual(values = alphas_group_zea, labels = zea_group_labels) +
+#   scale_color_viridis_d(direction = -1, option = "viridis") +
+#   scale_shape_manual(values = shape_group_zea, labels = zea_group_labels) +
+#   labs(color = "Location", shape = "Zea", alpha = "Zea") +
+#   theme(legend.box = "horizontal") 
+# 
+# ggsave("global_ancestry/plots/pc56_colorbypop.png", 
+#        plot = p56_color, 
+#        device = "png", 
+#        width = 7.5, height = 6, units = "in",
+#        dpi = 200)

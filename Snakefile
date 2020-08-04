@@ -12,6 +12,7 @@ ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 
 # recombination map
 rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
+rmap_ext = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
 
 # all fastq/samples sequenced
 #prefix_bams = "April2020"
@@ -43,7 +44,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 #include: "filtered_bams/Snakefile"
-#include: "variant_sites/Snakefile"
+include: "variant_sites/Snakefile"
 include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
 
@@ -51,8 +52,8 @@ include: "local_ancestry/Snakefile"
 rule all:
     input:
         # SNP set
-        #expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        #        REGION=list(regions_dict.keys())),
+        expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
+                REGION=list(regions_dict.keys())),
         # bam metrics files
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
