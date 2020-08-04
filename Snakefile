@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from csv import DictReader
 
 #configfile: "config.yaml"
 path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on the local machine
@@ -13,6 +14,7 @@ ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 # recombination map
 rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
 rmap_ext = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+r_quintiles = [1, 2, 3, 4, 5]
 
 # all fastq/samples sequenced
 #prefix_bams = "April2020"
@@ -44,9 +46,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 #include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
+#include: "variant_sites/Snakefile"
 include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:

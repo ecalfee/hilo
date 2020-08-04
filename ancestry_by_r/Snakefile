@@ -1,0 +1,154 @@
+## ancestry_by_r/Snakefile: pipeline to get global ancestry estimates by recombination quintile (and bootstrap results)
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+## define_1cM_windows: divides genome into 1cM windows
+rule define_1cM_windows:
+    input:
+        rmap_ext
+    output:
+        "variant_sites/results/map_pos_1cM_windows.txt
+    params:
+        p = "med2"
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "define_1cM_windows_from_map.R" # define_bootstrap_windows_from_map.R
+
+# store all windows
+windows_1cM = []
+with open("ancestry_by_r/results/map_pos_1cM_windows.txt", "r") as read_obj:
+    csv_dict_reader = DictReader(read_obj, delimiter = "\t")
+    for row in csv_dict_reader:
+        windows_1cM.append(row["window"])
+
+## sample_bootstrap_windows: makes bootstrap (i.e. with replacement) samples of windows within recombination rate quintiles
+rule sample_bootstrap_windows:
+    input:
+        rmap_ext
+    output:
+        # all the bootstrap files with lists of windows
+    params:
+        p = "med2"
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         #### NEW SCRIPT TO SAMPLE WINDOWS!
+
+## make_bed_files_for_windows: makes a separate bed file for each 1cM window
+rule make_bed_file_for_windows:
+    input:
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
+    output:
+        expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM)
+        #"ancestry_by_r/results/BED_1cM/{WINDOW}.bed"
+    params:
+        p = "med2"
+        prefix_all = prefix_all
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+        time_min = 5,
+        mem = 2
+    script:
+        "make_bed_4_windows.R"
+        #awk '$4=="W15" {print $0}' genes_r_ancestry/results/map_pos_1cM_windows.txt"
+        # """
+        # zcat {input.gl} | \
+        # awk '\{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0\}' | tail -n +2 | \
+        # bedtools map -a stdin -b {input.windows} -c 4 -o collapse -sorted \
+        # -g {input.genome} | cut -f4- | \
+        # awk '\{print > "ancestry_by_r/results/GL_1cM/{params.prefix_all}/"$NF".txt"\}'
+        # """
+
+
+
+#genes_r_ancestry/results$ for i in $(cut -f4 map_pos_1cM_windows.txt | tail -n +2); do grep -w $i map_pos_1cM_windows.txt > windows_1cM/$i.bed; done
+#e.g. results/windows_1cM/W10.bed
+# rule sample_bootstrap_windows:
+#     input:
+#         gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+#         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
+#         genome = ref_chr
+#     output:
+#         "ancestry_by_r/results/GL_1cM/{params.prefix_all}/"${NF}".txt"
+#     params:
+#         p = "med2"
+#         prefix_all = prefix_all
+#     shadow:
+#          "minimal"
+#     conda:
+#          "../envs/environment.yaml"
+#     resources:
+#         time_min = lambda wildcards, attempt: attempt * 60,
+#         mem = lambda wildcards, attempt: attempt * 8
+#     shell:
+#         """
+#         zcat {input.gl} | \
+#         awk '\{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0\}' | tail -n +2 | \
+#         bedtools map -a stdin -b {input.windows} -c 4 -o collapse -sorted \
+#         -g {input.genome} | cut -f4- | \
+#         awk '\{print > "ancestry_by_r/results/GL_1cM/{params.prefix_all}/"$NF".txt"\}'
+#         """
+
+## find_SNPs_in_window: creates a GL file for each 1cM window using bedtools
+# To accomplish this, I use an awk split file; first mapping the window label onto the GL line,
+# then sending lines into each window-named file based on their 1cM window label
+rule find_SNPs_in_window:
+    input:
+        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+        bed = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed"
+        genome = ref_chr
+    output:
+        "ancestry_by_r/results/GL_1cM/{params.prefix_all}/{WINDOW}.beagle.gz"
+    params:
+        p = "med2"
+        prefix_all = prefix_all
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 20,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        # get header and then append all the SNPs found within the window specified by the bed file
+        """
+        zcat {input.gl} | head -n 1 | gzip > {output}
+        zcat {input.gl} | \
+        awk '\{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0\}' | tail -n +2 | \
+        bedtools intersect -a stdin -b {input.bed} -wa -sorted -g {input.genome} | \
+        cut -f4- | gzip >> {output}
+        """
+
+
+
+#genes_r_ancestry$ zcat ../global_ancestry/results/thinnedSNPs/pass2_alloMAIZE_PalmarChico/prunedBy100/whole_genome.beagle.gz | \
+#awk '{split($1,a,"_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}' | tail -n +2 | \
+#bedtools map -a stdin -b results/map_pos_1cM_windows.txt -c 4 -o collapse -sorted \
+#-g ../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | cut -f4- | \
+#awk '{print > "results/GL_1cM/pass2_alloMAIZE_PalmarChico/"$NF".txt"}'
+# After I will gzip and remove that last field (the window name)
+#hilo/genes_r_ancestry$ for i in $(cut -f4 results/map_pos_1cM_windows.txt | tail -n +2); \
+#do awk '{NF--; print $0}' results/GL_1cM/pass2_alloMAIZE_PalmarChico/$i.txt | \
+#gzip > results/GL_1cM/pass2_alloMAIZE_PalmarChico/$i.beagle.gz; done
+# note: one window must not have any SNPs so that file is empty: results/GL_1cM/pass2_alloMAIZE_PalmarChico/W382.beagle.gz:
+#awk: fatal: cannot open file `results/GL_1cM/pass2_alloMAIZE_PalmarChico/W382.txt' for reading (No such file or directory)
+
+## make_bootstrap_GL_file: creates a new beagle GL file for a bootstrap sample by including SNPs within the sampled windows (with replacement)
+
+
+## run_boostrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
