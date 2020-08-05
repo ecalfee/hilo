@@ -52,9 +52,12 @@ map_pos_1cM <- map_pos_1cM_v0 %>%
   mutate(bin_r5 = cut(cM_Mb,
                       breaks = breaks_5r_1cM,
                       right = T,
-                      include.lowest = T)) %>%
-  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "pos_cM"))
+                      include.lowest = T),
+         quintile_r5 = as.numeric(factor(bin_r5))) %>% # label quintiles 1-5
+  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "quintile_r5", "pos_cM"))
 
+# print out quintiles
+print(with(map_pos_1cM, unique(paste(quintile_r5, bin_r5, sep = "_"))))
 
 # print a list of all 1cM windows and their recombination rate quintile
 write.table(map_pos_1cM, file_out,

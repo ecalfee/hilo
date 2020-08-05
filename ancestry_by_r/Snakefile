@@ -74,6 +74,8 @@ rule find_SNPs_in_window:
     params:
         p = "med2",
         prefix_all = prefix_all
+    shadow:
+         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -81,7 +83,7 @@ rule find_SNPs_in_window:
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         # get header and then append all the SNPs found within the window specified by the bed file
-        "./ancestry_by_r/find_SNPs_in_window.sh {input.gl} {input.bed} {input.genome} {output}"
+        "./ancestry_by_r/find_SNPs_in_window {input.gl} {input.bed} {input.genome} {output}"
         # zcat {input.gl} | head -n 1 | gzip > {output}
         # zcat {input.gl} | \
         # awk '{{split($1, a, "_"); print a[1]"\\t"a[2]-1"\\t"a[2]"\\t"$0}}' | tail -n +2 | \
@@ -162,3 +164,24 @@ rule label_k_anc:
         "define_K_ancestries.R"
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
+rule plot_bootstrap_anc_by_r:
+    input:
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        colors = "colors.R",
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
+        r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
+    output:
+        png_symp = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png"
+    params:
+        p = "med2",
+        k = 2,
+        prefix_all = prefix_all
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "plot_bootstrap_NGSAdmix.R"

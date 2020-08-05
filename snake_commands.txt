@@ -704,7 +704,22 @@ Job counts:
                 505     make_bootstrap_GL_file
                 505     run_boostrap_NGSAdmix
                 1       sample_bootstrap_1cM
-                3036 # running 8.5.2020 10am
+                3036 # running 8.5.2020 10am. only ran through find_SNPs_in_window
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+      count   jobs
+      1       all
+      505     label_k_anc
+      505     make_bootstrap_GL_file
+      505     run_boostrap_NGSAdmix
+      1       sample_bootstrap_1cM
+      1517 # fixed typo in path of sample_bootstrap_1cM. rerunning.
+
+# ok problem is that the bin_r5 is not a factor with defined levels.
+# so I added a column quintile_r5 that has values 1-5.
+# I will force rerun define_1cM_windows and make_bed_file_for_windows
+# and use touch to not have to redo find_SNPs_in_window, which would be unaffected
+
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:
