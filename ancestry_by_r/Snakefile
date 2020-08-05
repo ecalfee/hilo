@@ -83,13 +83,12 @@ rule find_SNPs_in_window:
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         # get header and then append all the SNPs found within the window specified by the bed file
-        """
-        zcat {input.gl} | head -n 1 | gzip > {output}
-        zcat {input.gl} | \
-        awk '{{split($1, a, "_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}}' | tail -n +2 | \
-        bedtools intersect -a stdin -b {input.bed} -wa -sorted -g {input.genome} | \
-        cut -f4- | gzip >> {output}
-        """
+        "./ancestry_by_r/find_SNPs_in_window {input.gl} {input.bed} {input.genome} {output}"
+        # zcat {input.gl} | head -n 1 | gzip > {output}
+        # zcat {input.gl} | \
+        # awk '{{split($1, a, "_"); print a[1]"\\t"a[2]-1"\\t"a[2]"\\t"$0}}' | tail -n +2 | \
+        # bedtools intersect -a stdin -b {input.bed} -wa -sorted -g {input.genome} | \
+        # cut -f4- | gzip >> {output}
 
 ## make_bootstrap_GL_file: creates a new beagle GL file for a bootstrap sample by including SNPs within the sampled windows (with replacement)
 rule make_bootstrap_GL_file:
