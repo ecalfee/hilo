@@ -15,6 +15,15 @@ ref_chr = path_hilo + "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
 rmap_ext = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
 
+# 1cM genomic windows for whole genome (1520 windows)
+windows_1cM = []
+#with open("ancestry_by_r/results/map_pos_1cM_windows.txt", "r") as read_obj:
+#    csv_dict_reader = DictReader(read_obj, delimiter = "\t")
+#    for row in csv_dict_reader:
+#        windows_1cM.append(row["window"])
+for i in range(1, 1521):
+    windows_1cM.append("W" + str(i))
+
 # all fastq/samples sequenced
 #prefix_bams = "April2020"
 #prefix_bams = "TEST2"
@@ -79,7 +88,9 @@ rule all:
         #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
         #expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM),
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz",
+        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz",
+        #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0,101)))
     params:
         p = "med2"
