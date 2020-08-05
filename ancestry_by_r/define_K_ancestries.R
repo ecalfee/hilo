@@ -24,18 +24,20 @@ colnames(admix) <- paste0("anc", 1:K) #c("anc1", "anc2")
 d <- bind_cols(meta, admix)  %>%
   arrange(., popN) %>%
   arrange(., zea) %>%
-  arrange(., symp_allo)
+  arrange(., symp_allo) %>%
+  tidyr::pivot_longer(data = ., cols = colnames(admix), # separate out the K ancestries to each have their own row
+                      names_to = "ancestry", values_to = "p")
 
+# for each of k unlabelled ancestries, find the zea subspecies that is the best match
+which_anc <- d %>%
+  filter(., symp_allo == "allopatric") %>% # only include allopatric samples
+  group_by(zea, ancestry) %>%  
+  summarise(p = mean(p)) %>% # for each zea subspecies, what is the mean proportion p of each ancestry?
+  group_by(ancestry) %>%
+  summarise(ancestry_label = zea[which.max(p)]) # which subspecies has the most of each ancestry? assign that zea as the ancestry label
 
-which_anc <- data.frame(ancestry = colnames(admix),
-                   ancestry_label = sapply(colnames(admix), function(x) # for each of K ancestries,
-                       names(which.max(tapply(d$x[d$symp_allo == "allopatric"],
-                                              d$zea[d$symp_allo == "allopatric"],
-                                              mean)))), # which zea allopatric population, on avg, has the highest % of that ancestry?
-                   stringsAsFactors = F)
 
 d %>%
-  tidyr::gather(., "ancestry", "p", colnames(admix)) %>%
   left_join(., which_anc, by = "ancestry") %>%
   dplyr::select(-ancestry) %>%
   tidyr::spread(., ancestry_label, p) %>%

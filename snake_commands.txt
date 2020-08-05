@@ -688,7 +688,23 @@ Job counts:
         505     run_boostrap_NGSAdmix
         1       sample_bootstrap_1cM
         3039 # running 8.4.2020 11pm
-# oops forgot double brackets in R scripts to call snakemake variables. fixed and re-trying:
+# oops forgot double brackets in R scripts to call snakemake variables. fixed and re-trying.
+# awk to find SNPs in windows still not working. added it's own bash script for awk and testing just this piece:
+hilo$ snakemake ancestry_by_r/results/GL_1cM/HILO_MAIZE55/W1.beagle.gz --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       find_SNPs_in_window
+        1 # finally ran through without errors. Now running all pieces:
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1519    find_SNPs_in_window
+                505     label_k_anc
+                505     make_bootstrap_GL_file
+                505     run_boostrap_NGSAdmix
+                1       sample_bootstrap_1cM
+                3036 # running 8.5.2020 10am
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:
