@@ -719,6 +719,13 @@ Job counts:
 # so I added a column quintile_r5 that has values 1-5.
 # I will force rerun define_1cM_windows and make_bed_file_for_windows
 # and use touch to not have to redo find_SNPs_in_window, which would be unaffected
+hilo$ snakemake -f define_1cM_windows make_bed_file_for_windows --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       define_1cM_windows
+        1       make_bed_file_for_windows
+        2 # COMPLETED 8.5.2020
+hilo$ touch ancestry_by_r/results/GL_1cM/HILO_MAIZE55/W*.beagle.gz
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

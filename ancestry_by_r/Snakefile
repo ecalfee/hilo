@@ -167,11 +167,11 @@ rule label_k_anc:
 rule plot_bootstrap_anc_by_r:
     input:
         "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
-        "colors.R", 
+        "colors.R",
         expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
     output:
-        png_symp = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png"
+        png_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
     params:
         p = "med2",
         k = 2,
