@@ -86,7 +86,7 @@ rule find_SNPs_in_window:
         """
         zcat {input.gl} | head -n 1 | gzip > {output}
         zcat {input.gl} | \
-        awk '{{split($1, a, "_"); print a[1] "\t" a[2]-1 "\t" a[2] "\t" $0}}' | tail -n +2 | \
+        awk '{{split($1, a, "_"); print a[1]"\t"a[2]-1"\t"a[2]"\t"$0}}' | tail -n +2 | \
         bedtools intersect -a stdin -b {input.bed} -wa -sorted -g {input.genome} | \
         cut -f4- | gzip >> {output}
         """
