@@ -74,8 +74,6 @@ rule find_SNPs_in_window:
     params:
         p = "med2",
         prefix_all = prefix_all
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -83,7 +81,7 @@ rule find_SNPs_in_window:
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         # get header and then append all the SNPs found within the window specified by the bed file
-        "./ancestry_by_r/find_SNPs_in_window {input.gl} {input.bed} {input.genome} {output}"
+        "./ancestry_by_r/find_SNPs_in_window.sh {input.gl} {input.bed} {input.genome} {output}"
         # zcat {input.gl} | head -n 1 | gzip > {output}
         # zcat {input.gl} | \
         # awk '{{split($1, a, "_"); print a[1]"\\t"a[2]-1"\\t"a[2]"\\t"$0}}' | tail -n +2 | \
