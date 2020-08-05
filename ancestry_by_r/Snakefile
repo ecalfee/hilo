@@ -6,9 +6,9 @@ workdir: path_hilo
 ## define_1cM_windows: divides genome into 1cM windows
 rule define_1cM_windows:
     input:
-        rmap_ext
+        rmap = rmap_ext
     output:
-        "variant_sites/results/map_pos_1cM_windows.txt"
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
     params:
         p = "med2"
     shadow:

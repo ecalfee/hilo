@@ -662,7 +662,19 @@ Job counts:
         count   jobs
         1       all
         426     calc_rmap_pos
-        427 # running 8.3.2020 10pm
+        427 # running 8.3.2020 10pm. COMPLETED.
+
+# made pipeline to do 100 bootstraps of global ancestry ~ recombination quintile (1cM window)
+snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       define_1cM_windows
+        1520    find_SNPs_in_window
+        1       make_bed_file_for_windows
+        505     make_bootstrap_GL_file
+        1       sample_bootstrap_1cM
+        2029 # running 8.4.2020 5pm 
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
