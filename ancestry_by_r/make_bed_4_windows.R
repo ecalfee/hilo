@@ -8,7 +8,8 @@ library(tidyr)
 windows_file = snakemake@input[["windows"]]
 # windows = "results/map_pos_1cM_windows.txt"
 
-out_dir = "results/BED_1cM/"
+out_dir = "ancestry_by_r/results/BED_1cM/"
+# out_dir = "results/BED_1cM/"
 
 windows = read.table(windows_file, sep = "\t", header = T, stringsAsFactors = F)
 
