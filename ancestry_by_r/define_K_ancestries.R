@@ -7,10 +7,10 @@ library(dplyr)
 library(tidyr)
 
 # load variables from Snakefile
-K = snakemake@params["k"]
+K = snakemake@params[["k"]]
 # K = 2
-admix_file = snakemake@input["admix"]
-file_out = snakemake@output["anc"]
+admix_file = snakemake@input[["admix"]]
+file_out = snakemake@output[["anc"]]
 load(snakemake@input[["meta"]]) # sample metadata - samples are in the same order as NGSAdmix results
 # load("samples/HILO_MAIZE55_meta.RData")
 
@@ -29,12 +29,12 @@ d <- bind_cols(meta, admix)  %>%
 
 which_anc <- data.frame(ancestry = colnames(admix),
                    ancestry_label = sapply(colnames(admix), function(x) # for each of K ancestries,
-                       names(which.max(tapply(d$x[d$symp_allo == "allopatric"], 
-                                              d$zea[d$symp_allo == "allopatric"], 
+                       names(which.max(tapply(d$x[d$symp_allo == "allopatric"],
+                                              d$zea[d$symp_allo == "allopatric"],
                                               mean)))), # which zea allopatric population, on avg, has the highest % of that ancestry?
                    stringsAsFactors = F)
 
-d %>% 
+d %>%
   tidyr::gather(., "ancestry", "p", colnames(admix)) %>%
   left_join(., which_anc, by = "ancestry") %>%
   dplyr::select(-ancestry) %>%

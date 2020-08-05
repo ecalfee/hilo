@@ -3,9 +3,9 @@ library(dplyr)
 library(tidyr)
 
 # load variables from Snakefile
-file_out = snakemake@output["windows"]
+file_out = snakemake@output[["windows"]]
 # file_out = "results/map_pos_1cM_windows.txt"
-rmap_file = snakemake@input["rmap"]
+rmap_file = snakemake@input[["rmap"]]
 # rmap_file = "../data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
 
 # load the extended map (goes to ends of chr's)

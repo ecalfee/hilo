@@ -674,8 +674,21 @@ Job counts:
         1       make_bed_file_for_windows
         505     make_bootstrap_GL_file
         1       sample_bootstrap_1cM
-        2029 # running 8.4.2020 5pm 
+        2029 # running 8.4.2020 5pm. Did not work b/c it's circular to read file to get the number of 1cM windows -- have to provide that separately
+        hilo$ snakemake -n all --quiet --profile slurm
 
+Job counts:
+        count   jobs
+        1       all
+        1       define_1cM_windows
+        1520    find_SNPs_in_window
+        505     label_k_anc
+        1       make_bed_file_for_windows
+        505     make_bootstrap_GL_file
+        505     run_boostrap_NGSAdmix
+        1       sample_bootstrap_1cM
+        3039 # running 8.4.2020 11pm
+# oops forgot double brackets in R scripts to call snakemake variables. fixed and re-trying:
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

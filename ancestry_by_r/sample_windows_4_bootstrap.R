@@ -3,11 +3,11 @@ library(dplyr)
 library(tidyr)
 
 # load variables from Snakefile
-windows = snakemake@input["windows"]
+windows = snakemake@input[["windows"]]
 # windows = "results/map_pos_1cM_windows.txt"
-prefix_all = snakemake@params["prefix_all"]
+prefix_all = snakemake@params[["prefix_all"]]
 # prefix_all = "HILO_MAIZE55"
-n = as.integer(snakemake@params["n"]) # number of bootstraps
+n = as.integer(snakemake@params[["n"]]) # number of bootstraps
 # n = 100
 
 map_pos_1cM <- read.table(windows, header = T, sep = "\t", stringsAsFactors = F)
