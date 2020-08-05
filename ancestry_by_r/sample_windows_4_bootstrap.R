@@ -23,7 +23,7 @@ for (r in 1:5){ # 5 recombination rate quintiles
     # (same size = same # windows as original data
     # but windows are sampled w/ replacement)
     write.table(x = sample(x = r_windows,
-                         size = length(r_windows_incl),
+                         size = length(r_windows),
                          replace = T),
                 file = paste0("ancestry_by_r/results/bootstrap_1cM/", prefix_all, "/r5_recomb", r, "/boot", b, ".list"),
                 quote = F, col.names = F, row.names = F, sep = "\t")

@@ -114,7 +114,7 @@ rule make_bootstrap_GL_file:
         """
         (zcat {params.gl} | head -n 1;
         for w in $(cat {params.sample});
-            do zcat results/GL_1cM/{params.prefix_all}/$w.beagle.gz | tail -n +2;
+            do zcat ancestry_by_r/results/GL_1cM/{params.prefix_all}/$w.beagle.gz | tail -n +2;
         done) | gzip > {output}
         """
 
