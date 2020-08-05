@@ -111,12 +111,7 @@ rule make_bootstrap_GL_file:
         time_min = lambda wildcards, attempt: attempt * 20,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
-        """
-        (zcat {params.gl} | head -n 1;
-        for w in $(cat {params.sample});
-            do zcat ancestry_by_r/results/GL_1cM/{params.prefix_all}/$w.beagle.gz | tail -n +2;
-        done) | gzip > {output}
-        """
+        "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {params.prefix_all} {output}"
 
 ## run_boostrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
 rule run_boostrap_NGSAdmix:

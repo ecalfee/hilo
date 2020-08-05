@@ -726,7 +726,15 @@ Job counts:
         1       make_bed_file_for_windows
         2 # COMPLETED 8.5.2020
 hilo$ touch ancestry_by_r/results/GL_1cM/HILO_MAIZE55/W*.beagle.gz
-
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        505     label_k_anc
+        505     make_bootstrap_GL_file
+        505     run_boostrap_NGSAdmix
+        1       sample_bootstrap_1cM
+        1517 # RUNNING 8.5.2020
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:
