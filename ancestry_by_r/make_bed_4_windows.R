@@ -16,5 +16,5 @@ windows = read.table(windows_file, sep = "\t", header = T, stringsAsFactors = F)
 for (w in windows$window){
   filter(windows, window == w) %>%
     write.table(., file = paste0(out_dir, w, ".bed"),
-                sep = "\t", col.names = T, row.names = F, quote = T)
+                sep = "\t", col.names = T, row.names = F, quote = F)
 }
