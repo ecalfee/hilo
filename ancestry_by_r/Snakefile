@@ -32,8 +32,6 @@ rule sample_bootstrap_1cM:
         p = "med2",
         n = 100, # 100 bootstraps
         prefix_all = prefix_all
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -51,8 +49,6 @@ rule make_bed_file_for_windows:
     params:
         p = "med2",
         prefix_all = prefix_all
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -74,8 +70,6 @@ rule find_SNPs_in_window:
     params:
         p = "med2",
         prefix_all = prefix_all
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -83,7 +77,7 @@ rule find_SNPs_in_window:
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         # get header and then append all the SNPs found within the window specified by the bed file
-        "./ancestry_by_r/find_SNPs_in_window {input.gl} {input.bed} {input.genome} {output}"
+        "./ancestry_by_r/find_SNPs_in_window.sh {input.gl} {input.bed} {input.genome} {output}"
         # zcat {input.gl} | head -n 1 | gzip > {output}
         # zcat {input.gl} | \
         # awk '{{split($1, a, "_"); print a[1]"\\t"a[2]-1"\\t"a[2]"\\t"$0}}' | tail -n +2 | \
@@ -103,8 +97,6 @@ rule make_bootstrap_GL_file:
         prefix_all = prefix_all,
         gl = lambda wildcards, input: input[0],
         sample = lambda wildcards, input: input[1]
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -148,8 +140,6 @@ rule label_k_anc:
     params:
         p = "med2",
         k = 2
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -173,8 +163,6 @@ rule plot_bootstrap_anc_by_r:
         prefix_all = prefix_all,
         meta = "samples/HILO_MAIZE55_meta.RData",
         colors = "colors.R"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
