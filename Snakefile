@@ -84,14 +84,19 @@ rule all:
         expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
         expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
         expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
+        # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
         #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
         #expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM),
         #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
-        r = [1, 2, 3, 4, 5], BOOT = list(range(0,101)))
+        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
+        #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
+        "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
+        "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
+        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
+        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
     params:
         p = "med2"
     resources:

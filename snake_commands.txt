@@ -736,6 +736,26 @@ Job counts:
         1       sample_bootstrap_1cM
         1517 # RUNNING 8.5.2020
 
+# NOTE: don't use any kind of shadow when running a bash script through 'shell' (or put script in as a parameter..)
+# In general I don't need 'shadow' unless there's lots of reading and writing.
+hilo$ snakemake -n all --quiet --profile slurm                                    Job counts:
+        count   jobs
+        1       all
+        505     label_k_anc
+        504     make_bootstrap_GL_file
+        505     run_boostrap_NGSAdmix
+        1515 # RUNNING 8.5.2020 6pm. hmm didn't work. debugged make_bootstrap_GL_file, label_k_anc and run_bootstrap_NGSAdmix one at a time with 1 file each
+
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+      count   jobs
+      1       all
+      504     label_k_anc
+      504     run_bootstrap_NGSAdmix
+      1009 # running 8.6.2020 11am
+
+
+
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:
 # RUNNING (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
