@@ -222,3 +222,4 @@ table(diff(vs$rpos) < 0 & diff(vs$chr) == 0)
 filter(vs, c(diff(rpos) < 0 & diff(chr) == 0, F)) %>% View()
 
 
+
