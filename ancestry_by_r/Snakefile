@@ -105,8 +105,8 @@ rule make_bootstrap_GL_file:
     shell:
         "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {params.prefix_all} {output}"
 
-## run_boostrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
-rule run_boostrap_NGSAdmix:
+## run_bootstrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
+rule run_bootstrap_NGSAdmix:
     input:
         gl = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz"
     output:
@@ -120,21 +120,22 @@ rule run_boostrap_NGSAdmix:
     conda:
          "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
+        time_min = lambda wildcards, attempt: attempt * 30,
+        mem = lambda wildcards, attempt: attempt * 4
     threads:
-        2
+        1
     shell:
         """
         NGSadmix -likes {input.gl} \
         -K {params.k} -P {threads} \
-        -o "results/bootstrap_1cM/{params.prefix_all}/r5_recomb{wildcards.r}/K{params.k}/boot{wildcards.BOOT}"
+        -o "ancestry_by_r/results/bootstrap_1cM/{params.prefix_all}/r5_recomb{wildcards.r}/K{params.k}/boot{wildcards.BOOT}"
         """
 
 ## label_k_anc: defines which of K ancestries is 'mexicana' based on allopatric reference panels
 rule label_k_anc:
     input:
-        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.qopt"
+        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.qopt",
+        meta = "samples/HILO_MAIZE55_meta.RData"
     output:
         anc = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc"
     params:
@@ -146,7 +147,7 @@ rule label_k_anc:
         time_min = 5,
         mem = 2
     script:
-        "define_K_ancestries.R"
+        "label_k_ancestries.R"
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
