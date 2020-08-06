@@ -65,7 +65,7 @@ anc_boot_mean <- anc_boot %>%
 
 
 # group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
-anc_group_mean <- anc_boot_mean %>%
+anc_group_estimate <- anc_boot_mean %>%
   filter(bootstrap == 0) %>%
   gather(., key = "ancestry", value = "p",
          paste(ancestries[1:K], "ancestry", sep = "_"))
@@ -83,7 +83,7 @@ anc_boot_perc <- anc_boot_mean %>%
             mean_boot = mean(p))
 
 # calculate basic bootstrap (i.e. 'pivot') confidence intervals together (to plot later as range)
-anc_group_confidence_intervals <- anc_group_mean %>%
+anc_group_confidence_intervals <- anc_group_estimate %>%
   left_join(., anc_boot_perc, by = c("ancestry", "group", "r5_bin")) %>%
   mutate(low = 2*p - high_boot, # p is the estimate from the original sample
          high = 2*p - low_boot)
@@ -124,7 +124,7 @@ ggsave(file = png_symp,
 
 
 # mexicana ancestry for K=2 in sympatric and allopatric maize/mex
-p_k2_symp_allo <- anc_group_estimate %>%
+p_k2_symp_allo <- anc_group_confidence_intervals %>%
   filter(ancestry == "mexicana_ancestry") %>%
   ggplot(aes(x = r5_bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry

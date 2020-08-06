@@ -175,4 +175,4 @@ rule plot_bootstrap_anc_by_r:
          time_min = 15,
          mem = 2
     script:
-         "plot_bootstrap_NGSAdmix.R"
+         "plot_bootstrap_NGSadmix.R"
