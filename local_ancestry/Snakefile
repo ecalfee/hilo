@@ -5,7 +5,7 @@ workdir: path_hilo
 
 
 ## thin_sites_4HMM: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high freq difference between them
-rule thin_AIMs:
+rule thin_sites_4HMM:
     input:
         # input minor allele freq files for allopatric maize and mexicana
         maize_maf = expand("variant_sites/results/popFreq/allopatric_maize/{REGION}.mafs.gz",
