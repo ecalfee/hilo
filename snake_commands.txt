@@ -760,7 +760,7 @@ Job counts:
         1       plot_NGSAdmix
         1       plot_PCAngsd
         1       plot_bootstrap_anc_by_r
-        4 # RUNNING 8.6.2020 4pm
+        4 # RUNNING 8.6.2020 4pm. COMPLETED ALL PLOTS
 
 
 

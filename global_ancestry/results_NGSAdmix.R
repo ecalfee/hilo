@@ -54,11 +54,12 @@ alphasByPop = d_admix2 %>%
             n_global_ancestry = n(),
             n_local_ancestry = sum(est_coverage >= 0.5)) # number included individuals per group
 
+options(scipen=999) # don't use scientific notation when printing alphas
 # write file with mean population ancestry (for prior in ancestry_hmm)
-write.table(format(alphasByPop, scientific = F),  # write table so I can pull population global ancestry values for ancestry_hmm
+write.table(alphasByPop,  # write table so I can pull population global ancestry values for ancestry_hmm
             file.path(alphas_out),
             col.names = T, row.names = F, quote = F, sep = "\t")
-
+options(scipen=0)
 # also save estimated admixture proportions for individuals
 save(list = c("d_admix2"), file = ind_out)
 
