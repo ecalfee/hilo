@@ -96,7 +96,9 @@ rule all:
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
-        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        # local ancestry inference
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites"
     params:
         p = "med2"
     resources:

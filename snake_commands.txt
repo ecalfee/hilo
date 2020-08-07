@@ -761,6 +761,12 @@ Job counts:
         1       plot_PCAngsd
         1       plot_bootstrap_anc_by_r
         4 # RUNNING 8.6.2020 4pm. COMPLETED ALL PLOTS
+# rerunning population alphas output from ngsadmix to use as input for ancestry_hmm (admixture proportion prior)
+hilo$ snakemake -f global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_symp_pop.txt --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       results_NGSAdmix
+        1 # RUNNING 8.6.2020 5pm
 
 
 
