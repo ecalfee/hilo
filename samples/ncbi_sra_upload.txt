@@ -1,0 +1,46 @@
+# upload sample bio attributes file
+samples/bio_attributes_ncbi_sra.txt
+# upload fastq metadata file
+samples/sra_metadata_information.txt
+# save list of links/paths
+hilo$ parallel --jobs 1 'echo $(readlink {1}) data/ncbi_sra_upload/{2}' :::: samples/farm_fastq_paths_4_ncbi.txt ::::+ samples/ncbi_fastq_paths_4_ncbi.txt > samples/ncbi_farm_symbolic_links.txt
+# make symlinks for all files to upload in one directory
+hilo$ parallel --jobs 1 'ln -s $(readlink {1}) data/ncbi_sra_upload/{2}' :::: samples/farm_fastq_paths_4_ncbi.txt ::::+ samples/ncbi_fastq_paths_4_ncbi.txt
+# use aspera to upload fastq files to ncbi my_ncbi_directory/zea_fastq/
+# first I logged into farm using ssh -p 2022
+# I started a new screen session so I can't lose the connection
+screen -S ncbi
+# TRY AGAIN WITH ASPERA
+ecalfee@c11-42:~/hilo$ screen -r 21852.ncbi
+# first, load aspera
+~/hilo/data/ncbi_sra_upload$ module load aspera-connect
+# download key aspera.connect from ncbi sra website and follow instructions for upload:
+~/hilo/data/ncbi_sra_upload$ ascp -i /home/ecalfee/hilo/aspera.connect -QT -l100m -k1 -d data/ncbi_sra_upload subasp@upload.ncbi.nlm.nih.gov:uploads/erincalfee_gmail.com_e0BNHQbj
+[detached from 21852.ncbi]
+
+
+
+
+# 1st TRY (WITH FTP) - PROBLEMS:
+# then I navigated to hilo/data/ncbi_sra_upload on farm.
+# then I followed the directions from sra upload to ftp into ncbi ftp-private.ncbi.nlm.nih.gov
+# I made a new directory on my ncbi that is named zea_fastq and I navigated into that directory
+# then I started my file transfer:
+ftp> put *.fq.gz
+# and detached my screen for the transfer to happen CTRL+A+D
+[detached from 21852.ncbi]
+
+(wd ecalfee@c11-42:~/hilo/data/ncbi_sra_upload$)
+# logged into ftp
+230 User subftp logged in
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> cd uploads/erincalfee_gmail.com_xeHknmvz
+250 CWD command successful
+ftp> cd zea
+550 zea: No such file or directory
+ftp> cd zea_fastq
+250 CWD command successful
+ftp> put *.fq.gz
+local: HILO101_L003_1.fq.gz remote: HILO101_L003_1.fq.gz
+421 Service not available, remote server has closed connection
