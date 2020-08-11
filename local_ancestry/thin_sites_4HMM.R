@@ -34,11 +34,6 @@ regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
   data.table::setnames(., c("chr", "start", "end", "region_n", "txt_file"))
 
-<<<<<<< HEAD
-=======
-#print(regions)
->>>>>>> 1ccec06eef065c379a427dde73dd638e7d7b25c8
-
 # for each region, takes in a last chr and cM value, and the chromosome and rpos file for a region
 # and a minimum cM spacing between thinned sites
 # to get a vector of T/F to keep (F = discard) a site
