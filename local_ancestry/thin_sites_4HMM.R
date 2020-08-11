@@ -17,7 +17,11 @@ rpos_out = snakemake@output[["rpos"]]
 counts_out = snakemake@output[["counts"]]
 
 # # to test:
+<<<<<<< HEAD
 #setwd("~/Documents/gitErin/hilo")
+=======
+# setwd("~/Documents/gitErin/hilo")
+>>>>>>> 1ccec06eef065c379a427dde73dd638e7d7b25c8
 #print(getwd())
 #prefix_all = "HILO_MAIZE55"
 #min_cM = 0.001
@@ -34,6 +38,10 @@ regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
   data.table::setnames(., c("chr", "start", "end", "region_n", "txt_file"))
 
+<<<<<<< HEAD
+=======
+#print(regions)
+>>>>>>> 1ccec06eef065c379a427dde73dd638e7d7b25c8
 
 # for each region, takes in a last chr and cM value, and the chromosome and rpos file for a region
 # and a minimum cM spacing between thinned sites
@@ -66,7 +74,7 @@ for (j in 1:nrow(regions)){
   mex_maf = read.table(paste0("variant_sites/results/popFreq/allopatric_mexicana/region_", n, ".mafs.gz"), 
                          header = T, sep = "\t", stringsAsFactors = F) %>%
     left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor"))
-  
+ 
   # First find SNPs that meet threshold difference in allele frequency 
   # and minimum n samples with data to be ancestry informative markers (AIMs)
   min_ind = !is.na(maize_maf$phat) & !is.na(mex_maf$phat) &
@@ -81,6 +89,7 @@ for (j in 1:nrow(regions)){
   # which positions to keep?
   keep = rep(F, length(rpos_aims))
   for (i in 1:length(rpos_aims)){
+    #print(paste("i:", i, "last_chr:", last_chr, "chr:", chr, "rpos_aims:", rpos_aims[i], "last_cM:", last_cM, "min_cM:", min_cM))
     if (last_chr != chr | rpos_aims[i] - last_cM >= min_cM){
       # keep site if far enough apart (or on a new chromosome)
       keep[i] <- T
