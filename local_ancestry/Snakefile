@@ -28,7 +28,7 @@ rule thin_sites_4HMM:
         # recombination position (in cM)
         rpos = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.rpos",
         # summary counts of the number of snps that passed filters
-        counts_out = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/counts_thinned_aims.txt"
+        counts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/counts_thinned_aims.txt"
     params:
         p = "med2",
         prefix_all = prefix_all,

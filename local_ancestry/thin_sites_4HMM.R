@@ -5,33 +5,36 @@ library(data.table)
 
 
 # load variables from Snakefile
-regions_file = snakemake@input[["regions"]]
-prefix_all = snakemake@params[["prefix_all"]]
-min_cM = as.numeric(snakemake@params[["min_cM"]])
-min_n_maize = as.numeric(snakemake@params[["min_n_maize"]])
-min_n_mex = as.numeric(snakemake@params[["min_n_mex"]])
-min_maf_diff = as.numeric(snakemake@params[["min_maf_diff"]])
-rdiff_out = snakemake@output[["rdiff"]]
-sites_out = snakemake@output[["sites"]]
-rpos_out = snakemake@output[["rpos"]]
-counts_out = snakemake@output[["counts"]]
+#regions_file = snakemake@input[["regions"]]
+#prefix_all = snakemake@params[["prefix_all"]]
+#min_cM = as.numeric(snakemake@params[["min_cM"]])
+#min_n_maize = as.numeric(snakemake@params[["min_n_maize"]])
+#min_n_mex = as.numeric(snakemake@params[["min_n_mex"]])
+#min_maf_diff = as.numeric(snakemake@params[["min_maf_diff"]])
+#rdiff_out = snakemake@output[["rdiff"]]
+#sites_out = snakemake@output[["sites"]]
+#rpos_out = snakemake@output[["rpos"]]
+#counts_out = snakemake@output[["counts"]]
 
 # # to test:
 # setwd("~/Documents/gitErin/hilo")
-# prefix_all = "HILO_MAIZE55"
-# min_cM = 0.001
-# min_n_maize = 44
-# min_n_mex = 12
-# min_maf_diff = 0.3
-# rpos_out = "test/TEST2_regions.rpos"
-# rdiff_out = "test/TEST2_regions.rdiff"
-# sites_out = "test/TEST2_regions.var.sites"
-# counts_out = "test/counts_thinned_AIMs.txt"
-# regions_file= "test/TEST2_regions.list"
+print(getwd())
+prefix_all = "HILO_MAIZE55"
+min_cM = 0.001
+min_n_maize = 44
+min_n_mex = 12
+min_maf_diff = 0.3
+rpos_out = "test/TEST2_regions.rpos"
+rdiff_out = "test/TEST2_regions.rdiff"
+sites_out = "test/TEST2_regions.var.sites"
+counts_out = "test/counts_thinned_AIMs.txt"
+regions_file = "test/TEST2_regions.list"
 
 regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
   data.table::setnames(., c("chr", "start", "end", "region_n", "txt_file"))
+
+print(regions)
 
 # for each region, takes in a last chr and cM value, and the chromosome and rpos file for a region
 # and a minimum cM spacing between thinned sites
@@ -46,7 +49,7 @@ tot_keep = 0
 
 # starting values
 last_chr = 0
-last_cM = NA
+last_cM = -Inf
 
 for (j in 1:nrow(regions)){
   chr = regions$chr[j] # each region spans only 1 chromosome
