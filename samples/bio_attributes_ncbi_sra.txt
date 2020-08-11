@@ -1,0 +1,349 @@
+sample_name	organism	isolate	ecotype	dev_stage	geo_loc_name	tissue	growth_protocol	lat_lon	isolation_source
+HILO2	Zea mays subsp. mays	family_A_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO3	Zea mays subsp. mays	family_A_seed_xi	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO5	Zea mays subsp. mays	family_B_seed_xi	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO6	Zea mays subsp. mays	family_E_seed_xi	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO7	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO8	Zea mays subsp. mays	family_F_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO9	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO10	Zea mays subsp. mays	family_G_seed_xi	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO11	Zea mays subsp. mays	family_D_seed_xi	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO12	Zea mays subsp. mexicana	family_L_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO13	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO15	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO16	Zea mays subsp. mays	family_D_seed_xi	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO17	Zea mays subsp. mays	family_B_seed_xi	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO18	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO19	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO20	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO21	Zea mays subsp. mays	family_J_seed_xi	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO22	Zea mays subsp. mays	family_C_seed_xi	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO23	Zea mays subsp. mays	family_B_seed_xi	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO25	Zea mays subsp. mays	family_F_seed_xi	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO27	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO28	Zea mays subsp. mexicana	family_P_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO29	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO33	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO34	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO37	Zea mays subsp. mays	family_F_seed_xi	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO38	Zea mays subsp. mexicana	family_K_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO39	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO40	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO41	Zea mays subsp. mexicana	family_L_seed_xi	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO42	Zea mays subsp. mays	family_D_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO43	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO44	Zea mays subsp. mays	family_A_seed_xi	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO45	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO46	Zea mays subsp. mays	family_G_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO47	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO48	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO50	Zea mays subsp. mays	family_E_seed_xi	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO51	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO52	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO53	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO54	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO55	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO56	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO58	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO59	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO60	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO61	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO65	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO67	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO71	Zea mays subsp. mexicana	family_O_seed_xi	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO73	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO76	Zea mays subsp. mays	family_H_seed_xi	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO78	Zea mays subsp. mays	family_J_seed_xi	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO79	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO82	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO83	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO85	Zea mays subsp. mays	family_G_seed_xi	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO86	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO87	Zea mays subsp. mays	family_J_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO88	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO89	Zea mays subsp. mays	family_G_seed_xi	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO90	Zea mays subsp. mays	family_C_seed_xi	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO91	Zea mays subsp. mays	family_E_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO93	Zea mays subsp. mays	family_I_seed_xi	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO94	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO95	Zea mays subsp. mays	family_D_seed_xi	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO96	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO97	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO98	Zea mays subsp. mexicana	family_N_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO101	Zea mays subsp. mays	family_B_seed_xi	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO102	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO103	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO104	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO105	Zea mays subsp. mexicana	family_K_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO106	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO107	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO109	Zea mays subsp. mays	family_H_seed_xi	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO110	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO111	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO113	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO114	Zea mays subsp. mays	family_C_seed_xi	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO116	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO117	Zea mays subsp. mays	family_D_seed_xi	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO118	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO119	Zea mays subsp. mays	family_H_seed_xi	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO120	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO121	Zea mays subsp. mays	family_I_seed_xi	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO122	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO124	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO125	Zea mays subsp. mays	family_C_seed_x	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO127	Zea mays subsp. mays	family_F_seed_xi	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO128	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO129	Zea mays subsp. mexicana	family_N_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO130	Zea mays subsp. mays	family_E_seed_xi	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO131	Zea mays subsp. mays	family_B_seed_xi	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO132	Zea mays subsp. mays	family_H_seed_xi	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO133	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO134	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO135	Zea mays subsp. mays	family_B_seed_x	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO137	Zea mays subsp. mays	family_H_seed_xi	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO139	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO140	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO141	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO142	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO143	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO146	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO147	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO148	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO149	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO151	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO152	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO153	Zea mays subsp. mexicana	family_P_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO154	Zea mays subsp. mays	family_D_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO155	Zea mays subsp. mexicana	family_I_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO156	Zea mays subsp. mexicana	family_Q_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO157	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO158	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO159	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO160	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO161	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO162	Zea mays subsp. mays	family_I_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO163	Zea mays subsp. mexicana	family_K_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO164	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO165	Zea mays subsp. mays	family_H_seed_xi	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO166	Zea mays subsp. mexicana	family_G_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO167	Zea mays subsp. mexicana	family_K_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO169	Zea mays subsp. mays	family_B_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO170	Zea mays subsp. mays	family_F_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO171	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO173	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO174	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO175	Zea mays subsp. mays	family_G_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO176	Zea mays subsp. mexicana	family_R_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO177	Zea mays subsp. mays	family_E_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO179	Zea mays subsp. mexicana	family_J_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO181	Zea mays subsp. mexicana	family_O_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO182	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO183	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO184	Zea mays subsp. mays	family_D_seed_xi	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO185	Zea mays subsp. mexicana	family_A_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO188	Zea mays subsp. mays	family_B_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO189	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO191	Zea mays subsp. mexicana	family_L_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO192	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO193	Zea mays subsp. mays	family_B_seed_xi	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO194	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO195	Zea mays subsp. mays	family_E_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO196	Zea mays subsp. mexicana	family_B_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO197	Zea mays subsp. mexicana	family_C_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO199	Zea mays subsp. mexicana	family_L_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO200	Zea mays subsp. mays	family_H_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO201	Zea mays subsp. mays	family_J_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO202	Zea mays subsp. mexicana	family_M_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO203	Zea mays subsp. mexicana	family_O_seed_xi	RIMME0033	seedling	Mexico:Puerta Encantada	leaf	greenhouse	18.9725 N 99.0298 W	Elevation: 1658 m
+HILO206	Zea mays subsp. mays	family_G_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO207	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO208	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO210	Zea mays subsp. mexicana	family_E_seed_xi	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO211	Zea mays subsp. mexicana	family_H_seed_xi	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO213	Zea mays subsp. mays	family_F_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO215	Zea mays subsp. mexicana	family_F_seed_xi	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO217	Zea mays subsp. mexicana	family_D_seed_xi	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO218	Zea mays subsp. mays	family_C_seed_xi	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO219	Zea mays subsp. mays	family_A_seed_xi	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO300	Zea mays subsp. mexicana	family_F_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO301	Zea mays subsp. mays	family_C_seed_i	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO302	Zea mays subsp. mexicana	family_B_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO303	Zea mays subsp. mexicana	family_G_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO304	Zea mays subsp. mays	family_E_seed_i	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO305	Zea mays subsp. mays	family_C_seed_i	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO306	Zea mays subsp. mexicana	family_F_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO307	Zea mays subsp. mays	family_G_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO308	Zea mays subsp. mexicana	family_G_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO309	Zea mays subsp. mexicana	family_J_seed_i	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO310	Zea mays subsp. mexicana	family_O_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO311	Zea mays subsp. mexicana	family_H_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO312	Zea mays subsp. mexicana	family_S_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO313	Zea mays subsp. mexicana	family_F_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO314	Zea mays subsp. mays	family_F_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO315	Zea mays subsp. mexicana	family_C_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO316	Zea mays subsp. mexicana	family_O_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO317	Zea mays subsp. mays	family_D_seed_i	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO318	Zea mays subsp. mays	family_A_seed_i	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO319	Zea mays subsp. mexicana	family_K_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO320	Zea mays subsp. mexicana	family_C_seed_i	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO321	Zea mays subsp. mexicana	family_M_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO322	Zea mays subsp. mexicana	family_F_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO323	Zea mays subsp. mexicana	family_I_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO324	Zea mays subsp. mexicana	family_T_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO325	Zea mays subsp. mexicana	family_L_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO326	Zea mays subsp. mexicana	family_C_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO327	Zea mays subsp. mexicana	family_Q_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO328	Zea mays subsp. mexicana	family_C_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO329	Zea mays subsp. mays	family_A_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO330	Zea mays subsp. mays	family_E_seed_i	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO331	Zea mays subsp. mays	family_A_seed_i	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO332	Zea mays subsp. mexicana	family_M_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO333	Zea mays subsp. mays	family_F_seed_i	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO334	Zea mays subsp. mexicana	family_L_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO335	Zea mays subsp. mexicana	family_I_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO336	Zea mays subsp. mays	family_A_seed_i	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO337	Zea mays subsp. mexicana	family_N_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO338	Zea mays subsp. mays	family_B_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO339	Zea mays subsp. mays	family_M_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO340	Zea mays subsp. mays	family_G_seed_i	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO341	Zea mays subsp. mays	family_K_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO342	Zea mays subsp. mays	family_B_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO343	Zea mays subsp. mays	family_I_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO344	Zea mays subsp. mexicana	family_H_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO345	Zea mays subsp. mexicana	family_M_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO346	Zea mays subsp. mays	family_J_seed_i	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO347	Zea mays subsp. mays	family_F_seed_i	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO348	Zea mays subsp. mexicana	family_B_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO349	Zea mays subsp. mexicana	family_B_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO350	Zea mays subsp. mexicana	family_Q_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO351	Zea mays subsp. mays	family_C_seed_i	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO352	Zea mays subsp. mexicana	family_K_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO353	Zea mays subsp. mays	family_I_seed_i	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO354	Zea mays subsp. mays	family_F_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO355	Zea mays subsp. mexicana	family_G_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO356	Zea mays subsp. mays	family_E_seed_i	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO357	Zea mays subsp. mays	family_H_seed_i	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO358	Zea mays subsp. mexicana	family_N_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO359	Zea mays subsp. mexicana	family_P_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO360	Zea mays subsp. mexicana	family_N_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO361	Zea mays subsp. mays	family_G_seed_i	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO362	Zea mays subsp. mexicana	family_P_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO363	Zea mays subsp. mexicana	family_F_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO364	Zea mays subsp. mexicana	family_J_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO365	Zea mays subsp. mexicana	family_A_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO369	Zea mays subsp. mays	family_B_seed_i	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO370	Zea mays subsp. mexicana	family_J_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO371	Zea mays subsp. mexicana	family_K_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO372	Zea mays subsp. mexicana	family_A_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO375	Zea mays subsp. mexicana	family_O_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO376	Zea mays subsp. mays	family_G_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO377	Zea mays subsp. mexicana	family_D_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO378	Zea mays subsp. mays	family_J_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO379	Zea mays subsp. mexicana	family_E_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO380	Zea mays subsp. mays	family_I_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO381	Zea mays subsp. mexicana	family_N_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO382	Zea mays subsp. mexicana	family_O_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO383	Zea mays subsp. mays	family_A_seed_i	RIMMA0362	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO384	Zea mays subsp. mays	family_E_seed_i	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO385	Zea mays subsp. mays	family_G_seed_i	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO386	Zea mays subsp. mays	family_C_seed_i	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO387	Zea mays subsp. mexicana	family_I_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO389	Zea mays subsp. mexicana	family_G_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO390	Zea mays subsp. mays	family_H_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO391	Zea mays subsp. mays	family_I_seed_i	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO392	Zea mays subsp. mays	family_A_seed_i	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO393	Zea mays subsp. mexicana	family_N_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO394	Zea mays subsp. mexicana	family_K_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO395	Zea mays subsp. mexicana	family_O_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO396	Zea mays subsp. mays	family_D_seed_i	RIMMA0369	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO397	Zea mays subsp. mexicana	family_M_seed_i	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO398	Zea mays subsp. mays	family_A_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO399	Zea mays subsp. mays	family_H_seed_i	RIMMA0371	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO400	Zea mays subsp. mays	family_D_seed_i	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO401	Zea mays subsp. mexicana	family_D_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO402	Zea mays subsp. mexicana	family_D_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO403	Zea mays subsp. mexicana	family_O_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO404	Zea mays subsp. mexicana	family_S_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO405	Zea mays subsp. mexicana	family_M_seed_i	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO406	Zea mays subsp. mexicana	family_K_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO407	Zea mays subsp. mexicana	family_E_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO408	Zea mays subsp. mays	family_F_seed_i	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO409	Zea mays subsp. mexicana	family_O_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO410	Zea mays subsp. mexicana	family_J_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO411	Zea mays subsp. mexicana	family_E_seed_i	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO412	Zea mays subsp. mexicana	family_I_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO413	Zea mays subsp. mexicana	family_G_seed_i	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO414	Zea mays subsp. mexicana	family_M_seed_ii	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO415	Zea mays subsp. mexicana	family_O_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO416	Zea mays subsp. mays	family_F_seed_i	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO417	Zea mays subsp. mexicana	family_J_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO418	Zea mays subsp. mexicana	family_R_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO419	Zea mays subsp. mexicana	family_K_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO420	Zea mays subsp. mexicana	family_K_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO421	Zea mays subsp. mays	family_D_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO422	Zea mays subsp. mays	family_L_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO423	Zea mays subsp. mays	family_D_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO424	Zea mays subsp. mexicana	family_L_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO425	Zea mays subsp. mays	family_G_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO426	Zea mays subsp. mays	family_A_seed_i	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO427	Zea mays subsp. mays	family_A_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO428	Zea mays subsp. mays	family_I_seed_i	RIMMA0370	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO429	Zea mays subsp. mexicana	family_C_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO430	Zea mays subsp. mexicana	family_E_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO431	Zea mays subsp. mays	family_C_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO432	Zea mays subsp. mexicana	family_O_seed_ii	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO433	Zea mays subsp. mexicana	family_E_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO434	Zea mays subsp. mexicana	family_L_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO435	Zea mays subsp. mexicana	family_N_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO436	Zea mays subsp. mays	family_I_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO437	Zea mays subsp. mays	family_H_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO438	Zea mays subsp. mays	family_G_seed_i	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO439	Zea mays subsp. mexicana	family_K_seed_i	RIMME0021	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO440	Zea mays subsp. mays	family_E_seed_i	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO441	Zea mays subsp. mexicana	family_F_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO442	Zea mays subsp. mexicana	family_O_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO443	Zea mays subsp. mexicana	family_L_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO444	Zea mays subsp. mexicana	family_M_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO445	Zea mays subsp. mexicana	family_N_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO446	Zea mays subsp. mexicana	family_K_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO447	Zea mays subsp. mexicana	family_I_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO448	Zea mays subsp. mexicana	family_C_seed_ii	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO449	Zea mays subsp. mexicana	family_A_seed_i	RIMME0022	seedling	Mexico:Amecameca	leaf	greenhouse	19.139 N 98.7733 W	Elevation: 2467 m
+HILO450	Zea mays subsp. mexicana	family_K_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO451	Zea mays subsp. mexicana	family_O_seed_i	RIMME0026	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO452	Zea mays subsp. mays	family_K_seed_i	RIMMA0360	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO453	Zea mays subsp. mexicana	family_K_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO454	Zea mays subsp. mexicana	family_L_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO455	Zea mays subsp. mays	family_C_seed_i	RIMMA0363	seedling	Mexico:El Porvenir	leaf	greenhouse	19.6789 N 100.64 W	Elevation: 2094 m
+HILO456	Zea mays subsp. mays	family_D_seed_i	RIMMA0367	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO457	Zea mays subsp. mexicana	family_J_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO458	Zea mays subsp. mexicana	family_K_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO459	Zea mays subsp. mexicana	family_M_seed_i	RIMME0019	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO460	Zea mays subsp. mays	family_E_seed_i	RIMMA0361	seedling	Mexico:Penjamillo	leaf	greenhouse	20.1176 N 101.93 W	Elevation: 1705 m
+HILO461	Zea mays subsp. mexicana	family_D_seed_i	RIMME0025	seedling	Mexico:Cocotilan	leaf	greenhouse	19.2244 N 98.8427 W	Elevation: 2269 m
+HILO462	Zea mays subsp. mays	family_A_seed_i	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO463	Zea mays subsp. mays	family_C_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO464	Zea mays subsp. mays	family_G_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO465	Zea mays subsp. mexicana	family_D_seed_i	RIMME0023	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO466	Zea mays subsp. mays	family_E_seed_i	RIMMA0374	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO467	Zea mays subsp. mexicana	family_L_seed_i	RIMME0029	seedling	Mexico:Ixtlan	leaf	greenhouse	20.1683 N 102.373 W	Elevation: 1547 m
+HILO468	Zea mays subsp. mays	family_F_seed_i	RIMMA0366	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO469	Zea mays subsp. mays	family_C_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO470	Zea mays subsp. mexicana	family_B_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO471	Zea mays subsp. mays	family_C_seed_i	RIMMA0365	seedling	Mexico:Tlapala	leaf	greenhouse	19.2351 N 98.8368 W	Elevation: 2272 m
+HILO472	Zea mays subsp. mexicana	family_I_seed_i	RIMME0020	seedling	Mexico:Malinalco	leaf	greenhouse	18.9531 N 99.503 W	Elevation: 1887 m
+HILO473	Zea mays subsp. mexicana	family_I_seed_i	RIMME0018	seedling	Mexico:Nabogame	leaf	greenhouse	26.2465 N 106.915 W	Elevation: 2020 m
+HILO474	Zea mays subsp. mexicana	family_N_seed_i	RIMME0034	seedling	Mexico:Santa Clara	leaf	greenhouse	19.4184 N 101.642 W	Elevation: 2173 m
+HILO475	Zea mays subsp. mexicana	family_H_seed_i	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO476	Zea mays subsp. mays	family_B_seed_i	RIMMA0368	seedling	Mexico:Opopeo	leaf	greenhouse	19.4181 N 101.613 W	Elevation: 2213 m
+HILO477	Zea mays subsp. mexicana	family_M_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO478	Zea mays subsp. mays	family_F_seed_i	RIMMA0372	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO479	Zea mays subsp. mexicana	family_H_seed_i	RIMME0031	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO480	Zea mays subsp. mexicana	family_N_seed_i	RIMME0024	seedling	Mexico:Jicaltepec	leaf	greenhouse	19.3764 N 99.6303 W	Elevation: 2587 m
+HILO481	Zea mays subsp. mays	family_E_seed_i	RIMMA0373	seedling	Mexico:Tenango del Aire	leaf	greenhouse	19.1197 N 99.5896 W	Elevation: 2609 m
+HILO482	Zea mays subsp. mexicana	family_N_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO483	Zea mays subsp. mexicana	family_A_seed_i	RIMME0035	seedling	Mexico:Xochimilco	leaf	greenhouse	19.2861 N 99.0827 W	Elevation: 2237 m
+HILO485	Zea mays subsp. mexicana	family_G_seed_i	RIMME0030	seedling	Mexico:San Pedro	leaf	greenhouse	19.0886 N 98.4935 W	Elevation: 2459 m
+HILO486	Zea mays subsp. mexicana	family_B_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m
+HILO487	Zea mays subsp. mexicana	family_O_seed_i	RIMME0027	seedling	Mexico:Amatlan	leaf	greenhouse	18.9719 N 99.0551 W	Elevation: 1658 m
+HILO488	Zea mays subsp. mexicana	family_G_seed_i	RIMME0028	seedling	Mexico:Puruandiro	leaf	greenhouse	20.1076 N 101.49 W	Elevation: 1915 m

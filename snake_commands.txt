@@ -767,7 +767,15 @@ Job counts:
         count   jobs
         1       results_NGSAdmix
         1 # RUNNING 8.6.2020 5pm
-
+hilo$ snakemake -n all --quiet --profile slurm
+      Job counts:
+      count   jobs
+      1       all
+      1       plot_NGSAdmix
+      1       thin_AIMs
+      3
+# ERROR in thin_sites_4HMM
+ 
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
@@ -775,8 +783,7 @@ Job counts:
 # RUNNING (0) Do I need to calc other allele freqs before choosing SNPs for local ancestry?
       - yes, working on allopatric allele frequencies now
       # (0.5) Why doesn't the counts plot work??
-# (1) Get NGSAdmix and PCA basic plots 2 work interactively.
-# (2) Get to run on Snakemake. (must include other R meta file)
+
 # DONE (3) Get included individuals to run local ancestry inference
         # Done. I made these byPop files.
 # (4) Filter SNPs for local ancestry inference (1 chromosome at a time? 1 region?)
