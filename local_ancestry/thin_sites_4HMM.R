@@ -6,13 +6,11 @@ library(data.table)
 
 # load variables from Snakefile
 regions_file = snakemake@input[["regions"]]
-
 prefix_all = snakemake@params[["prefix_all"]]
 min_cM = as.numeric(snakemake@params[["min_cM"]])
 min_n_maize = as.numeric(snakemake@params[["min_n_maize"]])
 min_n_mex = as.numeric(snakemake@params[["min_n_mex"]])
 min_maf_diff = as.numeric(snakemake@params[["min_maf_diff"]])
-
 rdiff_out = snakemake@output[["rdiff"]]
 sites_out = snakemake@output[["sites"]]
 rpos_out = snakemake@output[["rpos"]]
@@ -25,7 +23,10 @@ counts_out = snakemake@output[["counts"]]
 # min_n_maize = 44
 # min_n_mex = 12
 # min_maf_diff = 0.3
-# file_out = "test/whole_genome.beagle.gz"
+# rpos_out = "test/TEST2_regions.rpos"
+# rdiff_out = "test/TEST2_regions.rdiff"
+# sites_out = "test/TEST2_regions.var.sites"
+# counts_out = "test/counts_thinned_AIMs.txt"
 # regions_file= "test/TEST2_regions.list"
 
 regions = read.table(regions_file, header = F,
@@ -103,9 +104,11 @@ for (j in 1:nrow(regions)){
   rdiff[c(T, diff(sites_keep$chr) != 0)] <- 1
   
   # write output files (append to file if it's not the first region)
+  options(scipen = 999) # do not print scientific notation
   write.table(rpos_keep, file = rpos_out, append = (n > 0), col.names = F, row.names = F, quote = F, sep = "\t")
   write.table(sites_keep, file = sites_out, append = (n > 0), col.names = F, row.names = F, quote = F, sep = "\t")
   write.table(rdiff, file = rdiff_out, append = (n > 0), col.names = F, row.names = F, quote = F, sep = "\t")
+  options(scipen = 0) # back to default
 }
 
 # write summary of total counts:
