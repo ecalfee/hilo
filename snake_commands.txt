@@ -774,8 +774,14 @@ hilo$ snakemake -n all --quiet --profile slurm
       1       plot_NGSAdmix
       1       thin_AIMs
       3
-# ERROR in thin_sites_4HMM
- 
+# ERROR in thin_sites_4HMM. problem was NAs in rpos files. remaking those files:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     calc_rmap_pos
+        1       thin_sites_4HMM
+        428 # RUNNING 8.11.2020. Again didn't work. Fixed reading in columns of extended map, deleted rpos files with lots of NAs and rerunning.
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

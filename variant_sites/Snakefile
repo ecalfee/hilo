@@ -173,7 +173,6 @@ rule index_sites_file:
 ## calc_rmap_pos: uses a cubic spline fit to estimate the cM position for every site according to the Ogut 2015 genetic map
 rule calc_rmap_pos:
     input:
-        #rmap = rmap,
         rmap = rmap_ext,
         sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
     output:
@@ -188,7 +187,6 @@ rule calc_rmap_pos:
     conda:
         "../envs/environment.yaml"
     script:
-        #"calc_rpos.R"
         "approx_rpos.R"
 
 ## allo_freqs: estimates the minor allele frequency at all SNPs for allopatric maize and mexicana
