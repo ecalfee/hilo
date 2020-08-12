@@ -45,23 +45,41 @@ rule thin_sites_4HMM:
         "thin_sites_4HMM.R"
 
 
+## index_sites_4HMM: uses angsd to index thinned sites
+rule index_sites_4HMM:
+    input:
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites"
+    output:
+        idx = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites.idx",
+        bin = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites.bin"
+    params:
+        p = "med2"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        "angsd sites index {input}"
+
+
 ## count_ACGT: counts reads matching each nucleotide A, C, T or G at each position in sites file for 1 sample's bam
 rule count_ACGT:
     input:
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        idx = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites.idx",
+        bin = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites.bin",
         ref = ref,
         fai = fai,
         bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam",
-        bai = "filtered_bams/merged_bams/{ID}.sort.dedup.baq.bam"
+        bai = "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"
     output:
         acgt = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.counts.gz",
         pos = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.pos.gz",
-        bam_list = "samples/Over0.5x_byInd/{ID}_bams.list"
+        bam_list = "samples/HILO_MAIZE55_byInd/{ID}_bams.list"
     params:
         p = "med2",
-        out_prefix = lambda wildcards: "results/countsACGT/" + prefix_all + "/" + wildcards.ID
+        out_prefix = lambda wildcards: "local_ancestry/results/countsACGT/" + prefix_all + "/" + wildcards.ID
     resources:
-        time_min = lambda wildcards, attempt: attempt * 60,
+        time_min = lambda wildcards, attempt: attempt * 4 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     conda:
         "../envs/environment.yaml"
@@ -90,8 +108,8 @@ rule count_maj_min:
     params:
         p = "med2"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 60,
-        mem = lambda wildcards, attempt: attempt * 8
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
     script:
