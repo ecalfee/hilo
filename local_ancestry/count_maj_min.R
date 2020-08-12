@@ -1,43 +1,31 @@
 #!/usr/bin/env Rscript
+library(dplyr)
 
-# input:
-# chromosome #, hilo individual #, and directory where the countsACGT subdirectory is located
-# this script finds ACGT read counts file for an individual at a chromosome:
-# DIR_IN/chr1.counts.gz
-# positions with counts (>0 coverage) DIR_IN/chr1.pos.gz
-# and it finds the DIR_SITES/chr1.var.sites file
-# with major/minor allele and all positions desired for counts
+# this script converts ACGT read counts into major/minor allele read counts
+
+# input: ACGT read counts file for an individual *.counts.gz,
+# positions with counts (>0 coverage) *.pos.gz,
+# and it finds the *.var.sites file with major/minor allele and all positions desired for counts
 
 # output: file with two columns: read counts for major allele,
-# and read counts for minor allele for all positions
+# and read counts for minor allele for all positions *.counts.txt
 # (even for positions where the individual has zero coverage, ie. 0 0 counts)
-# each individual for each chromosome has a diff. output file
-# DIR_OUT/chr1.counts.txt
 
-library(dplyr)
-# to run:
-# Rscript count_reads_major_minor.R 10 HILO12 results/thinnedSNPs/pass2_alloMAIZE results/countsACGT/pass2_alloMAIZE/HILO12 results/countsMajMin/pass2_alloMAIZE/HILO12
+# load variables from Snakefile
+sites_file = snakemake@input[["sites"]]
+acgt_file = snakemake@input[["acgt"]]
+pos_file = snakemake@input[["pos"]]
+output_file = snakemake@output[["majmin"]]
 
-print(getwd()) # print current directory
+# to test:
+#ID = "HILO9"
+#prefix_all = "HILO_MAIZE55"
+#sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "whole_genome.var.sites")
+#acgt_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".counts.gz")
+#pos_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".pos.gz")
+#output_file = paste0("local_ancestry/results/countsMajMin/", prefix_all, "/", ID, ".counts.txt")
 
-# arguments
-args = commandArgs(trailingOnly=TRUE)
-# chromosome #
-#CHR = 10
-CHR = as.integer(args[1])
-# sample ID
-ID = args[2]
-# path to directories
-DIR_SITES = args[3]
-DIR_IN = args[4]
-DIR_OUT = args[5]
-
-acgt_file = paste0(DIR_IN, "/chr", CHR, ".counts.gz")
-pos_file = paste0(DIR_IN, "/chr", CHR, ".pos.gz")
-sites_file = paste0(DIR_SITES, "/chr", CHR, ".var.sites")
-output_file = paste0(DIR_OUT, "/chr", CHR, ".counts.txt")
-
-# input data
+# get data
 SNPs = read.table(sites_file,
                   header = F, stringsAsFactors = F, sep = "\t")
 colnames(SNPs) = c("chr", "pos", "major", "minor")
@@ -47,6 +35,8 @@ pos = read.table(pos_file, stringsAsFactors = F, header = T)
 d = cbind(pos, acgt) %>%
   left_join(SNPs, ., by = c("chr", "pos")) %>%
   tidyr::gather(., "allele", "n", c("A", "C", "G", "T"))
+
+# do counts
 maj_counts = filter(d, major==allele) %>%
   select(-allele) # get read counts for alleles matching major allele
 min_counts = filter(d, minor==allele) %>%

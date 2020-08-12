@@ -3,13 +3,8 @@ import os
 
 #workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
-wildcard_constraints:
-    ID = "[A-Za-z0-9]+"
 
-# list of sample IDs
-with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
-    ids = f.read().splitlines()
-# list of lanes for sample IDs above
+# list of lanes for sample IDs
 with open("data/HILO_raw_reads/" + prefix_bams + "_lanes.list") as f:
     lanes = f.read().splitlines()
 

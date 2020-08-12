@@ -37,13 +37,116 @@ rule thin_sites_4HMM:
         min_n_maize = 44, # i.e. 90% of individuals have data (44/55). 95% of SNPs have this much data for maize.
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
+        time_min = lambda wildcards, attempt: attempt * 30,
+        mem = lambda wildcards, attempt: attempt * 2
     conda:
         "../envs/environment.yaml"
     script:
         "thin_sites_4HMM.R"
 
-## run_ancestry_hmm: runs ancestry_hmm
-#input:
-#alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt" # load as a dictionary to get the right values!
+
+## count_ACGT: counts reads matching each nucleotide A, C, T or G at each position in sites file for 1 sample's bam
+rule count_ACGT:
+    input:
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites"
+        ref = ref,
+        fai = fai,
+        bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam",
+        bai = "filtered_bams/merged_bams/{ID}.sort.dedup.baq.bam"
+    output:
+        acgt = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.counts.gz",
+        pos = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.pos.gz",
+        bam_list = "samples/Over0.5x_byInd/{ID}_bams.list"
+    params:
+        p = "med2",
+        out_prefix = lambda wildcards: "results/countsACGT/" + prefix_all + "/" + wildcards.ID
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    conda:
+        "../envs/environment.yaml"
+    shadow:
+        "minimal"
+    shell:
+        """
+        echo {input.bam} > {output.bam_list}
+        angsd -out {params.out_prefix} \
+        -ref {input.ref} \
+        -bam {output.bam_list} \
+        -minQ 20 -minMapQ 30 -baq 2\
+        -remove_bads 1 \
+        -doCounts 1 -dumpCounts 3 \
+        -sites {input.sites}
+        """
+
+## count_maj_min: turns ACGT read counts at each position into major and minor read counts based on sites file (ignores reads for other alleles)
+rule count_maj_min:
+    input:
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        acgt = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.counts.gz",
+        pos = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.pos.gz"
+    output:
+        majmin = "local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt"
+    params:
+        p = "med2"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "count_maj_min.R"
+# FIX THAT THE ALLOPATRIC MAIZE LOOKS LIKE IT COMES FROM A DIFFERENT DIRECTORY IN THE ALL_byPop files! (but not Over0.5x_byPop files :)
+
+# ## sample_1_allele: for allopatric populations, sample 1 read (based on major/minor read counts) per individual to get an allele count
+# rule sample_1_allele:
+#     input:
+#         "samples/Over0.5x_byPop/allopatric_{ZEA}_ids.list", # ZEA is maize or mexicana
+#         expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = ***)
+#     output:
+#         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.{ZEA}.counts"
+#     # takes in all the count_maj_min files for 1 allopatric sample and returns a file with major and minor allele counts
+# ## make_input_hmm: combines the snp information, allopatric reference pop allele freqs, and read counts for sympatric individuals
+# rule make_input_hmm:
+#     input:
+#         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.maize.counts",# counts from allopatric pops
+#         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.mexicana.counts",
+#         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.rdiff",
+#         expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = ***) # counts sympatric individuals
+#     output:
+#         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
+#         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
+#         ids = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ids"
+#
+# #{POP}
+#
+# ## run_ancestry_hmm: runs ancestry_hmm
+# #with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
+# #    ids = f.read().splitlines()
+# run_ancestry_hmm:
+#     input:
+#         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
+#         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
+#         alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
+#     output:
+#         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/output_noBoot/{ID}.posterior",
+#         ID = ***)
+#     params:
+#         p = "med2",
+#         alpha_maize = lambda wildcards, input: lambda wildcards: libraries_dict[wildcards.LANE]  # proportion maize ancestry from NGSAdmix
+#         alpha_mex = , # proportion mexicana ancestry from NGSAdmix
+#         Ne = 10000, # effective population size after admixture
+#         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
+#         dir = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/output_noBoot"
+#     shell:
+#         """
+#         cd {params.dir}
+#         ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
+#         -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
+#         --ne {params.Ne} --tmin 0 --tmax 10000 \
+#         -i "../input/{wildcards.POP}.counts" \
+#         -s "../input/{wildcards.POP}.ploidy"
+#         """
+# #input: {POP}
+# #alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt" # load as a dictionary to get the right values!
+# # NOTE: use lambda function in params to extract the correct alphas for your pop (read in as a dictionary)

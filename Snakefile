@@ -5,6 +5,11 @@ from csv import DictReader
 #configfile: "config.yaml"
 path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on the local machine
 
+# wildcards
+wildcard_constraints:
+    ID = "[A-Za-z0-9]+",
+    POP = "[A-Za-z0-9]+"
+
 # reference genome
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 ref = path_hilo + "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -29,6 +34,10 @@ for i in range(1, 1521):
 #prefix_bams = "TEST2"
 prefix_bams = "Combined"
 
+# list of sample IDs
+with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
+    ids = f.read().splitlines()
+
 # all bams included in combined sample (est_coverage > 0.05x)
 prefix_all = "HILO_MAIZE55"
 #prefix_all = "TEST"
@@ -36,6 +45,7 @@ prefix_all = "HILO_MAIZE55"
 # groups
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
+zea = ["maize", "mexicana"]
 
 # sympatric populations
 sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
@@ -110,11 +120,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        # SNP set for 1 scaffold
-        #"variant_sites/results/" + prefix_all + "/region_1.rpos",
-        #"variant_sites/results/" + prefix_all + "/region_1.var.sites"
-        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=["allopatric_mexicana"], REGION=["region_120"])
+        expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = ids)
     params:
         p = "med2"
     resources:
