@@ -782,7 +782,31 @@ Job counts:
         426     calc_rmap_pos
         1       thin_sites_4HMM
         428 # RUNNING 8.11.2020. Again didn't work. Fixed reading in columns of extended map, deleted rpos files with lots of NAs and rerunning.
-
+# thin sites ran. trying one file to test counts pipeline:
+hilo$ snakemake local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO2.counts.txt --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       count_ACGT
+        1       count_maj_min
+        1       index_sites_4HMM
+        3 # made index of sites ok and started on ACGT counts but then I stopped the job I could run all of the samples:
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        403     count_ACGT
+        403     count_maj_min
+        1       some
+        807 # RUNNING 8.11.2020
+# note the above is slightly inefficient because I have it make a counts file for all included samples (all_ids) when some sympatric samples will be excluded for coverage < 0.5x
+# but rather than have dynamic inputs for each population, I can use all of these counts files as inputs for each of the following rules to make the pop input files.
+farm:~/hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        49      count_ACGT
+        49      count_maj_min
+        1       some
+        99 # some need to be rerun with higher maximum time limit (I added a thread and changed from 4 to 12 hrs because MAIZE55 bams are very large). Unfortunately, the "TIMEOUT" didn't trigger a "FAIL" and rerun.
+# RUNNING 8.12.2020 9:30am
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

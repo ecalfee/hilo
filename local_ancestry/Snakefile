@@ -79,12 +79,14 @@ rule count_ACGT:
         p = "med2",
         out_prefix = lambda wildcards: "local_ancestry/results/countsACGT/" + prefix_all + "/" + wildcards.ID
     resources:
-        time_min = lambda wildcards, attempt: attempt * 4 * 60,
+        time_min = lambda wildcards, attempt: attempt * 12 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     conda:
         "../envs/environment.yaml"
     shadow:
         "minimal"
+    threads:
+        2
     shell:
         """
         echo {input.bam} > {output.bam_list}
@@ -94,6 +96,7 @@ rule count_ACGT:
         -minQ 20 -minMapQ 30 -baq 2\
         -remove_bads 1 \
         -doCounts 1 -dumpCounts 3 \
+        -P {threads} \
         -sites {input.sites}
         """
 
