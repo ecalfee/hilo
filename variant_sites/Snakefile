@@ -3,10 +3,6 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-# list of combined sample bams
-with open("samples/" + prefix_all + "_bams.list") as f:
-    all_bams = f.read().splitlines()
-
 
 ## get_chr_lengths: make chromosome file (with lengths) from reference genome
 rule get_chr_lengths:

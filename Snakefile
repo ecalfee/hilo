@@ -29,18 +29,17 @@ windows_1cM = []
 for i in range(1, 1521):
     windows_1cM.append("W" + str(i))
 
-# all fastq/samples sequenced
-#prefix_bams = "April2020"
-#prefix_bams = "TEST2"
-prefix_bams = "Combined"
-
-# list of sample IDs
-with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
-    ids = f.read().splitlines()
 
 # all bams included in combined sample (est_coverage > 0.05x)
 prefix_all = "HILO_MAIZE55"
 #prefix_all = "TEST"
+
+# list of all included bams and ids
+with open("samples/" + prefix_all + "_bams.list") as f:
+    all_bams = f.read().splitlines()
+with open("samples/" + prefix_all + "_ids.list") as f:
+    all_ids = f.read().splitlines()
+
 
 # groups
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
@@ -120,7 +119,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = ids)
+        expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
     params:
         p = "med2"
     resources:

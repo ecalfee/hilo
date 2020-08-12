@@ -48,7 +48,7 @@ rule thin_sites_4HMM:
 ## count_ACGT: counts reads matching each nucleotide A, C, T or G at each position in sites file for 1 sample's bam
 rule count_ACGT:
     input:
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites"
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         ref = ref,
         fai = fai,
         bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam",

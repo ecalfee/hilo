@@ -3,6 +3,14 @@ import os
 
 #workdir: path_hilo + "filtered_bams/" # some rules need an absolute path to create a 'shadow' copy of files outside of current working directory
 
+# all fastq/samples sequenced
+#prefix_bams = "April2020"
+#prefix_bams = "TEST2"
+prefix_bams = "Combined"
+
+# list of sample IDs
+with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
+    ids = f.read().splitlines()
 
 # list of lanes for sample IDs
 with open("data/HILO_raw_reads/" + prefix_bams + "_lanes.list") as f:
