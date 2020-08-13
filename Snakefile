@@ -34,17 +34,21 @@ for i in range(1, 1521):
 prefix_all = "HILO_MAIZE55"
 #prefix_all = "TEST"
 
-# list of all included bams and ids
+# list of all included bams and ids (over minimum 0.05x coverage)
 with open("samples/" + prefix_all + "_bams.list") as f:
     all_bams = f.read().splitlines()
 with open("samples/" + prefix_all + "_ids.list") as f:
     all_ids = f.read().splitlines()
-
+# samples with local ancesty calls (sympatric and over 0.5x coverage)
+#with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
+#        symp_maize_ids = f.read().splitlines()
+#with open("samples/Over0.5x_byPop/sympatric_mexicana_ids.list") as f:
+#        symp_mex_ids = f.read().splitlines()
+#symp_ids = symp_maize_ids + symp_mex_ids
 
 # groups
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
-zea = ["maize", "mexicana"]
 
 # sympatric populations
 sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
@@ -120,6 +124,8 @@ rule all:
 rule some:
     input:
         expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
+        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_noBoot/anc/{POP}.{SUFFIX}",
+        #ID = sympatric_pops, SUFFIX = ["anc.ind", "anc.freq", "alpha.ind"])
     params:
         p = "med2"
     resources:

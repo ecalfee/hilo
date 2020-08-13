@@ -799,7 +799,7 @@ Job counts:
         807 # RUNNING 8.11.2020
 # note the above is slightly inefficient because I have it make a counts file for all included samples (all_ids) when some sympatric samples will be excluded for coverage < 0.5x
 # but rather than have dynamic inputs for each population, I can use all of these counts files as inputs for each of the following rules to make the pop input files.
-farm:~/hilo$ snakemake -n some --quiet --profile slurm
+farm:~/hilo$ snakemake some --quiet --profile slurm
 Job counts:
         count   jobs
         49      count_ACGT
@@ -807,6 +807,12 @@ Job counts:
         1       some
         99 # some need to be rerun with higher maximum time limit (I added a thread and changed from 4 to 12 hrs because MAIZE55 bams are very large). Unfortunately, the "TIMEOUT" didn't trigger a "FAIL" and rerun.
 # RUNNING 8.12.2020 9:30am
+
+### HMM... so I want the lists of bams/IDs to be outside of my Snakemake pipeline
+# so that I can use them as inputs.
+# I can force rerun: rule list_total_samples in filtered_bams/Snakefile
+# then use 'touch' to update downstream files (because it will be the same outputs, because results/Maize55/*.bam is symlinked to results/merged_bams/*.bam)
+# then I can comment out that code and use the output files to fill a dictionary of IDs for each population
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:
