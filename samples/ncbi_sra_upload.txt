@@ -18,7 +18,7 @@ ecalfee@c11-42:~/hilo$ screen -r 21852.ncbi
 ~/hilo/data/ncbi_sra_upload$ ascp -i /home/ecalfee/hilo/aspera.connect -QT -l100m -k1 -d data/ncbi_sra_upload subasp@upload.ncbi.nlm.nih.gov:uploads/erincalfee_gmail.com_e0BNHQbj
 [detached from 21852.ncbi]
 
-
+# COMPLETED. Finished submission!ß
 
 
 # 1st TRY (WITH FTP) - PROBLEMS:

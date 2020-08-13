@@ -72,6 +72,8 @@ rule index_sites_4HMM:
     resources:
         time_min = 15,
         mem = 2
+    conda:
+        "../envs/environment.yaml"
     shell:
         "angsd sites index {input}"
 
@@ -180,7 +182,7 @@ rule make_input_hmm:
 ## run_ancestry_hmm: runs ancestry_hmm
 #with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
 #    ids = f.read().splitlines()
-run_ancestry_hmm:
+rule run_ancestry_hmm:
     input:
         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
