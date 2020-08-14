@@ -200,7 +200,7 @@ rule run_ancestry_hmm:
         time_min = lambda wildcards, attempt: attempt * 60,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
-        "local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.log"
+        "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/{POP}.log"
     shell:
         """
         module load Ancestry_HMM
@@ -210,7 +210,7 @@ rule run_ancestry_hmm:
         -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
         --ne {params.Ne} --tmin 0 --tmax 10000 \
         -i "../../input/{wildcards.POP}.counts" \
-        -s "../../input/{wildcards.POP}.ploidy" && touch ../{wildcards.POP}.completed
+        -s "../../input/{wildcards.POP}.ploidy" && cat "all done!" > ../{wildcards.POP}.completed
         """
 
 ## summarise_ancestry: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome

@@ -864,6 +864,17 @@ Job counts:
         1       run_ancestry_hmm
         3 # redoing same thing -- input file not quite right (repeated maize instead of maize, then mex allele counts! and needed no scientific notation for position difference in Morgans)
 # still breaks at run_ancestry_hmm. I needed to fix the dictionary to retrieve alphas. now done:
+hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/pop360.completed --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       run_ancestry_hmm
+        1
+
+        mkdir -p local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/posterior/
+                cd local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/posterior/
+                ancestry_hmm -a 2 0.863879911723782 0.136120088276218         -p 0 100000 0.863879911723782 -p 1 -100 0.136120088276218         --ne 10000 --tmin 0 --tmax 10000         -i "../../input/pop360.counts"         -s "../../input/pop360.ploidy" && touch ../pop360.completed
+
+Rscript calc_genomewide_pop_anc_freq.R ${POP_N} ${DIR_IN} ${IDs_FILE}
 
 
 

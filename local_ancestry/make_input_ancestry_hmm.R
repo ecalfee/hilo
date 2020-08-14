@@ -43,6 +43,6 @@ bind_cols(ALLO_COLS, POP_COUNTS) %>%
 # write ploidy file for included individuals in the same order they appear in ancestry_hmm input file
 data.frame(id = POP_IDs, ploidy = 2, stringsAsFactors = F) %>%
   write.table(., output_file_ploidy,
-            row.names = F, col.names = F, quote = F, sep = " ")
+            row.names = F, col.names = F, quote = F, sep = "\t")
 
 
