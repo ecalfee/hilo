@@ -214,6 +214,8 @@ rule run_ancestry_hmm:
 ## summarise_ancestry: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
 #rule summarise_ancestry:
 
+## get_admix_time: takes in log file from ancestry_hmm and extracts the inferred timing of admixture
+
 ## ancestry_sites_to_tracts: takes in var.sites positions and creates a bed file that defines the tracts around each ancestry call.
 
 # # NOTE: use lambda function in params to extract the correct alphas for your pop (read in as a dictionary)

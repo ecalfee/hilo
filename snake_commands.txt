@@ -855,7 +855,14 @@ Job counts:
         1       make_allo_counts
         1       make_input_hmm
         1       run_ancestry_hmm
-        3 # only make_allo_counts ran. troubleshooting hmm input.
+        3 # only make_allo_counts ran. troubleshooting hmm input. need to fix spacing on allo_counts, so deleting that output and rerunning:
+hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/pop360.completed --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       make_allo_counts
+        1       make_input_hmm
+        1       run_ancestry_hmm
+        3
 
 
 

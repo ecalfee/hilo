@@ -33,6 +33,7 @@ POP_COUNTS = lapply(POP_IDs, function(id)
              header = T, stringsAsFactors = F) %>%
     data.table::setnames(paste0(id, "_", colnames(.)))) # label columns with the sample id and major/minor
 
+options(scipen = 999) # don't write output in scientific notation
 # combine data for counts output file
 bind_cols(ALLO_COLS, POP_COUNTS) %>%
   write.table(., output_file_counts,

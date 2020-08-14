@@ -70,7 +70,7 @@ for (id in MAIZE_IDs){
 }
 
 # add mexicana allele counts
-for (id in MAIZE_IDs){
+for (id in MEX_IDs){
   newCounts = sample1_read(
     ind_counts_file = paste0(DIR_COUNTS, "/", id, ".counts.txt"))
   colnames(newCounts) = c("n_major", "n_minor")
