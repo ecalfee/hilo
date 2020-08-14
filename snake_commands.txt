@@ -855,7 +855,7 @@ Job counts:
         1       make_allo_counts
         1       make_input_hmm
         1       run_ancestry_hmm
-        3
+        3 # only make_allo_counts ran. troubleshooting hmm input.
 
 
 

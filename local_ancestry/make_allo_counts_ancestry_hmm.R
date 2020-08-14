@@ -83,6 +83,7 @@ for (id in MAIZE_IDs){
 d = bind_cols(SNPs, counts, map_pos)
 
 # write output to be used by make_input_ancestry_hmm.R (with no headers)
-write.table(format(d, digits = 10), output_file,
+options(scipen = 999)
+write.table(d, output_file,
     row.names = F, col.names = T, quote = F, sep = " ") # prints column names even though final file for ancestry_hmm won't include them
 warnings() # print any warnings
