@@ -186,9 +186,10 @@ rule run_ancestry_hmm:
         alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
     output:
         # empty output file is created only if ancestry_hmm runs sucessfully
-        "local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.completed"
+        "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/{POP}.completed"
         # also creates posterior files for each ID in POP, but snakemake can't track dynamic output like this
         # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
+        # note: can't use 'shadow' with these extra output files!
     params:
         p = "med2",
         alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
@@ -196,6 +197,11 @@ rule run_ancestry_hmm:
         Ne = lambda wildcards: wildcards.Ne, # Ne = 10000 effective population size after admixture
         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_noBoot/posterior/"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    log: # log file keeps info about inferred timing of admixture
+        "local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.log"
     shell:
         """
         cd {params.dir}

@@ -848,7 +848,15 @@ Job counts:
         2 # DONE
 # commented out list_total_samples rule and added all sample files to git!
 
-# making input files for ancestry_hmm:
+# now trying to run ancestry_hmm with a dummy output file with the POP name (because can't have a rule define individual sample posterior outputs)
+hilo$ snakemake -n local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/pop360.completed --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       make_allo_counts
+        1       make_input_hmm
+        1       run_ancestry_hmm
+        3
+
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
