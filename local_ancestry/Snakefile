@@ -4,10 +4,10 @@ workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
 # function to read in all the sample IDs for local ancestry inference in a sympatric population
-def IDs4LocalAncestrybyPop(wildcards):
-    with open("samples/Over0.5x_byPop/" + wildcards.POP + "_ids.list") as f:
-        pop_ids = f.read().splitlines()
-        return pop_ids
+#def IDs4LocalAncestrybyPop(wildcards):
+#    with open("samples/Over0.5x_byPop/" + wildcards.POP + "_ids.list") as f:
+#        pop_ids = f.read().splitlines()
+#        return pop_ids
 
 # function to find mixture proportion estimates for a population based on NGSAdmix results (as prior for ancestry_hmm)
 def Alphas4LocalAncestrybyPop(pop, alphas_file):
@@ -143,7 +143,6 @@ rule make_allo_counts:
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         rdiff = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.rdiff",
         counts = ["local_ancestry/results/countsMajMin/" + prefix_all + "/" + id + ".counts.txt" for id in all_ids]
-        #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = ids_all) # will only use a subset, but input all of the counts files
     output:
         allo_counts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts"
     params:

@@ -29,7 +29,7 @@ prefix_all = snakemake@params[["prefix_all"]]
 # input data
 SNPs = read.table(sites_file,
                   header = F, stringsAsFactors = F, sep = "\t") %>%
-  data.table::setnames(c("chr", "position", "major", "minor")) %>%
+  data.table::setnames(c("chr", "pos", "major", "minor")) %>%
   dplyr::select("chr", "pos") # don't need to keep which nucleotide ACGT is major/minor for hmm
 map_pos = read.table(rdiff_file,
                      header = F, stringsAsFactors = F)
