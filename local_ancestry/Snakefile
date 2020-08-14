@@ -15,7 +15,7 @@ def Alphas4LocalAncestrybyPop(pop, alphas_file):
         for line in f:
             row = line.split("\t")
             if "pop" + row[0] == pop:
-                alphas_dict = {alpha_maize: row[1], alpha_mex: row[2]}
+                alphas_dict = {"alpha_maize": float(row[1]), "alpha_mex": float(row[2])}
         return(alphas_dict)
 
 

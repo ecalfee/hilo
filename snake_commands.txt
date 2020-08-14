@@ -862,7 +862,8 @@ Job counts:
         1       make_allo_counts
         1       make_input_hmm
         1       run_ancestry_hmm
-        3
+        3 # redoing same thing -- input file not quite right (repeated maize instead of maize, then mex allele counts! and needed no scientific notation for position difference in Morgans)
+# still breaks at run_ancestry_hmm. I needed to fix the dictionary to retrieve alphas. now done:
 
 
 
