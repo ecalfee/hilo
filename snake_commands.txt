@@ -808,11 +808,48 @@ Job counts:
         99 # some need to be rerun with higher maximum time limit (I added a thread and changed from 4 to 12 hrs because MAIZE55 bams are very large). Unfortunately, the "TIMEOUT" didn't trigger a "FAIL" and rerun.
 # RUNNING 8.12.2020 9:30am
 
+
 ### HMM... so I want the lists of bams/IDs to be outside of my Snakemake pipeline
 # so that I can use them as inputs.
 # I can force rerun: rule list_total_samples in filtered_bams/Snakefile
 # then use 'touch' to update downstream files (because it will be the same outputs, because results/Maize55/*.bam is symlinked to results/merged_bams/*.bam)
 # then I can comment out that code and use the output files to fill a dictionary of IDs for each population
+hilo$ snakemake -f list_total_samples --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       list_total_samples
+        1 # RUNNING 8.13.2020 11:45am
+This fixes ALLOPATRIC MAIZE LOOKS LIKE IT COMES FROM A DIFFERENT DIRECTORY IN THE ALL_byPop files! (but not Over0.5x_byPop files). this is just a symlink issue, both link to the same underlying files. But I should fix so the symlink name pattern is consistent across all bams.
+# there are many downstream files that depend on list_total_samples:
+        hilo$ snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                852     allo_freqs
+                403     count_ACGT
+                403     count_maj_min
+                1       index_sites_4HMM
+                1       plot_total_samples
+                1       thin_sites_4HMM
+                1662
+# touch so I don't have to remake downstream files (because will be the same since inputs changed only by name (symlink) not content)
+hilo$ touch variant_sites/results/popFreq/allopatric_*/*
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.*
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/counts_thinned_aims.txt
+hilo$ touch samples/HILO_MAIZE55_byInd/*_bams.list
+hilo$ touch local_ancestry/results/countsACGT/HILO_MAIZE55/*
+hilo$ touch local_ancestry/results/countsMajMin/HILO_MAIZE55/*
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_total_samples
+        2 # DONE
+# commented out list_total_samples rule and added all sample files to git!
+
+# making input files for ancestry_hmm:
+
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)
 # TO DO:

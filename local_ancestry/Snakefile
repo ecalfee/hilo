@@ -134,7 +134,6 @@ rule count_maj_min:
         "../envs/environment.yaml"
     script:
         "count_maj_min.R"
-# FIX THAT THE ALLOPATRIC MAIZE LOOKS LIKE IT COMES FROM A DIFFERENT DIRECTORY IN THE ALL_byPop files! (but not Over0.5x_byPop files :)
 
 ## make_allo_counts: for allopatric populations, sample 1 read (based on major/minor read counts) per individual to get an allele count. Also add SNP information to output file.
 rule make_allo_counts:
@@ -159,53 +158,50 @@ rule make_allo_counts:
         "make_allo_counts_ancestry_hmm.R"
 
 
-# ## make_input_hmm: combines the snp information, allopatric reference pop allele freqs, and read counts for sympatric individuals
-# rule make_input_hmm:
-#     input:
-#         allo = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts", # SNP info and counts from allopatric pops
-#         pop_ids = "samples/Over0.5x_byPop/{POP}_ids.list",
-#         counts = ["local_ancestry/results/countsMajMin/" + prefix_all + "/" + id + ".counts.txt" for id in IDs4LocalAncestrybyPop] # counts for sympatric individuals
-#     output:
-#         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
-#         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
-#     params:
-#         p = "med2",
-#         prefix_all = prefix_all
-#     resources:
-#         time_min = lambda wildcards, attempt: attempt * 15,
-#         mem = lambda wildcards, attempt: attempt * 4
-#     conda:
-#         "../envs/environment.yaml"
-#     script:
-#         "make_input_ancestry_hmm.R"
-#
-# ## run_ancestry_hmm: runs ancestry_hmm
-# #with open("data/HILO_raw_reads/" + prefix_bams + "_IDs.list") as f:
-# #    ids = f.read().splitlines()
-# rule run_ancestry_hmm:
-#     input:
-#         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
-#         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
-#         alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
-#     output:
-#         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior",
-#         ID = IDs4LocalAncestrybyPop)
-#     params:
-#         p = "med2",
-#         alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
-#         alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
-#         Ne = lambda wildcards: wildcards.Ne, # Ne = 10000 effective population size after admixture
-#         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
-#         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_noBoot/posterior/"
-#     shell:
-#         """
-#         cd {params.dir}
-#         ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
-#         -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
-#         --ne {params.Ne} --tmin 0 --tmax 10000 \
-#         -i "../../input/{wildcards.POP}.counts" \
-#         -s "../../input/{wildcards.POP}.ploidy"
-#         """
+## make_input_hmm: combines the snp information, allopatric reference pop allele freqs, and read counts for sympatric individuals
+rule make_input_hmm:
+    input:
+        allo = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts", # SNP info and counts from allopatric pops
+        pop_ids = "samples/Over0.5x_byPop/{POP}_ids.list",
+        counts = ["local_ancestry/results/countsMajMin/" + prefix_all + "/" + id + ".counts.txt" for id in all_ids]
+    output:
+        counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
+    params:
+        p = "med2",
+        prefix_all = prefix_all
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "make_input_ancestry_hmm.R"
+
+## run_ancestry_hmm: runs ancestry_hmm
+rule run_ancestry_hmm:
+    input:
+        counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
+        alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
+    output:
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[{POP}])
+    params:
+        p = "med2",
+        alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
+        alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
+        Ne = lambda wildcards: wildcards.Ne, # Ne = 10000 effective population size after admixture
+        t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
+        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_noBoot/posterior/"
+    shell:
+        """
+        cd {params.dir}
+        ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
+        -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
+        --ne {params.Ne} --tmin 0 --tmax 10000 \
+        -i "../../input/{wildcards.POP}.counts" \
+        -s "../../input/{wildcards.POP}.ploidy"
+        """
 
 ## summarise_ancestry: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
 #rule summarise_ancestry:

@@ -56,6 +56,15 @@ sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
 "pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
 "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
 
+# create a dictionary that has one entry for each sympatric population
+# containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)
+# for each sympatric population.
+symp_dict = {}
+for pop in sympatric_pops:
+    with open("samples/Over0.5x_byPop/" + pop + "_ids.list") as f:
+        symp_dict[pop] = f.read().splitlines()
+
+
 # make a dictionary of 5Mb regions across the genome
 regions_dict = {}
 with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
@@ -66,11 +75,12 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 
 # snakemake sub-workflows
-include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
+# note: commenting out some workflows that are already completed makes DAG a lot faster!
+#include: "filtered_bams/Snakefile"
+#include: "variant_sites/Snakefile"
+#include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
+#include: "ancestry_by_r/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
