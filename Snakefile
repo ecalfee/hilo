@@ -121,7 +121,7 @@ rule all:
         # local ancestry inference
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.completed", Ne = 10000, POP = symp_pops)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/{POP}.completed", Ne = 10000, POP = symp_pops)
     params:
         p = "med2"
     resources:
