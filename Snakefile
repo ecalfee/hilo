@@ -51,7 +51,7 @@ groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatr
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
 
 # sympatric populations
-sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
+symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
 "pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35",
 "pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
 "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
@@ -60,7 +60,7 @@ sympatric_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
 # containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)
 # for each sympatric population.
 symp_dict = {}
-for pop in sympatric_pops:
+for pop in symp_pops:
     with open("samples/Over0.5x_byPop/" + pop + "_ids.list") as f:
         symp_dict[pop] = f.read().splitlines()
 
@@ -104,8 +104,6 @@ rule all:
         #"global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov",
         #"global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
         "filtered_bams/plots/p_seq_counts.png",
-        expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
-        expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
         expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
@@ -121,8 +119,9 @@ rule all:
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
         # local ancestry inference
-        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
-        expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
+        #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.completed", Ne = 10000, POP = symp_pops)
     params:
         p = "med2"
     resources:

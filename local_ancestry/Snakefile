@@ -185,7 +185,10 @@ rule run_ancestry_hmm:
         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy",
         alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
     output:
-        posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
+        # empty output file is created only if ancestry_hmm runs sucessfully
+        "local_ancestry/results/ancestry_hmm/" + prefix_all + "Ne{Ne}_noBoot/{POP}.completed"
+        # also creates posterior files for each ID in POP, but snakemake can't track dynamic output like this
+        # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
     params:
         p = "med2",
         alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
@@ -200,7 +203,7 @@ rule run_ancestry_hmm:
         -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
         --ne {params.Ne} --tmin 0 --tmax 10000 \
         -i "../../input/{wildcards.POP}.counts" \
-        -s "../../input/{wildcards.POP}.ploidy"
+        -s "../../input/{wildcards.POP}.ploidy" && touch ../{wildcards.POP}.completed
         """
 
 ## summarise_ancestry: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome

@@ -367,7 +367,7 @@ rule multiQC_picard:
 #        meta = "samples/HILO_MAIZE55_meta.RData"
 #    output:
 #        expand("samples/{SUBSET}_byPop/{GROUP}_{LIST_TYPE}.list", GROUP=groups, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"]),
-#        expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=sympatric_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"])
+#        expand("samples/{SUBSET}_byPop/{POP}_{LIST_TYPE}.list", POP=symp_pops, LIST_TYPE=["ids", "bams"], SUBSET=["ALL", "Over0.5x"])
 #    params:
 #        p = "med2"
 #    shadow:
