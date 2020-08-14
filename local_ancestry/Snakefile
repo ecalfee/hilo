@@ -207,8 +207,8 @@ rule run_ancestry_hmm:
         mkdir -p {params.dir}
         cd {params.dir}
         ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
-        -p 0 100000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
-        --ne {params.Ne} --tmin 0 --tmax 10000 \
+        -p 0 10000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
+        --ne {params.Ne} --tmin 0 --tmax 1000 \
         -i "../../input/{wildcards.POP}.counts" \
         -s "../../input/{wildcards.POP}.ploidy" && cat "all done!" > ../{wildcards.POP}.completed
         """
