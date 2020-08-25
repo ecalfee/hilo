@@ -8,7 +8,10 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 # wildcards
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
-    POP = "[A-Za-z0-9]+"
+    POP = "[A-Za-z0-9]+",
+    BOOT = "yes|no",
+    Ne = "[0-9]+",
+    GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana""
 
 # reference genome
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -121,7 +124,8 @@ rule all:
         # local ancestry inference
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/{POP}.completed", Ne = 10000, POP = symp_pops)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq",
+        Ne = 10000, BOOT = "no", POP = symp_pops)
     params:
         p = "med2"
     resources:
