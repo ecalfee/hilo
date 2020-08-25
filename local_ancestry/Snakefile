@@ -226,8 +226,8 @@ rule summarise_posterior:
         p = "med2",
         dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/posterior"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 20,
-        mem = lambda wildcards, attempt: attempt * 8
+        time_min = lambda wildcards, attempt: attempt * 10,
+        mem = lambda wildcards, attempt: attempt * 2
     script:
         "post2anc.R"
 
