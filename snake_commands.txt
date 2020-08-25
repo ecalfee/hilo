@@ -876,9 +876,22 @@ Job counts:
                 count   jobs
                 1       make_input_hmm
                 1       run_ancestry_hmm
-                2 # ran but had trouble creating .completed output file . troubleshooting:
-
-Rscript calc_genomewide_pop_anc_freq.R ${POP_N} ${DIR_IN} ${IDs_FILE}
+                2 # ran but had trouble creating .completed output file . troubleshooting. Now ran.
+# testing posterior to ancestry files:
+hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/anc/pop360.anc.freq --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       summarise_posterior
+        1
+# running the remaining pops:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        27      make_input_hmm
+        27      run_ancestry_hmm
+        27      summarise_posterior
+        82 # RUNNING 8.25.2020 5pm.
 
 
 
