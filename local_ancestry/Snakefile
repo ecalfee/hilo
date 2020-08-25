@@ -213,10 +213,25 @@ rule run_ancestry_hmm:
         -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
         """
 
-## summarise_ancestry: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
-#rule summarise_ancestry:
+## summarise_posterior: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
+rule summarise_posterior:
+    input: # this file tracts that the posteriors are complete, but actually posterior files vary
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/{POP}.completed", # BOOT can be yes or no
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
+    output:
+        pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq",
+        ind = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.ind",
+        alpha = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.alpha.ind"
+    params:
+        p = "med2",
+        dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/posterior"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 20,
+        mem = lambda wildcards, attempt: attempt * 8
+    script:
+        "post2anc.R"
 
-## get_admix_time: takes in log file from ancestry_hmm and extracts the inferred timing of admixture
+## get_admix_times: takes in log files from ancestry_hmm and extracts the inferred timing of admixture
 
 ## ancestry_sites_to_tracts: takes in var.sites positions and creates a bed file that defines the tracts around each ancestry call.
 
