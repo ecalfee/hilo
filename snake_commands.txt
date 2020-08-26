@@ -905,7 +905,22 @@ Job counts:
         28      summarise_posterior
         57 RUNNING 8.25.2020 11pm
 # OOPS! I identified an error in the count_maj_min.R script (was not sorting to correct order because there are many chr and positions and only sorted by pos.)
-# re-doing all downstream steps:
+# doing 'touch' to ACGT counts (those files are ok) to re-do all downstream steps (starting with maj/min counts):
+hilo$ touch local_ancestry/results/countsACGT/HILO_MAIZE55/*.counts.gz
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        403     count_maj_min
+        1       make_allo_counts
+        28      make_input_hmm
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        545 # RUNNING 8.26.2020 2pm
+
+# only takes a few hours to re-run. make left_join with SNPs for extra security the order is correct. can now re-run:
+# also added error rate for read errors 3e-3 to ancestry_hmm scripts and expanded possible time range to 0-10000 generations (10k not 1k. maize made it to the highlands ~7k ago)
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

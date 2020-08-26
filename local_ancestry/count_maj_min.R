@@ -20,7 +20,7 @@ output_file = snakemake@output[["majmin"]]
 # to test:
 #ID = "HILO9"
 #prefix_all = "HILO_MAIZE55"
-#sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "whole_genome.var.sites")
+#sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.var.sites")
 #acgt_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".counts.gz")
 #pos_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".pos.gz")
 #output_file = paste0("local_ancestry/results/countsMajMin/", prefix_all, "/", ID, ".counts.txt")
@@ -44,7 +44,7 @@ min_counts = filter(d, minor==allele) %>%
 counts = full_join(maj_counts, min_counts,
                    suffix = c("_major", "_minor"),
                    by = c("chr", "pos", "major", "minor", "totDepth")) %>%
-  arrange(chr, pos) # re-order by nucleotide position within chromosomes
+  left_join(SNPs, ., by = c("chr", "pos", "major", "minor")) # arrange(chr, pos) order to match sites
 
 # write output file
 write.table(select(counts, c(n_major, n_minor)),
