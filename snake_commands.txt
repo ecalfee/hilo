@@ -891,8 +891,21 @@ Job counts:
         27      make_input_hmm
         27      run_ancestry_hmm
         27      summarise_posterior
-        82 # RUNNING 8.25.2020 5pm.
+        82 # RUNNING 8.25.2020 5pm. COMPLETED.
 
+# hint for screen if ssh disconnects while it's still attached:
+screen -rd is pretty much the standard way to attach to an existing screen session.
+
+# now with bootstrapping:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        28      summarise_posterior
+        57 RUNNING 8.25.2020 11pm
+# OOPS! I identified an error in the count_maj_min.R script (was not sorting to correct order because there are many chr and positions and only sorted by pos.)
+# re-doing all downstream steps:
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

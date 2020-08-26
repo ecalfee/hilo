@@ -44,7 +44,7 @@ min_counts = filter(d, minor==allele) %>%
 counts = full_join(maj_counts, min_counts,
                    suffix = c("_major", "_minor"),
                    by = c("chr", "pos", "major", "minor", "totDepth")) %>%
-  .[order(.$pos),] # re-order by nucleotide position within chromosome
+  arrange(chr, pos) # re-order by nucleotide position within chromosomes
 
 # write output file
 write.table(select(counts, c(n_major, n_minor)),
