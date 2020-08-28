@@ -59,6 +59,24 @@ rule thin_sites_4HMM:
     script:
         "thin_sites_4HMM.R"
 
+## get_tracts_from_sites: takes in a set of sites where local ancestry calls are made and returns bed file of ancestry tracts, 1 per site. Adjacent tracts are divided at the midpoint (in cM) between sites and first/last tract for a chromosome start/end at first/last site position.
+rule get_tracts_from_sites:
+    input:
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        rmap = "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+    output:
+        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+    params:
+        p = "med2",
+        prefix_all = prefix_all
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "tracts_from_sites.R"
+
 
 ## index_sites_4HMM: uses angsd to index thinned sites
 rule index_sites_4HMM:
