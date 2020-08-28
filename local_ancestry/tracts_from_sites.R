@@ -45,8 +45,8 @@ for (i in 1:10){
     # find nearest bp (round to integer) for each cM start position
     start_bp = round(stats::approx(x = rmap_by_chr[[i]]$pos_cM, y = rmap_by_chr[[i]]$pos_bp,
                             xout = start_cM, method = "linear")$y)
-    sites_by_chr[[i]]$start = c(sites_by_chr[[i]]$pos[1], start_bp - 1) # minus 1 because bed files are zero indexed
-    sites_by_chr[[i]]$end = c(start_bp, sites_by_chr[[i]]$pos[length(pos_cM)])
+    sites_by_chr[[i]]$start = c(sites_by_chr[[i]]$pos[1], start_bp) - 1 # minus 1 because bed files are zero indexed
+    sites_by_chr[[i]]$end = c(start_bp - 1, sites_by_chr[[i]]$pos[length(pos_cM)])
   }
 }
 

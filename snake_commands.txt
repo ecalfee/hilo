@@ -932,8 +932,14 @@ Job counts:
         28      make_input_hmm
         28      run_ancestry_hmm
         56      summarise_posterior
-        545 # RUNNING 8.26.2020 4pm
-        # SEND Dan new 'ancestry desert' coordinates
+        545 # RUNNING 8.26.2020 4pm. COMPLETED.
+# making tracts for ancestry calls:
+hilo$ snakemake -n local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       get_tracts_from_sites
+        1 # ran but am force re-running because need to correct 0-index on bed file
+# SEND Dan new 'ancestry desert' coordinates
 
 
 # NOTE: I should delete intermediate files from 'all' because it possibly slows down creating DAG (e.g. if they've already been used already it wouldn't need to check them?)

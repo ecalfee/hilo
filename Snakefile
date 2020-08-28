@@ -123,6 +123,7 @@ rule all:
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
         # local ancestry inference
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq",
         Ne = 10000, BOOT = ["yes", "no"], POP = symp_pops)
