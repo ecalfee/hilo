@@ -947,6 +947,8 @@ Job counts:
 
 # PROBLEM: there is an issue that nInd from maf.gz is counting some individuals with reads that must be subquality (or not maj/min allele)
 # so that the allo_counts are not meeting minimum # individuals to use for local ancestry calling, especially in mexicana (some zeros!)
+# I moved old -doMaf 8 data to variant_sites/results/popFreq/allopatric_mexicana_doMaf8
+# and modified rule allo_freqs in Snakefile/variant_sites
 # I'm testing if the same problem persists with -doMaf 1 which relies on a HW assumption but should be find for allopatric pops
 hilo$ snakemake -n -f variant_sites/results/popFreq/allopatric_mexicana variant_sites/results/popFreq/allopatric_mexicana/region_0.mafs.gz --quiet --profile slurm
 

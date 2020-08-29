@@ -221,7 +221,7 @@ rule allo_freqs:
         "-minMapQ 30 -minQ 20 "
         "-doMajorMinor 3 "
         "-P 2 "
-        "-baq 2 "  
+        "-baq 2 "
         "-doMaf 1"
         #"-doCounts 1 -doMaf 8 "
 
