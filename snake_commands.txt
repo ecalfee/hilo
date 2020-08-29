@@ -950,8 +950,11 @@ Job counts:
 # I moved old -doMaf 8 data to variant_sites/results/popFreq/allopatric_mexicana_doMaf8
 # and modified rule allo_freqs in Snakefile/variant_sites
 # I'm testing if the same problem persists with -doMaf 1 which relies on a HW assumption but should be find for allopatric pops
-hilo$ snakemake -n -f variant_sites/results/popFreq/allopatric_mexicana variant_sites/results/popFreq/allopatric_mexicana/region_0.mafs.gz --quiet --profile slurm
-
+hilo$ snakemake -f variant_sites/results/popFreq/allopatric_mexicana/region_0.mafs.gz variant_sites/results/popFreq/allopatric_mexicana/region_1.mafs.gz variant_sites/results/popFreq/allopatric_mexicana/region_300.mafs.gz --quiet --profile slurm
+Job counts:
+        count   jobs
+        3       allo_freqs
+        3 # RUNNING FOR JUST A FEW REGIONS FIRST. CAN THEN COMPARE nIND with the tot_mex in ACGT counts for overlapping SNPs
 
 
 # NOTE:
