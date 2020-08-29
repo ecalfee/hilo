@@ -220,9 +220,11 @@ rule allo_freqs:
         "-remove_bads 1 "
         "-minMapQ 30 -minQ 20 "
         "-doMajorMinor 3 "
-        "-doCounts 1 -doMaf 8 "
         "-P 2 "
-        "-baq 2"
+        "-baq 2 "  
+        "-doMaf 1"
+        #"-doCounts 1 -doMaf 8 "
+
 
 
 # # to uncomment code below: cmd + /

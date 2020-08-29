@@ -115,7 +115,7 @@ rule run_NGSAdmix:
 rule results_NGSAdmix:
     input:
         admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
-        meta = "samples/HILO_MAIZE55_meta.RData"
+        meta = "samples/" + prefix_all + "_meta.RData"
     output:
         alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
         ind = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
@@ -135,7 +135,7 @@ rule results_NGSAdmix:
 ## plot_NGSAdmix: plots results of NGSAdmix and produces table with linear model output for cline in mexicana ancestry with elevation
 rule plot_NGSAdmix:
     input:
-        meta = "samples/HILO_MAIZE55_meta.RData",
+        meta = "samples/" + prefix_all + "_meta.RData",
         colors = "colors.R",
         k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
     output:
@@ -157,7 +157,7 @@ rule plot_NGSAdmix:
 ## plot_PCAngsd: plots genomewide PCA from genetic covariance matrix estimated by PCAngsd
 rule plot_PCAngsd:
     input:
-        meta = "samples/HILO_MAIZE55_meta.RData",
+        meta = "samples/" + prefix_all + "_meta.RData",
         colors = "colors.R",
         cov = "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov"
     output:

@@ -18,7 +18,6 @@ def Alphas4LocalAncestrybyPop(pop, alphas_file):
                 alphas_dict = {"alpha_maize": float(row[1]), "alpha_mex": float(row[2])}
         return(alphas_dict)
 
-
 ## thin_sites_4HMM: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high freq difference between them
 rule thin_sites_4HMM:
     input:
@@ -59,7 +58,7 @@ rule thin_sites_4HMM:
     script:
         "thin_sites_4HMM.R"
 
-## get_tracts_from_sites: takes in a set of sites where local ancestry calls are made and returns bed file of ancestry tracts, 1 per site. Adjacent tracts are divided at the midpoint (in cM) between sites and first/last tract for a chromosome start/end at first/last site position.
+## get_tracts_from_sites: takes in var.sites positions and creates a bed file that defines the tracts around each ancestry call. Adjacent tracts are divided at the midpoint (in cM) between sites and first/last tract for a chromosome start/end at first/last site position.
 rule get_tracts_from_sites:
     input:
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
@@ -195,7 +194,7 @@ rule make_input_hmm:
     script:
         "make_input_ancestry_hmm.R"
 
-## run_ancestry_hmm: runs ancestry_hmm
+## run_ancestry_hmm: runs local ancestry hidden Markov model (ancestry_hmm)
 rule run_ancestry_hmm:
     input:
         counts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.counts",
@@ -283,14 +282,36 @@ rule summarise_posterior:
     params:
         p = "med2",
         dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/posterior"
+    conda:
+        "../envs/environment.yaml"
     resources:
         time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 2
     script:
         "post2anc.R"
 
+## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
+rule combine_pop_ancestry_data:
+    input:
+        "samples/" + prefix_all + "_meta.RData",
+        "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy", POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq", POP = symp_pops)
+    output:
+        pops = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.pops.anc.RData",
+        combined = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.combined.anc.freq",
+        meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.pop.meta.RData" # n, elev and alpha for each pop
+    params:
+        p = "med2",
+        dir_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc",
+        dir_ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input",
+        zea = lambda wildcards: wildcards.ZEA
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 20,
+        mem = lambda wildcards, attempt: attempt * 8
+    script:
+        "combined_pop_anc_data.R"
+
 ## get_admix_times: takes in log files from ancestry_hmm and extracts the inferred timing of admixture
-
-## ancestry_sites_to_tracts: takes in var.sites positions and creates a bed file that defines the tracts around each ancestry call.
-
-# # NOTE: use lambda function in params to extract the correct alphas for your pop (read in as a dictionary)

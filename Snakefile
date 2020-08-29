@@ -11,7 +11,8 @@ wildcard_constraints:
     POP = "[A-Za-z0-9]+",
     BOOT = "yes|no",
     Ne = "[0-9]+",
-    GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana"
+    GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana",
+    ZEA = "maize|mexicana"
 
 # reference genome
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -52,6 +53,7 @@ with open("samples/" + prefix_all + "_ids.list") as f:
 # groups
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
+zea = ["maize", "mexicana"]
 
 # sympatric populations
 symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
