@@ -296,7 +296,7 @@ rule combine_pop_ancestry_data:
         "samples/" + prefix_all + "_meta.RData",
         "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq", POP = symp_pops, Ne = wildcards.Ne, BOOT = wildcards.BOOT)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{BOOT}}Boot/anc/{POP}.anc.freq", POP = symp_pops)
     output:
         pops = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.pops.anc.RData",
         combined = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.combined.anc.freq",
