@@ -955,7 +955,7 @@ Job counts:
         count   jobs
         3       allo_freqs
         3 # RUNNING FOR JUST A FEW REGIONS FIRST. CAN THEN COMPARE nIND with the tot_mex in ACGT counts for overlapping SNPs
-
+# ADDED -GL 1 and TRYING AGAIN (SAME JOBS):
 
 # NOTE:
 # TO DO:
