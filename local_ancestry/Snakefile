@@ -21,7 +21,7 @@ def Alphas4LocalAncestrybyPop(pop, alphas_file):
 ## allo_freqs: estimates the minor allele frequency at all SNPs for allopatric maize and mexicana
 rule allo_freqs:
     input:
-        bams = ["filtered_bams/merged_bams/" + id + ".sort.dedup.bam" for id in all_ids]
+        bams = ["filtered_bams/merged_bams/" + id + ".sort.dedup.bam" for id in all_ids],
         bais = ["filtered_bams/merged_bams/" + id + ".sort.dedup.bam.bai" for id in all_ids]
         sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites",
         idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
