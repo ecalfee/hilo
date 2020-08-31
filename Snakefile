@@ -82,7 +82,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
+#include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
@@ -108,8 +108,6 @@ rule all:
         #"global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
         #"global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov",
         #"global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
-        "filtered_bams/plots/p_seq_counts.png",
-        expand("variant_sites/results/popFreq/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
         #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
@@ -124,6 +122,7 @@ rule all:
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
         # local ancestry inference
+        expand("local_ancestry/results/alloFreqs/" + prefix_all + "/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),

@@ -955,7 +955,10 @@ Job counts:
         count   jobs
         3       allo_freqs
         3 # RUNNING FOR JUST A FEW REGIONS FIRST. CAN THEN COMPARE nIND with the tot_mex in ACGT counts for overlapping SNPs
-# ADDED -GL 1 and TRYING AGAIN (SAME JOBS):
+# ADDED -GL 1 and TRYING AGAIN (SAME JOBS). worked. also tested and this gets the right nIND for allopatric counts -- great!
+# I moved allo_freqs rule to local_ancestry/Snakefile
+# and am rerunning all regions now with gl 1 method.
+
 
 # NOTE:
 # TO DO:
