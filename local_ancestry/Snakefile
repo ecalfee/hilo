@@ -34,7 +34,7 @@ rule allo_freqs:
     params:
         p = "med2",
         region = lambda wildcards: regions_dict[wildcards.REGION],
-        out_prefix = lambda wildcards: "variant_sites/results/popFreq/" + wildcards.GROUP + "/" + wildcards.REGION
+        out_prefix = lambda wildcards: "local_ancestry/results/alloFreqs/" + prefix_all + "/" + wildcards.GROUP + "/" + wildcards.REGION
     shadow:
         "minimal"
     conda:
@@ -43,7 +43,7 @@ rule allo_freqs:
         2
     resources:
         time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 16
+        mem = lambda wildcards, attempt: attempt * 6
     shell:
         "angsd -out {params.out_prefix} "
         "-r {params.region} "
