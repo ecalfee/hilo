@@ -40,10 +40,10 @@ rule allo_freqs:
     conda:
         "../envs/environment.yaml"
     threads:
-        2
+        1
     resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 6
+        time_min = lambda wildcards, attempt: attempt * 12 * 60,
+        mem = lambda wildcards, attempt: attempt * 12
     shell:
         "angsd -out {params.out_prefix} "
         "-r {params.region} "
@@ -53,7 +53,7 @@ rule allo_freqs:
         "-remove_bads 1 "
         "-minMapQ 30 -minQ 20 "
         "-doMajorMinor 3 "
-        "-P 2 "
+        "-P 1 "
         "-baq 2 "
         "-GL 1 -doMaf 1"
 

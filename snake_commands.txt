@@ -1015,6 +1015,25 @@ Job counts:
 
 # TO DO:
 # check on output files from ancestry_hmm -- did it run?
+# NOT COMPLETELY:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        66      allo_freqs
+        28      boot_ancestry_hmm
+        403     count_ACGT
+        403     count_maj_min
+        1       get_tracts_from_sites
+        1       index_sites_4HMM
+        1       make_allo_counts
+        28      make_input_hmm
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        1       thin_sites_4HMM
+        1017 # some allo_freqs need to be re-run. won't restart on their own if out of time (only if out of memory ..)
+        # so I added resources to allo_freqs rule. and will restart.
+
 # remove old popFreq directory with old allo_freqs
 # SEND Dan new 'ancestry desert' coordinates
 
