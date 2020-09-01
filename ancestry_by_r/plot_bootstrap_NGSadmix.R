@@ -45,7 +45,7 @@ anc_boot <- do.call(rbind,
                     lapply(0:100, function(BOOT) do.call(rbind,
                                                          lapply(1:5, function(r)
                                                          read.table(paste0("ancestry_by_r/results/bootstrap_1cM/",
-                                                         PREFIX, "/r5_recomb", r, "/K", K, "/boot", BOOT, ".anc"),
+                                                         PREFIX, "/r5_", r, "/K", K, "/boot", BOOT, ".anc"),
                                                          header = T, sep = "\t", stringsAsFactors = F) %>%
                                                          mutate(bootstrap = BOOT) %>%
                                                          mutate(r5_quintile = r))))) %>%

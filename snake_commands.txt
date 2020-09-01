@@ -1029,11 +1029,9 @@ Job counts:
 
 # TO DO:
 
-# remove old popFreq directory with old allo_freqs
 # SEND Dan new 'ancestry desert' coordinates
 
 # get coding density/cM in my 1cM blocks and re-run bootstrap.
-# 1st TEST make_coding_bedfile
 # then see what needs to be re-run when you do plot_bootstrap_anc_by_r
 # finally, if all set, add new plot with cd5 coding/cM quintiles
 
