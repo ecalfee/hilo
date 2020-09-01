@@ -17,11 +17,11 @@ rule make_coding_bed:
     conda:
          "../envs/environment.yaml"
     resources:
-        time_min = 15,
+        time_min = 10,
         mem = 4
     shell:
         """
-        grep -v '^#' {input.annotations} | awk -v OFS='\t' '{{print \$1,\$4,\$5,\$3}}' |\
+        grep -v '^#' {input.annotations} | awk -v OFS='\t' '{{print $1,$4,$5,$3}}' |\
         grep 'CDS' | grep -v '^Mt' | grep -v '^Pt' |\
         bedtools sort -faidx {input.genome} -i stdin |\
         bedtools merge -i stdin -c 4 -o distinct > {output}
