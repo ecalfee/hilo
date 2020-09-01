@@ -52,7 +52,7 @@ rule sample_bootstrap_1cM:
     input:
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
     output: # FEATURE is recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.list",
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{{FEATURE}}5_{r}/boot{BOOT}.list",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))) # 5 recombination rate quintiles, '0' for original sample and 1-100 bootstrap samples
     params:
         p = "med2",

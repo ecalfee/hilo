@@ -1033,6 +1033,8 @@ Job counts:
         1       thin_sites_4HMM
         1017 # some allo_freqs need to be re-run. won't restart on their own if out of time (only if out of memory ..)
         # so I added resources to allo_freqs rule. and will restart.
+        # First I test other new rules: make_coding_bedfile:
+        
 
 # remove old popFreq directory with old allo_freqs
 # SEND Dan new 'ancestry desert' coordinates
