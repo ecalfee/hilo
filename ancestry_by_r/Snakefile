@@ -6,7 +6,7 @@ workdir: path_hilo
 ## make_coding_bed: makes a bed file of coding regions ('CDS') from gff3 file. merges overlapping CDS and sorts results by genome order.
 rule make_coding_bed:
     input:
-        annotations = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3",
+        annotations = ref_anno,
         genome = ref_chr
     output:
         bed = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed"
@@ -21,7 +21,7 @@ rule make_coding_bed:
          mem = 2
     shell:
         """
-        grep -v '^#' {input.annotations} | awk '{{print $1"\t"$4"\t"$5"\t"$3}}' |\
+        grep -v '^#' {input.annotations} | awk '{{print $1"\\t"$4"\\t"$5"\\t"$3}}' |\
         grep 'CDS' | grep -v '^Mt' | grep -v '^Pt' |\
         bedtools sort -faidx {input.genome} -i stdin |\
         bedtools merge -i stdin -c 4 -o distinct > {output}

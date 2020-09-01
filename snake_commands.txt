@@ -1019,6 +1019,11 @@ Job counts:
                 Job counts:
                         count   jobs
                         1       make_coding_bedfile
+                        1 # didn't run. fixing error and retry:
+                        hilo$ snakemake make_coding_bed --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       make_coding_bed
                         1
 
 
