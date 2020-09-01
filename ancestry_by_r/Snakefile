@@ -3,10 +3,36 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
+## make_coding_bedfile: makes a bed file of coding regions ('CDS') from gff3 file. merges overlapping CDS and sorts results by genome order.
+rule make_coding_bedfile:
+    input:
+        annotations = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3",
+        genome = ref_chr
+    output:
+        bed = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed"
+    params:
+        p = "med2"
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    shell:
+        """
+        grep -v '^#' {input} | awk '{{print $1"\t"$4"\t"$5"\t"$3}}' |\
+        grep 'CDS' | grep -v '^Mt' | grep -v '^Pt' |\
+        bedtools sort -faidx {input.genome} -i stdin |\
+        bedtools merge -i stdin -c 4 -o distinct > {output}
+        """
+
 ## define_1cM_windows: divides genome into 1cM windows
 rule define_1cM_windows:
     input:
-        rmap = rmap_ext
+        rmap = rmap_ext,
+        genome = ref_chr,
+        cds = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed"
     output:
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
     params:
@@ -25,13 +51,14 @@ rule define_1cM_windows:
 rule sample_bootstrap_1cM:
     input:
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
-    output:
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
+    output: # FEATURE is recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.list",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))) # 5 recombination rate quintiles, '0' for original sample and 1-100 bootstrap samples
     params:
         p = "med2",
         n = 100, # 100 bootstraps
-        prefix_all = prefix_all
+        prefix_all = prefix_all,
+        feature = lambda wildcards: wildcards.FEATURE
     conda:
          "../envs/environment.yaml"
     resources:
@@ -88,10 +115,10 @@ rule find_SNPs_in_window:
 rule make_bootstrap_GL_file:
     input:
         "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
+        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.list",
         expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
     output:
-        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz"
+        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
     params:
         p = "med2",
         prefix_all = prefix_all,
@@ -108,9 +135,9 @@ rule make_bootstrap_GL_file:
 ## run_bootstrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
 rule run_bootstrap_NGSAdmix:
     input:
-        gl = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz"
+        gl = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
     output:
-        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.qopt"
+        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.qopt"
     params:
         p = "med2",
         prefix_all = prefix_all,
@@ -128,16 +155,16 @@ rule run_bootstrap_NGSAdmix:
         """
         NGSadmix -likes {input.gl} \
         -K {params.k} -P {threads} \
-        -o "ancestry_by_r/results/bootstrap_1cM/{params.prefix_all}/r5_recomb{wildcards.r}/K{params.k}/boot{wildcards.BOOT}"
+        -o "ancestry_by_r/results/bootstrap_1cM/{params.prefix_all}/{wildcards.FEATURE}5_{wildcards.r}/K{params.k}/boot{wildcards.BOOT}"
         """
 
 ## label_k_anc: defines which of K ancestries is 'mexicana' based on allopatric reference panels
 rule label_k_anc:
     input:
-        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.qopt",
+        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.qopt",
         meta = "samples/HILO_MAIZE55_meta.RData"
     output:
-        anc = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc"
+        anc = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.anc"
     params:
         p = "med2",
         k = 2
@@ -155,8 +182,8 @@ rule plot_bootstrap_anc_by_r:
         "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
         "colors.R",
         "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
-        r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.anc",
+        r = [1, 2, 3, 4, 5], FEATURE = ["r", "cd"], BOOT = list(range(0, 101)))
     output:
         png_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         png_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",

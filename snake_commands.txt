@@ -995,6 +995,23 @@ filtered_bams/merged_bams/MAIZE1.sort.dedup.bam.
 oops it's because all_bams is looking for the other end of this symlink: filtered_bams/MAIZE55/MAIZE1.sort.dedup.bam
 (LATER I can make a symlink rule for allopatric maize instead of 'merge' for these bams.)
 for now I'll just directly specify input bams. and later I can check all places all_bams is used.
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        830     allo_freqs
+        28      boot_ancestry_hmm
+        403     count_ACGT
+        403     count_maj_min
+        1       get_tracts_from_sites
+        1       index_sites_4HMM
+        1       make_allo_counts
+        28      make_input_hmm
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        1       thin_sites_4HMM
+        1781 # RUNNING 8.31.2020 (note a few allo freqs for mexicana had finished already..only maize had the path errors)
+
 
 # TO DO:
 # check on output files from ancestry_hmm -- did it run?
@@ -1002,4 +1019,8 @@ for now I'll just directly specify input bams. and later I can check all places 
 # SEND Dan new 'ancestry desert' coordinates
 
 # get coding density/cM in my 1cM blocks and re-run bootstrap.
-# also set up to use bedtools (and better avg) to estimate local ancestry for 1cM blocks
+# 1st TEST make_coding_bedfile
+# then see what needs to be re-run when you do plot_bootstrap_anc_by_r
+# finally, if all set, add new plot with cd5 coding/cM quintiles
+
+# set up to use bedtools (and better avg) to estimate local ancestry for 1cM blocks

@@ -12,7 +12,8 @@ wildcard_constraints:
     BOOT = "yes|no",
     Ne = "[0-9]+",
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana",
-    ZEA = "maize|mexicana"
+    ZEA = "maize|mexicana",
+    FEATURE = "r|cd|frac" # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
 
 # reference genome
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -85,7 +86,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
+include: "ancestry_by_r/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
