@@ -3,8 +3,8 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-## make_coding_bedfile: makes a bed file of coding regions ('CDS') from gff3 file. merges overlapping CDS and sorts results by genome order.
-rule make_coding_bedfile:
+## make_coding_bed: makes a bed file of coding regions ('CDS') from gff3 file. merges overlapping CDS and sorts results by genome order.
+rule make_coding_bed:
     input:
         annotations = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3",
         genome = ref_chr
@@ -21,7 +21,7 @@ rule make_coding_bedfile:
          mem = 2
     shell:
         """
-        grep -v '^#' {input} | awk '{{print $1"\t"$4"\t"$5"\t"$3}}' |\
+        grep -v '^#' {input.annotations} | awk '{{print $1"\t"$4"\t"$5"\t"$3}}' |\
         grep 'CDS' | grep -v '^Mt' | grep -v '^Pt' |\
         bedtools sort -faidx {input.genome} -i stdin |\
         bedtools merge -i stdin -c 4 -o distinct > {output}
