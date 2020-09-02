@@ -177,6 +177,7 @@ rule label_k_anc:
         "label_k_ancestries.R"
 
 ## summarise_bootstrap_anc_by_r: summarises bootstrap results for global ancestry by genomic quintiles
+rule summarise_bootstrap_anc_by_r:
     input:
         "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
         "ancestry_by_r/results/map_pos_1cM_windows.txt",
