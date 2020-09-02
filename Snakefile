@@ -121,6 +121,7 @@ rule all:
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
         #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_{r}/K2/boot{BOOT}.anc",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_K2.Rdata", FEATURE = ["r", "cd"]),
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",

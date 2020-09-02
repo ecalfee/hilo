@@ -176,6 +176,30 @@ rule label_k_anc:
     script:
         "label_k_ancestries.R"
 
+## summarise_bootstrap_anc_by_r: summarises bootstrap results for global ancestry by genomic quintiles
+    input:
+        "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
+        "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{{FEATURE}}5_{r}/K2/boot{BOOT}.anc",
+        r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
+    output:
+        rdata = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_K2.Rdata"
+    params:
+        p = "med2",
+        k = 2,
+        prefix_all = prefix_all,
+        feature = lambda wildcards: wildcards.FEATURE,
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        alpha = 0.1 # use 90% confidence intervals for bootstrap
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "summarise_bootstrap_NGSadmix.R"
+
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
     input:
