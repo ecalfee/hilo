@@ -59,10 +59,10 @@ for (j in 1:nrow(regions)){
   sites0 = read.table(paste0("variant_sites/results/", prefix_all, "/region_", n, ".var.sites"),
                      header = F, sep = "\t", stringsAsFactors = F) %>%
     data.table::setnames(c("chr", "pos", "major", "minor"))
-  maize_maf = read.table(paste0("variant_sites/results/popFreq/allopatric_maize/region_", n, ".mafs.gz"),
+  maize_maf = read.table(paste0("local_ancestry/results/alloFreq/", prefix_all, "/allopatric_maize/region_", n, ".mafs.gz"),
                          header = T, sep = "\t", stringsAsFactors = F) %>%
     left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor"))
-  mex_maf = read.table(paste0("variant_sites/results/popFreq/allopatric_mexicana/region_", n, ".mafs.gz"),
+  mex_maf = read.table(paste0("local_ancestry/results/alloFreq/", prefix_all, "/allopatric_mexicana/region_", n, ".mafs.gz"),
                          header = T, sep = "\t", stringsAsFactors = F) %>%
     left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor"))
 

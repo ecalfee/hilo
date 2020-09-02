@@ -1090,7 +1090,7 @@ Job counts:
         28      run_ancestry_hmm
         56      summarise_posterior
         1       thin_sites_4HMM
-        951 # RUNNING 10:45am 9.2.2020
+        951 # RUNNING 10:45am 9.2.2020. Fixed directory typo for alloFreqs in thin_sites_4HMM:
 
 # TO DO:
 
