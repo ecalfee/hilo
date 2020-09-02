@@ -313,15 +313,15 @@ rule boot_ancestry_hmm:
 ## summarise_posterior: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
 rule summarise_posterior:
     input: # this file tracts that the posteriors are complete, but actually posterior files vary
-        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/{POP}.completed", # BOOT can be yes or no
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
     output:
-        pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq",
-        ind = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.ind",
-        alpha = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.alpha.ind"
+        pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
+        ind = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.ind",
+        alpha = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.alpha.ind"
     params:
         p = "med2",
-        dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/posterior"
+        dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/posterior"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -336,14 +336,14 @@ rule combine_pop_ancestry_data:
         "samples/" + prefix_all + "_meta.RData",
         "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{BOOT}}Boot/anc/{POP}.anc.freq", POP = symp_pops)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{POP}.anc.freq", POP = symp_pops)
     output:
-        pops = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.pops.anc.RData",
-        combined = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.combined.anc.freq",
-        meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{ZEA}.pop.meta.RData" # n, elev and alpha for each pop
+        pops = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        combined = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.freq",
+        meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData" # n, elev and alpha for each pop
     params:
         p = "med2",
-        dir_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc",
+        dir_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc",
         dir_ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input",
         zea = lambda wildcards: wildcards.ZEA
     conda:

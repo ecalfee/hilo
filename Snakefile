@@ -9,10 +9,12 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
     POP = "[A-Za-z0-9]+",
-    BOOT = "yes|no",
+    BOOT = "[0-9]+", # bootstrap
+    YESNO = "yes|no",
     Ne = "[0-9]+",
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana",
     ZEA = "maize|mexicana",
+    r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac" # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
 
 # reference genome and associated files
@@ -112,12 +114,12 @@ rule all:
         #"global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
-        #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.list",
+        #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_{r}/boot{BOOT}.list",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
         #expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM),
-        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/boot{BOOT}.beagle.gz",
+        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_{r}/boot{BOOT}.beagle.gz",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
-        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_recomb{r}/K2/boot{BOOT}.anc",
+        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_{r}/K2/boot{BOOT}.anc",
         #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
@@ -128,8 +130,8 @@ rule all:
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{BOOT}Boot/anc/{POP}.anc.freq",
-        Ne = 10000, BOOT = ["yes", "no"], POP = symp_pops)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
+        Ne = 10000, YESNO = ["yes", "no"], POP = symp_pops)
     params:
         p = "med2"
     resources:
