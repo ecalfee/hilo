@@ -68,10 +68,10 @@ for (j in 1:nrow(regions)){
 
   # First find SNPs that meet threshold difference in allele frequency
   # and minimum n samples with data to be ancestry informative markers (AIMs)
-  min_ind = !is.na(maize_maf$phat) & !is.na(mex_maf$phat) &
+  min_ind = !is.na(maize_maf$knownEM) & !is.na(mex_maf$knownEM) &
                maize_maf$nInd >= min_n_maize & mex_maf$nInd >= min_n_mex
-  min_diff = !is.na(abs(maize_maf$phat - mex_maf$phat)) &
-    (abs(maize_maf$phat - mex_maf$phat) >= min_maf_diff)
+  min_diff = !is.na(abs(maize_maf$knownEM - mex_maf$knownEM)) &
+    (abs(maize_maf$knownEM - mex_maf$knownEM) >= min_maf_diff)
   is_aim = min_ind & min_diff
   rpos_aims = rpos0[is_aim]
   sites_aims = sites0[is_aim, ]

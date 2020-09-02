@@ -1052,6 +1052,45 @@ hilo$ snakemake -f define_1cM_windows --quiet --profile slurm
     count   jobs
     1       define_1cM_windows
     1 # COMPlETED. Now I'll rerun rule 'all' for the whole pipeline 9.1.2020.
+    hilo$ snakemake all --quiet --profile slurm
+    Job counts:
+            count   jobs
+            1       all
+            66      allo_freqs
+            28      boot_ancestry_hmm
+            403     count_ACGT
+            403     count_maj_min
+            1520    find_SNPs_in_window
+            1       get_tracts_from_sites
+            1       index_sites_4HMM
+            1010    label_k_anc
+            1       make_allo_counts
+            1       make_bed_file_for_windows
+            1010    make_bootstrap_GL_file
+            28      make_input_hmm
+            1       plot_bootstrap_anc_by_r
+            28      run_ancestry_hmm
+            1010    run_bootstrap_NGSAdmix
+            2       sample_bootstrap_1cM
+            56      summarise_posterior
+            1       thin_sites_4HMM
+            5571 # RUNNING 9.2.2020 6pm
+# because switched to -GL 1 needed to switch from 'phat' to 'knownEM' in thin_sites_4HMM
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        403     count_ACGT
+        403     count_maj_min
+        1       get_tracts_from_sites
+        1       index_sites_4HMM
+        1       make_allo_counts
+        28      make_input_hmm
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        1       thin_sites_4HMM
+        951 # RUNNING 10:45am 9.2.2020
 
 # TO DO:
 
