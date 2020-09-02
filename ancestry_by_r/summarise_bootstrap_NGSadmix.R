@@ -8,9 +8,9 @@ library(tidyr)
 # load variables from Snakefile
 load(snakemake@params[["meta"]])
 # load("samples/HILO_MAIZE55_meta.RData")
-FEATURE = snakemake@params[["prefix_all"]]
+FEATURE = snakemake@params[["feature"]]
 # FEATURE = "r" # vs. "cd"
-PREFIX = snakemake@params[["feature"]]
+PREFIX = snakemake@params[["prefix_all"]]
 # PREFIX = "HILO_MAIZE55"
 K = snakemake@params[["k"]]
 # K = 2
@@ -29,7 +29,7 @@ quintile_col <- paste0("quintile_", FEATURE, "5")
 # get the genomic quintile ranges
 q <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
   dplyr::select(., quintile_col, bin_col) %>%
-  rename(quintile = quintile, bin = bin_col) %>%
+  rename(quintile = quintile_col, bin = bin_col) %>%
   filter(., !duplicated(bin)) %>%
   arrange(., quintile) %>% # order 1-5
   mutate(bin = factor(bin, ordered = T, levels = bin))
@@ -93,4 +93,5 @@ assign(x = feature_name,
                     anc_boot_perc = anc_boot_perc,
                     anc_group_confidence_intervals = anc_group_confidence_intervals,
                     alpha = alpha))
-save(list(feature_name), rdata_out)
+save(list = c(feature_name), file = rdata_out)
+

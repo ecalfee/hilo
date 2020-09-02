@@ -1091,6 +1091,14 @@ Job counts:
         56      summarise_posterior
         1       thin_sites_4HMM
         951 # RUNNING 10:45am 9.2.2020. Fixed directory typo for alloFreqs in thin_sites_4HMM:
+# just retrying thin_sties_4HMM and summaries of bootstrap data
+hilo$ snakemake -n thin_sites_4HMM ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       summarise_bootstrap_anc_by_r
+        1       thin_sites_4HMM
+        3 # RUNNING 2pm 9.2.2020. had typo in summarise_bootstrap. trying again:
+
 
 # TO DO:
 
