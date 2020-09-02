@@ -1024,8 +1024,34 @@ Job counts:
                 Job counts:
                         count   jobs
                         1       make_coding_bed
-                        1
+                        1 # Yikes! Can't use 'head' in bash strict mode -- it sends a 141 error down the pipe (who knew?)
+                        hilo$ snakemake -p make_coding_bed --profile slurm
+                        Building DAG of jobs...
+                        Using shell: /bin/bash
+                        Provided cluster nodes: 100
+                        Job counts:
+                                count   jobs
+                                1       make_coding_bed
+                                1
 
+                        [Tue Sep  1 16:52:20 2020]
+                        rule make_coding_bed:
+                            input: /home/ecalfee/hilo/data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3, /home/ecalfee/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths
+                            output: data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed
+                            jobid: 0
+                            resources: time_min=5, mem=4
+
+
+                                grep -v '^#' /home/ecalfee/hilo/data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.gff3 | awk -v OFS='\t' '{print $1,$4,$5,$3}' |\
+                                grep 'CDS' | grep -v '^Mt' | grep -v '^Pt' |\
+                                bedtools sort -faidx /home/ecalfee/hilo/data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths -i stdin |\
+                                bedtools merge -i stdin -c 4 -o distinct > data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed
+                        # now completed make_coding_bed
+hilo$ snakemake -f define_1cM_windows --quiet --profile slurm
+    Job counts:
+    count   jobs
+    1       define_1cM_windows
+    1 # COMPlETED. Now I'll rerun rule 'all' for the whole pipeline 9.1.2020.
 
 # TO DO:
 
@@ -1034,5 +1060,6 @@ Job counts:
 # get coding density/cM in my 1cM blocks and re-run bootstrap.
 # then see what needs to be re-run when you do plot_bootstrap_anc_by_r
 # finally, if all set, add new plot with cd5 coding/cM quintiles
+# possibly split summarising bootstrap results into their own script
 
 # set up to use bedtools (and better avg) to estimate local ancestry for 1cM blocks
