@@ -1153,7 +1153,11 @@ Job counts:
         1       test_ancestry_hmm
         1 # RUNNING 9.3.2020 10am. TEST2 worked! can delete test rule now test_ancestry_hmm
 # I fixed the error in thin_sites_4HMM that was setting the start of every region (not chr) to 1. And I'm rerunning from there:
-
+hilo$ snakemake -n -f thin_sites_4HMM --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       thin_sites_4HMM
+        1 # COMPLETED 10:30am. Now I'll rerun the rest. And add the new fig ouputs for ancestry_by_r too
 
 
 

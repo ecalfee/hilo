@@ -204,23 +204,23 @@ rule summarise_bootstrap_anc_by_r:
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
     input:
-        "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
-        "colors.R",
-        "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.anc",
-        r = [1, 2, 3, 4, 5], FEATURE = ["r", "cd"], BOOT = list(range(0, 101)))
+        colors = "colors.R",
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        r5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_K2.Rdata",
+        cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata"
     output:
-        png_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
-        png_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
-        png_facet_r = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
-        png_color_elev = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+        png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
+        png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
+        png_cd5_symp = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png",
+        png_cd5_symp_allo = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
+        png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png",
+        png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png",
+        png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
+        png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
     params:
         p = "med2",
         k = 2,
-        prefix_all = prefix_all,
-        meta = "samples/HILO_MAIZE55_meta.RData",
-        colors = "colors.R",
-        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
+        prefix_all = prefix_all
     conda:
          "../envs/environment.yaml"
     resources:

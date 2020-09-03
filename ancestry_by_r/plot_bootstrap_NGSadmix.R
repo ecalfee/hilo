@@ -7,95 +7,105 @@ library(tidyr)
 library(ggplot2)
 
 # load variables from Snakefile
-load(snakemake@params[["meta"]])
-# load("samples/HILO_MAIZE55_meta.RData")
-source(snakemake@params[["colors"]])
+load(snakemake@input[["r5"]])
+# load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata")
+load(snakemake@input[["cd5"]])
+# load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata")
+source(snakemake@input[["colors"]])
 # source("colors.R")
-png_symp = snakemake@output[["png_symp"]]
-# png_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
-png_symp_allo = snakemake@output[["png_symp_allo"]]
-# png_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png"
-png_facet_r = snakemake@output[["png_facet_r"]]
-# png_facet_r = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
-png_color_elev = snakemake@output[["png_color_elev"]]
-# png_color_elev = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+png_r5_symp = snakemake@output[["png_r5_symp"]]
+# png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
+png_r5_symp_allo = snakemake@output[["png_r5_symp_allo"]]
+# png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png"
+png_cd5_symp = snakemake@output[["png_cd5_symp"]]
+# png_cd5_symp = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png"
+png_cd5_symp_allo = snakemake@output[["png_cd5_symp_allo"]]
+# png_cd5_symp_allo = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png"
+png_cor_r_cd = snakemake@output[["png_cor_r_cd"]]
+# png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png"
+png_cor_r_frac = snakemake@output[["png_cor_r_frac"]]
+# png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png"
+png_facet_r5 = snakemake@output[["png_facet_r"]]
+# png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
+png_color_elev_r5 = snakemake@output[["png_color_elev_r"]]
+# png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
 
-PREFIX = snakemake@params[["prefix_all"]]
+#PREFIX = snakemake@params[["prefix_all"]]
 # PREFIX = "HILO_MAIZE55"
-K = snakemake@params[["k"]]
+#K = snakemake@params[["k"]]
 # K = 2
 windows_file = snakemake@params[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 
-ancestries <- c("maize", "mexicana", "parviglumis")[1:K] # ancestries
+#ancestries <- c("maize", "mexicana", "parviglumis")[1:K] # ancestries
 
-alpha = 0.1 # use 90% confidence intervals for bootstrap
+#alpha = 0.1 # use 90% confidence intervals for bootstrap
 
 # get the recombination rate quintile ranges
-r5 <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-  dplyr::select(., quintile_r5, bin_r5) %>%
-  rename(r5_quintile = quintile_r5, r5_bin = bin_r5) %>%
-  filter(., !duplicated(r5_bin)) %>%
-  arrange(., r5_quintile) %>% # order 1-5
-  mutate(r5_bin = factor(r5_bin, ordered = T, levels = r5_bin))
-
-
-# get bootstrap estimates for proportion ancestry K=2
-anc_boot <- do.call(rbind,
-                    lapply(0:100, function(BOOT) do.call(rbind,
-                                                         lapply(1:5, function(r)
-                                                         read.table(paste0("ancestry_by_r/results/bootstrap_1cM/",
-                                                         PREFIX, "/r5_", r, "/K", K, "/boot", BOOT, ".anc"),
-                                                         header = T, sep = "\t", stringsAsFactors = F) %>%
-                                                         mutate(bootstrap = BOOT) %>%
-                                                         mutate(r5_quintile = r))))) %>%
-  left_join(., meta, by = "ID") %>%
-  left_join(., r5, by = "r5_quintile") # label recombination quintile with rates for that bin
-
-# point estimate individual ancestry for each sample
-anc_ind <- anc_boot %>%
-  filter(bootstrap == 0) %>% # the original sample is called 'bootstrap 0'
-  gather(., key = "ancestry", value = "p", ancestries[1:K])
-
-# mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
-anc_boot_mean <- anc_boot %>%
-  group_by(group, zea, symp_allo, bootstrap, r5_bin) %>%
-  summarise(mexicana_ancestry = mean(mexicana),
-            maize_ancestry = mean(maize))
-
-
-# group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
-anc_group_estimate <- anc_boot_mean %>%
-  filter(bootstrap == 0) %>%
-  gather(., key = "ancestry", value = "p",
-         paste(ancestries[1:K], "ancestry", sep = "_"))
-
-
-# get percentiles from bootstrap
-anc_boot_perc <- anc_boot_mean %>%
-  filter(bootstrap != 0) %>% # this is the original sample
-  gather(., key = "ancestry", value = "p",
-         paste(ancestries[1:K], "ancestry", sep = "_")) %>%
-  group_by(ancestry, group, r5_bin) %>%
-  summarise(low_boot = quantile(p, alpha/2), # low and high bounds
-            high_boot = quantile(p, 1-alpha/2), # of 90% conf. interval
-            median_boot = median(p),
-            mean_boot = mean(p))
-
-# calculate basic bootstrap (i.e. 'pivot') confidence intervals together (to plot later as range)
-anc_group_confidence_intervals <- anc_group_estimate %>%
-  left_join(., anc_boot_perc, by = c("ancestry", "group", "r5_bin")) %>%
-  mutate(low = 2*p - high_boot, # p is the estimate from the original sample
-         high = 2*p - low_boot)
+# r5 <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
+#   dplyr::select(., quintile_r5, bin_r5) %>%
+#   rename(r5_quintile = quintile_r5, r5_bin = bin_r5) %>%
+#   filter(., !duplicated(r5_bin)) %>%
+#   arrange(., r5_quintile) %>% # order 1-5
+#   mutate(r5_bin = factor(r5_bin, ordered = T, levels = r5_bin))
+# 
+# 
+# # get bootstrap estimates for proportion ancestry K=2
+# anc_boot <- do.call(rbind,
+#                     lapply(0:100, function(BOOT) do.call(rbind,
+#                                                          lapply(1:5, function(r)
+#                                                          read.table(paste0("ancestry_by_r/results/bootstrap_1cM/",
+#                                                          PREFIX, "/r5_", r, "/K", K, "/boot", BOOT, ".anc"),
+#                                                          header = T, sep = "\t", stringsAsFactors = F) %>%
+#                                                          mutate(bootstrap = BOOT) %>%
+#                                                          mutate(r5_quintile = r))))) %>%
+#   left_join(., meta, by = "ID") %>%
+#   left_join(., r5, by = "r5_quintile") # label recombination quintile with rates for that bin
+# 
+# # point estimate individual ancestry for each sample
+# anc_ind <- anc_boot %>%
+#   filter(bootstrap == 0) %>% # the original sample is called 'bootstrap 0'
+#   gather(., key = "ancestry", value = "p", ancestries[1:K])
+# 
+# # mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
+# anc_boot_mean <- anc_boot %>%
+#   group_by(group, zea, symp_allo, bootstrap, r5_bin) %>%
+#   summarise(mexicana_ancestry = mean(mexicana),
+#             maize_ancestry = mean(maize))
+# 
+# 
+# # group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
+# anc_group_estimate <- anc_boot_mean %>%
+#   filter(bootstrap == 0) %>%
+#   gather(., key = "ancestry", value = "p",
+#          paste(ancestries[1:K], "ancestry", sep = "_"))
+# 
+# 
+# # get percentiles from bootstrap
+# anc_boot_perc <- anc_boot_mean %>%
+#   filter(bootstrap != 0) %>% # this is the original sample
+#   gather(., key = "ancestry", value = "p",
+#          paste(ancestries[1:K], "ancestry", sep = "_")) %>%
+#   group_by(ancestry, group, r5_bin) %>%
+#   summarise(low_boot = quantile(p, alpha/2), # low and high bounds
+#             high_boot = quantile(p, 1-alpha/2), # of 90% conf. interval
+#             median_boot = median(p),
+#             mean_boot = mean(p))
+# 
+# # calculate basic bootstrap (i.e. 'pivot') confidence intervals together (to plot later as range)
+# anc_group_confidence_intervals <- anc_group_estimate %>%
+#   left_join(., anc_boot_perc, by = c("ancestry", "group", "r5_bin")) %>%
+#   mutate(low = 2*p - high_boot, # p is the estimate from the original sample
+#          high = 2*p - low_boot)
 
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
-p_k2_symp <- anc_group_confidence_intervals %>%
+p_r5_symp <- r5$anc_group_confidence_intervals %>%
   filter(ancestry == "mexicana_ancestry") %>%
   filter(symp_allo == "sympatric") %>%
-  ggplot(aes(x = r5_bin, y = p, group = zea)) +
+  ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
-             aes(x = r5_bin,
+  geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+             aes(x = bin,
                  y = p,
                  shape = zea,
                  color = zea),
@@ -115,21 +125,54 @@ p_k2_symp <- anc_group_confidence_intervals %>%
          shape = guide_legend("Subspecies")) +
   ggtitle("Mexicana ancestry by recombination rate") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-#p_k2_symp
-ggsave(file = png_symp,
-       plot = p_k2_symp,
+#p_r5_symp
+ggsave(file = png_r5_symp,
+       plot = p_r5_symp,
        device = "png",
        width = 5, height = 4, 
        units = "in", dpi = 300)
 
+# by coding bp per cM
+p_cd5_symp <- cd5$anc_group_confidence_intervals %>%
+  filter(ancestry == "mexicana_ancestry") %>%
+  filter(symp_allo == "sympatric") %>%
+  ggplot(aes(x = bin, y = p, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(cd5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+             aes(x = bin,
+                 y = p,
+                 shape = zea,
+                 color = zea),
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  # then add mean for that group
+  geom_point(pch = 18, size = 2) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap with NGSAdmix
+  geom_errorbar(aes(ymin = low,
+                    ymax = high),
+                width = .5) +
+  xlab("Gene density (coding bp/cM)") +
+  ylab("Proportion mexicana ancestry") +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Mexicana ancestry by gene density") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_cd5_symp
+ggsave(file = png_cd5_symp,
+       plot = p_cd5_symp,
+       device = "png",
+       width = 5, height = 4, 
+       units = "in", dpi = 300)
 
 # mexicana ancestry for K=2 in sympatric and allopatric maize/mex
-p_k2_symp_allo <- anc_group_confidence_intervals %>%
+p_r5_symp_allo <- r5$anc_group_confidence_intervals %>%
   filter(ancestry == "mexicana_ancestry") %>%
-  ggplot(aes(x = r5_bin, y = p, group = zea)) +
+  ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
-             aes(x = r5_bin,
+  geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+             aes(x = bin,
                  y = p,
                  shape = zea,
                  color = zea),
@@ -150,16 +193,83 @@ p_k2_symp_allo <- anc_group_confidence_intervals %>%
          shape = guide_legend("Subspecies")) +
   ggtitle("Mexicana ancestry by recombination rate") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-#p_k2_symp_allo
-ggsave(file = png_symp_allo,
-       plot = p_k2_symp_allo,
+#p_r5_symp_allo
+ggsave(file = png_r5_symp_allo,
+       plot = p_r5_symp_allo,
+       device = "png",
+       width = 7, height = 7, 
+       units = "in", dpi = 300)
+
+p_cd5_symp_allo <- cd5$anc_group_confidence_intervals %>%
+  filter(ancestry == "mexicana_ancestry") %>%
+  ggplot(aes(x = bin, y = p, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(cd5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+             aes(x = bin,
+                 y = p,
+                 shape = zea,
+                 color = zea),
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  # then add mean for that group
+  geom_point(pch = 18, size = 2) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap with NGSAdmix
+  geom_errorbar(aes(ymin = low,
+                    ymax = high),
+                width = .5) +
+  xlab("Gene density (coding bp/cM)") +
+  ylab("Proportion mexicana ancestry") +
+  theme_classic() +
+  facet_wrap(~symp_allo) +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Mexicana ancestry by gene density") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_cd5_symp_allo
+ggsave(file = png_cd5_symp_allo,
+       plot = p_cd5_symp_allo,
        device = "png",
        width = 7, height = 7, 
        units = "in", dpi = 300)
 
 
+# plot feature correlations for genomic windows
+windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
+p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding, 
+                    col = bin_frac5, shape = bin_r5)) +
+  geom_point() +
+  ggtitle("Log(cM/Mb) vs. fraction coding (vs. noncoding) bp in 1cM windows")
+
+ggsave(file = png_cor_r_frac,
+       plot = p_cor_r_frac,
+       device = "png",
+       width = 7, height = 4, 
+       units = "in", dpi = 300)
+print("Genomic feature correlation at 1cM window scale:")
+print("cM_Mb ~ frac_bp_coding")
+print(cor(windows$cM_Mb, windows$frac_bp_coding))
+print("quintile_r5 ~ quintile_frac5")
+print(cor(windows$quintile_r5, windows$quintile_frac5))
+print("log10(cM_Mb) ~ frac_bp_coding")
+print(cor(log10(windows$cM_Mb), windows$frac_bp_coding))
+
+p_cor_r_cd <- ggplot(windows, aes(x = log10(cM_Mb), y = coding_bp, 
+                    col = bin_cd5, shape = bin_r5)) +
+  geom_point() +
+  ggtitle("Log(cM/Mb) vs. coding bp in 1cM windows")
+ggsave(file = png_cor_r_cd,
+       plot = p_cor_r_cd,
+       device = "png",
+       width = 7, height = 4, 
+       units = "in", dpi = 300)
+print("log10(cM_Mb_ ~ coding_bp")
+print(cor(log10(windows$cM_Mb), windows$coding_bp))
+print("quintile_r5 ~ quintile_cd5")
+print(cor(windows$quintile_r5, windows$quintile_cd5))
+
 # plot ancestry across recombination bins and elevation:
-p_facet_r <- anc_ind %>%
+p_facet_r5 <- r5$anc_ind %>%
   filter(., symp_allo == "sympatric") %>%
   filter(., ancestry == "mexicana") %>%
   ggplot(., aes(x = ELEVATION, y = p,
@@ -171,25 +281,25 @@ p_facet_r <- anc_ind %>%
   scale_color_manual(values = col_maize_mex_parv) +
   scale_fill_manual(values = col_maize_mex_parv) +
   theme_light() +
-  facet_wrap(~r5_bin) +
+  facet_wrap(~bin) +
   xlab("Elevation (m)") +
   ylab("Proportion mexicana ancestry") +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies"),
          fill = guide_legend("Subspecies"))
 #p_facet_r
-ggsave(file = png_facet_r,
-       plot = p_facet_r,
+ggsave(file = png_facet_r5,
+       plot = p_facet_r5,
        device = "png",
        width = 7, height = 4, 
        units = "in", dpi = 300)
 
 
 # different way of visualizing the same pattern:
-p_color_elev <- anc_ind %>%
+p_color_elev_r5 <- r5$anc_ind %>%
   filter(., symp_allo == "sympatric") %>%
   filter(., ancestry == "mexicana") %>%
-  ggplot(., aes(x = r5_bin, y = p,
+  ggplot(., aes(x = bin, y = p,
                 color = ELEVATION)) +
   geom_smooth(method = "lm", se = FALSE, 
               aes(group = popN, color = ELEVATION)) +
@@ -201,9 +311,9 @@ p_color_elev <- anc_ind %>%
   xlab("Recombination rate quintile (cM/Mb)") +
   guides(color = guide_legend("Elevation (m)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-#p_color_elev
-ggsave(file = png_color_elev,
-       plot = p_color_elev,
+#p_color_elev_r5
+ggsave(file = png_color_elev_r5,
+       plot = p_color_elev_r5,
        device = "png",
        width = 7, height = 6, 
        units = "in", dpi = 300)
