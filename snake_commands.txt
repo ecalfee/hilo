@@ -1114,9 +1114,39 @@ hilo$ snakemake all --quiet --profile slurm                                     
     952 # RUNNING 9.2.2020. ancestry_hmm still failed ^^
 # so making a 'test_ancestry_hmm' rule and using old pass2_alloMAIZE input files just to check if it's my script.
 hilo$ mkdir -p local_ancestry/results/ancestry_hmm/TEST/input
-hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.input local_ancestry/results/ancestry_hmm/TEST/pop18.counts
-hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.ids.ploidy local_ancestry/results/ancestry_hmm/TEST/pop18.ploidy
-hilo$ snakemake -n local_ancestry/results/ancestry_hmm/TEST/Ne10000_noBoot/pop18.completed --quiet --profile slurm 
+hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.input local_ancestry/results/ancestry_hmm/TEST/input/pop18.counts
+hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.ids.ploidy local_ancestry/results/ancestry_hmm/TEST/input/pop18.ploidy
+hilo$ snakemake -n local_ancestry/results/ancestry_hmm/TEST/Ne10000_noBoot/pop18.completed --quiet --profile slurm
+# hmm.. it ran just fine on the old files, no Nan's:
+==> local_ancestry/results/ancestry_hmm/TEST/Ne10000_noBoot/posterior/HILO97.posterior <==
+chrom	position	2,0	1,1	0,2
+1	1961	0.159978	0.330604	0.509418
+1	18830	0.191147	0.398637	0.410216
+1	20171	0.187717	0.401802	0.410482
+1	26286	0.173269	0.415068	0.411663
+1	27214	0.301335	0.440951	0.257714
+1	28687	0.163653	0.418246	0.418101
+1	30261	0.155803	0.419309	0.424888
+1	49527	0.0426273	0.354082	0.603291
+1	51732	0.107311	0.467275	0.425414
+# As compared to the new SNPs/files:
+ecalfee@bigmem6:~/hilo$ head local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_noBoot/posterior/HILO97.posterior
+chrom	position	2,0	1,1	0,2
+1	15329	-nan	-nan	-nan
+1	15841	-nan	-nan	-nan
+1	18171	-nan	-nan	-nan
+1	21860	-nan	-nan	-nan
+1	22884	-nan	-nan	-nan
+1	26555	-nan	-nan	-nan
+1	27127	-nan	-nan	-nan
+1	29829	-nan	-nan	-nan
+1	30875	-nan	-nan	-nan
+
+# So I'll look more closely at the input files,
+e.g. TEST/input/pop18.counts and TEST/input/pop18.ploidy
+vs. HILO_MAIZE55/input/pop18.counts and HILO_MAIZE55/input/pop18.ploidy
+# ok so in the new dataset I manually set all non-starting rdiff that were == 1 to .00001 and will retry ancestry_hmm:
+# these new files are in TEST2/input/ and I'll modify test_ancestry_hmm to run them for pop18
 
 # TO DO:
 
