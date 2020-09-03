@@ -234,43 +234,6 @@ rule make_input_hmm:
     script:
         "make_input_ancestry_hmm.R"
 
-## test_ancestry_hmm: test runs local ancestry hidden Markov model (ancestry_hmm)
-rule test_ancestry_hmm:
-    input:
-        counts = "local_ancestry/results/ancestry_hmm/TEST2/input/{POP}.counts",
-        ploidy = "local_ancestry/results/ancestry_hmm/TEST2/input/{POP}.ploidy",
-        alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt"
-    output:
-        # empty output file is created only if ancestry_hmm runs sucessfully
-        complete = "local_ancestry/results/ancestry_hmm/TEST2/Ne{Ne}_noBoot/{POP}.completed"
-        # also creates posterior files for each ID in POP, but snakemake can't track dynamic output like this
-        # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
-        # note: can't use 'shadow' with these extra output files!
-    params:
-        p = "med2",
-        alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
-        alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
-        Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
-        t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
-        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/TEST2/Ne" + wildcards.Ne + "_noBoot/posterior"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 20,
-        mem = lambda wildcards, attempt: attempt * 8
-    log: # log file keeps info about inferred timing of admixture
-        "local_ancestry/results/ancestry_hmm/TEST2/Ne{Ne}_noBoot/{POP}.log"
-    shell:
-        """
-        module load Ancestry_HMM
-        mkdir -p {params.dir}
-        cd {params.dir}
-        ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
-        -p 0 10000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
-        --ne {params.Ne} --tmin 0 --tmax 10000 \
-        -e 3e-3 \
-        -i "../../input/{wildcards.POP}.counts" \
-        -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
-        """
-
 ## run_ancestry_hmm: runs local ancestry hidden Markov model (ancestry_hmm)
 rule run_ancestry_hmm:
     input:

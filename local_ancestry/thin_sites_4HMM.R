@@ -52,6 +52,10 @@ last_cM = -Inf
 for (j in 1:nrow(regions)){
   chr = regions$chr[j] # each region spans only 1 chromosome
   n = regions$region_n[j] # which region
+  # save whether this is the first region of a new chromosome.
+  # And what the cM position was for the last position from the last region analyzed.
+  is_first_region_on_chr = (chr != last_chr)
+  previous_region_last_cM = last_cM
 
   rpos0 = read.table(paste0("variant_sites/results/", prefix_all, "/region_", n, ".rpos"),
                     header = F, sep = "\t", stringsAsFactors = F)$V1
@@ -101,9 +105,9 @@ for (j in 1:nrow(regions)){
   rpos_keep <- rpos_aims[keep]
 
   # calculate difference in rpos position in Morgans (divide cM by 100)
-  rdiff <- c(0, diff(rpos_keep/100))
-  # set first rdiff of each chromosome = 1
-  rdiff[c(T, diff(sites_keep$chr) != 0)] <- 1
+  rdiff <- diff(c(previous_region_last_cM, rpos_keep)/100)
+  # set first rdiff of any new chromosome to 1
+  if (is_first_region_on_chr) rdiff[1] <- 1
 
   # write output files (append to file if it's not the first region)
   options(scipen = 999) # do not print scientific notation

@@ -1147,6 +1147,15 @@ e.g. TEST/input/pop18.counts and TEST/input/pop18.ploidy
 vs. HILO_MAIZE55/input/pop18.counts and HILO_MAIZE55/input/pop18.ploidy
 # ok so in the new dataset I manually set all non-starting rdiff that were == 1 to .00001 and will retry ancestry_hmm:
 # these new files are in TEST2/input/ and I'll modify test_ancestry_hmm to run them for pop18
+hilo$ snakemake local_ancestry/results/ancestry_hmm/TEST2/Ne10000_noBoot/pop18.completed --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       test_ancestry_hmm
+        1 # RUNNING 9.3.2020 10am. TEST2 worked! can delete test rule now test_ancestry_hmm
+# I fixed the error in thin_sites_4HMM that was setting the start of every region (not chr) to 1. And I'm rerunning from there:
+
+
+
 
 # TO DO:
 
