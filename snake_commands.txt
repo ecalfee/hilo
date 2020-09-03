@@ -1098,7 +1098,25 @@ Job counts:
         2       summarise_bootstrap_anc_by_r
         1       thin_sites_4HMM
         3 # RUNNING 2pm 9.2.2020. had typo in summarise_bootstrap. trying again:
-
+hilo$ snakemake all --quiet --profile slurm                                                                                                   Job counts:
+    count   jobs
+    1       all
+    28      boot_ancestry_hmm
+    403     count_ACGT
+    403     count_maj_min
+    1       get_tracts_from_sites
+    1       index_sites_4HMM
+    1       make_allo_counts
+    28      make_input_hmm
+    28      run_ancestry_hmm
+    2       summarise_bootstrap_anc_by_r
+    56      summarise_posterior
+    952 # RUNNING 9.2.2020. ancestry_hmm still failed ^^
+# so making a 'test_ancestry_hmm' rule and using old pass2_alloMAIZE input files just to check if it's my script.
+hilo$ mkdir -p local_ancestry/results/ancestry_hmm/TEST/input
+hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.input local_ancestry/results/ancestry_hmm/TEST/pop18.counts
+hilo$ cp local_ancestry/results/ancestry_hmm/pass2_alloMAIZE/input/pop18.anc_hmm.ids.ploidy local_ancestry/results/ancestry_hmm/TEST/pop18.ploidy
+hilo$ snakemake -n local_ancestry/results/ancestry_hmm/TEST/Ne10000_noBoot/pop18.completed --quiet --profile slurm 
 
 # TO DO:
 
