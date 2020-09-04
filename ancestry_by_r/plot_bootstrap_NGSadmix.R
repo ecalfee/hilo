@@ -29,9 +29,9 @@ png_cor_r_cd = snakemake@output[["png_cor_r_cd"]]
 # png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png"
 png_cor_r_frac = snakemake@output[["png_cor_r_frac"]]
 # png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png"
-png_facet_r5 = snakemake@output[["png_facet_r"]]
+png_facet_r5 = snakemake@output[["png_facet_r5"]]
 # png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
-png_color_elev_r5 = snakemake@output[["png_color_elev_r"]]
+png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
 
 
