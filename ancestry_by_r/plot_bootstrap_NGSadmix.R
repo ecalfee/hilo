@@ -7,12 +7,16 @@ library(tidyr)
 library(ggplot2)
 
 # load variables from Snakefile
-load(snakemake@input[["r5"]])
+windows_file = snakemake@input[["windows"]] # feature information for 1cM windows
+# windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
+windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
+load(snakemake@input[["r5"]]) # NGSAdmix results by recombination quintile
 # load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata")
-load(snakemake@input[["cd5"]])
+load(snakemake@input[["cd5"]]) # NGSAdmix results by coding bp/cM quintile
 # load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata")
-source(snakemake@input[["colors"]])
+source(snakemake@input[["colors"]]) # plotting colors
 # source("colors.R")
+# png filenames out:
 png_r5_symp = snakemake@output[["png_r5_symp"]]
 # png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
 png_r5_symp_allo = snakemake@output[["png_r5_symp_allo"]]
@@ -30,74 +34,8 @@ png_facet_r5 = snakemake@output[["png_facet_r"]]
 png_color_elev_r5 = snakemake@output[["png_color_elev_r"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
 
-#PREFIX = snakemake@params[["prefix_all"]]
-# PREFIX = "HILO_MAIZE55"
-#K = snakemake@params[["k"]]
-# K = 2
-windows_file = snakemake@params[["windows"]]
-# windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 
-#ancestries <- c("maize", "mexicana", "parviglumis")[1:K] # ancestries
-
-#alpha = 0.1 # use 90% confidence intervals for bootstrap
-
-# get the recombination rate quintile ranges
-# r5 <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-#   dplyr::select(., quintile_r5, bin_r5) %>%
-#   rename(r5_quintile = quintile_r5, r5_bin = bin_r5) %>%
-#   filter(., !duplicated(r5_bin)) %>%
-#   arrange(., r5_quintile) %>% # order 1-5
-#   mutate(r5_bin = factor(r5_bin, ordered = T, levels = r5_bin))
-# 
-# 
-# # get bootstrap estimates for proportion ancestry K=2
-# anc_boot <- do.call(rbind,
-#                     lapply(0:100, function(BOOT) do.call(rbind,
-#                                                          lapply(1:5, function(r)
-#                                                          read.table(paste0("ancestry_by_r/results/bootstrap_1cM/",
-#                                                          PREFIX, "/r5_", r, "/K", K, "/boot", BOOT, ".anc"),
-#                                                          header = T, sep = "\t", stringsAsFactors = F) %>%
-#                                                          mutate(bootstrap = BOOT) %>%
-#                                                          mutate(r5_quintile = r))))) %>%
-#   left_join(., meta, by = "ID") %>%
-#   left_join(., r5, by = "r5_quintile") # label recombination quintile with rates for that bin
-# 
-# # point estimate individual ancestry for each sample
-# anc_ind <- anc_boot %>%
-#   filter(bootstrap == 0) %>% # the original sample is called 'bootstrap 0'
-#   gather(., key = "ancestry", value = "p", ancestries[1:K])
-# 
-# # mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
-# anc_boot_mean <- anc_boot %>%
-#   group_by(group, zea, symp_allo, bootstrap, r5_bin) %>%
-#   summarise(mexicana_ancestry = mean(mexicana),
-#             maize_ancestry = mean(maize))
-# 
-# 
-# # group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
-# anc_group_estimate <- anc_boot_mean %>%
-#   filter(bootstrap == 0) %>%
-#   gather(., key = "ancestry", value = "p",
-#          paste(ancestries[1:K], "ancestry", sep = "_"))
-# 
-# 
-# # get percentiles from bootstrap
-# anc_boot_perc <- anc_boot_mean %>%
-#   filter(bootstrap != 0) %>% # this is the original sample
-#   gather(., key = "ancestry", value = "p",
-#          paste(ancestries[1:K], "ancestry", sep = "_")) %>%
-#   group_by(ancestry, group, r5_bin) %>%
-#   summarise(low_boot = quantile(p, alpha/2), # low and high bounds
-#             high_boot = quantile(p, 1-alpha/2), # of 90% conf. interval
-#             median_boot = median(p),
-#             mean_boot = mean(p))
-# 
-# # calculate basic bootstrap (i.e. 'pivot') confidence intervals together (to plot later as range)
-# anc_group_confidence_intervals <- anc_group_estimate %>%
-#   left_join(., anc_boot_perc, by = c("ancestry", "group", "r5_bin")) %>%
-#   mutate(low = 2*p - high_boot, # p is the estimate from the original sample
-#          high = 2*p - low_boot)
-
+# make plots
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
 p_r5_symp <- r5$anc_group_confidence_intervals %>%
   filter(ancestry == "mexicana_ancestry") %>%
@@ -235,7 +173,6 @@ ggsave(file = png_cd5_symp_allo,
 
 
 # plot feature correlations for genomic windows
-windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
 p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding, 
                     col = bin_frac5, shape = bin_r5)) +
   geom_point() +

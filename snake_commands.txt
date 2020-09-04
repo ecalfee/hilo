@@ -1158,7 +1158,24 @@ Job counts:
         count   jobs
         1       thin_sites_4HMM
         1 # COMPLETED 10:30am. Now I'll rerun the rest. And add the new fig ouputs for ancestry_by_r too
-
+hilo$ snakemake -f all --quiet --profile slurm
+Job counts:
+    count   jobs
+    1       all
+    28      boot_ancestry_hmm
+    403     count_ACGT
+    403     count_maj_min
+    1       get_tracts_from_sites
+    1       index_sites_4HMM
+    1       make_allo_counts
+    28      make_input_hmm
+    1       plot_bootstrap_anc_by_r
+    28      run_ancestry_hmm
+    56      summarise_posterior
+    951 # 9.3.2020 11:30am OOPS! ACCIDENTALLY RAN -F INSTEAD OF -N !!!
+    # BUT all ok because I don't have a bunch of intermediate files (only final files)
+    # in my ALL rule...so it's doing basically the same as snakemake -n all.
+    # SOME ERROR IN plot_bootstrap_anc_by_r .. will troubleshoot later
 
 
 # TO DO:
