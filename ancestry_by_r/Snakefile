@@ -224,7 +224,7 @@ rule plot_bootstrap_anc_by_r:
     conda:
          "../envs/environment.yaml"
     resources:
-         time_min = 15,
-         mem = 2
+         time_min = 30,
+         mem = 4
     script:
          "plot_bootstrap_NGSadmix.R"
