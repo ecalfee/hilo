@@ -153,7 +153,7 @@ rule count_ACGT:
         p = "med2",
         out_prefix = lambda wildcards: "local_ancestry/results/countsACGT/" + prefix_all + "/" + wildcards.ID
     resources:
-        time_min = lambda wildcards, attempt: attempt * 24 * 60,
+        time_min = lambda wildcards, attempt: attempt * 48 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     conda:
         "../envs/environment.yaml"
@@ -185,7 +185,7 @@ rule count_maj_min:
     params:
         p = "med2"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 60,
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"

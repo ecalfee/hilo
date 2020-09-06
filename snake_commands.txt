@@ -1177,6 +1177,21 @@ Job counts:
     # in my ALL rule...so it's doing basically the same as snakemake -n all.
     # SOME ERROR IN plot_bootstrap_anc_by_r .. will troubleshoot later
 
+# upped the time limit again becasue 24 hours wasn't enough for some of hte ACGT counts (not sure what' going on)
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        6       count_ACGT
+        10      count_maj_min
+        1       make_allo_counts
+        28      make_input_hmm
+        1       plot_bootstrap_anc_by_r
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        159 # RUNNING 9.5.2020
+
 
 # TO DO:
 
