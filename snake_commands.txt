@@ -1175,9 +1175,23 @@ Job counts:
     951 # 9.3.2020 11:30am OOPS! ACCIDENTALLY RAN -F INSTEAD OF -N !!!
     # BUT all ok because I don't have a bunch of intermediate files (only final files)
     # in my ALL rule...so it's doing basically the same as snakemake -n all.
-    # SOME ERROR IN plot_bootstrap_anc_by_r .. will troubleshoot later
+    # SOME ERROR IN plot_bootstrap_anc_by_r .. it was @params instead of @input for windows. Will rerun.
+    # Also, a few count_ACGT and count_maj_min didn't finish properly .. will check on this
+    hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+    count   jobs
+    1       all
+    28      boot_ancestry_hmm
+    11      count_ACGT
+    20      count_maj_min
+    1       make_allo_counts
+    28      make_input_hmm
+    1       plot_bootstrap_anc_by_r
+    28      run_ancestry_hmm
+    56      summarise_posterior
+    174 # RUNNING 9.4.2020 . Didn't all finish running.
 
-# upped the time limit again becasue 24 hours wasn't enough for some of hte ACGT counts (not sure what' going on)
+# upped the time limit again becasue 24 hours wasn't enough for some of hte ACGT counts (not sure what' going $
 hilo$ snakemake all --quiet --profile slurm
 Job counts:
         count   jobs
