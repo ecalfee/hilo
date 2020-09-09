@@ -24,7 +24,7 @@ anc = read.table(anc_bed_file, sep = "\t", header = F, stringsAsFactors = F) %>%
   dplyr::mutate(length = end - start) %>%
   dplyr::group_by(window) %>%
   dplyr::summarise(anc = sum(anc*length)/sum(length)) %>%
-  dplyr::left_join(windows, anc, by = "window") %>%
+  dplyr::left_join(windows, ., by = "window") %>%
   dplyr::mutate(pop = pop) %>%
   dplyr::select(window, pop, anc)
 
