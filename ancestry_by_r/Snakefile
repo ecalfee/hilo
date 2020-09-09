@@ -224,8 +224,8 @@ rule map_local_anc_onto_1cM_windows:
         bedtools map -a stdin -b {input.windows} -c 4 -o distinct > {output.bed}
         """
 
-## summarise_local_anc_1cM_windows: summarises mean local ancestry results by 1cM genomic windows
-rule summarise_local_anc_1cM_windows:
+## summarise_local_by_1cM: summarises mean local ancestry results by 1cM genomic windows
+rule summarise_local_anc_by_1cM:
     input:
         bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.bed",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
@@ -240,7 +240,7 @@ rule summarise_local_anc_1cM_windows:
         time_min = 5,
         mem = 2
     script:
-        "summarise_local_anc_1cM_windows.R"
+        "summarise_local_anc_by_1cM.R"
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
