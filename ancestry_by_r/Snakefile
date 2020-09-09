@@ -220,6 +220,7 @@ rule map_local_anc_onto_1cM_windows:
         """
         paste {input.tracts} {input.anc} | \\
         bedtools intersect -b {input.windows} -a stdin | \\
+        bedtools sort | \\
         bedtools map -a stdin -b {input.windows} -c 4 -o distinct > {output.bed}
         """
 
@@ -241,13 +242,15 @@ rule summarise_local_anc_1cM_windows:
     script:
         "summarise_local_anc_1cM_windows.R"
 
-## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
+## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
     input:
         colors = "colors.R",
+        meta = "samples/HILO_MAIZE55_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
         r5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_K2.Rdata",
-        cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata"
+        cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata",
+        local_anc = ["ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/" + POP + ".anc.wind" for POP in symp_pops]
     output:
         png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
@@ -256,11 +259,13 @@ rule plot_bootstrap_anc_by_r:
         png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png",
         png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png",
         png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
-        png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+        png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_sympatric_only.png",
+        png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png"
     params:
         p = "med2",
         k = 2,
-        prefix_all = prefix_all
+        dir_anc = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot"
     conda:
          "../envs/environment.yaml"
     resources:

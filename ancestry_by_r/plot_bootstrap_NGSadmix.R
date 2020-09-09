@@ -16,6 +16,12 @@ load(snakemake@input[["cd5"]]) # NGSAdmix results by coding bp/cM quintile
 # load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata")
 source(snakemake@input[["colors"]]) # plotting colors
 # source("colors.R")
+load(snakemake@input[["meta"]]) # meta
+# load("samples/HILO_MAIZE55_meta.RData")
+
+dir_anc = snakemake@params("dir_anc")
+# dir_anc = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/Ne10000_yesBoot"
+
 # png filenames out:
 png_r5_symp = snakemake@output[["png_r5_symp"]]
 # png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
@@ -33,7 +39,20 @@ png_facet_r5 = snakemake@output[["png_facet_r5"]]
 # png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
 png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+png_r5_local_anc = snakemake@output[["png_r5_local_anc"]]
+# png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_sympatric_only.png"
+png_cd5_local_anc = snakemake@output[["png_cd5_local_anc"]]
+# png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png"
 
+# metadata by population for local ancestry
+meta_symp = dplyr::filter(meta, symp_allo == "sympatric") %>%
+  dplyr::filter(meta, est_coverage >= 0.5) %>%
+  dplyr::group_by(popN, RI_ACCESSION, zea, symp_allo, group, ELEVATION, LOCALITY, GEOCTY) %>%
+  summarise(n_local_ancestry = n())
+
+# local ancestry by windows:
+anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
+  read.table(paste0(dir_anc, "/pop", i, ".anc.wind"))))
 
 # make plots
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
