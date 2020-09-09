@@ -1297,6 +1297,15 @@ Job counts:
         26      run_ancestry_hmm
         56      summarise_posterior
         113 # RUNNING 9.9.2020 10:30am. STILL RUNNING bootstrap but others are working. adding things to 'some' rule.
+        hilo$ snakemake -n some --profile slurm --quiet
+        Job counts:
+                count   jobs
+                2       combine_pop_ancestry_data
+                1       some
+                3 # DIDN'T WORK, DIRECTORY 'LOCKED'. MUST WAIT FOR OTHER JOBS TO FINISH. 9.9.2020 11am
+bedtools intersect -b wind.bed -a anc.bed | bedtools map -a stdin -b wind.bed -c 4 -o distinct
+
+
 
 # TO DO:
 

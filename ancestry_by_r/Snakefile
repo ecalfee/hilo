@@ -201,21 +201,27 @@ rule summarise_bootstrap_anc_by_r:
     script:
          "summarise_bootstrap_NGSadmix.R"
 
-## local_anc_by_1cM: summarises local ancestry results by 1cM genomic windows based on local ancestry frequencies and ancestry tracts bed file
-rule local_anc_by_1cM:
+## map_local_anc_onto_1cM_windows: summarises local ancestry results by 1cM genomic windows based on local ancestry frequencies and ancestry tracts bed file
+rule map_local_anc_onto_1cM_windows:
     input:
-        bed = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed"
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
+        tracts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed", # defines ancestry tracts
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
     output:
-        "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.bed"
+        bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.bed"
     params:
         p = "med2"
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 5,
+        time_min = 10,
         mem = 2
     shell:
-# look up bedtools command
+        """
+        paste {input.tracts} {input.anc} | \\
+        bedtools intersect -b {input.windows} -a stdin | \\
+        bedtools map -a stdin -b {input.windows} -c 4 -o distinct > {output.bed}
+        """
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
