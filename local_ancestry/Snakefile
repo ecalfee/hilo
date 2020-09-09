@@ -185,7 +185,7 @@ rule count_maj_min:
     params:
         p = "med2"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
+        time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
@@ -206,7 +206,7 @@ rule make_allo_counts:
         p = "med2",
         prefix_all = prefix_all
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
+        time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
@@ -227,7 +227,7 @@ rule make_input_hmm:
         p = "med2",
         prefix_all = prefix_all
     resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
+        time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
@@ -349,7 +349,7 @@ rule combine_pop_ancestry_data:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 20,
+        time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 8
     script:
         "combined_pop_anc_data.R"

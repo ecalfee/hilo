@@ -47,6 +47,10 @@ with open("samples/" + prefix_all + "_bams.list") as f:
     all_bams = f.read().splitlines()
 with open("samples/" + prefix_all + "_ids.list") as f:
     all_ids = f.read().splitlines()
+
+# TEMPORARY
+TEMP_ALL_IDS_EXCEPT_HILO42 = [x for i,x in enumerate(all_ids) if x!="HILO42"]
+
 # samples with local ancesty calls (sympatric and over 0.5x coverage)
 #with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
 #        symp_maize_ids = f.read().splitlines()
@@ -89,7 +93,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
+#include: "ancestry_by_r/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
