@@ -254,7 +254,7 @@ rule run_ancestry_hmm:
         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_noBoot/posterior"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
+        time_min = lambda wildcards, attempt: attempt * 10,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
         "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/{POP}.log"
@@ -284,14 +284,14 @@ rule boot_ancestry_hmm:
         # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
         # note: can't use 'shadow' with these extra output files!
     params:
-        p = "med2",
+        p = "bigmemm",
         alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
         alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
         Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_yesBoot/posterior"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 4 * 60,
+        time_min = lambda wildcards, attempt: attempt * 2 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
         "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.log"

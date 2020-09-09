@@ -1274,7 +1274,20 @@ Job counts:
         2       count_maj_min
         2 # RUNNING 9.9.2020 8am
 # HILO42 finally completed countsACGT. Now running the rest of the pipeline:
-
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        2       combine_pop_ancestry_data
+        1       count_maj_min
+        1       make_allo_counts
+        28      make_input_hmm
+        28      run_ancestry_hmm
+        56      summarise_posterior
+        145 # RUNNING 9.9.10am
+# was running but the bootstraps were slowing everything down. Putting them on bigmemm so they don't compete for resources.
+hilo$ snakemake all --quiet --profile slurm
 
 # TO DO:
 
