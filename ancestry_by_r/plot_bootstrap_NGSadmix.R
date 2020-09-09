@@ -9,7 +9,16 @@ library(ggplot2)
 # load variables from Snakefile
 windows_file = snakemake@input[["windows"]] # feature information for 1cM windows
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
-windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
+windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
+  arrange(quintile_r5) %>%
+  dplyr::mutate(bin_r5 = factor(bin_r5, levels = unique(bin_r5), ordered = T)) %>%
+  arrange(quintile_cd5) %>%
+  dplyr::mutate(bin_cd5 = factor(bin_cd5, levels = unique(bin_cd5), ordered = T)) %>%
+  arrange(quintile_frac5) %>%
+  dplyr::mutate(bin_frac5 = factor(bin_frac5, levels = unique(bin_frac5), ordered = T))
+
+  
+
 load(snakemake@input[["r5"]]) # NGSAdmix results by recombination quintile
 # load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata")
 load(snakemake@input[["cd5"]]) # NGSAdmix results by coding bp/cM quintile
@@ -46,13 +55,26 @@ png_cd5_local_anc = snakemake@output[["png_cd5_local_anc"]]
 
 # metadata by population for local ancestry
 meta_symp = dplyr::filter(meta, symp_allo == "sympatric") %>%
-  dplyr::filter(meta, est_coverage >= 0.5) %>%
+  dplyr::filter(., est_coverage >= 0.5) %>%
   dplyr::group_by(popN, RI_ACCESSION, zea, symp_allo, group, ELEVATION, LOCALITY, GEOCTY) %>%
-  summarise(n_local_ancestry = n())
+  summarise(n_local_ancestry = n()) %>%
+  mutate(pop = paste0("pop", popN))
 
 # local ancestry by windows:
 anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
-  read.table(paste0(dir_anc, "/pop", i, ".anc.wind"))))
+#anc_by_wind = do.call(bind_rows, lapply(c(18, 19, 360, 365), function(i)
+  read.table(paste0(dir_anc, "/pop", i, ".anc.wind"),
+             stringsAsFactors = F) %>%
+    data.table::setnames(c("window", "pop", "anc")))) %>%
+  left_join(., windows, by = "window") %>%
+  left_join(., meta_symp, by = "pop")
+
+# summarise mean across populations:
+anc_by_wind_and_zea <- anc_by_wind %>%
+  mutate(length = end - start) %>%
+  dplyr::group_by(zea, window, bin_cd5, bin_r5, length) %>%
+  dplyr::summarise(anc = sum(anc*n_local_ancestry)/sum(n_local_ancestry))
+
 
 # make plots
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
@@ -275,6 +297,79 @@ ggsave(file = png_color_elev_r5,
        units = "in", dpi = 300)
 
 
+
+# local ancestry plots:
+# recombination rate
+# local ancestry plots:
+p_r5_local_anc <- anc_by_wind_and_zea %>%
+  ggplot(., aes(x = bin_r5, y = anc, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(aes(shape = zea,
+                 color = zea),
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  # then add mean for that group
+  geom_point(data = anc_by_wind_and_zea %>%
+               dplyr::group_by(bin_r5, zea) %>%
+               dplyr::summarise(anc = sum(length*anc)/sum(length)), pch = 18, size = 2) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap
+  #geom_errorbar(aes(ymin = low,
+  #                  ymax = high),
+  #              width = .5) +
+  xlab("Recombination rate quintile (cM/Mbp)") +
+  ylab("Proportion mexicana ancestry (HMM)") +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Local mexicana ancestry by recombination rate") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_r5_local_anc
+ggsave(file = png_r5_local_anc,
+       plot = p_r5_local_anc,
+       device = "png",
+       width = 7, height = 7, 
+       units = "in", dpi = 300)
+
+# coding bp/cM
+p_cd5_local_anc <- anc_by_wind_and_zea %>%
+  ggplot(., aes(x = bin_cd5, y = anc, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(aes(shape = zea,
+                 color = zea),
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  # then add mean for that group
+  geom_point(data = anc_by_wind_and_zea %>%
+               dplyr::group_by(bin_cd5, zea) %>%
+               dplyr::summarise(anc = sum(length*anc)/sum(length)), pch = 18, size = 2) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap
+  #geom_errorbar(aes(ymin = low,
+  #                  ymax = high),
+  #              width = .5) +
+  xlab("Coding density quintile (bp/cM)") +
+  ylab("Proportion mexicana ancestry (HMM)") +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Local mexicana ancestry by coding bp") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave(file = png_cd5_local_anc,
+       plot = p_cd5_local_anc,
+       device = "png",
+       width = 7, height = 7, 
+       units = "in", dpi = 300)
+
+
+
+
+
+
+
+
+
+# ---------------------------------------------------- #
 # # get data for supplement K=3 figures
 # anc_boot_3 <- do.call(rbind,
 #                lapply(0:100, function(BOOT) do.call(rbind,

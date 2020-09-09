@@ -1311,7 +1311,15 @@ Job counts:
         2       combine_pop_ancestry_data
         28      map_local_anc_onto_1cM_windows
         31 # SOME FAILED. Added bedtools sort to my pipeline for mapping ancestry onto windows.
+        hilo$ snakemake all --quiet --profile slurm
 
+# trying to run again summary by 1cM
+Job counts:
+                count   jobs
+                1       all
+                1       plot_bootstrap_anc_by_r
+                28      summarise_local_anc_by_1cM
+                30 # RUNNING 9.9.2020 2:45pm
 
 # TO DO:
 
