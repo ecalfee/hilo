@@ -11,7 +11,7 @@ windows_file = snakemake@input[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 pop = snakemake@params[["pop"]]
 # pop = "pop365"
-output_file = snakemake@output[["anc"]]
+output_file = snakemake@output[["summary"]]
 # output_file = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/Ne10000_yesBoot/pop365.anc.wind"
 
 # windows
