@@ -201,7 +201,7 @@ rule summarise_bootstrap_anc_by_r:
     script:
          "summarise_bootstrap_NGSadmix.R"
 
-## map_local_anc_onto_1cM_windows: summarises local ancestry results by 1cM genomic windows based on local ancestry frequencies and ancestry tracts bed file
+## map_local_anc_onto_1cM_windows: maps local ancestry results onto 1cM genomic windows based on ancestry tracts bed file
 rule map_local_anc_onto_1cM_windows:
     input:
         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
@@ -222,6 +222,24 @@ rule map_local_anc_onto_1cM_windows:
         bedtools intersect -b {input.windows} -a stdin | \\
         bedtools map -a stdin -b {input.windows} -c 4 -o distinct > {output.bed}
         """
+
+## summarise_local_anc_1cM_windows: summarises mean local ancestry results by 1cM genomic windows
+rule summarise_local_anc_1cM_windows:
+    input:
+        bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.bed"
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
+    output:
+        summary = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.anc.wind"
+    params:
+        p = "bigmemm",
+        pop = lambda wildcards: wildcards.POP
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 5,
+        mem = 2
+    script:
+        "summarise_local_anc_1cM_windows.R"
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:

@@ -32,10 +32,11 @@ meta_pops = dplyr::filter(meta, symp_allo == "sympatric" & zea == ZEA) %>%
   dplyr::select(popN, zea, symp_allo, group, GEOCTY, LOCALITY, ELEVATION, LAT, LON) %>%
   arrange(ELEVATION) %>%
   distinct() %>%
-  mutate(pop = paste0("pop", popN)) %>%
-  mutate(n_local_ancestry = nrow(read.table(paste0(dir_ploidy, "/pop", popN, ".ploidy"), 
+  mutate(pop = paste0("pop", popN),
+         n_local_ancestry = sapply(popN, function(i)
+           nrow(read.table(paste0(dir_ploidy, "/pop", i, ".ploidy"), 
                              stringsAsFactors = F,
-                             header = F, sep = "\t")))
+                             header = F, sep = "\t"))))
 
 # get ancestry for all individuals
 # rows = SNPs; columns = individuals

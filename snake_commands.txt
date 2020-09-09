@@ -1304,7 +1304,13 @@ Job counts:
                 1       some
                 3 # DIDN'T WORK, DIRECTORY 'LOCKED'. MUST WAIT FOR OTHER JOBS TO FINISH. 9.9.2020 11am
 bedtools intersect -b wind.bed -a anc.bed | bedtools map -a stdin -b wind.bed -c 4 -o distinct
-
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       combine_pop_ancestry_data
+        28      map_local_anc_onto_1cM_windows
+        31 # SOME FAILED. Added bedtools sort to my pipeline for mapping ancestry onto windows.
 
 
 # TO DO:
