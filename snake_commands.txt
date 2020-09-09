@@ -1204,8 +1204,75 @@ Job counts:
         1       plot_bootstrap_anc_by_r
         28      run_ancestry_hmm
         56      summarise_posterior
-        159 # RUNNING 9.5.2020
+        159 # RUNNING 9.5.2020. Many jobs still ran out of time despite high limits. problem is slurm nodes, not job time limits. reducing time and rerunning:
+        hilo$ snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                28      boot_ancestry_hmm
+                3       count_ACGT
+                8       count_maj_min
+                1       make_allo_counts
+                28      make_input_hmm
+                1       plot_bootstrap_anc_by_r
+                28      run_ancestry_hmm
+                56      summarise_posterior
+                154 # RUNNING 9.8.2020 1:30pm (should finish before 5am)
 
+# UGH HILO42 counts got stalled but I want to look at prelim results.
+ecalfee@bigmem3:~/hilo$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      25821166      med2 count_AC  ecalfee  S    10:12:14      1 2   8G     c6-89
+# SO, FOR THAT FILE ONLY, I'LL USE THE OLDER DATA AND THEN REPLACE LATER:
+hilo$ ls -l local_ancestry/results/countsACGT/HILO_MAIZE55/HILO42.*
+-rw-rw-r-- 1 ecalfee ecalfee  493268 Sep  3 12:05 local_ancestry/results/countsACGT/HILO_MAIZE55/HILO42.counts.gz
+-rw-rw-r-- 1 ecalfee ecalfee 1623390 Sep  3 12:05 local_ancestry/results/countsACGT/HILO_MAIZE55/HILO42.pos.gz
+hilo$ mkdir -p local_ancestry/results/countsACGT/BACKUP_OLD
+hilo$ ls -l local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO42.*
+-rw-rw-r-- 1 ecalfee ecalfee 1895159 Sep  3 18:49 local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO42.counts.txt
+hilo$ cp local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO42.counts.txt local_ancestry/results/countsMajMin/BACKUP_OLD/.
+hilo$ touch local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO42.counts.txt
+ecalfee@bigmem3:~/hilo$ date
+Wed Sep  9 06:30:01 PDT 2020 # SO WHEN THE NEW FILE FINALLY RUNS IT WILL HAVE A MORE RECENT TIME STAMP AND
+# I'LL HAVE TO FORCE RERUN MAJMIN AND THAT POP'S ANCESTRY_HMM (sympatric maize POP370)
+# Now I CTRL+C cancel running snakemake (that one job will still con't running).
+hilo$ snakemake plot_bootstrap_anc_by_r --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       plot_bootstrap_anc_by_r
+        1 # COMPLETED.
+        hilo$ ls -lt snake_logs/plot_boot*.out | head -n 1
+        -rw-rw-r-- 1 ecalfee ecalfee 1051 Sep  9 06:42 snake_logs/plot_bootstrap_anc_by_r..25826671.out
+        # this output file contains:
+        [1] "Genomic feature correlation at 1cM window scale:"
+        [1] "cM_Mb ~ frac_bp_coding"
+        [1] 0.06325552
+        [1] "quintile_r5 ~ quintile_frac5"
+        [1] 0.487383
+        [1] "log10(cM_Mb) ~ frac_bp_coding"
+        [1] 0.4614461
+        [1] "log10(cM_Mb_ ~ coding_bp"
+        [1] -0.7767665
+        [1] "quintile_r5 ~ quintile_cd5"
+        [1] -0.8464101
+# NOW TEMPORARILY COMMENTED OUT ancestry_by_r/Snakefile from snakefile imports so it builds DAG faster.
+# checking which jobs need to be completed:
+hilo$ snakemake -n all --profile slurm | less
+hilo$ touch local_ancestry/results/countsACGT/HILO_MAIZE55/HILO42.* samples/HILO_MAIZE55_byInd/MAIZE42_bams.list
+# wait several minutes
+ecalfee@bigmem3:~/hilo$ touch local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO42.counts.txt
+# STILL, AFTER 'TOUCH' snake still wants to re-run HILO42 ACGT and MajMin counts.. I'm not sure why
+# to get around this for today, I made a temporary array of IDs that doesn't include HILO42:
+TEMP_ALL_IDS_EXCEPT_HILO42 = [x for i,x in enumerate(all_ids) if x!="HILO42"]
+hilo$ ls -lt snake_logs/count_ACGT* | head -n 1
+# see tail, it's on chr10 (good!)
+
+# rerunning the other counts_maj_min jobs that failed:
+hilo$ snakemake -n local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO359.counts.txt local_ancestry/results/countsMajMin/HILO_MAIZE55/HILO416.counts.txt --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       count_maj_min
+        2 # RUNNING 9.9.2020 8am
 
 # TO DO:
 

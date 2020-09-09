@@ -201,6 +201,22 @@ rule summarise_bootstrap_anc_by_r:
     script:
          "summarise_bootstrap_NGSadmix.R"
 
+## local_anc_by_1cM: summarises local ancestry results by 1cM genomic windows based on local ancestry frequencies and ancestry tracts bed file
+rule local_anc_by_1cM:
+    input:
+        bed = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed"
+    output:
+        "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.bed"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 5,
+        mem = 2
+    shell:
+# look up bedtools command
+
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global ancestry by recombination rate
 rule plot_bootstrap_anc_by_r:
     input:

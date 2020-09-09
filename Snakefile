@@ -138,7 +138,8 @@ rule all:
         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
-        Ne = 10000, YESNO = ["yes", "no"], POP = symp_pops)
+        Ne = 10000, YESNO = ["yes", "no"], POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea)
     params:
         p = "med2"
     resources:

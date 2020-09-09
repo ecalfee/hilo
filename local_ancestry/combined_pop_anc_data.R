@@ -7,59 +7,57 @@ library(dplyr)
 # (2) a combined sample allele frequency file for all maize/mexicana
 
 # load variables from Snakefile
-meta_file = snakemake@input[[1]]
+meta_file = snakemake@input[["meta"]]
 # meta_file = "samples/HILO_MAIZE55_meta.RData"
-k2_file = snakemake@input[[2]]
+#k2_file = snakemake@input[["K2"]]
+# k2_file = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_symp_pop.txt"
+tracts_file = snakemake@input[["tracts"]]
+# tracts_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
 dir_anc = snakemake@params[["dir_anc"]]
+# dir_anc = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc"
 dir_ploidy = snakemake@params[["dir_ploidy"]]
-zea = snakemake@parmas[["zea"]]
-output_pops = snakemake@output[["pops"]]
-output_combined = snakemake@output[["combined"]]
-output_meta = snakemake@output[["meta"]]
+# dir_ploidy = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/input"
+ZEA = snakemake@parmas[["zea"]]
+# ZEA = "mexicana"
+output_pop_anc = snakemake@output[["pop_anc"]]
+output_combined_anc = snakemake@output[["combined_anc"]]
+output_meta_pop = snakemake@output[["meta_pop"]]
 
 # load metadata
 load(meta_file) # meta
 
-k2 = read.table(k2_file, sep ="\t", header = T, stringsAsFactors = F)
+tracts = read.table(tracts_file, sep = "\t", header = F, stringsAsFactors = F) %>%
+  data.table::setnames(c("chr", "start", "end", "pos"))
+#k2 = read.table(k2_file, sep ="\t", header = T, stringsAsFactors = F)
 
-pops = unique(filter(meta, symp_allo == "sympatric" & zea == zea)$popN) 
-
-# find included individuals from current pop
-pop_ids <- read.table(ploidy_file, stringsAsFactors = F,
-                    header = F, sep = "\t")$V1
-
-# function to summarise individual ancestry from posterior output
-sample_pos = function(ID, path) {# summarize across posterior of all 3 genotypes 
-  # to get estimate of mex. ancestry at each of all SNPs for a HILO individual ID
-  as.matrix(read.table(paste0(path, "/", ID, ".posterior"), 
-                       header = T, 
-                       stringsAsFactors = F)[ , 3:5]) %*% c(0, .5, 1) 
-}
+# which pops are included?
+meta_pops = dplyr::filter(meta, symp_allo == "sympatric" & zea == ZEA) %>%
+  dplyr::select(popN, zea, symp_allo, group, GEOCTY, LOCALITY, ELEVATION, LAT, LON) %>%
+  arrange(ELEVATION) %>%
+  distinct() %>%
+  mutate(pop = paste0("pop", popN)) %>%
+  mutate(n_local_ancestry = nrow(read.table(paste0(dir_ploidy, "/pop", popN, ".ploidy"), 
+                             stringsAsFactors = F,
+                             header = F, sep = "\t")))
 
 # get ancestry for all individuals
 # rows = SNPs; columns = individuals
 anc = do.call(cbind, 
-                lapply(pop_ids, 
-                       function(id) sample_pos(ID = id, path = dir_input)))
-# mean mexicana ancestry across all markers per individual
-alpha = data.frame(hilo_id = pop_ids, alpha = apply(anc, 2, mean))
+                lapply(meta_pops$popN, 
+                       function(i) read.table(paste0(dir_anc, "/pop", i, ".anc.freq"),
+                                          header = F, stringsAsFactors = F)$V1))
+colnames(anc) = meta_pops$pop
 
-# mean population ancestry at each SNP
-pop_anc_freq = apply(anc, 1, mean)
+# mean mexicana ancestry across all markers per pop
+meta_pops$alpha_local_ancestry = apply(anc, 2, mean)
+
+# mean ancestry at each SNP, combined across all indidivuals
+combined_anc_freq = (anc %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)
+tracts$anc_freq = combined_anc_freq
 
 # write output files:
-# a popN.anc.ind file with ancestry for all individuals in popN individually
-write.table(anc, 
-            output_file_anc_ind, 
-            col.names = F, row.names = F, quote = F, sep = "\t")
-
-# a popN.anc.freq file with mean ancestry for all individuals in popN
-write.table(pop_anc_freq, 
-            output_file_anc_pop, 
-            col.names = F, row.names = F, quote = F, sep = "\t")
-
-# a popN.alpha.ind file with two columns, n (ind HILO ID)
-write.table(alpha, 
-            output_file_alpha_ind, 
+save(list = "meta_pops", file = output_meta_pop)
+save(list = "anc", file = output_pop_anc)
+write.table(tracts, # bed file with combined ancestry frequencies
+            file = output_combined_anc, 
             col.names = T, row.names = F, quote = F, sep = "\t")
-
