@@ -7,11 +7,9 @@ library(dplyr)
 # (2) a combined sample allele frequency file for all maize/mexicana
 
 # load variables from Snakefile
-meta_file = snakemake@input[["meta"]]
+meta_file = snakemake@input[[1]]
 # meta_file = "samples/HILO_MAIZE55_meta.RData"
-#k2_file = snakemake@input[["K2"]]
-# k2_file = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_symp_pop.txt"
-tracts_file = snakemake@input[["tracts"]]
+tracts_file = snakemake@input[[2]]
 # tracts_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
 dir_anc = snakemake@params[["dir_anc"]]
 # dir_anc = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc"
@@ -28,7 +26,6 @@ load(meta_file) # meta
 
 tracts = read.table(tracts_file, sep = "\t", header = F, stringsAsFactors = F) %>%
   data.table::setnames(c("chr", "start", "end", "pos"))
-#k2 = read.table(k2_file, sep ="\t", header = T, stringsAsFactors = F)
 
 # which pops are included?
 meta_pops = dplyr::filter(meta, symp_allo == "sympatric" & zea == ZEA) %>%

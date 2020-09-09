@@ -333,11 +333,10 @@ rule summarise_posterior:
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data:
     input:
-        meta = "samples/" + prefix_all + "_meta.RData",
-        #K2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
-        ploidy = ["local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/" + POP + ".ploidy", for POP in symp_pops],
-        anc = ["local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/" + POP + ".anc.freq", for POP in symp_pops],
-        tracts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+        "samples/" + prefix_all + "_meta.RData",
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy", POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{POP}.anc.freq", POP = symp_pops)
     output:
         pop_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
         combined_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed",

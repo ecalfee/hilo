@@ -1273,6 +1273,8 @@ Job counts:
         count   jobs
         2       count_maj_min
         2 # RUNNING 9.9.2020 8am
+# HILO42 finally completed countsACGT. Now running the rest of the pipeline:
+
 
 # TO DO:
 
