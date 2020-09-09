@@ -146,7 +146,8 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_noBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea)
+        #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
         #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_noBoot/anc/{POP}.{SUFFIX}",
         #ID = sympatric_pops, SUFFIX = ["anc.ind", "anc.freq", "alpha.ind"])
     params:

@@ -1288,6 +1288,15 @@ Job counts:
         145 # RUNNING 9.9.10am
 # was running but the bootstraps were slowing everything down. Putting them on bigmemm so they don't compete for resources.
 hilo$ snakemake all --quiet --profile slurm
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      boot_ancestry_hmm
+        2       combine_pop_ancestry_data
+        26      run_ancestry_hmm
+        56      summarise_posterior
+        113 # RUNNING 9.9.2020 10:30am. STILL RUNNING bootstrap but others are working. adding things to 'some' rule.
 
 # TO DO:
 
