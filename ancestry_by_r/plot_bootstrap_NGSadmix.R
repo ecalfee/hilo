@@ -72,7 +72,7 @@ anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
 # summarise mean across populations:
 anc_by_wind_and_zea <- anc_by_wind %>%
   mutate(length = end - start) %>%
-  dplyr::group_by(zea, window, bin_cd5, bin_r5, length) %>%
+  dplyr::group_by(zea, window, bin_cd5, bin_r5, length, cM_Mb, coding_bp) %>%
   dplyr::summarise(anc = sum(anc*n_local_ancestry)/sum(n_local_ancestry))
 
 
@@ -156,6 +156,15 @@ p_r5_symp_allo <- r5$anc_group_confidence_intervals %>%
                  shape = zea,
                  color = zea),
              position = position_jitter(0.2)) +
+  #geom_point(data = filter(r5$anc_ind, # apply same stringency of filters as for local ancestry estimates
+  #                         zea != "parviglumis" & ancestry == "mexicana" & est_coverage >= 0.5) %>%
+  #             dplyr::group_by(zea, ancestry, symp_allo, bin) %>%
+  #             dplyr::summarise(p = mean(p)),
+  #           aes(x = bin,
+  #               y = p),
+  #           size = 5,
+  #           color = "black",
+  #           shape = 1) +
   scale_color_manual(values = col_maize_mex_parv) +
   # then add mean for that group
   geom_point(pch = 18, size = 2) +
@@ -328,7 +337,7 @@ p_r5_local_anc <- anc_by_wind_and_zea %>%
 ggsave(file = png_r5_local_anc,
        plot = p_r5_local_anc,
        device = "png",
-       width = 7, height = 7, 
+       width = 5, height = 4, 
        units = "in", dpi = 300)
 
 # coding bp/cM
@@ -358,13 +367,74 @@ p_cd5_local_anc <- anc_by_wind_and_zea %>%
 ggsave(file = png_cd5_local_anc,
        plot = p_cd5_local_anc,
        device = "png",
-       width = 7, height = 7, 
+       width = 5, height = 4, 
        units = "in", dpi = 300)
 
+anc_by_wind_and_zea %>%
+  ggplot(., aes(x = log10(cM_Mb), y = anc, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(aes(shape = zea,
+                 color = zea),
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  xlab("Recombination rate quintile log10(cM/Mb)") +
+  ylab("Proportion mexicana ancestry (HMM)") +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Local mexicana ancestry by recombination rate") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+# ------------------------------------------------- #
 
+# bootstrap of local ancestry results
+boot_local_r5 <- do.call(bind_rows, lapply(1:100, function(i)
+  anc_by_wind_and_zea %>%
+  dplyr::group_by(zea, bin_r5) %>%
+  sample_n(., size = n(), replace = T) %>%
+  dplyr::group_by(zea) %>%
+  dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
+                   cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
+                   cor.spearman = cor(cM_Mb, anc, method = "spearman")) %>%
+  mutate(boot = i)))
 
+boot_local_cd5 <- do.call(bind_rows, lapply(1:100, function(i)
+  anc_by_wind_and_zea %>%
+    dplyr::group_by(zea, bin_r5) %>%
+    sample_n(., size = n(), replace = T) %>%
+    dplyr::group_by(zea) %>%
+    dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
+                     cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
+                     cor.spearman = cor(cM_Mb, anc, method = "spearman")) %>%
+    mutate(boot = i)))
 
+boot1 <- anc_by_wind_and_zea %>%
+  dplyr::group_by(zea, bin_r5) %>%
+  sample_n(., size = n(), replace = T) %>%
+  ungroup()
+#calc_stats <- function(d, var1, var2){
+  d = filter(anc_by_wind_and_zea,
+             zea == "maize")
+  d = anc_by_wind_and_zea
+  d %>%
+    dplyr::group_by(zea) %>%
+    dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
+                     cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
+                     cor.spearman = cor(cM_Mb, anc, method = "spearman"))
+  d %>%
+    dplyr::filter(., zea == "mexicana") %>%
+    dplyr::ungroup() %>%
+    dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
+                     cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
+                     cor.spearman = cor(cM_Mb, anc, method = "spearman"))
+  
+  
+    pearsons = cor(d[, var1], d[ , var2])
+  cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc)
+#}
+cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc, type = "pearsons")
+cor.test(log10(anc_by_wind_and_zea$cM_Mb), anc_by_wind_and_zea$anc, type = "pearsons")
+cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc, type = "spearmans")
 
 
 

@@ -138,7 +138,8 @@ rule all:
         #Ne = 10000, YESNO = ["yes", "no"], POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea),
         #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
-        expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.anc.wind", POP = symp_pops)
+        expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.anc.wind", POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_yesBoot/{POP}.log", POP = symp_pops)
     params:
         p = "med2"
     resources:
