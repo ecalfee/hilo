@@ -371,7 +371,7 @@ rule get_admix_times:
         "awk -v N=4 'NR % N == 0' {input.log} | cut -f3 > {output.times}"
 
 ## plot_admix_times:
-rule get_admix_times:
+rule plot_admix_times:
     input:
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{POP}.log", POP = symp_pops)

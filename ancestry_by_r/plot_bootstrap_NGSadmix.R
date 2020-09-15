@@ -10,11 +10,11 @@ library(ggplot2)
 windows_file = snakemake@input[["windows"]] # feature information for 1cM windows
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-  arrange(quintile_r5) %>%
+  dplyr::arrange(quintile_r5) %>%
   dplyr::mutate(bin_r5 = factor(bin_r5, levels = unique(bin_r5), ordered = T)) %>%
-  arrange(quintile_cd5) %>%
+  dplyr::arrange(quintile_cd5) %>%
   dplyr::mutate(bin_cd5 = factor(bin_cd5, levels = unique(bin_cd5), ordered = T)) %>%
-  arrange(quintile_frac5) %>%
+  dplyr::arrange(quintile_frac5) %>%
   dplyr::mutate(bin_frac5 = factor(bin_frac5, levels = unique(bin_frac5), ordered = T))
 
   
@@ -57,8 +57,8 @@ png_cd5_local_anc = snakemake@output[["png_cd5_local_anc"]]
 meta_symp = dplyr::filter(meta, symp_allo == "sympatric") %>%
   dplyr::filter(., est_coverage >= 0.5) %>%
   dplyr::group_by(popN, RI_ACCESSION, zea, symp_allo, group, ELEVATION, LOCALITY, GEOCTY) %>%
-  summarise(n_local_ancestry = n()) %>%
-  mutate(pop = paste0("pop", popN))
+  dplyr::summarise(n_local_ancestry = n()) %>%
+  dplyr::mutate(pop = paste0("pop", popN))
 
 # local ancestry by windows:
 anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
@@ -66,12 +66,12 @@ anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
   read.table(paste0(dir_anc, "/pop", i, ".anc.wind"),
              stringsAsFactors = F) %>%
     data.table::setnames(c("window", "pop", "anc")))) %>%
-  left_join(., windows, by = "window") %>%
-  left_join(., meta_symp, by = "pop")
+  dplyr::left_join(., windows, by = "window") %>%
+  dplyr::left_join(., meta_symp, by = "pop")
 
 # summarise mean across populations:
 anc_by_wind_and_zea <- anc_by_wind %>%
-  mutate(length = end - start) %>%
+  dplyr::mutate(length = end - start) %>%
   dplyr::group_by(zea, window, bin_cd5, bin_r5, length, cM_Mb, coding_bp) %>%
   dplyr::summarise(anc = sum(anc*n_local_ancestry)/sum(n_local_ancestry))
 
@@ -79,8 +79,8 @@ anc_by_wind_and_zea <- anc_by_wind %>%
 # make plots
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
 p_r5_symp <- r5$anc_group_confidence_intervals %>%
-  filter(ancestry == "mexicana_ancestry") %>%
-  filter(symp_allo == "sympatric") %>%
+  dplyr::filter(ancestry == "mexicana_ancestry") %>%
+  dplyr::filter(symp_allo == "sympatric") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
@@ -113,8 +113,8 @@ ggsave(file = png_r5_symp,
 
 # by coding bp per cM
 p_cd5_symp <- cd5$anc_group_confidence_intervals %>%
-  filter(ancestry == "mexicana_ancestry") %>%
-  filter(symp_allo == "sympatric") %>%
+  dplyr::filter(ancestry == "mexicana_ancestry") %>%
+  dplyr::filter(symp_allo == "sympatric") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(cd5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
@@ -147,7 +147,7 @@ ggsave(file = png_cd5_symp,
 
 # mexicana ancestry for K=2 in sympatric and allopatric maize/mex
 p_r5_symp_allo <- r5$anc_group_confidence_intervals %>%
-  filter(ancestry == "mexicana_ancestry") %>%
+  dplyr::filter(ancestry == "mexicana_ancestry") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
@@ -189,7 +189,7 @@ ggsave(file = png_r5_symp_allo,
        units = "in", dpi = 300)
 
 p_cd5_symp_allo <- cd5$anc_group_confidence_intervals %>%
-  filter(ancestry == "mexicana_ancestry") %>%
+  dplyr::filter(ancestry == "mexicana_ancestry") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(cd5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
@@ -257,8 +257,8 @@ print(cor(windows$quintile_r5, windows$quintile_cd5))
 
 # plot ancestry across recombination bins and elevation:
 p_facet_r5 <- r5$anc_ind %>%
-  filter(., symp_allo == "sympatric") %>%
-  filter(., ancestry == "mexicana") %>%
+  dplyr::filter(., symp_allo == "sympatric") %>%
+  dplyr::filter(., ancestry == "mexicana") %>%
   ggplot(., aes(x = ELEVATION, y = p,
                 color = zea,
                 shape = zea)) +
@@ -284,8 +284,8 @@ ggsave(file = png_facet_r5,
 
 # different way of visualizing the same pattern:
 p_color_elev_r5 <- r5$anc_ind %>%
-  filter(., symp_allo == "sympatric") %>%
-  filter(., ancestry == "mexicana") %>%
+  dplyr::filter(., symp_allo == "sympatric") %>%
+  dplyr::filter(., ancestry == "mexicana") %>%
   ggplot(., aes(x = bin, y = p,
                 color = ELEVATION)) +
   geom_smooth(method = "lm", se = FALSE, 
@@ -391,50 +391,34 @@ anc_by_wind_and_zea %>%
 boot_local_r5 <- do.call(bind_rows, lapply(1:100, function(i)
   anc_by_wind_and_zea %>%
   dplyr::group_by(zea, bin_r5) %>%
-  sample_n(., size = n(), replace = T) %>%
+  dplyr::sample_n(., size = n(), replace = T) %>%
   dplyr::group_by(zea) %>%
   dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
                    cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
                    cor.spearman = cor(cM_Mb, anc, method = "spearman")) %>%
-  mutate(boot = i)))
+  dplyr::mutate(boot = i)))
 
 boot_local_cd5 <- do.call(bind_rows, lapply(1:100, function(i)
   anc_by_wind_and_zea %>%
     dplyr::group_by(zea, bin_r5) %>%
-    sample_n(., size = n(), replace = T) %>%
+    dplyr::sample_n(., size = n(), replace = T) %>%
     dplyr::group_by(zea) %>%
     dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
                      cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
                      cor.spearman = cor(cM_Mb, anc, method = "spearman")) %>%
-    mutate(boot = i)))
+    dplyr::mutate(boot = i)))
 
 boot1 <- anc_by_wind_and_zea %>%
   dplyr::group_by(zea, bin_r5) %>%
-  sample_n(., size = n(), replace = T) %>%
-  ungroup()
+  dplyr::sample_n(., size = n(), replace = T) %>%
+  dplyr::ungroup()
+
 #calc_stats <- function(d, var1, var2){
-  d = filter(anc_by_wind_and_zea,
-             zea == "maize")
-  d = anc_by_wind_and_zea
-  d %>%
+anc_by_wind_and_zea %>%
     dplyr::group_by(zea) %>%
     dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
                      cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
                      cor.spearman = cor(cM_Mb, anc, method = "spearman"))
-  d %>%
-    dplyr::filter(., zea == "mexicana") %>%
-    dplyr::ungroup() %>%
-    dplyr::summarise(cor.pearson = cor(cM_Mb, anc, method = "pearson"),
-                     cor.log10 = cor(log10(cM_Mb), anc, method = "pearson"),
-                     cor.spearman = cor(cM_Mb, anc, method = "spearman"))
-  
-  
-    pearsons = cor(d[, var1], d[ , var2])
-  cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc)
-#}
-cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc, type = "pearsons")
-cor.test(log10(anc_by_wind_and_zea$cM_Mb), anc_by_wind_and_zea$anc, type = "pearsons")
-cor.test(anc_by_wind_and_zea$cM_Mb, anc_by_wind_and_zea$anc, type = "spearmans")
 
 
 
