@@ -141,7 +141,7 @@ rule all:
         #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
         expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
-        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png", POP = symp_pops, Ne = Nes)
+        expand("local_ancestry/plots/admix_times_Ne{Ne}_yesBoot.png", Ne = Nes)
     params:
         p = "med2"
     resources:
