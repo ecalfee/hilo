@@ -381,7 +381,7 @@ rule plot_admix_times:
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
-        YESNO = lambda wildcars: wildcards.YESNO,
+        YESNO = lambda wildcards: wildcards.YESNO,
         prefix_all = prefix_all,
         colors = "colors.R"
     conda:
