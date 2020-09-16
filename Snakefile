@@ -59,6 +59,7 @@ with open("samples/" + prefix_all + "_ids.list") as f:
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
 zea = ["maize", "mexicana"]
+Nes = [10000, 100000]
 
 # sympatric populations
 symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
@@ -136,10 +137,11 @@ rule all:
         #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
         #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
         #Ne = 10000, YESNO = ["yes", "no"], POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes),
         #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
-        expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.anc.wind", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_yesBoot/{POP}.log", POP = symp_pops)
+        expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
+        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png", POP = symp_pops, Ne = Nes)
     params:
         p = "med2"
     resources:

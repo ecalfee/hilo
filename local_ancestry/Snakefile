@@ -374,13 +374,16 @@ rule get_admix_times:
 rule plot_admix_times:
     input:
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{POP}.log", POP = symp_pops)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{POP}.log", POP = symp_pops),
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts"
     output:
-        png_times = "local_ancestry/plots/admix_times.png"
+        png_times = "local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
-        YESNO = lambda wildcars: wildcards.YESNO
+        YESNO = lambda wildcars: wildcards.YESNO,
+        prefix_all = prefix_all,
+        colors = "colors.R"
     conda:
         "../envs/environment.yaml"
     resources:

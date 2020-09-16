@@ -1,127 +1,110 @@
-# this script plots posterior results from ancestry_hmm
+#!/usr/bin/env Rscript
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+# this script plots timing of admixture estimated from ancestry_hmm
 
-dir_in = "../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/"
-alphas <- read.table("../data/var_sites/merged_pass1_all_alloMaize4Low_16/thinnedHMM/ancestry_hmm/input/globalAdmixtureByPopN.txt",
-                     stringsAsFactors = F, header = F)
-colnames(alphas) <- c("popN", "alpha_maize", "alpha_mex")
-meta <- read.table("../data/pass1_ids.txt", stringsAsFactors = F, 
-                   header = T, sep = "\t") %>%
-  filter(est_coverage >= 0.05) %>%
-  group_by(popN, zea, symp_allo, RI_ACCESSION, GEOCTY, LOCALITY) %>%
-  summarise(tot_pop_coverage = sum(est_coverage)) %>%
-  left_join(., alphas, by = c("popN"))
+# load variables from Snakefile
+Ne = snakemake@params[["Ne"]]
+# Ne = 10000
+YESNO = snakemake@params[["YESNO"]]
+# YESNO = "yes"
+alpha = snakemake@params[["alpha"]]
+# alpha = 0.1
+prefix_all = snakemake@params[["prefix_all"]]
+# prefix_all = "HILO_MAIZE55"
+png_times = snakemake@output[["png_times"]]
+# png_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.png"
+source(snakemake@params[["colors"]]) # plotting colors
+# source("colors.R")
 
-pops = meta[(meta$symp_allo == "sympatric" & 
-              meta$alpha_maize > 0 & 
-              meta$alpha_mex > 0), "popN"] %>%
-  unlist(.) # won't work as tibble in lapply below
-
-get_boots = function(path){
-  boots = do.call(rbind, lapply(pops, function(pop) read.table(paste0(path, 
-                                                                      "bootstrap_pop", 
-                                                                      pop, ".txt"), 
-                                                               stringsAsFactors = F, 
-                                                               header = F, skip = 1)$V2))
-  colnames(boots)<- paste0("boot", 1:11)
-  boots = as.data.frame(boots)
-  boots$popN = pops
-  boots = gather(boots, "bootstrap", "t_est", 1:11) %>%
-    left_join(., meta, by = c("popN"))
-  return(boots)
+# load meta and bootstrap data for maize and mexicana
+zea = c("maize", "mexicana")
+for (z in zea){
+  load(paste0("local_ancestry/results/ancestry_hmm/",
+              prefix_all, "/Ne", Ne, "_", YESNO, 
+              "Boot/anc/", z, ".pop.meta.RData"))
+  times = do.call(bind_cols, lapply(meta_pops$pop, function(p) 
+    read.table(paste0("local_ancestry/results/ancestry_hmm/",
+                      prefix_all, "/Ne", Ne, "_", YESNO, 
+                      "Boot/", p, ".times"), 
+               header = F, stringsAsFactors = F)))
+  colnames(times) <- meta_pops$pop
+  boots = times[2:nrow(times), ] # first row is estimate, remaining rows bootstraps
+  time_est = data.frame(time = unlist(times[1, ]),
+                    low_boot = apply(boots, 2, function(x) quantile(x, alpha/2)),
+                    high_boot = apply(boots, 2, function(x) quantile(x, 1 - alpha/2)),
+                    pop = colnames(times), stringsAsFactors = F) %>%
+    dplyr::mutate(low_bound = 2*time - low_boot,
+                  high_bound = 2*time - high_boot)
+  assign(x = z, value = left_join(meta_pops, time_est, by = "pop"))
+  rm(meta_pops, times, time_est, boots)
 }
-boots10 = get_boots(path = paste0(dir_in, "output_bootT/"))
-boots10$Ne = 10000
-boots5 = get_boots(path = paste0(dir_in, "output_bootT_Ne5k/"))
-boots5$Ne = 5000
-boots50 = get_boots(path = paste0(dir_in, "output_bootT_Ne50k/"))
-boots50$Ne = 50000
-boots = rbind(boots10, boots5, boots50)
 
+# combine data
+d <- bind_rows(maize, mexicana) %>%
+  dplyr::mutate(introgress = ifelse(zea == "maize", alpha_local_ancestry, 1 - alpha_local_ancestry))
 
-# no clear relationship between age of admixture estimate (t)
-# and total population coverage or alpha
-p1 = ggplot(boots10, aes(col = zea)) +
-  geom_point(aes(x = tot_pop_coverage, y = t_est)) +
-  ggtitle("time estimate by total population coverage")
-plot(p1)
-p1
-ggsave("../plots/t_est_by_pop_coverage.png", plot = p1, device = png(), 
-       width = 7, height = 5, units = "in",
-       dpi = 200)
-p2 = ggplot(filter(meta, symp_allo=="sympatric"), 
-       aes(col = zea)) +
-  geom_point(aes(x = tot_pop_coverage, y = alpha_mex)) +
-  ggtitle("alpha mean admixture estimate by total population coverage")
-p2
-ggsave("../plots/alpha_est_by_pop_coverage.png", plot = p2, device = png(), 
-       width = 7, height = 5, units = "in",
-       dpi = 200)
+# plot
+p_times <- d %>%
+  ggplot(., aes(x = reorder(LOCALITY, ELEVATION), 
+                y = time,
+                #alpha = introgress,
+                col = zea)) +
+  geom_point() + # plot time estimate
+  # add errorbars for 90% CI around that mean
+  # based on bootstrap
+  geom_errorbar(aes(ymin = low_bound,
+                    ymax = high_bound),
+                width = .5) +
+  xlab("Sympatric population") +
+  ylab("Admixture time (generations)") +
+  theme_classic() +
+  ylim(0, 1500) +
+  guides(color = guide_legend("Subspecies"),
+         alpha = guide_legend("Proportion\nminor ancestry")) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_times
+ggsave(file = png_times,
+       plot = p_times,
+       device = "png",
+       width = 5, height = 4, 
+       units = "in", dpi = 300)
 
-p3 = ggplot(boots10, aes(x = zea, y = t_est, color = zea)) +
-  geom_violin() + 
-  geom_point(size=1, position = position_jitter(w=0.05)) +
-  theme_minimal() + 
-  facet_wrap(~LOCALITY) # show plot
-plot(p3)
-ggsave("../plots/t_est_by_location_violin.png", plot = p3, 
-       device = png(), 
-       width = 7, height = 5, units = "in",
-       dpi = 200)
+print("summary of time estimates")
+d %>%
+  dplyr::group_by(zea) %>%
+  dplyr::summarise(min = min(time),
+                 mean = mean(time),
+                 max = max(time))
 
-p4 = ggplot(boots10, aes(x = zea, y = t_est, color = zea)) +
-  geom_point() +
-  ggtitle("10 block bootstrap time of admixture estimates", 
-          sub = "5 pops have no pair b/c no inferred admixture") +
-  theme_minimal() + 
-  facet_wrap(~LOCALITY) # show plot
-ggsave("../plots/t_est_by_location_points.png", plot = p4, 
-       device = png(), 
-       width = 7, height = 5, units = "in",
-       dpi = 200)
+# so around 1300 generations on the high end.
+# how many markers do I have per block?
+# mean block length in cM:
+mean_cM_block_length = 1/max(d$time) * 100 #cM/Morgan
 
-# now with different Ne estimates too:
-p5 = ggplot(boots, aes(x = zea, y = t_est, color = as.factor(Ne))) +
-  geom_point(size=1, position = position_jitter(w=0.2)) + # jitter to see overlap
-  ggtitle("Vary Ne: 10 block bootstrap time of admixture estimates", 
-          sub = "5 pops have no pair b/c no inferred admixture") +
-  theme_minimal() + 
-  facet_wrap(~LOCALITY) # show plot
-ggsave("../plots/t_est_by_location_varying_Ne.png", plot = p5, 
-       device = png(), 
-       width = 7, height = 5, units = "in",
-       dpi = 200)
+allo <- read.table(paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.allo.counts"),
+                    stringsAsFactors = F, header = T) %>%
+  dplyr::mutate(n_tot_maize = n_minor_maize + n_major_maize,
+                p_maize = n_minor_maize/(n_tot_maize),
+                n_tot_mex = n_minor_mex + n_major_mex,
+                p_mex = n_minor_mex/(n_tot_mex),
+                p_diff = abs(p_mex - p_maize))
 
-# what is the range of t estimates?
-summary_t_est <- summary(boots10$t_est)
-min_t <- min(boots10$t_est)
-max_t <- max(boots10$t_est)
-# how big should an average block be?
-# I need to know mean recombination rate in maize...
-# assuming recombination is .001cM ~ 1kb
-# 1 M ~ 100,000kb or 1e-8 M per bp recomb. rate on avg.
-r = 1e-5 # in M/kb
-# since blocks are exponentially distributed r*T*e^-(r*T)
-# we can calc mean block length (in kb) as 1/(r*T)
-mean_block_length_kb <- 1/(r*summary_t_est)
-mean_block_length_kb
-# how many SNPs per avg. sized block?
-# thinned to max 1 SNP per .001cM (on avg. 1 kb)
-# but in reality SNP density is less 
-# (b/c SNPs aren't evenly distributed to begin with)
-# There are 450822 SNPs total (thinned to .001cM)
-# and ~2.3 GB in the maize genome -> 
-tot_thinned_snps <- 450822
-maize_genome_size_kb <- 2.3*10^6 # in kb
-thinned_snps_per_kb_avg <- tot_thinned_snps/maize_genome_size_kb
-thinned_snps_per_kb_avg
-exp_snps_per_mean_block <- thinned_snps_per_kb_avg * mean_block_length_kb
-exp_snps_per_mean_block
+mean_cM_between_markers = mean(allo$distM[allo$distM != 1])*100
+print("Mean block length (cM):")
+mean_cM_block_length
+print("Mean markers per cM:")
+1/mean_cM_between_markers
+print("Mean markers per ancestry block:")
+mean_cM_block_length/mean_cM_between_markers
 
-snp_block_detection <- rbind(t_est = summary_t_est, 
-           mean_block_length_kb = mean_block_length_kb, 
-           exp_snps_per_mean_block = exp_snps_per_mean_block)
-snp_block_detection
-# should be getting ~ 200kb for avg. block length 1/(rbp*T)
+# look at distribution, not just mean # markers per block:
+# fraction of ancestry blocks, under an exponential model, 
+# with x or fewer expected markers:
+#sapply(c(1,5,10,24,50), function(x) pexp(q = x*mean_cM_between_markers, lower.tail = T, rate = 1300/100))
+#curve(exp(-1300*(x/100)), 0, 1,
+#main = "expected dist. ancestry tracts",
+#xlab = "tract length (cM)", ylab = "Prob")
+#abline(v = mean_cM_block_length, col = "purple")

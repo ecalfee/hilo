@@ -1320,6 +1320,16 @@ Job counts:
                 1       plot_bootstrap_anc_by_r
                 28      summarise_local_anc_by_1cM
                 30 # RUNNING 9.9.2020 2:45pm
+hilo$ snakemake plot_bootstrap_anc_by_r --quiet --profile slurm
+# getting timing of admixture:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        28      get_admix_times
+        1       plot_bootstrap_anc_by_r
+        30 # RUNNING 9.15.2020 12:30pm. Why did plot bootstrap fail? not clear. but get_admix_times ran ok.
+
 
 # TO DO:
 
