@@ -370,14 +370,14 @@ ggsave(file = png_cd5_local_anc,
        width = 5, height = 4, 
        units = "in", dpi = 300)
 
-anc_by_wind_and_zea %>%
+p_log10_cM_Mb_local_anc <- anc_by_wind_and_zea %>%
   ggplot(., aes(x = log10(cM_Mb), y = anc, group = zea)) +
   # first plot original point estimates for ind. ancestry
   geom_point(aes(shape = zea,
                  color = zea),
              position = position_jitter(0.2)) +
   scale_color_manual(values = col_maize_mex_parv) +
-  xlab("Recombination rate quintile log10(cM/Mb)") +
+  xlab("Recombination rate log10(cM/Mb)") +
   ylab("Proportion mexicana ancestry (HMM)") +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
@@ -567,3 +567,4 @@ anc_by_wind_and_zea %>%
 #   ggtitle("Mexicana ancestry by recombination rate")
 # ggsave("plots/K3_ind_ancestries_jitter_and_mean_bootstrap_90CI.png",
 #        width = 8, height = 8, units = "in")
+
