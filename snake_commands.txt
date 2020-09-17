@@ -1329,6 +1329,19 @@ Job counts:
         28      get_admix_times
         1       plot_bootstrap_anc_by_r
         30 # RUNNING 9.15.2020 12:30pm. Why did plot bootstrap fail? not clear. but get_admix_times ran ok.
+        (hilo-env) ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                28      boot_ancestry_hmm
+                2       combine_pop_ancestry_data
+                28      get_admix_times
+                28      map_local_anc_onto_1cM_windows
+                2       plot_admix_times
+                1       plot_bootstrap_anc_by_r
+                28      summarise_local_anc_by_1cM
+                28      summarise_posterior
+                146 # running with 100,000 as Ne
 
 
 # TO DO:

@@ -14,7 +14,7 @@ calcK = function(ancFreqMatrix, alpha){ # for all markers and # pops = length(al
 }
 
 calcInvL = function(K){
-  solve(t(chol(K)))  
+  solve(t(chol(K)))
   #calculate the inverse Cholesky. t(chol(K)) is a lower left triangular matrix such that LL' = K
 }
 
@@ -31,7 +31,7 @@ make_K_calcs = function(pop_anc){
 # cholesky transformation of population ancestry frequencies
 zAnc = function(ancFreq, invL, alpha){
   # throws an error if the dimensions are not correct (all should = total # of populations)
-  if (!(length(alpha) == dim(invL)[1] && 
+  if (!(length(alpha) == dim(invL)[1] &&
         length(alpha) == length(ancFreq))){
     stop("Oops! dimensions for ancFreq, invL and alpha must match")
   }
@@ -40,7 +40,7 @@ zAnc = function(ancFreq, invL, alpha){
 
 
 # Poisson Binomial probability calculation (of = or more extreme - larger - value)
-calcProbPoiBin = function(ancCount, nHap, alpha){ 
+calcProbPoiBin = function(ancCount, nHap, alpha){
   # AncCount is a vector of counts w/ length = # pops
   # nHap is the number of haplotypes per pop, alpha is a vector of mean ancestry per pop
   # lower inclusive probability <= kk total counts
@@ -63,7 +63,7 @@ simple_env_regression = function(ancFreq, envWeights){
     r_squared = fit.summary$r.squared, # coefficient of determination
     pval_Env = fit.summary$coefficients[1, 4],
     pval_Int = tryCatch(fit.summary$coefficients[2, 4], error = function(e){
-      print("Warning: slope and intercept are confounded. try using no intercept") 
+      print("Warning: slope and intercept are confounded. try using no intercept")
       return(NA)}))
   return(output)
 }
@@ -104,26 +104,26 @@ RSS <- function(ancFreq, mu, invK){
 fit_null <- function(anc, alpha, K){
   invK = solve(K)
   detK = det(K) # determinant of K matrix
-  
+
   # estimate log likelihood under this MVN model
   logliks <- sapply(1:nrow(anc), function(i)
     ll_mvn(t(anc[i, ]), # make into a column vector
            mu = alpha,
-           detK = detK, 
+           detK = detK,
            invK = invK))
-  
+
   rss <- sapply(1:nrow(anc), function(i)
     RSS(ancFreq = t(anc[i, ]),
         mu = alpha,
         invK = invK))
-  
+
   fits <- data.frame(
     RSS = rss,
     ll = logliks,
     k = 0,
     n = length(alpha)) %>%
     mutate(AICc = AICc(ll = ll, k = k, n = n))
-  
+
   return(fits)
 }
 
@@ -136,26 +136,26 @@ fit_sel <- function(anc, alpha, K, X, b_names){
   }
   invK = solve(K)
   detK = det(K)
-  
+
   # estimate beta for each observed vector of population ancestries
-  betas = apply(anc, 1, function(y) 
+  betas = apply(anc, 1, function(y)
     ML_b(y = y, alpha = alpha, invK = invK, X = X)) %>%
     as.matrix(.)
   if (dim(betas)[2] != length(b_names)) betas = t(betas) # fix because for 1D it outputs one way and 2D it outputs a diff way from apply
-  #betas = apply(maize_anc, 1, function(y) 
+  #betas = apply(maize_anc, 1, function(y)
   #  ML_b(y = y, alpha = alpha, invK = invK, X = X)) %>%
   #  as.matrix(.)
   logliks <- sapply(1:nrow(anc), function(i)
     ll_mvn(t(anc[i, ]), # make into a column vector
            mu = alpha + X %*% betas[i, ], # use ML beta estimate calculate expected value
-           detK = detK, 
+           detK = detK,
            invK = invK))
-  
+
   rss <- sapply(1:nrow(anc), function(i)
     RSS(ancFreq = t(anc[i, ]),
         mu = alpha + X %*% betas[i, ],
         invK = invK))
-  
+
   fits <- betas %>% # put everything together
     as.data.frame(.) %>%
     data.table::setnames(b_names) %>%
@@ -175,7 +175,7 @@ test_Chol = function(){
   sigma_K = matrix(c(1,.2,.3, .2, 1, -.5, .3, -.5, 1), nrow = 3, ncol = 3)
   mu = c(1, 5, 2)
   mvn = mvrnorm(n=50000, # create some MVN data
-                mu = mu, 
+                mu = mu,
                 Sigma = sigma_K)
   hist(mvn) #not normal - a mixture of correlated normals
   cor(mvn[,1], mvn[,2]) # empirical is close to expected .2
@@ -189,11 +189,11 @@ test_Chol = function(){
   cor(z_mvn[3,], z_mvn[1,])
   hist(z_mvn) # ~N(0,1)
   hist(rnorm(50000*3, mean=0, sd=1), col="darkblue", add=TRUE)
-  hist(z_mvn[1,])# ~ N(0,1) 
+  hist(z_mvn[1,])# ~ N(0,1)
   # so it works well using the true sigma_K.
   # what if I estimate K from the simulated data?
   mu_est = colMeans(mvn) # mu_est = alpha instead of known mu
-  sigma_K_est = calcK(ancFreqMatrix = t(mvn), 
+  sigma_K_est = calcK(ancFreqMatrix = t(mvn),
                       alpha = mu_est)
   inv_chol_mvn_est = calcInvL(sigma_K_est)
   z_mvn_est = apply(mvn, 1, function(i) inv_chol_mvn_est %*% (i - mu_est))

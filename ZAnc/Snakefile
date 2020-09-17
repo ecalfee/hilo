@@ -1,0 +1,49 @@
+## variant_sites/Snakefile: pipeline to call SNPs
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+## calc_K_matrix_zea: calculate K matrix
+rule calc_K_matrix_zea:
+    input:
+        pop_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        k_functions = "ZAnc/k_matrix.R"
+    output:
+        K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    script:
+        "calc_K_matrix_zea.R"
+
+## simulate_MVN: simulate ancestry data based on a multi-variate normal model of ancestry drift
+rule calc_K_matrix_zea:
+    input:
+        K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+    output:
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData"
+    params:
+        p = "med2",
+        n_sim = 10000
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    log:
+        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.log"
+    script:
+        "calc_K_matrix_zea.R"

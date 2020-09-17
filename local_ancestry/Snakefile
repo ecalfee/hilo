@@ -342,7 +342,7 @@ rule combine_pop_ancestry_data:
         combined_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed",
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData" # meta_pops dataframe has n_local_ancestry, ELEVATION, and alpha_local_ancestry for each pop, sorted in same order as anc
     params:
-        p = "bigmemm",
+        p = "med2",
         dir_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc",
         dir_ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input",
         zea = lambda wildcards: wildcards.ZEA

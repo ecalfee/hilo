@@ -50,12 +50,12 @@ colnames(anc) = meta_pops$pop
 meta_pops$alpha_local_ancestry = apply(anc, 2, mean)
 
 # mean ancestry at each SNP, combined across all indidivuals
-combined_anc_freq = (anc %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)
-tracts$anc_freq = combined_anc_freq
+anc_mean = (anc %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)
+tracts$anc_freq = anc_mean
 
 # write output files:
 save(list = "meta_pops", file = output_meta_pop)
-save(list = "anc", file = output_pop_anc)
+save(list = c("anc", "anc_mean"), file = output_pop_anc)
 write.table(tracts, # bed file with combined ancestry frequencies
             file = output_combined_anc, 
             col.names = T, row.names = F, quote = F, sep = "\t")
