@@ -90,8 +90,8 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
-include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
+#include: "local_ancestry/Snakefile"
+#include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -143,7 +143,8 @@ rule all:
         expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
         expand("local_ancestry/plots/admix_times_Ne{Ne}_yesBoot.png", Ne = Nes),
-        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_yesBoot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea)
+        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_yesBoot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea),
+        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_yesBoot/{ZEA}.lmElev.fit.RData", Ne = 10000, ZEA = zea)
     params:
         p = "med2"
     resources:

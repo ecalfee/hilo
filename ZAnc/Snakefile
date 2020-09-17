@@ -41,6 +41,33 @@ rule simulate_MVN:
     threads:
         1
     resources:
+        time_min = lambda wildcards, attempt: 5,
+        mem = lambda wildcards, attempt: attempt * 2
+    log:
+        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.log"
+    script:
+        "calc_K_matrix_zea.R"
+
+## fit_lm_elev: fits simple linear model lm(anc ~ elev)
+rule fit_lm_elev
+    input:
+        fdr_functions = "ZAnc/FDR.R",
+        lm_functions = "ZAnc/lm_env_function.R",
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+    output:
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
         time_min = lambda wildcards, attempt: attempt * 15,
         mem = lambda wildcards, attempt: attempt * 2
     log:

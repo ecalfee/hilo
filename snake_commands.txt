@@ -1341,7 +1341,24 @@ Job counts:
                 1       plot_bootstrap_anc_by_r
                 28      summarise_local_anc_by_1cM
                 28      summarise_posterior
-                146 # running with 100,000 as Ne
+                146 # running with 100,000 as Ne. Ran through complete.
+Wanted to re-do combining ancestry freqs so it saves the mean across individuals in the .RData file as well:
+So I force a rerun:
+farm:~/hilo$ snakemake -f local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/mexicana.combined.anc.bed local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.combined.anc.bed local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne100000_yesBoot/anc/maize.combined.anc.bed local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne100000_yesBoot/anc/mexicana.combined.anc.bed --quiet --profile slurm
+Job counts:
+        count   jobs
+        4       combine_pop_ancestry_data
+        4 # RUNNING 9.16.2020
+# then uncomment ancestry_by_r, add ZAnc/Snakefile, and run 'all' rule.
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       calc_K_matrix_zea
+        2       plot_admix_times
+        2       simulate_MVN
+        7 # RUNNING. simulate_MVN ran out of time but should be very fast. trying again with low time threshold .. probably computer problem.
+# then comment out local_ancestry and ancestry_by_r
 
 
 # TO DO:
