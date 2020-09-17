@@ -33,6 +33,12 @@ print("Truncated too high:")
 apply(MVN_sim_untruncated, 2, function(x) sum(x > 1))/n_sim
 
 # truncate simulated allele freqs within [0,1] range
+truncate01 <- function(x){
+  t <- x
+  t[t < 0] <- 0
+  t[t > 1] <- 1
+  return(t)
+}
 MVN_sim = truncate01(MVN_sim_untruncated)
 
 # calculate mean across individuals

@@ -37,11 +37,3 @@ zAnc = function(ancFreq, invL, alpha){
   }
   invL %*% (ancFreq - alpha)
 } #inv_chol_mvn %*% (i - mu))
-
-# truncate to [0,1] range (e.g. from simulated mvn data)
-truncate01 <- function(x){
-  t <- x
-  t[t < 0] <- 0
-  t[t > 1] <- 1
-  return(t)
-}
