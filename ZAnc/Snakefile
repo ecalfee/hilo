@@ -58,7 +58,7 @@ rule fit_lm_elev:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
         fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData"
     params:
-        p = "med2"
+        p = "high2"
     shadow:
         "minimal"
     conda:
@@ -68,7 +68,29 @@ rule fit_lm_elev:
     resources:
         time_min = 12*60,
         mem = 8
-    log:
-        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.log"
     script:
         "fit_lm_elev.R"
+
+## plot_mean_anc: plots mean ancestry across all samples and outlier regions
+rule plot_mean_anc:
+    input:
+        fdr_functions = "ZAnc/FDR.R",
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+    output:
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+
+    script:
+        "plot_mean_anc.R"

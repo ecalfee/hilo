@@ -1367,7 +1367,20 @@ Job counts:
         2       fit_lm_elev
         2       simulate_MVN
         7 # RUNNING 9.17.2020 on high2. (small # jobs. but I'll change the script back to med2 for safety)
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                2       fit_lm_elev
+                2       simulate_MVN
+                5 # FIXED SOME TYPOS. NOW RUNNING. SIMULATION FINISHED BUT STILL GOING ON MODEL FITS
 
+(1) Make plot of mean ancestry across genome with FDR for maize and mexicana
+(2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
+(3) Make plot of # shared outliers against expectation
+(4) Make plot of slope ~ elev across genome with FDR for maize and mexicana
+(5) Make plot of freq in maize vs. freq in mexicana
+(6) Try to do bootstraps of introgression ~ recombination. 
 
 # TO DO:
 
