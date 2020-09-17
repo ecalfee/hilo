@@ -43,10 +43,8 @@ rule simulate_MVN:
     resources:
         time_min = 5,
         mem = lambda wildcards, attempt: attempt * 2
-    log:
-        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.log"
     script:
-        "calc_K_matrix_zea.R"
+        "simulate_MVN.R"
 
 ## fit_lm_elev: fits simple linear model lm(anc ~ elev)
 rule fit_lm_elev:
@@ -68,9 +66,9 @@ rule fit_lm_elev:
     threads:
         1
     resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = 12*60,
+        mem = 8
     log:
         "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.log"
     script:
-        "calc_K_matrix_zea.R"
+        "fit_lm_elev.R"

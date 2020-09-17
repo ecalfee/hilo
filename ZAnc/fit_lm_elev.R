@@ -3,7 +3,8 @@ library(dplyr)
 # load variables from Snakefile
 source(snakemake@input[["fdr_functions"]])
 # source("ZAnc/FDR.R")
-
+source(snakemake@input[["lm_functions"]])
+# source("ZAnc/lm_env_function.R")
 # zea = "maize"
 meta_file = snakemake@input[["meta_pop"]]
 # meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
