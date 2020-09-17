@@ -25,7 +25,7 @@ rule calc_K_matrix_zea:
         "calc_K_matrix_zea.R"
 
 ## simulate_MVN: simulate ancestry data based on a multi-variate normal model of ancestry drift
-rule calc_K_matrix_zea:
+rule simulate_MVN:
     input:
         K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData",
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
