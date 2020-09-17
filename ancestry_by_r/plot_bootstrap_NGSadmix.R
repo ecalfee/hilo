@@ -28,7 +28,7 @@ source(snakemake@input[["colors"]]) # plotting colors
 load(snakemake@input[["meta"]]) # meta
 # load("samples/HILO_MAIZE55_meta.RData")
 
-dir_anc = snakemake@params("dir_anc")
+dir_anc = snakemake@params[["dir_anc"]]
 # dir_anc = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/Ne10000_yesBoot"
 
 # png filenames out:
@@ -62,7 +62,6 @@ meta_symp = dplyr::filter(meta, symp_allo == "sympatric") %>%
 
 # local ancestry by windows:
 anc_by_wind = do.call(rbind, lapply(meta_symp$popN, function(i)
-#anc_by_wind = do.call(bind_rows, lapply(c(18, 19, 360, 365), function(i)
   read.table(paste0(dir_anc, "/pop", i, ".anc.wind"),
              stringsAsFactors = F) %>%
     data.table::setnames(c("window", "pop", "anc")))) %>%

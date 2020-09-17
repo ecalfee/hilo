@@ -264,7 +264,6 @@ rule plot_bootstrap_anc_by_r:
         png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png"
     params:
         p = "med2",
-        k = 2,
         dir_anc = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot"
     conda:
          "../envs/environment.yaml"

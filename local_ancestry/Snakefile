@@ -284,14 +284,14 @@ rule boot_ancestry_hmm:
         # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
         # note: can't use 'shadow' with these extra output files!
     params:
-        p = "bigmemm",
+        p = "med2",
         alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
         alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPop(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
         Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne" + wildcards.Ne + "_yesBoot/posterior"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 2 * 60,
+        time_min = lambda wildcards, attempt: attempt * 3 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
         "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.log"
@@ -375,7 +375,8 @@ rule plot_admix_times:
     input:
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{POP}.log", POP = symp_pops),
-        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts"
+        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts",
+        "colors.R"
     output:
         png_times = "local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png"
     params:
@@ -383,7 +384,8 @@ rule plot_admix_times:
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
         prefix_all = prefix_all,
-        colors = "colors.R"
+        colors = "colors.R",
+        alpha = 0.1
     conda:
         "../envs/environment.yaml"
     resources:

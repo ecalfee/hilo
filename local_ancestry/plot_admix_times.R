@@ -3,13 +3,19 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 # this script plots timing of admixture estimated from ancestry_hmm
+# # test snakemake
+# setClass("snake", slots=list(input="character", output="character", params="character"))
+# snakemake = new("snake")
+# snakemake@params = c(Ne = "10000", YESNO = "yes", alpha = 0.1, 
+#                      prefix_all = "HILO_MAIZE55", colors = "colors.R")
+# snakemake@output = c(png_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.png")
 
 # load variables from Snakefile
 Ne = snakemake@params[["Ne"]]
 # Ne = 10000
 YESNO = snakemake@params[["YESNO"]]
 # YESNO = "yes"
-alpha = snakemake@params[["alpha"]]
+alpha = as.numeric(snakemake@params[["alpha"]])
 # alpha = 0.1
 prefix_all = snakemake@params[["prefix_all"]]
 # prefix_all = "HILO_MAIZE55"
