@@ -58,7 +58,7 @@ rule fit_lm_elev:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
         fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData"
     params:
-        p = "high2"
+        p = "med2"
     shadow:
         "minimal"
     conda:
@@ -66,8 +66,8 @@ rule fit_lm_elev:
     threads:
         1
     resources:
-        time_min = 12*60,
-        mem = 8
+        time_min = 2*60,
+        mem = 2
     script:
         "fit_lm_elev.R"
 
@@ -77,11 +77,16 @@ rule plot_mean_anc:
         fdr_functions = "ZAnc/FDR.R",
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        colors = "colors.R",
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        genome = ref_chr
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png"
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png",
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData"
     params:
-        p = "med2"
+        p = "med2",
+        zea = lambda wildcards: wildcards.ZEA
     shadow:
         "minimal"
     conda:
@@ -91,6 +96,62 @@ rule plot_mean_anc:
     resources:
         time_min = 15,
         mem = 2
-
     script:
         "plot_mean_anc.R"
+
+## plot_slope_elev: plots lm results, slope with elevation, with outlier regions
+rule plot_slope_elev:
+    input:
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        colors = "colors.R",
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        genome = ref_chr
+    output:
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png"
+    params:
+        p = "med2",
+        zea = lambda wildcards: wildcards.ZEA
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "plot_slope_elev.R"
+
+## plot_shared_peaks: plots shared outlier peaks for high introgression
+rule plot_shared_peaks:
+    input:
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        colors = "colors.R",
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        inv = "data/refMaize/inversions/knownInv_v4_coord.txt"
+
+    output:
+        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_outlier_peaks.png",
+        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{ZEA}}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    params:
+        p = "med2",
+        zea = lambda wildcards: wildcards.ZEA,
+        Ne = lambda wildcards: wildcards.Ne,
+        YESNO = lambda wildcards: wildcards.YESNO,
+        prefix_all = prefix_all
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "plot_shared_peaks.R"

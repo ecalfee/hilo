@@ -59,7 +59,7 @@ with open("samples/" + prefix_all + "_ids.list") as f:
 groups = ["sympatric_maize", "sympatric_mexicana", "allopatric_maize", "allopatric_mexicana"]
 allo_groups = ["allopatric_maize", "allopatric_mexicana"]
 zea = ["maize", "mexicana"]
-Nes = [10000, 100000]
+Nes = [1000, 10000, 100000]
 
 # sympatric populations
 symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",

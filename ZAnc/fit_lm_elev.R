@@ -46,6 +46,13 @@ FDRs <- calc_FDR(d = fits$envWeights, s = fits_sim$envWeights,
                                                max(fits$envWeights), 
                                                by = .0001))
 
+# what % of SNPs exceed these thresholds?
+FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
+  ifelse(FDRs$tail[i] == "high", 
+         sum(fits$envWeights > FDRs$thesholds[i]),
+         sum(fits$envWeights < FDRs$thesholds[i])))
+FDRs$prop_SNPs = FDRs$n_SNPs/nrow(fits)
+
 # save results
 save(FDRs, file = fdr_out)
 save(fits, file = fit_out)
