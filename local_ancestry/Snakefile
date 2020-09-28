@@ -330,6 +330,26 @@ rule summarise_posterior:
     script:
         "post2anc.R"
 
+## get_maximum_a_posterior: takes in posterior probabilities for a population from ancestry_hmm and gets maximum a posterior ancestry state and posterior probability for that state
+rule get_maximum_a_posterior:
+    input: # this file tracts that the posteriors are complete, but actually posterior files vary
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
+    output:
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.anc.ind",
+        prob = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.prob.ind"
+    params:
+        p = "med2",
+        dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/posterior"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 10,
+        mem = lambda wildcards, attempt: attempt * 2
+    script:
+        "post2map.R"
+
+
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data:
     input:

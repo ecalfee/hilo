@@ -1380,6 +1380,11 @@ Job counts:
                         1       all
                         2       fit_lm_elev
                         3 # got rid of log file -- messed things up. rerunning now on high2.
+# adding Ne=1k as option (note: uncommented several subsnake files before running. builds DAG slowly)
+include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
+include: "ZAnc/Snakefile"
+hilo$ snakemake -n all --quiet --profile slurm
 
 (1) Make plot of mean ancestry across genome with FDR for maize and mexicana
 (2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
