@@ -33,7 +33,7 @@ rule simulate_MVN:
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData"
     params:
         p = "med2",
-        n_sim = 10000
+        n_sim = 100000
     shadow:
         "minimal"
     conda:
@@ -137,6 +137,8 @@ rule plot_shared_peaks:
 
     output:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_outlier_peaks.png",
+        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_ratio_outlier_peaks.png",
+        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_ratio_outlier_peaks.png",
         expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{ZEA}}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     params:
         p = "med2",

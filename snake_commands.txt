@@ -1386,16 +1386,18 @@ include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 hilo$ snakemake -n all --quiet --profile slurm
 
+# I want to re-do the MVN simulations with 10^6 instead of 10^5 sims
+# so that the ratios for shared outliers are more stable:
+hilo$ snakemake -n -f ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/mexicana.MVN.RData ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/maize.MVN.RData --quiet --profile slurm
+hilo$ snakemake -n all --quiet --profile slurm
+
 (1) Make plot of mean ancestry across genome with FDR for maize and mexicana
 (2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
 (3) Make plot of # shared outliers against expectation
 (4) Make plot of slope ~ elev across genome with FDR for maize and mexicana
 (5) Make plot of freq in maize vs. freq in mexicana
-(6) Try to do bootstraps of introgression ~ recombination.
 
 # TO DO:
-
-# SEND Dan new 'ancestry desert' coordinates
 
 # get coding density/cM in my 1cM blocks and re-run bootstrap.
 # then see what needs to be re-run when you do plot_bootstrap_anc_by_r

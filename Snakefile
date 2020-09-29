@@ -143,9 +143,12 @@ rule all:
         #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
         expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
-        expand("local_ancestry/plots/admix_times_Ne{Ne}_yesBoot.png", Ne = Nes),
-        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_yesBoot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea),
-        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_yesBoot/{ZEA}.lmElev.fit.RData", Ne = 10000, ZEA = zea)
+        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png", Ne = Nes, YESNO = "yes"),
+        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
+        expand("ZAnc/results/HILO_MAIZE55/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
+        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_outlier_peaks.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
+        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
+        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png", Ne = 10000, ZEA = zea, YESNO = "yes")
     params:
         p = "med2"
     resources:
