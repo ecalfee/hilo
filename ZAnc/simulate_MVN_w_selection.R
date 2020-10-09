@@ -20,8 +20,8 @@ meta_file = snakemake@input[["meta_pop"]]
 #file_out = snakemake@output[["sim"]]
 # file_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
 n_sim = as.integer(snakemake@params[["n_sim"]])
-# n_sim = 100
-fdr_lm = snakemake@output[["fdr_lm"]]
+# n_sim = 1000
+#fdr_lm = snakemake@output[["fdr_lm"]]
 # fdr_lm = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
 Ne = 10000
 YESNO = "yes"
@@ -68,8 +68,8 @@ mvn = MASS::mvrnorm(n = n_sim,
 # note that the sel[[1]] is the neutral MVN simulation,
 # and sel[[2]] and sel[[3]] are a shared selection simulation (with no elevation effect)
 # all other simulations have slopes with elevation
-slopes = do.call(c, lapply(c(0, 0.01, 0.05, 0.1, 0.3, 0.5, 1, 5, -0.01, -0.05, -0.1, -0.3, -0.5, -1, -5), rep, 5))
-intercepts = rep(c(0, 0.1, 0.3, -0.1, -0.3), 15)
+slopes = do.call(c, lapply(c(0, 0.1, 0.3, 0.5, 1, 3, -0.1, -0.3, -0.5, -1, -3), rep, 7))
+intercepts = rep(c(0, 0.1, 0.3, 0.5, -0.1, -0.3, -0.5), 11)
 generating_model = ifelse(intercepts == 0 & slopes == 0, "null",
                           ifelse(slopes == 0, "allpop", "elevation"))
 sel_names = 1:length(slopes)
@@ -152,13 +152,13 @@ detK = det(K$K)
 # )
 
 # merge all sims into one data frame:
-sel_df <- do.call(rbind, lapply(1:length(slopes), function(i)
-  as.data.frame(sel[[i]]) %>%
-    mutate(l = 1:n_sim,
-           intercept = intercepts[i],
-           slope = slopes[i],
-           generating_model = generating_model[i],
-           truncated = F)))
+# sel_df <- do.call(rbind, lapply(1:length(slopes), function(i)
+#   as.data.frame(sel[[i]]) %>%
+#     mutate(l = 1:n_sim,
+#            intercept = intercepts[i],
+#            slope = slopes[i],
+#            generating_model = generating_model[i],
+#            truncated = F)))
 sel_trunc_df <- do.call(rbind, lapply(1:length(slopes), function(i)
   as.data.frame(sel_trunc[[i]]) %>%
     mutate(l = 1:n_sim,
@@ -166,7 +166,8 @@ sel_trunc_df <- do.call(rbind, lapply(1:length(slopes), function(i)
            slope = slopes[i],
            generating_model = generating_model[i],
            truncated = T)))
-df <- bind_rows(sel_df, sel_trunc_df)
+#df <- bind_rows(sel_df, sel_trunc_df)
+df <- sel_trunc_df
 
 # then fit all selection scenarios (takes a while!):
 fits <- c(list(null = fit_null(anc = df[ , names(K$alpha)], 
@@ -189,6 +190,201 @@ fits <- c(list(null = fit_null(anc = df[ , names(K$alpha)],
 #model_names <- c("null", "allpop", "elevation", paste0("onepop", 1:14))
 model_names <- c("null", "allpop", "elevation")
 names(fits) <- model_names
+
+# using likelihood ratio, compare slope + intercept model (elevation)
+# and just intercept model (allpop)
+# use Null simulations, not theoretical chisq(df = 1) to set significance
+# at fdr for under null at 5% (equivalent to p<.05 2-tailed):
+zElev <- left_join(fits[["allpop"]], fits[["elevation"]], 
+                   by = c("l", "n", "intercept", "slope", "generating_model", "truncated"), 
+                   suffix = c(".all", ".elev")) %>%
+  filter(truncated) %>% # only keep truncated data
+  dplyr::mutate(diff_ll2 = -2*(ll.all - ll.elev)) # calculate 2*ln(likelihood ratio)
+
+# what happens if I just fit a simple linear model with elevation
+# for these simulations?
+lmElev <- apply(sel_trunc_df[ , names(K$alpha)], 
+                 1, function(x)
+                   simple_env_regression(ancFreq = x - K$alpha, # subtract of mean ancestry trend 
+                                         envWeights = meta_pops$elev_km)) %>%
+  t(.) %>%
+  as.data.frame(.) %>%
+  bind_cols(dplyr::select(sel_trunc_df, c(l, intercept, slope, generating_model, truncated)), .) %>%
+  dplyr::filter(truncated) %>% # only keep truncated
+  dplyr::rename(b1 = "envWeights",
+               b0 = "(Intercept)") %>%
+  dplyr::mutate(abs_slope = abs(b1)) # magnitude of relationship w/ elevation = absolute value of slope
+
+# use only null distribution to determine cutoffs
+sig_cutoffs <- bind_rows(
+  zElev %>%
+  dplyr::filter(slope == 0 & intercept == 0) %>%
+  dplyr::summarise(p_0.05 = quantile(diff_ll2, 0.95),
+                   p_0.01 = quantile(diff_ll2, 0.99),
+                   stat = "zElev"),
+  lmElev %>%
+    dplyr::filter(slope == 0 & intercept == 0) %>%
+    dplyr::summarise(p_0.05 = quantile(abs_slope, 0.95),
+                     p_0.01 = quantile(abs_slope, 0.99),
+                     stat = "lmElev"))
+
+# count number of significant results per simulated set of slopes and intercepts:
+zElev_summary <- zElev %>%
+  dplyr::mutate(b1_sign = c("-", "None", "+")[sign(b1) + 2], # sign returns -1, 0, 1 for -/0/+ values
+                sig = diff_ll2 > sig_cutoffs$p_0.05[sig_cutoffs$stat == "zElev"]) %>%
+  dplyr::group_by(intercept, slope, sig, b1_sign) %>%
+  dplyr::summarise(n = n())
+lmElev_summary <- lmElev %>%
+  dplyr::mutate(b1_sign = c("-", "None", "+")[sign(b1) + 2], # sign returns -1, 0, 1 for -/0/+ values
+                sig = abs_slope > sig_cutoffs$p_0.05[sig_cutoffs$stat == "lmElev"]) %>%
+  dplyr::group_by(intercept, slope, sig, b1_sign) %>%
+  dplyr::summarise(n = n())
+
+# plot how many of the simulations would meet
+# 5% FDR cutoff for significance
+power_lm <- lmElev_summary %>%
+  ggplot(., aes(x = b1_sign, y = n, fill = sig)) + # a few have the wrong inferred sign (oops)
+  geom_col() +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  xlab("Sign of inferred slope mexicana anc ~ elevation") +
+  scale_fill_manual(values = c("darkgrey", "blue"), labels = c("n.s.", "p < 0.05"), name = "") +
+  ggtitle(paste("Power to detect selection w/ elevation using lm with truncation [0,1]", zea))
+power_lm
+ggsave(paste0(plots_prefix, "power_lm_simulated_MVN_selection.png"),
+       plot = power_lm,
+       height = 6, width = 8, units = "in", 
+       device = "png", dpi = 300)
+power_zElev <- zElev_summary %>%
+  ggplot(., aes(x = b1_sign, y = n, fill = sig)) + # a few have the wrong inferred sign (oops)
+  geom_col() +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  xlab("Sign of inferred slope mexicana anc ~ elevation") +
+  scale_fill_manual(values = c("darkgrey", "blue"), labels = c("n.s.", "p < 0.05"), name = "") +
+  ggtitle(paste("Power to detect selection w/ elevation using zElev with truncation [0,1]", zea))
+power_zElev
+ggsave(paste0(plots_prefix, "power_zElev_simulated_MVN_selection.png"),
+       plot = power_zElev,
+       height = 6, width = 8, units = "in", 
+       device = "png", dpi = 300)
+# combine into 1 plot to better compare power:
+p_true_pos <- bind_rows(zElev_summary %>%
+            mutate(stat = "zElev"), 
+          lmElev_summary %>%
+            mutate(stat = "lmElev")) %>%
+  filter(., sig) %>%
+  dplyr::mutate(type = ifelse(b1_sign == c("-", "None", "+")[sign(slope) + 2],
+    "true positive", # is inferred association in the same direction as simulated slope?
+    "false positive")) %>%
+  filter(., type == "true positive") %>%
+  ggplot(., aes(x = stat, 
+                y = n, 
+                fill = stat)) +
+  geom_col() +
+  xlab("") +
+  ylab(paste("n sims out of", n_sim)) +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  ggtitle(paste("True positives p < 0.05 detected from MVN sims + anc ~ elevation [0,1]", zea))
+p_true_pos
+ggsave(paste0(plots_prefix, "power_true_positives_p0.05_simulated_MVN_selection.png"),
+       plot = p_true_pos,
+       height = 6, width = 8, units = "in", 
+       device = "png", dpi = 300)
+p_false_pos <- bind_rows(zElev_summary %>%
+            mutate(stat = "zElev"), 
+          lmElev_summary %>%
+            mutate(stat = "lmElev")) %>%
+  filter(., sig) %>%
+  dplyr::mutate(type = ifelse(b1_sign == c("-", "None", "+")[sign(slope) + 2],
+                              "true positive", # is inferred association in the same direction as simulated slope?
+                              "false positive")) %>%
+  filter(., type == "false positive") %>%
+  ggplot(., aes(x = stat, 
+                y = n, 
+                fill = stat)) +
+  geom_col() +
+  xlab("") +
+  ylab(paste("n sims out of", n_sim)) +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  ggtitle(paste("False positives p < 0.05 detected from MVN sims + anc ~ elevation [0,1]", zea))
+p_false_pos
+ggsave(paste0(plots_prefix, "power_false_positives_p0.05_simulated_MVN_selection.png"),
+       plot = p_false_pos,
+       height = 6, width = 8, units = "in", 
+       device = "png", dpi = 300)
+
+# now what are the signals for these methods along the genome?
+
+#########################################################
+
+bind_rows(zElev_summary %>%
+            mutate(stat = "zElev"), 
+          lmElev_summary %>%
+            mutate(stat = "lmElev")) %>%
+  filter(., sig) %>%
+  dplyr::mutate(simulated_slope = factor(slope, 
+                                            ordered = T,
+                                            levels = c(-3, -1, -0.5, -0.3, -0.1, 0, 0.1, 0.3, 0.5, 1, 3))) %>%
+  ggplot(., aes(x = simulated_slope, 
+                y = n, 
+                group = stat, 
+                color = stat)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~intercept)
+
+
+# make comparable plot for zEnv
+# so I only plot sig vs. not sig. for elevation model
+# where not sig. includes slope wasn't sig (allpop model wins) and null wins or chisq isn't sig
+# so here I always want to give the slope for the elev model
+zElev_summary <- best %>%
+  dplyr::select(., l, n, intercept, slope, generating_model, slope, best_model, sig, truncated) %>%
+  left_join(., dplyr::select(fits[["elevation"]], l, n, intercept, slope, truncated, b0, b1),
+            by = c("l", "n", "intercept", "slope", "truncated")) %>%
+  dplyr::mutate(b1_sign = ifelse(is.na(b1), "None",  # what sign does the inferred slope have?
+                                 ifelse(b1 > 0, "+", "-")),
+                b0_sign = ifelse(is.na(b0), "None", 
+                                 ifelse(b0 > 0, "+", "-")),
+                sig = (sig & best_model == "elevation")) %>%
+  dplyr::group_by(intercept, slope, truncated, sig, b1_sign, b0_sign) %>%
+  dplyr::summarise(n = n())
+
+power_zElev <- zElev_summary %>%
+  filter(truncated) %>%
+  ggplot(., aes(x = b1_sign, y = n, fill = sig)) + # a few have the wrong inferred sign (oops)
+  geom_col() +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
+  ggtitle(paste("Power to detect selection w/ elevation using ll-ratio with truncation [0,1]", zea))
+ggsave(paste0(plots_prefix, "power_zElev_simulated_MVN_b1_b0.png"),
+       plot = power_zElev,
+       height = 6, width = 8, units = "in", 
+       device = "png", dpi = 300)
+
+# conclusion: zElev model has higher power than simple slope model, especially
+# for changes of 0.5-1 and -0.3 to -0.5 proportion mexicana over 1km elevation gain
+# smaller slopes both methods have very low power
+# and larger slopes they both do very well
+# having on avg. higher or lower intercept (mexicana %)
+# makes a big diff in power to detect a slope (likely b/c of bounds [0,1])
+# and 'significant' slopes that are very small under the loglik-ratio test are unreliable (can be false + in wrong direction if mexicana ancestry is elevated and abs(slope) <= 0.1)
+
+
+
+
+
+
+
+
 
 # what % are 'sig' under an elevation model?
 d <- do.call(bind_rows, lapply(1:3, function(i) fits[[i]] %>%
@@ -240,94 +436,6 @@ ggsave(paste0(plots_prefix, "power_best_model_simulated_MVN_b1_b0.png"),
        height = 6, width = 8, units = "in", 
        device = "png", dpi = 300)
 
-
-
-
-# clearly our power would be a lot better if
-# frequencies were not truncated [0,1]:
-best_summary %>%
-  filter(!truncated) %>%
-  ggplot(., aes(x = best_model, y = n, fill = sig)) +
-  geom_col() +
-  facet_grid(intercept~slope) +
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
-  ggtitle(paste("Power to detect selection w/ ll-ratio test with untruncated freqs (<0 and >1 ok", zea))
-
-  
-# what happens if I just fit a simple linear model with elevation
-# for these simulations?
-fits_lm <- apply(df[ , names(K$alpha)], 
-                 1, function(x)
-                   simple_env_regression(ancFreq = x, 
-                                         envWeights = meta_pops$elev_km)) %>%
-  t(.) %>%
-  as.data.frame(.) %>%
-  bind_cols(dplyr::select(df[ , ], c(l, intercept, slope, generating_model, truncated)), .) %>%
-  # would this locus meet my sig. threshold based on FDR?
-  dplyr::mutate(sig_high = envWeights > FDRs$thesholds[FDRs$FDR == 0.05 & FDRs$tail == "high"],
-                sig_low = envWeights < FDRs$thesholds[FDRs$FDR == 0.05 & FDRs$tail == "low"],
-                sig = sig_high | sig_low)
-
-lm_summary <- fits_lm %>%
-  dplyr::mutate(b1_sign = ifelse(is.na(envWeights), "None",  # what sign does the inferred slope have?
-                                 ifelse(envWeights > 0, "+", "-"))) %>%
-  dplyr::group_by(intercept, slope, truncated, sig, b1_sign) %>%
-  dplyr::summarise(n = n())
-
-# plot how many of the simulations would meet
-# 5% FDR cutoff for significance
-power_lm <- lm_summary %>%
-  filter(truncated) %>%
-  ggplot(., aes(x = b1_sign, y = n, fill = sig)) + # a few have the wrong inferred sign (oops)
-  geom_col() +
-  facet_grid(intercept~slope) +
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
-  ggtitle(paste("Power to detect selection w/ elevation using 5% FDR slopes with truncation [0,1]", zea))
-ggsave(paste0(plots_prefix, "power_lm_simulated_MVN_b1_b0.png"),
-       plot = power_lm,
-       height = 6, width = 8, units = "in", 
-       device = "png", dpi = 300)
-
-
-
-# make comparable plot for zEnv
-# so I only plot sig vs. not sig. for elevation model
-# where not sig. includes slope wasn't sig (allpop model wins) and null wins or chisq isn't sig
-# so here I always want to give the slope for the elev model
-zElev_summary <- best %>%
-  dplyr::select(., l, n, intercept, slope, generating_model, slope, best_model, sig, truncated) %>%
-  left_join(., dplyr::select(fits[["elevation"]], l, n, intercept, slope, truncated, b0, b1),
-            by = c("l", "n", "intercept", "slope", "truncated")) %>%
-  dplyr::mutate(b1_sign = ifelse(is.na(b1), "None",  # what sign does the inferred slope have?
-                                 ifelse(b1 > 0, "+", "-")),
-                b0_sign = ifelse(is.na(b0), "None", 
-                                 ifelse(b0 > 0, "+", "-")),
-                sig = (sig & best_model == "elevation")) %>%
-  dplyr::group_by(intercept, slope, truncated, sig, b1_sign, b0_sign) %>%
-  dplyr::summarise(n = n())
-
-power_zElev <- zElev_summary %>%
-  filter(truncated) %>%
-  ggplot(., aes(x = b1_sign, y = n, fill = sig)) + # a few have the wrong inferred sign (oops)
-  geom_col() +
-  facet_grid(intercept~slope) +
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) + 
-  ggtitle(paste("Power to detect selection w/ elevation using ll-ratio with truncation [0,1]", zea))
-ggsave(paste0(plots_prefix, "power_zElev_simulated_MVN_b1_b0.png"),
-       plot = power_zElev,
-       height = 6, width = 8, units = "in", 
-       device = "png", dpi = 300)
-
-# conclusion: zElev model has higher power than simple slope model, especially
-# for changes of 0.5-1 and -0.3 to -0.5 proportion mexicana over 1km elevation gain
-# smaller slopes both methods have very low power
-# and larger slopes they both do very well
-# having on avg. higher or lower intercept (mexicana %)
-# makes a big diff in power to detect a slope (likely b/c of bounds [0,1])
-# and 'significant' slopes that are very small under the loglik-ratio test are unreliable (can be false + in wrong direction if mexicana ancestry is elevated and abs(slope) <= 0.1)
 
 # how strong is the winner's curse here?
 # what are the estimated b1's for the loci where we detect a slope?
