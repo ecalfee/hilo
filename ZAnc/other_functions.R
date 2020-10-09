@@ -24,9 +24,9 @@ RSS <- function(ancFreq, mu, invK){
 }
 
 # fit the neutral model
-fit_null <- function(anc, alpha, K){
-  invK = solve(K)
-  detK = det(K) # determinant of K matrix
+fit_null <- function(anc, alpha, invK, detK){
+  #invK = solve(K)
+  #detK = det(K) # determinant of K matrix
   
   # estimate log likelihood under this MVN model
   logliks <- sapply(1:nrow(anc), function(i)
@@ -51,14 +51,14 @@ fit_null <- function(anc, alpha, K){
 }
 
 # fit a selection model with environment X:
-fit_sel <- function(anc, alpha, K, X, b_names){
+fit_sel <- function(anc, alpha, detK, invK, X, b_names){
   # X is a matrix but may only have 1 column (e.g. X = [1,1,1..1]^T)
   # b_names can be a single value or vector, e.g. "b" or c("b0", "b1")
   if (!is.matrix(X)){
     stop("environment X must be a matrix")
   }
-  invK = solve(K)
-  detK = det(K)
+  #invK = solve(K)
+  #detK = det(K)
   
   # estimate beta for each observed vector of population ancestries
   betas = apply(anc, 1, function(y)

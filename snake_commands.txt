@@ -1389,7 +1389,11 @@ hilo$ snakemake -n all --quiet --profile slurm
 # I want to re-do the MVN simulations with 10^6 instead of 10^5 sims
 # so that the ratios for shared outliers are more stable:
 hilo$ snakemake -n -f ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/mexicana.MVN.RData ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/maize.MVN.RData --quiet --profile slurm
-hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       simulate_MVN
+        2 # RUNNING 12pm 9.29.2020
+hilo$ snakemake -n all --quiet --profile slurm # TO RUN
 
 (1) Make plot of mean ancestry across genome with FDR for maize and mexicana
 (2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
