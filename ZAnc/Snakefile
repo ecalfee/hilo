@@ -129,15 +129,35 @@ rule plot_slope_elev:
 ## fit_zAnc: zTz, lm(zAnc ~ zElev) and lm(zAnc ~ intercept) transforms ancestry using cholesky rotation, then fits association with transformed variables, or null model
 rule fit_zAnc:
     input:
-        fdr_functions = "ZAnc/FDR.R",
         zAnc_functions = "ZAnc/other_functions.R",
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
         K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData"
     output:
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData",
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.sim.RData",
         fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 3*60,
+        mem = 8
+    script:
+        "fit_zAnc_models.R"
+
+## fdr_zAnc: calculates false discovery rates for zAnc models based on comparing enrichment for outliers in the data to the simulated MVN null model
+rule fdr_zAnc:
+    input:
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.sim.RData",
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData"
+    output:
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData"
     params:
         p = "med2"
     shadow:
@@ -150,7 +170,7 @@ rule fit_zAnc:
         time_min = 6*60,
         mem = 8
     script:
-        "fit_zAnc_models.R"
+        "fdr_zAnc_models.R"
 
 ## plot_shared_peaks: plots shared outlier peaks for high introgression
 rule plot_shared_peaks:

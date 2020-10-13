@@ -1,8 +1,10 @@
 #!/usr/bin/env Rscript
+
+# this script fits zAnc models to data and simulated null:
+# zElev (elevation), zAll (all pops selected + or -), zTz (general ancestry outlier test)
+
 library(dplyr)
 # load variables from Snakefile
-source(snakemake@input[["fdr_functions"]])
-# source("ZAnc/FDR.R")
 source(snakemake@input[["zAnc_functions"]])
 # source("ZAnc/other_functions.R")
 # zea = "maize"
@@ -14,8 +16,8 @@ sim_file = snakemake@input[["sim"]]
 # sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
 k_file = snakemake@input[["K"]]
 # k_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".K.RData")
-fdr_out = snakemake@output[["fdr"]]
-# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.fdr.RData")
+sim_out = snakemake@output[["sim"]]
+# sim_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.sim.RData")
 fit_out = snakemake@output[["fit"]]
 # fit_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.fit.RData")
 
@@ -65,49 +67,6 @@ fits <- fit_zAnc(anc = data.frame(anc), alpha = K$alpha, invK = invK, detK = det
 # fit simulated data
 fits_sim <- fit_zAnc(anc = data.frame(MVN_sim), alpha = K$alpha, invK = invK, detK = detK, c_elev_km = meta_pops$c_elev_km)
 
-# calculate false discovery rates
-# use neutral MVN simulations, not theoretical chisq(df = 1) 
-# to set significance at 5% FDR
-
-# range of values to test go from top 10% of null simulations
-# (all of test data would have to be above that threshold to meet 10% FDR)
-# to maximum value in test data
-print("ranges tested for FDR:")
-print("zElev")
-print(quantile(fits_sim$diff_elev_ll2, 1 - max(FDR_range)))
-print(max(fits$diff_elev_ll2))
-print("zAll")
-print(quantile(fits_sim$diff_all_ll2, 1 - max(FDR_range)))
-print(max(fits$diff_all_ll2))
-print("zTz")
-print(quantile(fits_sim$zTz, 1 - max(FDR_range)))
-print(max(fits$zTz))
-
-# calculate false-discovery rate -- unusually high values indicate statistical significance
-FDRs <- bind_rows(calc_FDR_high(d = fits$diff_elev_ll2, s = fits_sim$diff_elev_ll2, 
-                 FDR_values = FDR_range, 
-                             test_values = seq(quantile(fits_sim$diff_elev_ll2, 1 - max(FDR_range)), 
-                                               max(fits$diff_elev_ll2), 
-                                               by = .0001)) %>%
-                  dplyr::mutate(model = "elev"),
-                calc_FDR_high(d = fits$diff_all_ll2, s = fits_sim$diff_all_ll2, 
-                         FDR_values = FDR_range, 
-                         test_values = seq(quantile(fits_sim$diff_all_ll2, 1 - max(FDR_range)), 
-                                           max(fits$diff_all_ll2), 
-                                           by = .0001)) %>%
-                  dplyr::mutate(model = "all"),
-                calc_FDR_high(d = fits$zTz, s = fits_sim$zTz, 
-                         FDR_values = FDR_range, 
-                         test_values = seq(quantile(fits_sim$zTz, 1 - max(FDR_range)), 
-                                           max(fits$zTz), 
-                                           by = .0001)) %>%
-                  dplyr::mutate(model = "zTz"))
-
-# what % of SNPs exceed these thresholds?
-FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
-  sum(fits[ , paste0("diff_", FDRs$model[i], "_ll2")] > FDRs$thesholds[i]))
-FDRs$prop_SNPs = FDRs$n_SNPs/nrow(fits)
-
 # save results
-save(FDRs, file = fdr_out)
 save(fits, file = fit_out)
+save(fits_sim, file = sim_out)
