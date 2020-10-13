@@ -147,8 +147,8 @@ rule fit_zAnc:
     threads:
         1
     resources:
-        time_min = 2*60,
-        mem = 2
+        time_min = 6*60,
+        mem = 4
     script:
         "fit_zAnc_models.R"
 

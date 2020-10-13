@@ -1394,6 +1394,17 @@ Job counts:
         2       simulate_MVN
         2 # RUNNING 12pm 9.29.2020
 hilo$ snakemake -n all --quiet --profile slurm # TO RUN
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       fit_lm_elev
+        2       fit_zAnc
+        2       plot_mean_anc
+        2       plot_shared_peaks
+        2       plot_slope_elev
+        11 # RUNNING 10.12.2020. uses 100k MVN simulations to get FDR thresholds for lm and zAnc outlier methods
+# Oops fit_zAnc was too slow (large number of sims). I increased time and made FDR calculations less time burdensome to rerun:
 
 (1) Make plot of mean ancestry across genome with FDR for maize and mexicana
 (2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
