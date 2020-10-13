@@ -1415,7 +1415,10 @@ Job counts:
         2       plot_mean_anc
         2       plot_shared_peaks
         2       plot_slope_elev
-        11 # running 10.13.2020
+        11 # running 10.13.2020. fit_zAnc did not run through. I split into 2 scripts -- one to do fits and one to calc FDR:
+# I'm also finding homozygous ancestry tracts in this run:
+
+
 # TO DO:
 # filter bams to reads with high confidence homozygous ancestry
 # which SNPs and major/minor do I want to use for ABBA BABA?
