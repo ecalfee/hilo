@@ -148,7 +148,7 @@ rule fit_zAnc:
         1
     resources:
         time_min = 6*60,
-        mem = 4
+        mem = 8
     script:
         "fit_zAnc_models.R"
 
