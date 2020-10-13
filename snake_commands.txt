@@ -1415,7 +1415,11 @@ Job counts:
         2       plot_mean_anc
         2       plot_shared_peaks
         2       plot_slope_elev
-        11 
+        11 # running 10.13.2020
+# TO DO:
+# filter bams to reads with high confidence homozygous ancestry
+# which SNPs and major/minor do I want to use for ABBA BABA?
+# Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst
 
 
 (1) Make plot of mean ancestry across genome with FDR for maize and mexicana

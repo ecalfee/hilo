@@ -1,4 +1,4 @@
-## variant_sites/Snakefile: pipeline to call SNPs
+## ZAnc/Snakefile: pipeline to call ancestry outliers
 
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory

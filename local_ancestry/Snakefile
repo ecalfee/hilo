@@ -349,6 +349,46 @@ rule get_maximum_a_posterior:
     script:
         "post2map.R"
 
+## get_homozygous_ancestry_tracts_and_bams: finds homozygous ancestry tracts for every sample in a sympatric population
+rule get_homozygous_ancestry_tracts:
+    input: # this file tracts that the posteriors are complete, but actually posterior files vary
+        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed", # ancestry tracts around each site
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.completed",
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
+    output: # doesn't track all output files, just one file that updates when the population is completed
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts/{POP}.completed",
+    params:
+        p = "med2",
+        dir_out = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts",
+        dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/posterior",
+        ZEA = "{ZEA}"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 1 * 60,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "./local_ancestry/get_homozygous_ancestry_tracts.sh {input.bed} {params.ZEA} {input.ploidy} {params.dir_post} {params.dir_out} && touch {output.complete}"
+
+## get_homozygous_ancestry_bams: filters bams to only include reads within homozygous ancestry tracts for every sample in a sympatric population
+rule get_homozygous_ancestry_bams:
+    input: # this file tracts that the posteriors are complete, but actually posterior files vary
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts/{POP}.completed",
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
+    output: # doesn't track all output files, just one file that updates when the population is completed
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed",
+    params:
+        p = "med2",
+        dir_tracts = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts",
+        dir_in_bams = "filtered_bams/merged_bams",
+        dir_out = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 12 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        "./local_ancestry/get_homozygous_ancestry_bams.sh {input.ploidy} {params.dir_tracts} {params.dir_in_bams} {params.dir_out} && touch {output.complete}"
 
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data:
