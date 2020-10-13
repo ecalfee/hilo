@@ -113,7 +113,7 @@ outliers_ratios = outliers_bypop %>%
 
 # plot sfs of shared outliers across pops
 p_hist = outliers_bypop %>%
-  ggplot(., aes(x = outlier_pops, stat(density))) +
+  ggplot(., aes(x = outlier_pops, y = stat(width*density))) + # width*density turns it into a proportion
   geom_histogram(aes(fill = source), 
                  position = "dodge2", alpha = .5, binwidth = 0.5) + 
   geom_histogram(data = filter(outliers_bypop, !inv4m),
@@ -123,10 +123,10 @@ p_hist = outliers_bypop %>%
   scale_fill_manual(values = col_obs_sim,
                     name = NULL, 
                     labels = c("observed", "simulated")) +
-  ylim(c(0, 1.25)) +
+  ylim(c(0, 0.7)) +
   theme_classic() +
   xlab("Number of populations with high introgression") +
-  ylab("Density") +
+  ylab("Proportion of outliers") +
   ggtitle(paste("Distribution of shared outliers in", zea))
 #p_hist
 ggsave(file = png_hist,
@@ -159,19 +159,19 @@ ggsave(file = png_ratio,
        device = "png") 
   
 # plot histogram and ratio on same plot with 2 axes:
-scale_y2 = 5
+scale_y2 = 15
 p_hist_ratio = p_hist + 
-  geom_point(data = outliers_ratios, aes(x = outlier_pops, y = ratio/scale_y2)) + # plot ratio observed/expected
+  geom_point(data = outliers_ratios, size = 0.75, aes(x = outlier_pops, y = ratio/scale_y2)) + # plot ratio observed/expected
   geom_line(data = outliers_ratios, aes(x = outlier_pops, y = ratio/scale_y2)) +
   geom_abline(slope = 0, intercept = 1/scale_y2, lty = "dashed") +
   scale_y_continuous(
-    limits = c(0, 1.25),
+    limits = c(0, 0.7),
     # Add a second axis based on a linear transformation of the first y axis
     sec.axis = sec_axis(trans=~.*scale_y2, name="Ratio observed/expected")
   ) +
   scale_fill_manual(values = col_obs_sim,
                     name = NULL, 
-                    labels = c("observed", "expected"))
+                    labels = c("observed", "expected")) # change wording from 'simulated' to 'expected' to match ratio
 # p_hist_ratio
 ggsave(file = png_hist_ratio,
        plot = p_hist_ratio,

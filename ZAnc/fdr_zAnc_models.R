@@ -8,6 +8,7 @@ library(dplyr)
 source(snakemake@input[["fdr_functions"]])
 # source("ZAnc/FDR.R")
 fdr_out = snakemake@output[["fdr"]]
+# zea = "maize"
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.fdr.RData")
 sim_in = snakemake@output[["sim"]]
 # sim_in = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.sim.RData")
@@ -58,7 +59,10 @@ FDRs <- bind_rows(calc_FDR_high(d = fits$diff_elev_ll2, s = fits_sim$diff_elev_l
 
 # what % of SNPs exceed these thresholds?
 FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
-  sum(fits[ , paste0("diff_", FDRs$model[i], "_ll2")] > FDRs$thesholds[i]))
+  sum(fits[ , ifelse(FDRs$model[i] == "zTz", 
+                     "zTz", 
+                     paste0("diff_", FDRs$model[i], "_ll2"))]
+      > FDRs$thesholds[i]))
 FDRs$prop_SNPs = FDRs$n_SNPs/nrow(fits)
 
 # save results
