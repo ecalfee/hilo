@@ -1416,7 +1416,18 @@ Job counts:
         2       plot_shared_peaks
         2       plot_slope_elev
         11 # running 10.13.2020. fit_zAnc did not run through. I split into 2 scripts -- one to do fits and one to calc FDR:
-# I'm also finding homozygous ancestry tracts in this run:
+# I'm also finding homozygous ancestry tracts in this run & fixed an error in file output names for plot_shared_peaks that should run now:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       fdr_zAnc
+        2       fit_zAnc
+        56      get_homozygous_ancestry_bams
+        56      get_homozygous_ancestry_tracts
+        2       plot_shared_peaks
+        119
+
 
 
 # TO DO:

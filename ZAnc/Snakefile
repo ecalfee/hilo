@@ -186,7 +186,7 @@ rule plot_shared_peaks:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_outlier_peaks.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_ratio_outlier_peaks.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_ratio_outlier_peaks.png",
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{ZEA}}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        expand("ZAnc/plots/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{ZEA}}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA,
