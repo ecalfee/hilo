@@ -1434,7 +1434,12 @@ Job counts:
         2       fdr_zAnc
         2       plot_shared_peaks
         5 # RUNNING 10.13.2020. re-running fdr_zAnc -- just needed fdr functions file as input
-
+        hilo$ snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                2       fdr_zAnc
+                3 # RUNNING 10.15.2020
 
 
 # TRACTS script did not work: filter bams to reads with high confidence homozygous ancestry (keeps whole genome)

@@ -10,9 +10,9 @@ source(snakemake@input[["fdr_functions"]])
 fdr_out = snakemake@output[["fdr"]]
 # zea = "maize"
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.fdr.RData")
-sim_in = snakemake@output[["sim"]]
+sim_in = snakemake@input[["sim"]]
 # sim_in = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.sim.RData")
-fit_in = snakemake@output[["fit"]]
+fit_in = snakemake@input[["fit"]]
 # fit_in = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".zAnc.fit.RData")
 
 # load data
