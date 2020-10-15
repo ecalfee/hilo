@@ -47,13 +47,13 @@ for (( i=0; i<$n_ids; i++ )); do
     if [ "$ZEA" == "maize" ]; then # find homozygous ancestry state for maize
         echo "finding maize tracts $ID"
 		    # homozygous maize ancestry is the 1st column of ancestry_hmm posterior output file
-        pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST/$ID.posterior" | cut -f1) | \
+        pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST/$ID.posterior" | cut -f3) | \
         awk '$5 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > "$DIR_OUT/$ID.bed"
 
     elif [ "$ZEA" == "mexicana" ]; then
         echo "finding mexicana tracts $ID"
         # homozygous mexicana ancestry is the 3rd column of ancestry_hmm posterior output file
-		    pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST/$ID.posterior" | cut -f3) | \
+		    pr -mt -s$'\t' "$SITES_FILE" <(tail -n +2 "$DIR_POST/$ID.posterior" | cut -f5) | \
 		    awk '$5 > 0.8 {print $0}' | bedtools merge -sorted -d 1 > "$DIR_OUT/$ID.bed"
 
     else
