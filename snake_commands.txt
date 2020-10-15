@@ -1426,12 +1426,36 @@ Job counts:
         56      get_homozygous_ancestry_bams
         56      get_homozygous_ancestry_tracts
         2       plot_shared_peaks
-        119
+        119 # RUNNING 10.13.2020
+# most rules ran through but I still had to fix one type in fdr_zAnc and scaling in plot_shared_peaks. now rerunning:
+Job counts:
+        count   jobs
+        1       all
+        2       fdr_zAnc
+        2       plot_shared_peaks
+        5 # RUNNING 10.13.2020. re-running fdr_zAnc -- just needed fdr functions file as input
+
+
+
+# TRACTS script did not work: filter bams to reads with high confidence homozygous ancestry (keeps whole genome)
+local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed
+mexicana
+local_ancestry/results/ancestry_hmm/HILO_MAIZE55/input/pop374.ploidy
+local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/posterior
+local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/tracts
+finding mexicana tracts HILO16
+finding mexicana tracts HILO21
+finding mexicana tracts HILO137
+finding mexicana tracts HILO305
+finding mexicana tracts HILO353
+finding mexicana tracts HILO408
+finding mexicana tracts HILO462
+finding mexicana tracts HILO466
 
 
 
 # TO DO:
-# filter bams to reads with high confidence homozygous ancestry
+
 # which SNPs and major/minor do I want to use for ABBA BABA?
 # Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst
 
