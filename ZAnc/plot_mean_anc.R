@@ -75,7 +75,7 @@ p_combined = bind_cols(sites, anc = anc_mean) %>%
          zea = zea) %>%
   ggplot(., aes(pos_cum, anc, 
                 color = even_chr)) +
-  geom_abline(slope = 0, intercept = filter(FDRs, FDR == 0.05)$thesholds, linetype = "solid", color = "blue") +
+  geom_abline(slope = 0, intercept = filter(FDRs, FDR == 0.05, thesholds < Inf & thesholds > -Inf)$thesholds, linetype = "solid", color = "blue") +
   geom_point(size = .1) +
   geom_abline(slope = 0, intercept = mean(anc_mean), color = "black", linetype = "dashed") +
   xlab("bp position on chromosomes (total length = 2.3Gb)") +
@@ -85,7 +85,8 @@ p_combined = bind_cols(sites, anc = anc_mean) %>%
   theme(legend.position = "none") +
   theme_classic() +
   ggtitle(paste("Sympatric", zea)) +
-  guides(color = F)
+  guides(color = F) +
+  ylim(0:1)
 # p_combined
 
 ggsave(plot = p_combined,

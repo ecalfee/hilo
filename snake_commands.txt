@@ -1450,18 +1450,32 @@ Job counts:
         2       fdr_zAnc
         56      get_homozygous_ancestry_bams
         56      get_homozygous_ancestry_tracts
-        115
+        115 # RUNNING 10.15.2020
 
 # TO DO:
+# PREP FOR PRESENTATION:
+# (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
+# (2) Plot maize vs. mexicana with domestication loci highlighted a different color
+# Look quickly at results for zAnc -- anything interesting?
+# (3) Plot K matrices
+# (4) Anything on pi that you can salvage?
+# (5) Do I keep anything on zTz? What do I want to conclude, just that idiosyncratic selection is more common?
+
+
+
+# run -doAbbaBaba2 from angsd (just want numerator for f4) on every population
+# for each 1cM region of the genome
+# do abba baba runs mean of (x1-x2)*(x3-x4) which is equivalent o f4(1,2;3,4) ???? CHECK THIS.
+# (((1,2),3),4) is the abba baba tree.
+# maybe need to make bam file first, e.g. AbbaBaba/4pop_maize_bam.list
+
 # find flowering time GWAS hits and do permutations to calcuate overlap with big slopes w/ elevation
 # which SNPs and major/minor do I want to use for ABBA BABA?
-# Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst
+# Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst --
+# basically this means turning TRIPSACUM BAM INTO A FASTA FILE
 
 
-(1) Make plot of mean ancestry across genome with FDR for maize and mexicana
-(2) Make plot of outliers > 2sd across each chromosome for maize and mexicana
-(3) Make plot of # shared outliers against expectation
-(4) Make plot of slope ~ elev across genome with FDR for maize and mexicana
+
 (5) Make plot of freq in maize vs. freq in mexicana
 
 # TO DO:
