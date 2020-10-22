@@ -30,7 +30,7 @@ plots_prefix = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/", zea, "_")
 # load data
 load(K_file)
 load(meta_file) # loads meta_pops
-load(fdr_lm) # false discovery rate from empirical data
+#load(fdr_lm) # false discovery rate from empirical data
 # calculate elevation in km, mean-centered across pops
 meta_pops$elev_km <- meta_pops$ELEVATION/1000
 meta_pops$c_elev_km <- meta_pops$elev_km - mean(meta_pops$elev_km)
@@ -195,11 +195,18 @@ names(fits) <- model_names
 # and just intercept model (allpop)
 # use Null simulations, not theoretical chisq(df = 1) to set significance
 # at fdr for under null at 5% (equivalent to p<.05 2-tailed):
-zElev <- left_join(fits[["allpop"]], fits[["elevation"]], 
+zAnc <- left_join(fits[["allpop"]], fits[["elevation"]], 
                    by = c("l", "n", "intercept", "slope", "generating_model", "truncated"), 
                    suffix = c(".all", ".elev")) %>%
+  left_join(., fits[["null"]] %>%
+              rename(ll.null = ll, 
+                     k.null = k,
+                     RSS.null = RSS,
+                     AICc.null = AICc), 
+            by = c("l", "n", "intercept", "slope", "generating_model", "truncated")) %>%
   filter(truncated) %>% # only keep truncated data
-  dplyr::mutate(diff_ll2 = -2*(ll.all - ll.elev)) # calculate 2*ln(likelihood ratio)
+  dplyr::mutate(diff_elev_ll2 = -2*(ll.all - ll.elev),
+                diff_all_ll2 = -2*(ll.null - ll.all)) # calculate 2*ln(likelihood ratio)
 
 # what happens if I just fit a simple linear model with elevation
 # for these simulations?
@@ -215,29 +222,60 @@ lmElev <- apply(sel_trunc_df[ , names(K$alpha)],
                b0 = "(Intercept)") %>%
   dplyr::mutate(abs_slope = abs(b1)) # magnitude of relationship w/ elevation = absolute value of slope
 
+# and also calculate a simple mean ancestry
+# weighted by number of individuals per pop
+anc <- sel_trunc_df %>%
+  dplyr::select(-starts_with("pop")) %>%
+  mutate(anc = apply(sel_trunc_df[ , meta_pops$pop], 
+                1, function(x) (x %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)),
+         anc_c = anc - mean(anc),
+         abs_anc_c = abs(anc_c))
+
 # use only null distribution to determine cutoffs
 sig_cutoffs <- bind_rows(
-  zElev %>%
+  zAnc %>%
+    dplyr::filter(slope == 0 & intercept == 0) %>%
+    dplyr::summarise(p_0.05 = quantile(diff_all_ll2, 0.95),
+                     p_0.01 = quantile(diff_all_ll2, 0.99),
+                     stat = "zAll"),
+  zAnc %>%
   dplyr::filter(slope == 0 & intercept == 0) %>%
-  dplyr::summarise(p_0.05 = quantile(diff_ll2, 0.95),
-                   p_0.01 = quantile(diff_ll2, 0.99),
+  dplyr::summarise(p_0.05 = quantile(diff_elev_ll2, 0.95),
+                   p_0.01 = quantile(diff_elev_ll2, 0.99),
                    stat = "zElev"),
   lmElev %>%
     dplyr::filter(slope == 0 & intercept == 0) %>%
     dplyr::summarise(p_0.05 = quantile(abs_slope, 0.95),
                      p_0.01 = quantile(abs_slope, 0.99),
-                     stat = "lmElev"))
+                     stat = "lmElev"),
+  anc %>%
+    dplyr::filter(slope == 0 & intercept == 0) %>%
+    dplyr::summarise(p_0.05 = quantile(abs_anc_c, 0.95),
+                     p_0.01 = quantile(abs_anc_c, 0.99),
+                     stat = "anc"))
 
 # count number of significant results per simulated set of slopes and intercepts:
-zElev_summary <- zElev %>%
+zElev_summary <- zAnc %>%
   dplyr::mutate(b1_sign = c("-", "None", "+")[sign(b1) + 2], # sign returns -1, 0, 1 for -/0/+ values
-                sig = diff_ll2 > sig_cutoffs$p_0.05[sig_cutoffs$stat == "zElev"]) %>%
+                sig = diff_elev_ll2 > sig_cutoffs$p_0.05[sig_cutoffs$stat == "zElev"]) %>%
   dplyr::group_by(intercept, slope, sig, b1_sign) %>%
   dplyr::summarise(n = n())
 lmElev_summary <- lmElev %>%
   dplyr::mutate(b1_sign = c("-", "None", "+")[sign(b1) + 2], # sign returns -1, 0, 1 for -/0/+ values
                 sig = abs_slope > sig_cutoffs$p_0.05[sig_cutoffs$stat == "lmElev"]) %>%
   dplyr::group_by(intercept, slope, sig, b1_sign) %>%
+  dplyr::summarise(n = n())
+
+# count anc vs zAll
+zAll_summary <- zAnc %>%
+  dplyr::mutate(b0_sign = c("-", "None", "+")[sign(b0) + 2], # sign returns -1, 0, 1 for -/0/+ values
+                sig = diff_all_ll2 > sig_cutoffs$p_0.05[sig_cutoffs$stat == "zAll"]) %>%
+  dplyr::group_by(intercept, slope, sig, b0_sign) %>%
+  dplyr::summarise(n = n())
+anc_summary <- anc %>%
+  dplyr::mutate(b0_sign = c("-", "None", "+")[sign(anc_c) + 2], # sign returns -1, 0, 1 for -/0/+ values
+                sig = abs_anc_c > sig_cutoffs$p_0.05[sig_cutoffs$stat == "anc"]) %>%
+  dplyr::group_by(intercept, slope, sig, b0_sign) %>%
   dplyr::summarise(n = n())
 
 # plot how many of the simulations would meet
@@ -271,7 +309,7 @@ ggsave(paste0(plots_prefix, "power_zElev_simulated_MVN_selection.png"),
        height = 6, width = 8, units = "in", 
        device = "png", dpi = 300)
 # combine into 1 plot to better compare power:
-p_true_pos <- bind_rows(zElev_summary %>%
+p_true_pos_elev <- bind_rows(zElev_summary %>%
             mutate(stat = "zElev"), 
           lmElev_summary %>%
             mutate(stat = "lmElev")) %>%
@@ -290,12 +328,12 @@ p_true_pos <- bind_rows(zElev_summary %>%
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
   ggtitle(paste("True positives p < 0.05 detected from MVN sims + anc ~ elevation [0,1]", zea))
-p_true_pos
+p_true_pos_elev
 ggsave(paste0(plots_prefix, "power_true_positives_p0.05_simulated_MVN_selection.png"),
-       plot = p_true_pos,
+       plot = p_true_pos_elev,
        height = 6, width = 8, units = "in", 
        device = "png", dpi = 300)
-p_false_pos <- bind_rows(zElev_summary %>%
+p_false_pos_elev <- bind_rows(zElev_summary %>%
             mutate(stat = "zElev"), 
           lmElev_summary %>%
             mutate(stat = "lmElev")) %>%
@@ -314,13 +352,57 @@ p_false_pos <- bind_rows(zElev_summary %>%
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
   ggtitle(paste("False positives p < 0.05 detected from MVN sims + anc ~ elevation [0,1]", zea))
-p_false_pos
+p_false_pos_elev
 ggsave(paste0(plots_prefix, "power_false_positives_p0.05_simulated_MVN_selection.png"),
        plot = p_false_pos,
        height = 6, width = 8, units = "in", 
        device = "png", dpi = 300)
 
-# now what are the signals for these methods along the genome?
+# what is the power for anc vs. zAll?
+p_true_pos_all <- bind_rows(zAll_summary %>%
+                               mutate(stat = "zAll"), 
+                             anc_summary %>%
+                               mutate(stat = "anc")) %>%
+  filter(., sig) %>%
+  dplyr::mutate(type = ifelse(b0_sign == c("-", "None", "+")[sign(intercept) + 2],
+                              "true positive", # is inferred association in the same direction as simulated slope?
+                              "false positive")) %>%
+  filter(., type == "true positive") %>%
+  ggplot(., aes(x = stat, 
+                y = n, 
+                fill = stat)) +
+  geom_col() +
+  xlab("") +
+  ylab(paste("n sims out of", n_sim)) +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  ggtitle(paste("True positives p < 0.05 detected from MVN sims -- all pops model", zea))
+p_true_pos_all
+p_false_pos_all <- bind_rows(zAll_summary %>%
+                                mutate(stat = "zAll"), 
+                              anc_summary %>%
+                                mutate(stat = "anc")) %>%
+  filter(., sig) %>%
+  dplyr::mutate(type = ifelse(b0_sign == c("-", "None", "+")[sign(intercept) + 2],
+                              "true positive", # is inferred association in the same direction as simulated slope?
+                              "false positive")) %>%
+  filter(., type == "false positive") %>%
+  ggplot(., aes(x = stat, 
+                y = n, 
+                fill = stat)) +
+  geom_col() +
+  xlab("") +
+  ylab(paste("n sims out of", n_sim)) +
+  facet_grid(intercept~slope) +
+  theme_light() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+  ggtitle(paste("False positives p < 0.05 detected from MVN sims -- all pop model", zea))
+p_false_pos_all
+
+
+
+
 
 #########################################################
 

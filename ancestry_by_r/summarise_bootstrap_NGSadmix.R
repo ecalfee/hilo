@@ -69,7 +69,7 @@ anc_group_estimate <- anc_boot_mean %>%
 
 # get percentiles from bootstrap
 anc_boot_perc <- anc_boot_mean %>%
-  filter(bootstrap != 0) %>% # this is the original sample
+  filter(bootstrap != 0) %>% # boot = 0 is the original sample
   gather(., key = "ancestry", value = "p",
          paste(ancestries[1:K], "ancestry", sep = "_")) %>%
   group_by(ancestry, group, bin, quintile, feature) %>%
