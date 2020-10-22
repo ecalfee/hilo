@@ -47,6 +47,13 @@ with open("samples/" + prefix_all + "_bams.list") as f:
     all_bams = f.read().splitlines()
 with open("samples/" + prefix_all + "_ids.list") as f:
     all_ids = f.read().splitlines()
+# add bams for outgroup tripsacum
+with open("samples/ALL_byPop/trip_bams.list") as f:
+    trip_bams = f.read().splitlines()
+# add bams for parviglumis
+with open("samples/ALL_byPop/parv_bams.list") as f:
+    parv_bams = f.read().splitlines()
+all_bams_parv_trip = all_bams + parv_bams + trip_bams
 
 # samples with local ancesty calls (sympatric and over 0.5x coverage)
 #with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
@@ -151,7 +158,8 @@ rule all:
         expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes")
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = symp_pops + "allopatric_maize", WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:
@@ -161,10 +169,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_noBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea)
-        #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids)
-        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne10000_noBoot/anc/{POP}.{SUFFIX}",
-        #ID = sympatric_pops, SUFFIX = ["anc.ind", "anc.freq", "alpha.ind"])
+        "ancestry_by_r/results/f4/pop360/W1.abbababa2"
     params:
         p = "med2"
     resources:

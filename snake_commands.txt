@@ -1451,6 +1451,7 @@ Job counts:
         56      get_homozygous_ancestry_bams
         56      get_homozygous_ancestry_tracts
         115 # RUNNING 10.15.2020
+# attempting to run f4 stats. first testing with rule 'some':
 
 # TO DO:
 # PREP FOR PRESENTATION:
