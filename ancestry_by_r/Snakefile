@@ -315,7 +315,7 @@ rule do_abba_baba:
         mem = 4
     shell:
         "angsd -out {params.out_prefix} "
-        "-rf {input.regions} "
+        "-rf {params.region} "
         "-bam {input.bam_list} "
         "-sizeFile {input.size} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
