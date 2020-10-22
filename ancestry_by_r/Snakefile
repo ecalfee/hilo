@@ -272,7 +272,7 @@ rule input_abba_baba:
         trip_bams = "samples/ALL_byPop/trip_bams.list"
     output:
         bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
-        size = "ancestry_by_r/results/f4/{POP}.size"
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     params:
         p = "med2",
     resources:
@@ -281,10 +281,10 @@ rule input_abba_baba:
     shell:
         """
         cat {input.parv_bams} {input.mex_bams} {input.x_bams} {input.trip_bams} > {output.bam_list}
-        < {input.parv_bams} wc -l > {output.size}
-        < {input.mex_bams} wc -l >> {output.size}
-        < {input.x_bams} wc -l >> {output.size}
-        < {input.trip_bams} wc -l >> {output.size}
+        < {input.parv_bams} wc -l > {output.pops_size}
+        < {input.mex_bams} wc -l >> {output.pops_size}
+        < {input.x_bams} wc -l >> {output.pops_size}
+        < {input.trip_bams} wc -l >> {output.pops_size}
         """
 
 ## get_region_from_bed(): helper function to extract region in format chr:start-end from a single region bed file
@@ -303,12 +303,13 @@ rule do_abba_baba:
         bais = [bam + ".bai" for bam in all_bams_parv_trip], # all input bam indexes
         bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
         bed_window = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
-        size = "ancestry_by_r/results/f4/{POP}.size" # size of each population (to divide bams file into pops)
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     output:
         "ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2"
     params:
         p = "med2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
+#        region = "W2"
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     resources:
         time_min = lambda wildcards, attempt: attempt * 1 * 60,
@@ -317,9 +318,10 @@ rule do_abba_baba:
         "angsd -out {params.out_prefix} "
         "-rf {params.region} "
         "-bam {input.bam_list} "
-        "-sizeFile {input.size} "
+        "-sizeFile {input.pops_size} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
+        "-useLast 1 "
         "-checkBamHeaders 0"
 
 # what is the size of the largest region? set chunk size larger than that.
@@ -327,7 +329,7 @@ rule do_abba_baba:
 # -doAbbababa2 options: -maxDepth=max depth of each site allowed (default 100)
 # -sizeFile = file with sizes of the populations
 # -doCounts 1 = make counts (required)
-# -useLast1 = use the last group of bam files as outgroup (tripsacum)
+# -useLast 1 = use the last group of bam files as outgroup (tripsacum)
 
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
