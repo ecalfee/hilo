@@ -8,7 +8,7 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 # wildcards
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
-    POP = "[A-Za-z0-9]+",
+    POP = "pop[0-9]|allopatric_maize", # for f4 stats allopatric_maize needs to be treated like a pop
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
