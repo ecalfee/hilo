@@ -309,11 +309,10 @@ rule do_abba_baba:
     params:
         p = "med2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
-#        region = "W2"
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     resources:
         time_min = lambda wildcards, attempt: attempt * 1 * 60,
-        mem = 4
+        mem = lambda wildcards, attempt: attempt * 8
     shell:
         "angsd -out {params.out_prefix} "
         "-doAbbababa2 1 "

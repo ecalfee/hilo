@@ -1463,8 +1463,9 @@ Job counts:
                 1       do_abba_baba
                 1       some
                 2 # fixed some errors on farm, now running this 1 test 10.22.2020 4:50pm
-                # oops used -rf when I mean -r. trying again:
-                
+                # oops used -rf when I mean -r and forgot -doAbbaBaba2. trying again:
+                # completed.
+
 
 # TO DO:
 # PREP FOR PRESENTATION:
