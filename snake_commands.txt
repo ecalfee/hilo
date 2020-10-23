@@ -1452,6 +1452,19 @@ Job counts:
         56      get_homozygous_ancestry_tracts
         115 # RUNNING 10.15.2020
 # attempting to run f4 stats. first testing with rule 'some':
+hilo$ snakemake -n "ancestry_by_r/results/f4/pop360.size" --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       input_abba_baba
+        1 # RAN 10.22.2020
+        hilo$ snakemake -n some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       do_abba_baba
+                1       some
+                2 # fixed some errors on farm, now running this 1 test 10.22.2020 4:50pm
+                # oops used -rf when I mean -r. trying again:
+                
 
 # TO DO:
 # PREP FOR PRESENTATION:
