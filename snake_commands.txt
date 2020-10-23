@@ -1465,7 +1465,15 @@ Job counts:
                 2 # fixed some errors on farm, now running this 1 test 10.22.2020 4:50pm
                 # oops used -rf when I mean -r and forgot -doAbbaBaba2. trying again:
                 # completed.
-
+hilo$ snakemake all --quiet --profile slurm
+    Job counts:
+      count   jobs
+      1       all
+      44079   do_abba_baba
+      28      input_abba_baba
+      2       plot_mean_anc
+      2       plot_slope_elev
+      44112. Moved to low2 for so many jobs & now running. 10.23.2020
 
 # TO DO:
 # PREP FOR PRESENTATION:
