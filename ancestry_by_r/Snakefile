@@ -316,15 +316,18 @@ rule do_abba_baba:
         mem = 4
     shell:
         "angsd -out {params.out_prefix} "
+        "-doAbbababa2 1 "
         "-r {params.region} "
         "-bam {input.bam_list} "
         "-sizeFile {input.pops_size} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
         "-useLast 1 "
+        "-blockSize 60000000 "
         "-checkBamHeaders 0"
 
-# what is the size of the largest region? set chunk size larger than that.
+# what is the size of the largest 1cM window? set chunk size larger than that.
+# biggest 1cM window is 54024630bp, so I set chunck size to 60Mbp
 # how should I input regions?
 # -doAbbababa2 options: -maxDepth=max depth of each site allowed (default 100)
 # -sizeFile = file with sizes of the populations
