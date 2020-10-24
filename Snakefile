@@ -170,11 +170,11 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        "ancestry_by_r/results/f4/pop360/W2.depthGlobal"
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367", "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374", "allopatric_maize"], WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:
-        time_min = 5,
+        time_min = 15,
         mem = 2
 
 ## test: for running test files

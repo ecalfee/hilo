@@ -312,6 +312,8 @@ rule do_abba_baba:
         p = "low2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
+    shadow:
+        "minimal"
     resources:
         time_min = lambda wildcards, attempt: attempt * 1 * 60,
         mem = lambda wildcards, attempt: attempt * 6
