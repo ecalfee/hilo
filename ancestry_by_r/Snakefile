@@ -309,7 +309,7 @@ rule do_abba_baba:
         sample_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthSample",
         global_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal"
     params:
-        p = "med2",
+        p = "low2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     resources:
