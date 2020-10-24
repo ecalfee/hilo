@@ -164,13 +164,13 @@ rule all:
     params:
         p = "med2"
     resources:
-        time_min = 15,
+        time_min = 30,
         mem = 2
 
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        "ancestry_by_r/results/f4/pop360/W1.abbababa2"
+        "ancestry_by_r/results/f4/pop360/W2.depthGlobal"
     params:
         p = "med2"
     resources:

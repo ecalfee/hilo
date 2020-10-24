@@ -22,3 +22,12 @@ filtered_bams/merged_bams
 labwork/
 */old
 */logs
+filtered_bams/fastQC/
+filtered_bams/fastq_screen/
+filtered_bams/snake_logs/
+samples/
+TEST*
+.aspera*
+aspera*
+snake_logs
+venv/

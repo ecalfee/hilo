@@ -314,7 +314,7 @@ rule do_abba_baba:
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     resources:
         time_min = lambda wildcards, attempt: attempt * 1 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
+        mem = lambda wildcards, attempt: attempt * 6
     shell:
         "angsd -out {params.out_prefix} "
         "-doAbbababa2 1 "
