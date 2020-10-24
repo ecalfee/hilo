@@ -305,13 +305,15 @@ rule do_abba_baba:
         bed_window = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
         pops_size = "ancestry_by_r/results/f4/{POP}.size"
     output:
-        "ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2"
+        abbababa = "ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2",
+        sample_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthSample",
+        global_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal"
     params:
-        p = "low2",
+        p = "med2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     resources:
-        time_min = lambda wildcards, attempt: attempt * 1 * 20,
+        time_min = lambda wildcards, attempt: attempt * 1 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         "angsd -out {params.out_prefix} "
@@ -320,7 +322,8 @@ rule do_abba_baba:
         "-bam {input.bam_list} "
         "-sizeFile {input.pops_size} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
-        "-doCounts 1 -doDepth 1 -maxDepth 10000 "
+        "-doCounts 1 -doDepth 1 "
+        "-maxDepth 10000 "
         "-useLast 1 "
         "-blockSize 60000000 "
         "-checkBamHeaders 0"
