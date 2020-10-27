@@ -94,9 +94,9 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-#include: "filtered_bams/Snakefile"
-#include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
+include: "filtered_bams/Snakefile"
+include: "variant_sites/Snakefile"
+include: "global_ancestry/Snakefile"
 include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
@@ -158,9 +158,9 @@ rule all:
         expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM),
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM)
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes")#,
+        #expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM),
+        #expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:

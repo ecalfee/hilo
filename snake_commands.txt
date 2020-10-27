@@ -1474,6 +1474,40 @@ hilo$ snakemake all --quiet --profile slurm
       2       plot_mean_anc
       2       plot_slope_elev
       44112. Moved to low2 for so many jobs & now running. 10.23.2020
+# cancelled because many jobs timing out at 20 min. Upped to 60 min.
+# also testing if it's because I'm trying to read the same files at once..
+# so I'm testing just 1 file that timed-out last time:
+hilo$ snakemake ancestry_by_r/results/f4/pop360/W1330.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       do_abba_baba
+        1 # 10.23.2020 7:30pm. Finished in only 7min.
+# now running rule all (takes a long time to make DAG -- giving it 30 min)
+8:45pm 10.23.2020. ugh. some kind of python error probably because of output files from half-completed jobs.
+# I delete those files from pop360 and it can make a DAG again.
+# I add shadow "minimal" so this hopefully doesn't happen again and the directory stays clean
+# also made rule 'some' with just the sympatric maize + allopatric_maize group.
+# so I can try to just run those over the weekend now instead of all of the jobs. saving symp. mexicana for later.
+# testing w/ 1 file:
+hilo$ snakemake ancestry_by_r/results/f4/pop360/W1.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       do_abba_baba
+        1 # ran in < 1 min
+# now running all maize f4's:
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        22799   do_abba_baba
+        13      input_abba_baba
+        1       some
+        22813 # RUNNING 10.23.2020 10:.
+I cancelled part way through afte 3 days of running: allopatric_maize abba baba's failed to run.
+because the bams were listing just the simlink in the ALL_byPop/allopatric_maize_bams.list file, e.g. fitlered_bams/merged_bams/MAIZE1.sort.dedup.bam
+but input files didn't include symlink, just original bam in filtered_bams/results/MAIZE55/MAIZE1.sort.dedup.bam
+So I changed how ALL_byPop/allopatric_maize bams were listed. And did 'touch' to not repeat local ancestry results.
+
+
 
 # TO DO:
 # PREP FOR PRESENTATION:
@@ -1493,7 +1527,7 @@ hilo$ snakemake all --quiet --profile slurm
 # maybe need to make bam file first, e.g. AbbaBaba/4pop_maize_bam.list
 
 # find flowering time GWAS hits and do permutations to calcuate overlap with big slopes w/ elevation
-# which SNPs and major/minor do I want to use for ABBA BABA?
+
 # Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst --
 # basically this means turning TRIPSACUM BAM INTO A FASTA FILE
 
