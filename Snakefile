@@ -94,10 +94,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
-include: "local_ancestry/Snakefile"
+#include: "filtered_bams/Snakefile"
+#include: "variant_sites/Snakefile"
+#include: "global_ancestry/Snakefile"
+#include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 
@@ -170,7 +170,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367", "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374", "allopatric_maize"], WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["allopatric_maize", "pop361", "sympatric_maize"], WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:

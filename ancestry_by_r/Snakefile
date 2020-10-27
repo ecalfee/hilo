@@ -309,13 +309,13 @@ rule do_abba_baba:
         sample_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthSample",
         global_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal"
     params:
-        p = "low2",
+        p = "med2",
         out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     shadow:
         "minimal"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 1 * 60,
+        time_min = lambda wildcards, attempt: attempt * 4 * 60,
         mem = lambda wildcards, attempt: attempt * 6
     shell:
         "angsd -out {params.out_prefix} "
