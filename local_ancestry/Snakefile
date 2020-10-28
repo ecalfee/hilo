@@ -137,7 +137,7 @@ rule count_ACGT:
         bin = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites.bin",
         ref = ref,
         fai = fai,
-        bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam",
+        bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam", # note: to run you need to make symlink for allopatric maize from e.g. filtered_bams/MAIZE55/MAIZE1.sort.dedup.bam to filtered_bams/merged_bams/MAIZE1.sort.dedup.bam
         bai = "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"
     output:
         acgt = "local_ancestry/results/countsACGT/" + prefix_all + "/{ID}.counts.gz",

@@ -1505,9 +1505,63 @@ Job counts:
 I cancelled part way through afte 3 days of running: allopatric_maize abba baba's failed to run.
 because the bams were listing just the simlink in the ALL_byPop/allopatric_maize_bams.list file, e.g. fitlered_bams/merged_bams/MAIZE1.sort.dedup.bam
 but input files didn't include symlink, just original bam in filtered_bams/results/MAIZE55/MAIZE1.sort.dedup.bam
+# cancelled a few pending/stalled jobs, but otherwise let running ones finish:
+hilo$ scancel 26629104 26629107
 So I changed how ALL_byPop/allopatric_maize bams were listed. And did 'touch' to not repeat local ancestry results.
-
-
+# files I updated just using touch b/c of this change:
+hilo$ touch local_ancestry/results/alloFreqs/HILO_MAIZE55/allopatric_maize/region_*
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.rdiff local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.rpos local_ancestry/results/thinnedSNPs/HILO_MAIZE55/counts_thinned_aims.txt
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed
+hilo$ touch local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites.*
+# okay actual 'touch' didn't work on countsACGT, but I'll use snakemake's built in --touch for pipelines:
+# first tried on just 1 file & works:
+hilo$ snakemake --touch local_ancestry/results/countsACGT/HILO_MAIZE55/MAIZE1.counts.gz --profile slurm
+# now running on whole pipeline:
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        84      boot_ancestry_hmm
+        2       calc_K_matrix_zea
+        6       combine_pop_ancestry_data
+        402     count_ACGT
+        403     count_maj_min
+        2       fdr_zAnc
+        2       fit_lm_elev
+        2       fit_zAnc
+        84      get_admix_times
+        56      get_homozygous_ancestry_bams
+        56      get_homozygous_ancestry_tracts
+        28      get_maximum_a_posterior
+        1       make_allo_counts
+        28      make_input_hmm
+        84      map_local_anc_onto_1cM_windows
+        3       plot_admix_times
+        1       plot_bootstrap_anc_by_r
+        2       plot_mean_anc
+        2       plot_shared_peaks
+        2       plot_slope_elev
+        2       simulate_MVN
+        84      summarise_local_anc_by_1cM
+        84      summarise_posterior
+        1421
+      hilo$ snakemake --touch all --quiet --profile slurm # 10.27.2020
+      hilo$ snakemake -n all --quiet --profile slurm
+      Job counts:
+              count   jobs
+              1       all
+              2       plot_mean_anc
+              2       plot_slope_elev
+              5 # run just these ones that must be updated not with simply 'touch'
+# testing 1 window for allopatric_maize:
+hilo$ snakemake ancestry_by_r/results/f4/allopatric_maize/W1.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       do_abba_baba
+        1       input_abba_baba
+        2 # see how many minutes it takes.. only 1.5min (not so bad!)
+# now rerunning pop361, allopatric_maize, sympatric_maize as a group (and later will run sympatric mexicana)
+hilo$ snakemake some --quiet --profile slurm # RUNNING 10.27.2020 5:23pm
 
 # TO DO:
 # PREP FOR PRESENTATION:
