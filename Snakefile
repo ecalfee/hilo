@@ -14,7 +14,7 @@ wildcard_constraints:
     Ne = "[0-9]+",
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana",
-    SUBSAMPLE = "[0-9]+"
+    SUBSAMPLE = "[0-9]+",
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac" # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
 
