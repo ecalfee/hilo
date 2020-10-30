@@ -1561,7 +1561,90 @@ Job counts:
         1       input_abba_baba
         2 # see how many minutes it takes.. only 1.5min (not so bad!)
 # now rerunning pop361, allopatric_maize, sympatric_maize as a group (and later will run sympatric mexicana)
-hilo$ snakemake some --quiet --profile slurm # RUNNING 10.27.2020 5:23pm
+hilo$ snakemake some --quiet --profile slurm # RUNNING 10.27.2020 5:23pm. oops actually got stuck on DAG b/c of wildcards for sympatric maize
+hilo$ snakemake some --quiet --profile slurm # RUNNING 10.27.2020 8:39pm
+Job counts:
+        count   jobs
+        3046    do_abba_baba
+        1       input_abba_baba
+        1       some
+        3048
+# MOST JOBS ARE RUNNING OUT OF TIME, BUT HAVE LOW CPU TIME
+# AND VERY HIGH WALL TIME. I WANT TO ASK JEFF ABOUT THIS:
+# W1:
+# hilo$ less snake_logs/do_abba_baba.POP=allopatric_maize,WINDOW=W1.26676305.err
+# Number of sites retained after filtering: 383460
+# [ALL done] cpu-time used =  88.11 sec
+# [ALL done] walltime used =  109.00 sec
+# 1 of 1 steps (100%) done
+# # ~60k lines in .err file
+# slurm .out file:
+# Reserved walltime   : 04:00:00
+# Used walltime       : 00:01:53
+# Used CPU time       : 00:01:29
+
+# W1351:
+# hilo$ less snake_logs/do_abba_baba.POP=allopatric_maize,WINDOW=W1351.26677882.err
+# Number of sites retained after filtering: 1364706
+# [ALL done] cpu-time used =  151.76 sec
+# [ALL done] walltime used =  9801.00 sec
+# slurmstepd: error: *** JOB 26677882 ON c6-67 CANCELLED AT 2020-10-28T00:32:43 DUE TO TIME LIMIT ***
+# ~60k lines in .err file
+# slurm .out file:
+# Reserved walltime   : 04:00:00
+# Used walltime       : 04:00:39
+# Used CPU time       : 00:02:32
+# note: this job times out nearly an hour after angsd thinks it's completed.
+
+# SOLUTION: split whole genome bams into much smaller bams! (1 bam per 1cM segment). I can also re-header/re-sort and, if I want, cap with BAQ, when I do this.
+# 1st check how much space I have in my dir on farm for duplicating bams.
+
+# trying just 1 abbababa (with low r, so large region):
+hilo$ snakemake ancestry_by_r/results/f4/allopatric_maize/W1331.abbababa2 --quiet --profile slurm
+57399486 - ran out of memory
+36294779-82156624
+
+# what is the reading/writing capacity?
+# try 5 short jobs at the same time:
+hilo$ snakemake ancestry_by_r/results/f4/allopatric_maize/W34.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W1442.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W254.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W253.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W610.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        5       do_abba_baba
+        5 # RUNNING 10.29.2020. Finished fast in < 5min.
+# ok, what about 10 jobs of cM/Mb bin 4? (so slightly bigger?)
+hilo$ snakemake ancestry_by_r/results/f4/allopatric_maize/W611.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W174.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W175.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W628.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W629.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W648.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W649.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W680.abbababa2
+ancestry_by_r/results/f4/allopatric_maize/W1346.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W1466.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        10      do_abba_baba
+        10 # RUNNING 10.29.2020. Takes about double walltime (6-7min) as cpu time (~3min).
+# now try only 5 jobs at once from the bin 4 cM/Mb:
+hilo$ Job counts:
+        count   jobs
+        5       do_abba_baba
+        5 # RUNNING 10.29.2020. Not too much extra walltime -- only 20s per job.
+# So ~5 jobs accessing the same files is a computational limit for I/O efficiency.
+# Now checking that sympatric_maize runs equally smoothly with similar time/memory constraints:
+hilo$ snakemake ancestry_by_r/results/f4/sympatric_maize/W199.abbababa2 ancestry_by_r/results/f4/sympatric_maize/W263.abbababa2 ancestry_by_r/results/f4/sympatric_maize/W270.abbababa2 ancestry_by_r/results/f4/sympatric_maize/W271.abbababa2 ancestry_by_r/results/f4/sympatric_maize/W272.abbababa2 --quiet --profile slurm
+Job counts:
+        count   jobs
+        5       do_abba_baba
+        1       input_abba_baba
+        6 # RUNNING 10.29.2020
+# can I limit the jobs in the snake command?
+hilo$ snakemake ancestry_by_r/results/f4/sympatric_mexicana/W199.abbababa2 ancestry_by_r/results/f4/sympatric_mexicana/W263.abbababa2 ancestry_by_r/results/f4/sympatric_mexicana/W270.abbababa2 ancestry_by_r/results/f4/sympatric_mexicana/W271.abbababa2 --quiet --profile slurm --jobs 2
+Job counts:
+        count   jobs
+        4       do_abba_baba
+        1       input_abba_baba
+        5 # try limiting to 2 running jobs at a time. Works!
+        # so I just have to add the --jobs 5 flag when I run snakemake :).
+        # also just try to run twice per job: --restart-times 1
+# last test before running all:
+hilo$ snakemake ancestry_by_r/results/f4/sympatric_maize/W309.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W310.abbababa2 --quiet --profile slurm --jobs 1 --restart-times 1
+
+# now run rule 'some' has allopatric_maize, sympatric_maize, sympatric_mexicana. I estimate 24hrs to run per group.
+
 
 # TO DO:
 # PREP FOR PRESENTATION:

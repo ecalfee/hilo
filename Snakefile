@@ -8,12 +8,13 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 # wildcards
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
-    POP = "pop[0-9]+|allopatric_maize|sympatric_maize|sympatric_mexicana|allopatric_mexicana", # for f4 stats allopatric_maize needs to be treated like a pop
+    POP = "pop[0-9]+|allopatric_maize|allopatric_maize_subsample[0-9]+|sympatric_maize|sympatric_mexicana|allopatric_mexicana", # for f4 stats allopatric_maize needs to be treated like a pop
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
-    GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana",
+    GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana",
+    SUBSAMPLE = "[0-9]+"
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac" # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
 
@@ -170,7 +171,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["allopatric_maize", "pop361", "sympatric_maize"], WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["allopatric_maize", "sympatric_maize", "sympatric_mexicana"], WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:

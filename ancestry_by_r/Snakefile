@@ -274,7 +274,7 @@ rule input_abba_baba:
         bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
         pops_size = "ancestry_by_r/results/f4/{POP}.size"
     params:
-        p = "med2",
+        p = "med2"
     resources:
         time_min = 1,
         mem = 1
@@ -294,6 +294,14 @@ def get_region_from_bed(window):
         line2 = f.readline()
         row = line2.split("\t")
     return row[0] + ":" + row[1] + "-" + row[2]
+
+## get_size_region_from_bed(): helper function to extract size of a region as an integer (# bp start-end) from a single region bed file
+def get_size_region_from_bed(window):
+    with open("ancestry_by_r/results/BED_1cM/" + window + ".bed") as f:
+        line1 = f.readline()
+        line2 = f.readline()
+        row = line2.split("\t")
+    return int(row[2]) - int(row[1])/1000000 # units Mbp
 
 ## do_abba_baba: runs angsd abba_baba2 to get f4 statistic for 1 genomic window
 # output file has all possible population orders .. will later extract f4(parv, mex; x, trip)
@@ -315,8 +323,8 @@ rule do_abba_baba:
     shadow:
         "minimal"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 4 * 60,
-        mem = lambda wildcards, attempt: attempt * 6
+        time_min = lambda wildcards, attempt: attempt * 30 + get_size_region_from_bed(wildcards.WINDOW) * 3.5, # 1/2 hour to 4 hours for attempt 1
+        mem = lambda wildcards, attempt: attempt * 4 + get_size_region_from_bed(wildcards.WINDOW) * 7/30 # 4G to 18G for attempt 1
     shell:
         "angsd -out {params.out_prefix} "
         "-doAbbababa2 1 "
@@ -337,6 +345,84 @@ rule do_abba_baba:
 # -sizeFile = file with sizes of the populations
 # -doCounts 1 = make counts (required)
 # -useLast 1 = use the last group of bam files as outgroup (tripsacum)
+
+## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
+# rule subsample_group:
+#     input:
+#         all_bams = "samples/ALL_byPop/{GROUP}_bams.list"
+#     output:
+#         sub_bams = "samples/ALL_byPop/{GROUP}_subsample{SUBSAMPLE}_bams.list"
+#     params:
+#         p = "med2",
+#         i = "{SUBSAMPLE}"
+#     resources:
+#         time_min = 1,
+#         mem = 1
+#     shell:
+#         shuf -n {params.i} {input.all_bams} > {output.sub_bams}
+
+
+# ABBA BABA is very intensive (!), I will subsample to just 10 individuals for the high coverage populations:
+## input_abba_baba_subsample: creates input size and bam_list for running abba baba (f4) calcs
+# subsamples to just 10 ind's for high coverage parv and allopatric_maize populations
+# rule input_abba_baba_subsample:
+#     input:
+#         parv_bams = "samples/ALL_byPop/parv_subsample10_bams.list",
+#         mex_bams = "samples/ALL_byPop/allopatric_mexicana_bams.list",
+#         x_bams = "samples/ALL_byPop/{POP}_bams.list",
+#         trip_bams = "samples/ALL_byPop/trip_bams.list"
+#     output:
+#         bam_list = "ancestry_by_r/results/f4_subsample/{POP}_bams.list",
+#         pops_size = "ancestry_by_r/results/f4_subsample/{POP}.size"
+#     params:
+#         p = "med2",
+#     resources:
+#         time_min = 1,
+#         mem = 1
+#     shell:
+#         """
+#         cat {input.parv_bams} {input.mex_bams} {input.x_bams} {input.trip_bams} > {output.bam_list}
+#         < {input.parv_bams} wc -l > {output.pops_size}
+#         < {input.mex_bams} wc -l >> {output.pops_size}
+#         < {input.x_bams} wc -l >> {output.pops_size}
+#         < {input.trip_bams} wc -l >> {output.pops_size}
+#         """
+
+## do_abba_baba_subsample: runs angsd abba_baba2 to get f4 statistic for 1 genomic window
+# output file has all possible population orders .. will later extract f4(parv, mex; x, trip)
+# subsamples to just 10 ind's for high coverage parv and allopatric_maize populations
+# rule do_abba_baba_subsample:
+#     input:
+#         bams = all_bams_parv_trip, # all input bams
+#         bais = [bam + ".bai" for bam in all_bams_parv_trip], # all input bam indexes
+#         bam_list = "ancestry_by_r/results/f4_subsample/{POP}_bams.list",
+#         bed_window = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
+#         pops_size = "ancestry_by_r/results/f4_subsample/{POP}.size"
+#     output:
+#         abbababa = "ancestry_by_r/results/f4_subsample/{POP}/{WINDOW}.abbababa2",
+#         sample_depth = "ancestry_by_r/results/f4_subsample/{POP}/{WINDOW}.depthSample",
+#         global_depth = "ancestry_by_r/results/f4_subsample/{POP}/{WINDOW}.depthGlobal"
+#     params:
+#         p = "med2",
+#         out_prefix = "ancestry_by_r/results/f4_subsample/{POP}/{WINDOW}",
+#         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
+#     shadow:
+#         "minimal"
+#     resources:
+#         time_min = lambda wildcards, attempt: attempt * 2 * 60,
+#         mem = 4
+#     shell:
+#         "angsd -out {params.out_prefix} "
+#         "-doAbbababa2 1 "
+#         "-r {params.region} "
+#         "-bam {input.bam_list} "
+#         "-sizeFile {input.pops_size} "
+#         "-remove_bads 1 -minMapQ 30 -minQ 20 "
+#         "-doCounts 1 -doDepth 1 "
+#         "-maxDepth 10000 "
+#         "-useLast 1 "
+#         "-blockSize 60000000 "
+#         "-checkBamHeaders 0"
 
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
