@@ -171,7 +171,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["allopatric_maize", "sympatric_maize", "sympatric_mexicana"], WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["sympatric_maize", "allopatric_maize"], WINDOW = windows_1cM)
     params:
         p = "med2"
     resources:

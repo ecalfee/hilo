@@ -1638,13 +1638,39 @@ Job counts:
         4       do_abba_baba
         1       input_abba_baba
         5 # try limiting to 2 running jobs at a time. Works!
-        # so I just have to add the --jobs 5 flag when I run snakemake :).
-        # also just try to run twice per job: --restart-times 1
+        # so I just have to add the --jobs 5 flag when I run snakemake :)
 # last test before running all:
 hilo$ snakemake ancestry_by_r/results/f4/sympatric_maize/W309.abbababa2 ancestry_by_r/results/f4/allopatric_maize/W310.abbababa2 --quiet --profile slurm --jobs 1 --restart-times 1
-
+Job counts:
+        count   jobs
+        2       do_abba_baba
+        2 # RAN SMOOTHLY. 10.29.2020 5:40pm.
 # now run rule 'some' has allopatric_maize, sympatric_maize, sympatric_mexicana. I estimate 24hrs to run per group.
-
+hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+# mystery error keepincomplete=keep_incomplete fixed  ...
+raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+Fixed by deleting some of the output files that maybe were from cancelled jobs (?)
+Now running:
+hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+Job counts:
+        count   jobs
+        4528    do_abba_baba
+        1       some
+        4529 # STARTED 10.29.2020 8:36pm. hmm, I'd prefer that it start with
+        # allopatric_maize, then sympatric_maize. Will cancel and restart with just those 2:
+# status when I cancelled the snakemake job:
+hilo$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      26725636     high2     bash  ecalfee  R       47:30      1 1   2G     c6-92
+      26726207      med2 do_abba_  ecalfee  R        6:29      1 2   7G     c6-92
+      26726147      med2 do_abba_  ecalfee  R       11:24      1 2   5G     c6-92
+      26726035      med2 do_abba_  ecalfee  R       19:01      1 2   6G     c6-92
+      26725668      med2 do_abba_  ecalfee  R       35:37      1 2   6G     c6-92
+      26725673      med2 do_abba_  ecalfee  R       35:37      1 3   8G     c6-92
+      # then cancelled remaining running jobs (1 finished, but maybe created bad files)
+      hilo$ scancel 26726207 26726147 26726035 26725673
+hilo$ snakemake -n some --quiet --profile slurm --jobs 5
 
 # TO DO:
 # PREP FOR PRESENTATION:
