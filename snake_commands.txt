@@ -1670,7 +1670,14 @@ hilo$ squeue -u ecalfee
       26725673      med2 do_abba_  ecalfee  R       35:37      1 3   8G     c6-92
       # then cancelled remaining running jobs (1 finished, but maybe created bad files)
       hilo$ scancel 26726207 26726147 26726035 26725673
-hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+hilo$ snakemake some --quiet --profile slurm --jobs 5
+Job counts:
+        count   jobs
+        3012    do_abba_baba
+        1       some
+        3013 # RUNNING 10.29.2020 9:30pm. Order is random .. here it's starting with sympatric_maize regions.
+# to find out which file is running, e.g.
+hilo$ grep 'wildcards:' -A 1 snake_logs/*abba*26726313.err
 
 # TO DO:
 # PREP FOR PRESENTATION:
