@@ -1678,6 +1678,23 @@ Job counts:
         3013 # RUNNING 10.29.2020 9:30pm. Order is random .. here it's starting with sympatric_maize regions.
 # to find out which file is running, e.g.
 hilo$ grep 'wildcards:' -A 1 snake_logs/*abba*26726313.err
+# so all but 6 abba baba files ran .. mostly seems like by Saturday morning.
+# some were rerun because of memory & I'm checking right now the ones that didn't complete:
+hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+Job counts:
+        count   jobs
+        6       do_abba_baba
+        1       some
+        7
+# which files are missing?
+hilo$ for i in {1..1520}; do ls ancestry_by_r/results/f4/allopatric_maize/W$i.abbababa2; done | grep 'cannot'
+ls: cannot access 'ancestry_by_r/results/f4/allopatric_maize/W113.abbababa2': No such file or directory
+ls: cannot access 'ancestry_by_r/results/f4/allopatric_maize/W892.abbababa2': No such file or directory
+ls: cannot access 'ancestry_by_r/results/f4/allopatric_maize/W1264.abbababa2': No such file or directory
+# same ones from sympatric_maize too
+# memory not enough: 12G, 13G, 12G
+# I added memory so it starts at 8G + extra , then goes to 16G + extra, then 24G + extra on attempt 3
+hilo$ snakemake some --quiet --profile slurm --jobs 6
 
 # TO DO:
 # PREP FOR PRESENTATION:
