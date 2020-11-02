@@ -1694,7 +1694,13 @@ ls: cannot access 'ancestry_by_r/results/f4/allopatric_maize/W1264.abbababa2': N
 # same ones from sympatric_maize too
 # memory not enough: 12G, 13G, 12G
 # I added memory so it starts at 8G + extra , then goes to 16G + extra, then 24G + extra on attempt 3
-hilo$ snakemake some --quiet --profile slurm --jobs 6
+hilo$ snakemake some --quiet --profile slurm --jobs 5
+# running Sunday Nov 1 8:50pm
+# W892 still ran out of memory. Time is very dependent on region length, but not memory.
+# I changed to each job having 8, 16, or 32G memory
+# added in sympatric_mexicana and pop361 to run abba baba (can do other pops later if needed)
+hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+
 
 # TO DO:
 # PREP FOR PRESENTATION:
