@@ -44,7 +44,7 @@ dependencies:
   - r-data.table =1.12.8
   - r-reader =1.0.6
   - r-xtable =1.8_4
-  - r-pracma
+  - r-pracma =2.2.9
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
@@ -55,6 +55,7 @@ dependencies:
 
 
   # to list available environments
+  #module load conda3
   #conda info -e
   # to create conda environment (only do with -p 2022)
   #conda create --name hilo-env --file environment.yaml
