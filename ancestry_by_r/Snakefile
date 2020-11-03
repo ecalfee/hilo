@@ -351,7 +351,7 @@ rule do_abba_baba:
 # 1st and every 3rd line. (some windows have more than 1 line because they spanned multiple 60Mbp chunks)
 rule f4_from_abba_baba:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
     output:
         f4 = "ancestry_by_r/results/f4/{POP}.f4"
     params:
@@ -374,7 +374,7 @@ rule f4_from_abba_baba:
 ## combine_abba_baba_for_Dstat: combines .abbababa2 files across the genome for input to D-statistic calc
 rule combine_abba_baba_for_Dstat:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
     output:
         abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
         names = "ancestry_by_r/results/f4/{POP}.names"
