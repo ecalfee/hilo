@@ -355,7 +355,8 @@ rule f4_from_abba_baba:
     output:
         f4 = "ancestry_by_r/results/f4/{POP}.f4"
     params:
-        p = "med2"
+        p = "med2",
+        POP = "{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -363,11 +364,11 @@ rule f4_from_abba_baba:
         mem = 2
     shell:
         """
-        (head -n 1 ancestry_by_r/results/f4/{POP}/W1.abbababa2 | \\
+        (head -n 1 ancestry_by_r/results/f4/{params.POP}/W1.abbababa2 | \\
         cut -f1-6 | awk -v OFS='\\t' '{{print "window",$0,"pop1","pop2","pop3","pop4"}}'
         for i in {1..1520}
-        do tail -n +2 ancestry_by_r/results/f4/{POP}/W$i.abbababa2 | \\
-        cut -f1-6 | awk -v i=$i -v pop={POP} OFS='\\t' 'NR%3==1 {{print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}}'
+        do tail -n +2 ancestry_by_r/results/f4/{params.POP}/W$i.abbababa2 | \\
+        cut -f1-6 | awk -v i=$i -v pop={params.POP} OFS='\\t' 'NR%3==1 {{print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}}'
         done) > {output.f4}
         """
 
@@ -379,7 +380,8 @@ rule combine_abba_baba_for_Dstat:
         abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
         names = "ancestry_by_r/results/f4/{POP}.names"
     params:
-        p = "med2"
+        p = "med2",
+        POP = "{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -387,9 +389,9 @@ rule combine_abba_baba_for_Dstat:
         mem = 2
     shell:
         """
-        (cat ancestry_by_r/results/f4/{POP}/W1.abbababa2
+        (cat ancestry_by_r/results/f4/{params.POP}/W1.abbababa2
         for i in {2..1520}
-        do tail -n +2 ancestry_by_r/results/f4/{POP}/W$i.abbababa2
+        do tail -n +2 ancestry_by_r/results/f4/{params.POP}/W$i.abbababa2
         done) > {output.abbababa}
         echo "parviglumis" > {output.names}
         echo "allopatric_mexicana" >> {output.names}
