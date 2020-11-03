@@ -1776,6 +1776,7 @@ W95: 1       119583369       154171190
 # making the code above into snakemake rules and rerunning:
 hilo$ snakemake some --quiet --profile slurm
 # can't set attribute error line 417 (run D-stat rule). Trying to fix syntax of shell command.
+# I think it was because I can't set 'size' or possible 'names' as a named input file
 
 
 

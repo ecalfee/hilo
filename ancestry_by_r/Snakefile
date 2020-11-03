@@ -401,9 +401,8 @@ rule combine_abba_baba_for_Dstat:
 rule calc_Dstat:
     input:
         abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
-        names = "ancestry_by_r/results/f4/{POP}.names",
-        size = "ancestry_by_r/results/f4/{POP}.size",
-        D_script = "../software/angsd_0.932/R/estAvgError.R"
+        pops_name = "ancestry_by_r/results/f4/{POP}.names",
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     output:
         "ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt"
     params:
@@ -416,7 +415,7 @@ rule calc_Dstat:
         time_min = 10,
         mem = 2
     shell:
-        "Rscript {input.D_script} angsdFile={params.prefix_in} out={params.prefix_out} sizeFile={input.size} nameFile={input.names}"
+        "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={params.prefix_in} out={params.prefix_out} sizeFile={input.pops_size} nameFile={input.pops_name}"
 
 
 ## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
