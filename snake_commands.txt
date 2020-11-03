@@ -1776,11 +1776,20 @@ W95: 1       119583369       154171190
 # making the code above into snakemake rules and rerunning:
 hilo$ snakemake some --quiet --profile slurm
 # can't set attribute error line 417 (run D-stat rule). Trying to fix syntax of shell command.
-# I think it was because I can't set 'size' or possible 'names' as a named input file
-
+# I think it was because I can't set 'size' or possible 'names' as a named input file. Fixed!
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        5       calc_Dstat
+        5       combine_abba_baba_for_Dstat
+        5       f4_from_abba_baba
+        1       some
+        16 # RUNNING 11.3.2020 11:37am
 
 
 # TO DO:
+# PUT calc_f4.R script into snakemake rule.
+# Re-make plots so the points are individual window estimates? Color inv4m windows.
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
