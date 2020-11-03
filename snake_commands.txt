@@ -1713,7 +1713,15 @@ Job counts:
         1522 # RUNNING 11.1.2020 11:30pm. Note: W892 still hasn't completed.
 # cancelled with just a few that didn't run/stalled Nov 2 at 11pm. Adding memory up to 40G for 3rd attempt.
 # also adding in a population to test that pattern holds also at individual population level.
-hilo$ snakemake some --quiet --profile slurm --jobs 5
+hilo$ snakemake some --quiet --profile slurm --jobs 5 # RUNNING 11.3.2020 1am
+# sympatric_maize and sympatric_mexicana still ran out of memory with 40G for W892, so now rerunning just those
+# with 48G, 64G, 80G attempts. Will see how much memory they use.
+hilo$ snakemake some --quiet --profile slurm --jobs 5 # RUNNING 11.3.2020 1am
+Job counts:
+        count   jobs
+        2       do_abba_baba
+        1       some
+        3 # completed quickly with between 40 and 48G memory usage.
 
 # testing ANGSD D-STAT to find out order of abbababa2 output file:
 hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/results/f4/sympatric_maize/W1" out="test_Dstat" sizeFile="ancestry_by_r/results/f4/sympatric_maize.size"
@@ -1765,8 +1773,10 @@ hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/r
 hilo$ nano ancestry_by_r/results/f4/sympatric_maize/W95.abbababa2
 W95: 1       119583369       154171190
 
-# NEXT: GET EACH LINE SEPARATELY TO ANALYZE IN R AND COMPARE TO ANGSD REPORTED D STATS
-# ASK SIVAN IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
+# making the code above into snakemake rules and rerunning:
+
+
+# ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 
 
 

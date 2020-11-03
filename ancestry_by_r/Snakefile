@@ -324,7 +324,7 @@ rule do_abba_baba:
         "minimal"
     resources:
         time_min = lambda wildcards, attempt: attempt * 30 + int(get_size_region_from_bed(wildcards.WINDOW) * 3.5), # 1/2 hour to 4 hours for attempt 1
-        mem = lambda wildcards, attempt: [8, 16, 40][attempt - 1] # 8G, 16G or 40G
+        mem = lambda wildcards, attempt: [8, 16, 48][attempt - 1] # 8G, 16G or 48G
     shell:
         "angsd -out {params.out_prefix} "
         "-doAbbababa2 1 "
@@ -345,6 +345,79 @@ rule do_abba_baba:
 # -sizeFile = file with sizes of the populations
 # -doCounts 1 = make counts (required)
 # -useLast 1 = use the last group of bam files as outgroup (tripsacum)
+
+## f4_from_abba_baba: extracts f4(parv, allo_mex; x, trip) from .abbababa2 output
+# Each set of 3 lines represents one possible 4-pop tree. For the correct tree for f4-ratio estimates we take the
+# 1st and every 3rd line. (some windows have more than 1 line because they spanned multiple 60Mbp chunks)
+rule f4_from_abba_baba:
+    input:
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+    output:
+        f4 = "ancestry_by_r/results/f4/{POP}.f4"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 10,
+        mem = 2
+    shell:
+        """
+        (head -n 1 ancestry_by_r/results/f4/{POP}/W1.abbababa2 | \\
+        cut -f1-6 | awk -v OFS='\\t' '{{print "window",$0,"pop1","pop2","pop3","pop4"}}'
+        for i in {1..1520}
+        do tail -n +2 ancestry_by_r/results/f4/{POP}/W$i.abbababa2 | \\
+        cut -f1-6 | awk -v i=$i -v pop={POP} OFS='\\t' 'NR%3==1 {{print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}}'
+        done) > {output.f4}
+        """
+
+## combine_abba_baba_for_Dstat: combines .abbababa2 files across the genome for input to D-statistic calc
+rule combine_abba_baba_for_Dstat:
+    input:
+        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+    output:
+        abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
+        names = "ancestry_by_r/results/f4/{POP}.names"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 10,
+        mem = 2
+    shell:
+        """
+        (cat ancestry_by_r/results/f4/{POP}/W1.abbababa2
+        for i in {2..1520}
+        do tail -n +2 ancestry_by_r/results/f4/{POP}/W$i.abbababa2
+        done) > {output.abbababa}
+        echo "parviglumis" > {output.names}
+        echo "allopatric_mexicana" >> {output.names}
+        echo {POP} >> {output.names}
+        echo "tripsacum" >> {output.names}
+        """
+
+## calc_Dstat: calculates D-statistic genomewide with bootstrap confidence intervals
+rule calc_Dstat:
+    input:
+        abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
+        names = "ancestry_by_r/results/f4/{POP}.names",
+        size = "ancestry_by_r/results/f4/{POP}.size"
+    output:
+        "ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt"
+    params:
+        p = "med2",
+        prefix_out = "ancestry_by_r/results/f4/{POP}.Dstats"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 10,
+        mem = 2
+    script:
+        """
+        Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="{input.abbababa}" out="{params.prefix_out}" sizeFile="{input.size}" nameFile="{input.names}"
+        """
+
 
 ## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
 # rule subsample_group:

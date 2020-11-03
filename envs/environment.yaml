@@ -44,9 +44,23 @@ dependencies:
   - r-data.table =1.12.8
   - r-reader =1.0.6
   - r-xtable =1.8_4
+  - r-pracma
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
   # angsd =0.932 # comes with htslib 1.10.2 and is linked to that library
   # picard =2.7.1 path to picard-tools-2.7.1/ loaded as $PICARD
   # and JAVA 1.8 to run picard MarkDuplicates
+
+
+
+  # to list available environments
+  #conda info -e
+  # to create conda environment (only do with -p 2022)
+  #conda create --name hilo-env --file environment.yaml
+  # to update conda environment: (only do when ssh'd into -p 2022)
+  #conda env update --name hilo-env --file envs/environment.yaml --prune
+  # to list packages and versions for hilo-env
+  #source activate hilo-env #activate
+  #conda list # list packages
+  #conda deactivate hilo-env # de-activate
