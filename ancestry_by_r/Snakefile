@@ -324,7 +324,7 @@ rule do_abba_baba:
         "minimal"
     resources:
         time_min = lambda wildcards, attempt: attempt * 30 + int(get_size_region_from_bed(wildcards.WINDOW) * 3.5), # 1/2 hour to 4 hours for attempt 1
-        mem = lambda wildcards, attempt: [8, 16, 32][attempt - 1] # 8G, 16G or 32G
+        mem = lambda wildcards, attempt: [8, 16, 40][attempt - 1] # 8G, 16G or 40G
     shell:
         "angsd -out {params.out_prefix} "
         "-doAbbababa2 1 "

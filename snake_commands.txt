@@ -1697,9 +1697,77 @@ ls: cannot access 'ancestry_by_r/results/f4/allopatric_maize/W1264.abbababa2': N
 hilo$ snakemake some --quiet --profile slurm --jobs 5
 # running Sunday Nov 1 8:50pm
 # W892 still ran out of memory. Time is very dependent on region length, but not memory.
+hilo$ snakemake ancestry_by_r/results/f4/allopatric_maize/W892.abbababa2 ancestry_by_r/results/f4/sympatric_maize/W892.abbababa2 --quiet --profile slurm --jobs 5 --restart-times 0 --config mem=32G
+Job counts:
+        count   jobs
+        2       do_abba_baba
+        2 # RUNNING 11.1.2020 10:36pm. CANCELLED BECAUSE DIDN'T USE THE 32G of memory.
 # I changed to each job having 8, 16, or 32G memory
 # added in sympatric_mexicana and pop361 to run abba baba (can do other pops later if needed)
-hilo$ snakemake -n some --quiet --profile slurm --jobs 5
+
+hilo$ snakemake some --quiet --profile slurm --jobs 5
+Job counts:
+        count   jobs
+        1521    do_abba_baba
+        1       some
+        1522 # RUNNING 11.1.2020 11:30pm. Note: W892 still hasn't completed.
+# cancelled with just a few that didn't run/stalled Nov 2 at 11pm. Adding memory up to 40G for 3rd attempt.
+# also adding in a population to test that pattern holds also at individual population level.
+hilo$ snakemake some --quiet --profile slurm --jobs 5
+
+# testing ANGSD D-STAT to find out order of abbababa2 output file:
+hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/results/f4/sympatric_maize/W1" out="test_Dstat" sizeFile="ancestry_by_r/results/f4/sympatric_maize.size"
+
+# installed R package pracma
+hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/results/f4/sympatric_maize/W1" out="test_Dstat" sizeFile="ancestry_by_r/results/f4/sympatric_maize.size" nameFile="ancestry_by_r/results/f4/sympatric_maize.names"
+----------
+angsdFile:  ancestry_by_r/results/f4/sympatric_maize/W1   errFile:  FALSE  nameFile:  ancestry_by_r/results/f4/sympatric_maize.names  sizeFile:  ancestry_by_r/results/f4/sympatric_maize.size  out:  test_Dstat  addErr:  FALSE  nIter:  100 maxErr:  0.02
+-----------
+--- Building tree error matrices ---
+ --- Time Spent  0  sec
+Error in `colnames<-`(`*tmp*`, value = colnames(outDataTotal)) :
+  attempt to set 'colnames' on an object with less than two dimensions
+Execution halted
+# maybe it needs more than 1 region to run calcs:
+hilo$ cat ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 > test_W1-9_sympatric_maize.abbababa2
+hilo$ cat ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 > test_W1-100_sympatric_maize.abbababa2
+ecalfee@c6-67:~/hilo$ for i in {2..100}; do tail -n 3 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 >> test_W1-100_sympatric_maize.abbababa2; done
+ecalfee@c6-67:~/hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="test_W1-100_sympatric_maize" out="test_Dstat_W1-100_sympatric_maize" sizeFile="ancestry_by_r/results/f4/sympatric_maize.size" nameFile="ancestry_by_r/results/f4/sympatric_maize.names"
+
+hilo/ancestry_by_r/results/f4$ for i in {890..893}; do head -n 2 sympatric_maize/W$i.abbababa2 | tail -n 1 | cut -f1,4-6; done
+6	-3.199246	459.730621	57905.000000
+6	-14.845173	921.008586	216003.000000
+head: cannot open 'sympatric_maize/W892.abbababa2' for reading: No such file or directory
+6	-86.311113	1830.236866	371792.000000
+
+# skipping W892 for now. summarising f4s. sympatric_maize.1.f4 is line 1 results, .2.f4 is line 2 results etc.
+# only population orders change:
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/allopatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/allopatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==1 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "allopatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/allopatric_maize.1.f4
+
+# all the other files too:
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/allopatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/allopatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==2 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "allopatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/allopatric_maize.2.f4
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/allopatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/allopatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==0 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "allopatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/allopatric_maize.3.f4
+
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==1 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "sympatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/sympatric_maize.1.f4
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==2 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "sympatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/sympatric_maize.2.f4
+ecalfee@c6-67:~/hilo$ (head -n 1 ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 | cut -f1-6 | awk '{print "window" "\t" $0 "\t" "pop1" "\t" "pop2" "\t" "pop3" "\t" "pop4"}'; for i in {1..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 | cut -f1-6| awk -v i=$i 'NR%3==0 {print "W"i "\t" $0 "\t" "parviglumis" "\t" "allopatric_mexicana" "\t" "sympatric_maize" "\t" "tripsacum"}';  done) > ancestry_by_r/results/f4/sympatric_maize.3.f4
+
+
+# D - stats all windows but 892:
+hilo$ (cat ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2; for i in {2..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2; done) > ancestry_by_r/results/f4/sympatric_maize.all.abbababa2
+hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/results/f4/sympatric_maize.all" out="ancestry_by_r/results/f4/sympatric_maize.Dstats" sizeFile="ancestry_by_r/results/f4/sympatric_maize.size" nameFile="ancestry_by_r/results/f4/sympatric_maize.names"
+hilo$ (cat ancestry_by_r/results/f4/allopatric_maize/W1.abbababa2; for i in {2..891} {893..1520}; do tail -n +2 ancestry_by_r/results/f4/allopatric_maize/W$i.abbababa2; done) > ancestry_by_r/results/f4/allopatric_maize.all.abbababa2
+hilo$ Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="ancestry_by_r/results/f4/allopatric_maize.all" out="ancestry_by_r/results/f4/allopatric_maize.Dstats" sizeFile="ancestry_by_r/results/f4/allopatric_maize.size" nameFile="ancestry_by_r/results/f4/allopatric_maize.names"
+# results have format: sympatric_maize.Dstats.Observed.txt
+
+# hmm.. seems like the blocks didn't work quite how I expected
+# some files have 7 lines instead of 4 because windows span multiple blocks:
+hilo$ nano ancestry_by_r/results/f4/sympatric_maize/W95.abbababa2
+W95: 1       119583369       154171190
+
+# NEXT: GET EACH LINE SEPARATELY TO ANALYZE IN R AND COMPARE TO ANGSD REPORTED D STATS
+# ASK SIVAN IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
+
 
 
 # TO DO:
