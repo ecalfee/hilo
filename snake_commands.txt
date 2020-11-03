@@ -1777,7 +1777,7 @@ W95: 1       119583369       154171190
 hilo$ snakemake some --quiet --profile slurm
 # can't set attribute error line 417 (run D-stat rule). Trying to fix syntax of shell command.
 # I think it was because I can't set 'size' or possible 'names' as a named input file. Fixed!
-hilo$ snakemake -n some --quiet --profile slurm
+hilo$ snakemake some --quiet --profile slurm
 Job counts:
         count   jobs
         5       calc_Dstat
@@ -1785,7 +1785,8 @@ Job counts:
         5       f4_from_abba_baba
         1       some
         16 # RUNNING 11.3.2020 11:37am
-
+# adding 2 more individual maize pops from across the range for f4 stats: pop362 & 366 (Santa Clara & Jicaltepec)
+hilo$ snakemake some --quiet --profile slurm --jobs 5
 
 # TO DO:
 # PUT calc_f4.R script into snakemake rule.
