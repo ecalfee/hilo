@@ -53,8 +53,8 @@ dependencies:
   # and JAVA 1.8 to run picard MarkDuplicates
 
 
-
-  # to list available environments
+  # useful commands for working with python virtual environments:
+  # list available environments
   #module load conda3
   #conda info -e
   # to create conda environment (only do with -p 2022)
@@ -64,4 +64,13 @@ dependencies:
   # to list packages and versions for hilo-env
   #source activate hilo-env #activate
   #conda list # list packages
-  #conda deactivate hilo-env # de-activate
+  #conda deactivate # de-activate
+  # run virtual environment in screen instance
+  #screen -S snake
+  #module load bio3
+  #source activate hilo-env
+  # open and close screen instances
+  # screen -ls lists screens available
+  # screen -r returns to a specific screen
+  # screen -rd returns to an attached screen
+  # CTRL+A+D detaches screen
