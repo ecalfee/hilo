@@ -413,10 +413,8 @@ rule calc_Dstat:
     resources:
         time_min = 10,
         mem = 2
-    script:
-        """
-        Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile="{input.abbababa}" out="{params.prefix_out}" sizeFile="{input.size}" nameFile="{input.names}"
-        """
+    shell:
+        "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={input.abbababa} out={params.prefix_out} sizeFile={input.size} nameFile={input.names}"
 
 
 ## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
