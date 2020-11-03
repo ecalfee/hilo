@@ -407,14 +407,15 @@ rule calc_Dstat:
         "ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt"
     params:
         p = "med2",
-        prefix_out = "ancestry_by_r/results/f4/{POP}.Dstats"
+        prefix_out = "ancestry_by_r/results/f4/{POP}.Dstats",
+        prefix_in = "ancestry_by_r/results/f4/{POP}.all"
     conda:
         "../envs/environment.yaml"
     resources:
         time_min = 10,
         mem = 2
     shell:
-        "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={input.abbababa} out={params.prefix_out} sizeFile={input.size} nameFile={input.names}"
+        "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={params.prefix_in} out={params.prefix_out} sizeFile={input.size} nameFile={input.names}"
 
 
 ## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
