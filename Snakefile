@@ -14,6 +14,7 @@ wildcard_constraints:
     Ne = "[0-9]+",
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana",
+    ALLO_MEX = "allopatric_maize|pop22", # used in f4s. pop22 is Amecameca (at 2467m, the highest elevation of 3 allopatric pops)
     SUBSAMPLE = "[0-9]+",
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac" # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
@@ -100,7 +101,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
+include: "ancestry_by_r/Snakefile"
 #include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 
@@ -162,9 +163,9 @@ rule all:
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        trip_anc
-        #expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM),
-        #expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal", POP = symp_pops + ["allopatric_maize"], WINDOW = windows_1cM)
+        trip_anc,
+        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
+        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
     params:
         p = "med2"
     resources:
@@ -174,9 +175,7 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-        expand("ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana", "pop361", "pop360", "pop366", "pop362"], WINDOW = windows_1cM),
-        expand("ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana", "pop361", "pop360", "pop366", "pop362"]),
-        expand("ancestry_by_r/results/f4/{POP}.f4", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana", "pop361", "pop360", "pop366", "pop362"])
+
     params:
         p = "med2"
     resources:

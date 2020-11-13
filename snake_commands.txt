@@ -1804,8 +1804,10 @@ Job counts:
                 1       make_fasta
                 1. COMPLETED. Now removing output file and fixing rule to run on whole genome.
 
-# decided to make f4's with Amecameca instead of using all allopatric mexicana
-# because this population has no evidence of admixture
+# decided to make f4's with Amecameca (pop22) instead of using all allopatric mexicana
+# because this population has no evidence of admixture.
+hilo$ snakemake -n all --quiet --profile slurm --jobs 6
+
 
 
 # TO DO:
