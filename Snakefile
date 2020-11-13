@@ -71,11 +71,15 @@ allo_groups = ["allopatric_maize", "allopatric_mexicana"]
 zea = ["maize", "mexicana"]
 Nes = [1000, 10000, 100000]
 
-# sympatric populations
+# sympatric populations (maize and mexicana)
 symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
 "pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35",
 "pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
 "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
+# allopatric mexicana pops
+allo_mex_pops = ["pop20", "pop22", "pop33"]
+# includes all pops sequenced by this study (allopatric maize, parviglumis & tripsacum published by other studies)
+hilo_pops = allo_mex_pops + symp_pops
 
 # create a dictionary that has one entry for each sympatric population
 # containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)
@@ -99,10 +103,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
-#include: "local_ancestry/Snakefile"
+include: "global_ancestry/Snakefile"
+include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
+include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -162,10 +166,10 @@ rule all:
         expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        trip_anc,
-        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
-        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes")#,
+        #trip_anc,
+        #expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
+        #expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
     params:
         p = "med2"
     resources:

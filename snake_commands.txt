@@ -1807,8 +1807,12 @@ Job counts:
 # decided to make f4's with Amecameca (pop22) instead of using all allopatric mexicana
 # because this population has no evidence of admixture.
 hilo$ snakemake -n all --quiet --profile slurm --jobs 6
-
-
+# missing samples/ALL_byPop/pop22_bams.list b/c apparently only copied over sympatric pop lists.
+# copied over pop20, pop22 and pop33 to ALL_byPop. Unfortunately tried to use a for loop for samples/Over0.5x/byPop and it copied ALL pop files, including sympatric. oops!
+# this will trigger a big re-run :(
+for i in 20 22 33; do scp -P 2022 samples/Over0.5x_byPop/pop$i_*.list ecalfee@farm.cse.ucdavis.edu:~/hilo/samples/Over0.5x_byPop/.; done
+# so I will try to 'touch' on snakemake to not rerun all the local ancestry rules etc.
+# should take a min to ID what files need to be 'touched' to fix this .. :/
 
 # TO DO:
 # PUT calc_f4.R script into snakemake rule.
