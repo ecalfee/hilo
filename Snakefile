@@ -99,8 +99,9 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "ancestry_by_r/Snakefile"
+#include: "ZAnc/Snakefile"
+include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:

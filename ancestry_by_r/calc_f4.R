@@ -11,8 +11,10 @@ library(boot)
 # load variables from Snakefile
 zea = snakemake@params[["zea"]]
 # zea = "maize"
+# zea = "mexicana"
 sympatric_pop = snakemake@params[["sympatric_pop"]]
 # sympatric_pop = "sympatric_maize"
+# sympatric_pop = "sympatric_mexicana"
 f4_num_file = snakemake@input[["f4_num"]]
 # f4_num_file = paste0("ancestry_by_r/results/f4/", sympatric_pop, ".f4")
 f4_denom_file = snakemake@input[["f4_denom"]]
@@ -25,11 +27,18 @@ png_r5 = snakemake@output[["png_r5"]]
 # png_r5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_byr5.png")
 png_cd5 = snakemake@output[["png_cd5"]]
 # png_cd5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_bycd5.png")
+png_r5_no_inv4m = snakemake@output[["png_r5_no_inv4m"]]
+# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_byr5_noinv4m.png")
+png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
+# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_bycd5_noinv4m.png")
+png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
+# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 1000
+inv_file = snakemake@params[["inv"]]
+# inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 
 source(colors_file)
-
 
 # population permutation used to calculate D-statistic:
 # (ABBA-BABA)/(ABBA+BABA) in phylogeny (((parv, x), allo_mex), trip)
@@ -54,8 +63,16 @@ alpha = (sum(f4_num$Numer)/sum(f4_num$numSites))/(sum(f4_denom$Numer)/sum(f4_den
 # genomewide the alpha estimate for % maize is ~ 58% in sympatric maize
 
 # look at f4 across recombination rates:
+# get windows
 winds <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
+# get inversion coordinates
+inv <- read.table(inv_file, header = F, stringsAsFactors = F) %>%
+  data.table::setnames(c("inv", "chr", "start", "end", "length"))
 
+# which windows overlap inv4m?
+winds$inv4m = winds$chr == inv$chr[inv$inv == "inv4m"] &
+  winds$start < inv$end[inv$inv == "inv4m"] &
+  winds$end > inv$start[inv$inv == "inv4m"]
 
 convert_2_Mb_per_cM <- function(bin){
   start = substr(bin, 1, 1)
@@ -80,7 +97,7 @@ d_f4 <- group_by(f4_num, window) %>%
   # report quintiles for # bp in a cM window (analogous to cd5, which is coding bp/cM)
   # instead or recombination rate, cM/Mb 
   dplyr::mutate(quintile_Mbp5 = 6 - quintile_r5,
-                bin_Mbp5 = convert_2_Mb_per_cM(bin_r5)
+                bin_Mbp5 = sapply(bin_r5, function(x) convert_2_Mb_per_cM(x))
   )
 
 # by recombination rate (inverse of bp density)
@@ -94,6 +111,7 @@ f4_by_r <- d_f4 %>%
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
             n_windows = length(unique(window))) %>%
   arrange(quintile_Mbp5)
+#View(f4_by_r)
 
 # by coding density
 f4_by_cd <- d_f4 %>%
@@ -139,11 +157,13 @@ calc_cor_r <- function(d, i) { # d is data, i is indices
 
 # test:
 filter(d_f4, !is.na(num_sites)) %>%
-  calc_cor_r(., 1:nrow(.))
+  calc_cor_r(., 1:nrow(.)) # all windows
+filter(d_f4, !is.na(num_sites) & !inv4m) %>%
+  calc_cor_r(., 1:nrow(.)) # all windows not overlapping inversion
 filter(d_f4, !is.na(num_sites)) %>%
   calc_cor_r(., sample(1:nrow(.), replace = T))
 
-# bootstrap
+# bootstrap across all windows
 boot_r <- boot(data = filter(d_f4, !is.na(num_sites)), 
                statistic = calc_cor_r,
                sim = "ordinary",
@@ -155,6 +175,21 @@ boot.ci(boot_r, index = 1, type = c("norm", "basic", "perc"))
 
 # bootstrap confidence interval for number of low recombination bins:
 boot.ci(boot_r, index = 7, type = c("norm", "basic", "perc"))
+
+# bootstrap across all windows, but 
+# exclude windows overlapping inv4m
+boot_r_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
+               statistic = calc_cor_r,
+               sim = "ordinary",
+               stype = "i",
+               R = n_boot)
+
+# bootstrap confidence interval for spearman's rank correlation:
+boot.ci(boot_r_no_inv4m, index = 1, type = c("norm", "basic", "perc"))
+
+# bootstrap confidence interval for number of low recombination bins:
+boot.ci(boot_r_no_inv4m, index = 11, type = c("norm", "basic", "perc"))
+
 
 # bootstrap sampling within each quintile separately:
 # (produces a very similar answer)
@@ -185,10 +220,13 @@ calc_cor_r5 <- function(d, i) { # d is data, i is indices
 # test:
 filter(d_f4, !is.na(num_sites)) %>%
   calc_cor_r5(., 1:nrow(.))
+filter(d_f4, !is.na(num_sites) & !inv4m) %>%
+  calc_cor_r5(., 1:nrow(.))
 filter(d_f4, !is.na(num_sites)) %>%
   calc_cor_r5(., 5)
 
-# bootstrap
+
+# bootstrap resampling each recombination rate quintile independently
 boot_r5 <- boot(data = filter(d_f4, !is.na(num_sites)), 
                statistic = calc_cor_r5,
                sim = "ordinary",
@@ -197,9 +235,20 @@ boot_r5 <- boot(data = filter(d_f4, !is.na(num_sites)),
 
 boot.ci(boot_r5, index = 1, type = c("norm", "basic", "perc"))
 
+# bootstrap resampling each recombination rate quintile independently, BUT
+# excluding all windows overlapping inv4m
+boot_r5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
+                statistic = calc_cor_r5,
+                sim = "ordinary",
+                stype = "i",
+                R = n_boot)
 
-# bootstrap
-# function to calc stat
+boot.ci(boot_r5_no_inv4m, index = 1, type = c("norm", "basic", "perc"))
+
+
+
+# bootstrap function to calc stat
+# correlation with coding density (cd)
 calc_cor_cd <- function(d, i) { # d is data, i is indices
   b = d[i, ] %>%
     group_by(., bin_cd5, quintile_cd5) %>%
@@ -221,9 +270,11 @@ calc_cor_cd <- function(d, i) { # d is data, i is indices
 
 # test:
 filter(d_f4, !is.na(num_sites)) %>%
-  calc_cor_cd(., 1:nrow(.))
+  calc_cor_cd(., 1:nrow(.)) # all windows
+filter(d_f4, !is.na(num_sites) & !inv4m) %>%
+  calc_cor_cd(., 1:nrow(.)) # excluding inv4m
 
-# bootstrap
+# bootstrap of correlation across coding density
 boot_cd <- boot(data = filter(d_f4, !is.na(num_sites)), 
                statistic = calc_cor_cd,
                sim = "ordinary",
@@ -232,6 +283,17 @@ boot_cd <- boot(data = filter(d_f4, !is.na(num_sites)),
 
 # bootstrap ci for spearman's rank correlation:
 boot.ci(boot_cd, index = 1, type = c("norm", "basic", "perc"))
+
+# bootstrap of correlation across coding density
+boot_cd_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
+                statistic = calc_cor_cd,
+                sim = "ordinary",
+                stype = "i",
+                R = n_boot)
+
+# bootstrap ci for spearman's rank correlation:
+boot.ci(boot_cd_no_inv4m, index = 1, type = c("norm", "basic", "perc"))
+
 
 
 # make plots, add spearman's rank + basic bootstrap to both
@@ -273,14 +335,62 @@ p_r5 <- ggplot(data = d_boot_r, aes(x = mbp_bin)) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Mexicana ancestry by bp density in", sympatric_pop)) +
+  ggtitle(paste("Ancestry by bp density in", sympatric_pop)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 #p_r5
 ggsave(file = png_r5,
        plot = p_r5,
        device = "png",
-       width = 5, height = 4, 
+       width = 5.5, height = 4.5, 
        units = "in", dpi = 300)
+
+# plot w/out inv4m:
+d_boot_r_no_inv4m <- as.data.frame(rbind(boot_r_no_inv4m$t0, boot_r_no_inv4m$t)) %>%
+  data.table::setnames(names(boot_r_no_inv4m$t0)) %>%
+  dplyr::mutate(boot = 0:n_boot) %>% # original estimate I set to boot '0'
+  pivot_longer(., cols = starts_with("Mbp"), 
+               names_to = "mbp_bin", values_to = "f4_mex")
+ci_boot_r_no_inv4m <- t(sapply(1:5, function(x)
+  boot.ci(boot_r_no_inv4m, index = 1+x, conf = 0.95, type = "basic")$basic[4:5])) %>%
+  data.frame(.) %>%
+  data.table::setnames(c("low", "high")) %>%
+  mutate(mbp_bin = paste0("Mbp", 1:5))
+ci_spearman_r_no_inv4m = boot.ci(boot_r_no_inv4m, index = 1, conf = 0.95, type = "basic")
+text_spearman_r_no_inv4m = paste0("Spearman's rho = ", ci_spearman_r_no_inv4m$t0, 
+                         " CI_95%(", ci_spearman_r_no_inv4m$basic[4], ", ",
+                         ci_spearman_r_no_inv4m$basic[5], ")")
+
+p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = mbp_bin)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(d_boot_r_no_inv4m, boot > 0), 
+             color = col_maize_mex_parv[zea],
+             position = position_jitter(0.2),
+             size = 0.1,
+             aes(y = f4_mex)) +
+  # then add mean for that group
+  geom_point(data = filter(d_boot_r_no_inv4m, boot == 0), 
+             pch = 18, size = 2,
+             aes(y = f4_mex)) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap with NGSAdmix
+  geom_errorbar(data = ci_boot_r_no_inv4m, aes(ymin = low,
+                                      ymax = high),
+                width = .5) +
+  xlab("Mbp per cM (quintiles low -> high)") +
+  ylab("Proportion mexicana ancestry") +
+  labs(subtitle = text_spearman_r_no_inv4m) +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle(paste("Ancestry by bp density in", sympatric_pop, "no inv4m")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_r5_no_inv4m
+ggsave(file = png_r5_no_inv4m,
+       plot = p_r5_no_inv4m,
+       device = "png",
+       width = 5.5, height = 4.5, 
+       units = "in", dpi = 300)
+
 
 # by coding bp per cM
 d_boot_cd <- as.data.frame(rbind(boot_cd$t0, boot_cd$t)) %>%
@@ -320,11 +430,86 @@ p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Mexicana ancestry by gene density in", sympatric_pop)) +
+  ggtitle(paste("Ancestry by gene density in", sympatric_pop)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 #p_cd5
 ggsave(file = png_cd5,
        plot = p_cd5,
        device = "png",
-       width = 5, height = 4, 
+       width = 5.5, height = 4.5, 
        units = "in", dpi = 300)
+
+
+# by coding bp per cM, excluding windows overlapping inversion inv4m
+d_boot_cd_no_inv4m <- as.data.frame(rbind(boot_cd_no_inv4m$t0, boot_cd_no_inv4m$t)) %>%
+  data.table::setnames(names(boot_cd_no_inv4m$t0)) %>%
+  dplyr::mutate(boot = 0:n_boot) %>% # original estimate I set to boot '0'
+  pivot_longer(., cols = starts_with("cd"), 
+               names_to = "cd_bin", values_to = "f4_mex")
+ci_boot_cd_no_inv4m <- t(sapply(1:5, function(x)
+  boot.ci(boot_cd_no_inv4m, index = 1+x, conf = 0.95, type = "basic")$basic[4:5])) %>%
+  data.frame(.) %>%
+  data.table::setnames(c("low", "high")) %>%
+  mutate(cd_bin = paste0("cd", 1:5))
+ci_spearman_cd_no_inv4m = boot.ci(boot_cd_no_inv4m, index = 1, conf = 0.95, type = "basic")
+text_spearman_cd_no_inv4m = paste0("Spearman's rho = ", ci_spearman_cd_no_inv4m$t0, 
+                          " CI_95%(", ci_spearman_cd_no_inv4m$basic[4], ", ",
+                          ci_spearman_cd_no_inv4m$basic[5], ")")
+
+p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(d_boot_cd_no_inv4m, boot > 0), 
+             color = col_maize_mex_parv[zea],
+             position = position_jitter(0.2),
+             size = 0.1,
+             aes(y = f4_mex)) +
+  # then add original estimate for that group
+  geom_point(data = filter(d_boot_cd_no_inv4m, boot == 0), 
+             pch = 18, size = 2,
+             aes(y = f4_mex)) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap with NGSAdmix
+  geom_errorbar(data = ci_boot_cd_no_inv4m, aes(ymin = low,
+                                       ymax = high),
+                width = .5) +
+  xlab("Coding bp per cM (quintiles low -> high)") +
+  ylab("Proportion mexicana ancestry") +
+  labs(subtitle = text_spearman_cd_no_inv4m) +
+  theme_classic() +
+  guides(color = guide_legend("Subspecies"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle(paste("Ancestry by gene density in", sympatric_pop, "no inv4m")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+#p_cd5_no_inv4m
+ggsave(file = png_cd5_no_inv4m,
+       plot = p_cd5_no_inv4m,
+       device = "png",
+       width = 5.5, height = 4.5, 
+       units = "in", dpi = 300)
+
+
+# plot separately f4's for numerator and denominator
+p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
+  pivot_longer(., cols = c("f4_num", "f4_denom"), 
+               names_to = "num_denom", values_to = "f4") %>%
+  pivot_longer(., cols = c("quintile_Mbp5", "quintile_cd5"),
+               names_to = "type", values_to = "quintile") %>%
+  filter(!is.na(quintile)) %>% # pivot longer creates some NAs because rows either have cd5 or Mbp5 data
+  mutate(neg_f4 = -f4) %>%
+  ggplot(., aes(x = quintile, y = neg_f4, color = num_denom)) +
+  geom_point() +
+  facet_wrap(~type) +
+  ggtitle(paste("f4 estimates for", sympatric_pop, "(num) and allopatric maize (denom)")) +
+  xlab("Mbp per cM quintile (low -> high)") +
+  ylab("f4 estimate (negative of angsd output)") +
+  labs(subtitle = "f4_num/f4_denom = alpha (maize ancestry estimate)",
+       color = "f4 ratio components") +
+  theme_light() +
+  geom_hline(yintercept = 0)
+# p_f4_num_denom
+ggsave(file = png_f4_num_denom,
+       plot = p_f4_num_denom,
+       device = "png",
+       width = 7.5, height = 4.5, 
+       units = "in", dpi = 300)
+

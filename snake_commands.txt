@@ -1784,9 +1784,15 @@ Job counts:
         5       combine_abba_baba_for_Dstat
         5       f4_from_abba_baba
         1       some
-        16 # RUNNING 11.3.2020 11:37am
+        16 # RUNNING 11.3.2020 11:37am. Hm says some issue with POP wildcard? fixing by adding to params.
 # adding 2 more individual maize pops from across the range for f4 stats: pop362 & 366 (Santa Clara & Jicaltepec)
 hilo$ snakemake some --quiet --profile slurm --jobs 5
+# RUNNING 11.3.2020
+
+# had typo in rule (fixed) but to run quickly I just did in command line:
+hilo$ (head -n 1 ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 | cut -f1-6 | awk -v OFS="\t" '{print "window",$0,"pop1","pop2","pop3","pop4"}'; for i in {1..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 | cut -f1-6 | awk -v i=$i -v pop=sympatric_maize -v OFS="\t" 'NR%3==1 {print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}'; done) > ancestry_by_r/results/f4/sympatric_maize.f4
+
+
 
 # TO DO:
 # PUT calc_f4.R script into snakemake rule.

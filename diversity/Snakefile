@@ -1,0 +1,27 @@
+## diversity/Snakefile: pipeline to get pi and Fst estimates
+
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+
+## make_fasta: makes ancestral fasta from tripsacum using concensus (most frequent) base
+rule make_fasta:
+    input:
+        bam = "filtered_bams/results/SRR7758238/TRIP.sort.dedup.baq.bam",
+        bai = "filtered_bams/results/SRR7758238/TRIP.sort.dedup.baq.bam.bai"
+    output:
+        fasta = "filtered_bams/results/SRR7758238/TRIP.sort.dedup.baq.fasta"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 4 + 44
+    shell:
+        "angsd -i {input.bam} "
+        "-doFasta 2 "
+        "-r 2:1000000-1002000 "
+        "-remove_bads 1 -minMapQ 30 -minQ 20 "
+        "-doCounts 1 "
