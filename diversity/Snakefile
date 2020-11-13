@@ -18,14 +18,11 @@ rule make_fasta:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 10,
-        mem = 4
-        #time_min = 12*60,
-        #mem = lambda wildcards, attempt: attempt * 4 + 44
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 4 + 44
     shell:
         "angsd -out {params.out_prefix} "
         "-i {input.bam} "
         "-doFasta 2 "
-        "-r 2:1000000-1002000 "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 "

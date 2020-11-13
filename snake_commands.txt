@@ -1792,12 +1792,17 @@ hilo$ snakemake some --quiet --profile slurm --jobs 5
 # had typo in rule (fixed) but to run quickly I just did in command line:
 hilo$ (head -n 1 ancestry_by_r/results/f4/sympatric_maize/W1.abbababa2 | cut -f1-6 | awk -v OFS="\t" '{print "window",$0,"pop1","pop2","pop3","pop4"}'; for i in {1..1520}; do tail -n +2 ancestry_by_r/results/f4/sympatric_maize/W$i.abbababa2 | cut -f1-6 | awk -v i=$i -v pop=sympatric_maize -v OFS="\t" 'NR%3==1 {print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}'; done) > ancestry_by_r/results/f4/sympatric_maize.f4
 
-# trying out making fasta file for tripsacum:
+# trying out making fasta file for tripsacum (test on small region):
 hilo$ snakemake filtered_bams/results/SRR7758238/TRIP.sort.dedup.baq.fasta --quiet --profile slurm
 Job counts:
         count   jobs
         1       make_fasta
-        1
+        1 # didn't work. (different output format). Trying again on small region:
+        hilo$ snakemake filtered_bams/results/SRR7758238/TRIP.fa.gz --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       make_fasta
+                1. COMPLETED. Now removing output file and fixing rule to run on whole genome.
 
 # decided to make f4's with Amecameca instead of using all allopatric mexicana
 # because this population has no evidence of admixture
