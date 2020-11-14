@@ -1813,10 +1813,43 @@ hilo$ snakemake -n all --quiet --profile slurm --jobs 6
 for i in 20 22 33; do scp -P 2022 samples/Over0.5x_byPop/pop$i_*.list ecalfee@farm.cse.ucdavis.edu:~/hilo/samples/Over0.5x_byPop/.; done
 # so I will try to 'touch' on snakemake to not rerun all the local ancestry rules etc.
 # should take a min to ID what files need to be 'touched' to fix this .. :/
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        84      boot_ancestry_hmm
+        2       calc_K_matrix_zea
+        6       combine_pop_ancestry_data
+        2       fdr_zAnc
+        2       fit_lm_elev
+        2       fit_zAnc
+        84      get_admix_times
+        56      get_homozygous_ancestry_bams
+        56      get_homozygous_ancestry_tracts
+        28      get_maximum_a_posterior
+        28      make_input_hmm
+        84      map_local_anc_onto_1cM_windows
+        3       plot_admix_times
+        1       plot_bootstrap_anc_by_r
+        2       plot_mean_anc
+        2       plot_shared_peaks
+        2       plot_slope_elev
+        2       simulate_MVN
+        84      summarise_local_anc_by_1cM
+        84      summarise_posterior
+        615
+# run 'touch' to update timestamps for all outputs:
+hilo$ snakemake --touch all --quiet --profile slurm
+
+# check nothing else needs to be re-run:
+hilo$ snakemake -n all --quiet --profile slurm
+
+# then try again to redo f4s and make tripsacum fasta:
+hilo$ snakemake -n all --quiet --profile slurm --jobs 6
+
 
 # TO DO:
 # PUT calc_f4.R script into snakemake rule.
-# Re-make plots so the points are individual window estimates? Color inv4m windows.
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
@@ -1826,28 +1859,5 @@ for i in 20 22 33; do scp -P 2022 samples/Over0.5x_byPop/pop$i_*.list ecalfee@fa
 # (4) Anything on pi that you can salvage?
 # (5) Do I keep anything on zTz? What do I want to conclude, just that idiosyncratic selection is more common?
 
-
-
-# run -doAbbaBaba2 from angsd (just want numerator for f4) on every population
-# for each 1cM region of the genome
-# do abba baba runs mean of (x1-x2)*(x3-x4) which is equivalent o f4(1,2;3,4) ???? CHECK THIS.
-# (((1,2),3),4) is the abba baba tree.
-# maybe need to make bam file first, e.g. AbbaBaba/4pop_maize_bam.list
-
 # find flowering time GWAS hits and do permutations to calcuate overlap with big slopes w/ elevation
-
-# Figure out how to polarize using outgroup so you can calculate the unfolded SFS/pi/Fst --
-# basically this means turning TRIPSACUM BAM INTO A FASTA FILE
-
-
-
 (5) Make plot of freq in maize vs. freq in mexicana
-
-# TO DO:
-
-# get coding density/cM in my 1cM blocks and re-run bootstrap.
-# then see what needs to be re-run when you do plot_bootstrap_anc_by_r
-# finally, if all set, add new plot with cd5 coding/cM quintiles
-# possibly split summarising bootstrap results into their own script
-
-# set up to use bedtools (and better avg) to estimate local ancestry for 1cM blocks
