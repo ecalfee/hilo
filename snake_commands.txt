@@ -1895,7 +1895,9 @@ Job counts:
     3       calc_Dstat
     3       combine_abba_baba_for_Dstat
     3       f4_from_abba_baba
-    10 # RUNNING 11.16.2020 12pm
+    10 # RUNNING 11.16.2020 12pm. hmm, getting weird error:
+    RuleException in line 353 of /home/ecalfee/hilo/ancestry_by_r/Snakefile:
+    IndexError: list index out of range
 
 
 

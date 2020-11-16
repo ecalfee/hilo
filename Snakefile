@@ -169,7 +169,8 @@ rule all:
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
         trip_anc,
         expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
-        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
+        expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
+        expand("ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
     params:
         p = "med2"
     resources:
