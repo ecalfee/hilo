@@ -359,7 +359,6 @@ rule f4_from_abba_baba:
         p = "med2",
         POP = "{POP}",
         ALLO_MEX = "{ALLO_MEX}"
-
     conda:
         "../envs/environment.yaml"
     resources:
@@ -374,6 +373,33 @@ rule f4_from_abba_baba:
         cut -f1-6 | awk -v i=$i -v pop={params.POP} -v OFS='\\t' 'NR%3==1 {{print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}}'
         done) > {output.f4}
         """
+
+## calc_and_plot_f4: calculates and plots f4 ratio for admixture proportion estimates (with bootstrap results)
+rule calc_and_plot_f4:
+    input:
+        f4_num = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4",
+        f4_denom = "ancestry_by_r/results/f4_{ALLO_MEX}/allopatric_maize.f4",
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        colors = "colors.R"
+    output:
+        png_r5 = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png",
+        png_cd5 = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_bycd5.png",
+        png_r5_no_inv4m = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5_noinv4m.png",
+        png_cd5_no_inv4m = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_bycd5_noinv4m.png",
+        png_f4_num_denom = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_num_denom.png"
+    params:
+        p = "med2",
+        sympatric_pop = "{POP}",
+        n_boot = 1000
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "calc_and_plot_f4.R"
+
 
 ## combine_abba_baba_for_Dstat: combines .abbababa2 files across the genome for input to D-statistic calc
 rule combine_abba_baba_for_Dstat:

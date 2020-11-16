@@ -1840,12 +1840,77 @@ Job counts:
         615
 # run 'touch' to update timestamps for all outputs:
 hilo$ snakemake --touch all --quiet --profile slurm
-
+Job counts:
+        count   jobs
+        1       all
+        84      boot_ancestry_hmm
+        2       calc_K_matrix_zea
+        6       combine_pop_ancestry_data
+        2       fdr_zAnc
+        2       fit_lm_elev
+        2       fit_zAnc
+        84      get_admix_times
+        56      get_homozygous_ancestry_bams
+        56      get_homozygous_ancestry_tracts
+        28      get_maximum_a_posterior
+        28      make_input_hmm
+        84      map_local_anc_onto_1cM_windows
+        3       plot_admix_times
+        1       plot_bootstrap_anc_by_r
+        2       plot_mean_anc
+        2       plot_shared_peaks
+        2       plot_slope_elev
+        2       simulate_MVN
+        84      summarise_local_anc_by_1cM
+        84      summarise_posterior
+        615
 # check nothing else needs to be re-run:
 hilo$ snakemake -n all --quiet --profile slurm
-
+(all clear)
 # then try again to redo f4s and make tripsacum fasta:
 hilo$ snakemake -n all --quiet --profile slurm --jobs 6
+Job counts:
+        count   jobs
+        1       all
+        3       calc_Dstat
+        3       combine_abba_baba_for_Dstat
+        4560    do_abba_baba
+        3       f4_from_abba_baba
+        3       input_abba_baba
+        1       make_fasta
+        4574 # RUNNING 11.13.2020 4:19pm
+        hilo$ squeue -u ecalfee
+                 JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+              26997260     high2     bash  ecalfee  R       17:54      1 1   2G     c6-95
+              26997750      med2 do_abba_  ecalfee  R        0:21      1 3   8G     c6-96
+              26997744      med2 do_abba_  ecalfee  R        0:43      1 3   8G     c6-94
+              26997745      med2 do_abba_  ecalfee  R        0:43      1 3   8G     c6-94
+              26997743      med2 do_abba_  ecalfee  R        0:46      1 3   8G     c6-95
+              26997712      med2 make_fas  ecalfee  R        2:05      1 13  48G    c6-94
+# everything but summary files and Dstats ran. Couldn't find snake logs, so just trying these files again:
+hilo$ snakemake all --quiet --profile slurm --jobs 6
+Job counts:
+    count   jobs
+    1       all
+    3       calc_Dstat
+    3       combine_abba_baba_for_Dstat
+    3       f4_from_abba_baba
+    10 # RUNNING 11.16.2020 12pm
+
+
+
+# flowering time genes
+# downloaded Data S7 candidate genes compiled by Li et al 2016
+data/flowering_time/candidate_flowering_time_genes_Li_et_al_2016_data_S7.csv
+# copy-pasted first column (gene name) into new file
+data/flowering_time/v2_gene_names_Li_et_al_2016.csv
+# found unique gene names
+Erin$ cat data/flowering_time/v2_gene_names_Li_et_al_2016.csv | sort | uniq | wc -l > data/flowering_time/v2_unique_gene_names_Li_et_al_2016.csv
+# download gene model cross reference from GRAMENE:
+https://www.maizegdb.org/gene_center/gene#ncbi
+(Complete B73 v4 (Zm00001d.2) gene model cross reference)
+
+# find matching gene on v4 genome:
 
 
 # TO DO:
