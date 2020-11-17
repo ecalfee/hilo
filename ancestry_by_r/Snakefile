@@ -413,7 +413,7 @@ rule combine_abba_baba_for_Dstat:
     shell:
         """
         (cat ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W1.abbababa2
-        for i in {2..1520}
+        for i in {{2..1520}}
         do tail -n +2 ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W$i.abbababa2
         done) > {output.abbababa}
         echo "parviglumis" > {output.pops_name}

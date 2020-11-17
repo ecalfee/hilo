@@ -1898,6 +1898,8 @@ Job counts:
     10 # RUNNING 11.16.2020 12pm. hmm, getting weird error:
     RuleException in line 353 of /home/ecalfee/hilo/ancestry_by_r/Snakefile:
     IndexError: list index out of range # fixed problem -- needed double brackets in for i in {{1..1250}}
+hilo$ snakemake all --quiet --profile slurm
+# RUNNING 11.16.2020 9:12pm. oops fixed 2nd for loop {{}} too:
 
 
 # flowering time genes
