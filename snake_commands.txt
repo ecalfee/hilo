@@ -1897,8 +1897,7 @@ Job counts:
     3       f4_from_abba_baba
     10 # RUNNING 11.16.2020 12pm. hmm, getting weird error:
     RuleException in line 353 of /home/ecalfee/hilo/ancestry_by_r/Snakefile:
-    IndexError: list index out of range
-
+    IndexError: list index out of range # fixed problem -- needed double brackets in for i in {{1..1250}}
 
 
 # flowering time genes
