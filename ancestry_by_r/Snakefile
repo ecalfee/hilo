@@ -416,10 +416,10 @@ rule combine_abba_baba_for_Dstat:
         for i in {{2..1520}}
         do tail -n +2 ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W$i.abbababa2
         done) > {output.abbababa}
-        echo "parviglumis" > {output.pops_name}
-        echo "allopatric_mexicana" >> {output.pops_name}
-        echo {POP} >> {output.pops_name}
-        echo "tripsacum" >> {output.pops_name}
+        echo "parviglumis" > {output.pop_names}
+        echo "allopatric_mexicana" >> {output.pop_names}
+        echo {POP} >> {output.pop_names}
+        echo "tripsacum" >> {output.pop_names}
         """
 
 ## calc_Dstat: calculates D-statistic genomewide with bootstrap confidence intervals
