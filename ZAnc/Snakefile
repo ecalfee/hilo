@@ -56,7 +56,8 @@ rule fit_lm_elev:
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
     output:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
-        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData"
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sim = "ZAnc/results/" + prefix_all + "Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData" # fits from simulated MVN data
     params:
         p = "med2"
     shadow:
@@ -124,6 +125,143 @@ rule plot_slope_elev:
         mem = 2
     script:
         "plot_slope_elev.R"
+
+## make_bed_slope_elev: makes bed files with outlier regions for ancestry slope with elevation
+rule make_bed_slope_elev:
+    input:
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData",
+        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+    output:
+        fdr_pos = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.fdr05.bed",
+        fdr_neg = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.fdr05.bed",
+        pos_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.perc02.bed",
+        neg_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.perc02.bed",
+        pos_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.p05.bed",
+        neg_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.p05.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "make_bed_slope_elev.R"
+
+## make_bed_anc_outliers: makes bed files with outlier regions for mean mexicana ancestry (pos is above mean, neg is below mean)
+rule make_bed_anc_outliers:
+    input:
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fit.RData",
+        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+    output:
+        pos_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.fdr05.bed",
+        neg_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.fdr05.bed",
+        pos_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.perc02.bed",
+        neg_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.perc02.bed",
+        pos_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.p05.bed",
+        neg_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.p05.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "make_bed_anc_outliers.R"
+
+## merge_bed_outliers: merges adjacent outliers into contiguous regions
+rule merge_bed_outliers:
+    input:
+        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed"
+    output:
+        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 2,
+        mem = 2
+    shell:
+        "bedtools merge -i {input} > {output}"
+
+## find_flowering_time_genes_v4: for all flowering time genes on v2 coordinates, finds match on v4 coordinates. makes a bed file.
+rule find_flowering_time_genes_v4:
+    input:
+        Li = "data/flowering_time/v2_unique_gene_names_Li_et_al_2016.csv",
+        Dong = "data/flowering_time/floweringTimeMaizeDong2012.csv",
+        cross_ref = "data/refMaize/geneAnnotations/gene_model_xref_v4_from_gramene.txt"
+    output:
+        bed = "ZAnc/results/flowering_time_genes_v4.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "flowering_time_genes.R"
+
+## add_10kb_flowering_time_genes: adds 10kb upstream and downstream to all flowering time genes found on v4 chromosome coordinates
+rule add_10kb_flowering_time_genes:
+    input:
+        bed = "ZAnc/results/flowering_time_genes_v4.bed",
+        genome = ref_chr
+    output:
+        bed = "ZAnc/results/flowering_time_genes_v4.plus10kb.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell: # also gets rid of header
+        "tail -n +2 {input.bed} | bedtools slop -i - -g {input.genome} -b 10000 > {output.bed}"
+
+## calc_overlap: find overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
+rule calc_overlap:
+    input:
+        genes = "ZAnc/results/flowering_time_genes_v4.plus10kb.bed",
+        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
+        genome = ref_chr
+    output:
+        bed = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
+        shuffle = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        """
+        bedtools intersect -a {input.genes} -b {input.outliers} > {output.bed}
+        wc -l {output.bed} > {output.shuffle}
+        for i in {{1..100}}
+            do bedtools shuffle -i {input.genes} -g {input.genome} | \\
+            bedtools intersect -a - -b {input.outliers} | wc -l >> {output.shuffle}
+        done
+        """
 
 
 ## fit_zAnc: zTz, lm(zAnc ~ zElev) and lm(zAnc ~ intercept) transforms ancestry using cholesky rotation, then fits association with transformed variables, or null model

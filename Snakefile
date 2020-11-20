@@ -12,6 +12,9 @@ wildcard_constraints:
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
+    POSNEG = "pos|neg",
+    SIG = "fdr05|perc02|p05", # outlier significance cutoffs: 5% FDR, 2% empirical cutoff, p = 5% (5% percentile from null simulations)
+    STAT = "meanAnc|lmElev", # statistics defining outliers
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana",
     ALLO_MEX = "allopatric_maize|pop22", # used in f4s. pop22 is Amecameca (at 2467m, the highest elevation of 3 allopatric pops)
@@ -106,8 +109,8 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
-include: "diversity/Snakefile"
+include: "ZAnc/Snakefile"
+#include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -170,7 +173,9 @@ rule all:
         trip_anc,
         expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
         expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
-        expand("ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"])
+        expand("ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
+        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"], SUFFIX = ["bed", "counts"])
+shuffle = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
     params:
         p = "med2"
     resources:

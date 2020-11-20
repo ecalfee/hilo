@@ -16,6 +16,8 @@ fdr_out = snakemake@output[["fdr"]]
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
 fit_out = snakemake@output[["fit"]]
 # fit_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
+sim_out = snakemake@output[["sim"]]
+# sim_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
 
 # load data
 load(anc_file)
@@ -56,3 +58,4 @@ FDRs$prop_SNPs = FDRs$n_SNPs/nrow(fits)
 # save results
 save(FDRs, file = fdr_out)
 save(fits, file = fit_out)
+save(fits_sim, file = sim_out)

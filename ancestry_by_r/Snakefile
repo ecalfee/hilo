@@ -418,7 +418,7 @@ rule combine_abba_baba_for_Dstat:
         done) > {output.abbababa}
         echo "parviglumis" > {output.pop_names}
         echo "allopatric_mexicana" >> {output.pop_names}
-        echo {POP} >> {output.pop_names}
+        echo {params.POP} >> {output.pop_names}
         echo "tripsacum" >> {output.pop_names}
         """
 

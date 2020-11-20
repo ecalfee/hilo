@@ -1899,7 +1899,8 @@ Job counts:
     RuleException in line 353 of /home/ecalfee/hilo/ancestry_by_r/Snakefile:
     IndexError: list index out of range # fixed problem -- needed double brackets in for i in {{1..1250}}
 hilo$ snakemake all --quiet --profile slurm
-# RUNNING 11.16.2020 9:12pm. oops fixed 2nd for loop {{}} too:
+# RUNNING 11.16.2020 9:12pm. oops fixed 2nd for loop {{}} too. Fixed {POP} to {params.POP} in next rule.
+# added a bunch of rules to the pipeline to look at flowering time genes.
 
 
 # flowering time genes
@@ -1908,16 +1909,15 @@ data/flowering_time/candidate_flowering_time_genes_Li_et_al_2016_data_S7.csv
 # copy-pasted first column (gene name) into new file
 data/flowering_time/v2_gene_names_Li_et_al_2016.csv
 # found unique gene names
-Erin$ cat data/flowering_time/v2_gene_names_Li_et_al_2016.csv | sort | uniq | wc -l > data/flowering_time/v2_unique_gene_names_Li_et_al_2016.csv
+Erin$ cat data/flowering_time/v2_gene_names_Li_et_al_2016.csv | sort | uniq  > data/flowering_time/v2_unique_gene_names_Li_et_al_2016.csv
 # download gene model cross reference from GRAMENE:
 https://www.maizegdb.org/gene_center/gene#ncbi
 (Complete B73 v4 (Zm00001d.2) gene model cross reference)
-
+data/refMaize/geneAnnotations/gene_model_xref_v4_from_gramene.txt
 # find matching gene on v4 genome:
 
 
 # TO DO:
-# PUT calc_f4.R script into snakemake rule.
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
