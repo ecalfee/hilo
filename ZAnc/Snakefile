@@ -57,7 +57,7 @@ rule fit_lm_elev:
     output:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
         fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
-        sim = "ZAnc/results/" + prefix_all + "Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData" # fits from simulated MVN data
+        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData" # fits from simulated MVN data
     params:
         p = "med2"
     shadow:
