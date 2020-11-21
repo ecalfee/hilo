@@ -157,8 +157,7 @@ rule make_bed_anc_outliers:
     input:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fit.RData",
-        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed"
     output:
         pos_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.fdr05.bed",
         neg_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.fdr05.bed",
