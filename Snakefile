@@ -174,7 +174,7 @@ rule all:
         expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
         expand("ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
         expand("ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "allopatric_maize", "sympatric_mexicana"]),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, Ne = 10000, YESNO = "yesP", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"], SUFFIX = ["bed", "counts"])
+        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"], SUFFIX = ["bed", "counts"])
     params:
         p = "med2"
     resources:
