@@ -1934,13 +1934,13 @@ Job counts:
         Job counts:
                 count   jobs
                 1       all
-                3       calc_Dstat
-                3       calc_and_plot_f4 # error: inv_file must be character string or connection
+                3       calc_Dstat # error is I must have accidentally written over angsd DStat script with a blank script. will download new one. (ls -lh says: -rw-r--r-- 1 ecalfee ecalfee    0 Nov 12 14:58 ../software/angsd_0.932/R/estAvgError.R)
+                3       calc_and_plot_f4 # error: inv_file must be character string or connection -fixed.
                 24      calc_overlap
-                2       make_bed_anc_outliers
-                2       make_bed_slope_elev
+                2       make_bed_anc_outliers # error: fdr_pos file not found (to write to)
+                2       make_bed_slope_elev # fixed output file name errors in R script.
                 24      merge_bed_outliers
-                59
+                59 # trying again:
 
 
 

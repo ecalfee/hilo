@@ -40,14 +40,14 @@ anc <- read.table(anc_file, header = T, stringsAsFactors = F, sep = "\t") # mean
 anc %>%
   filter(anc_freq > filter(FDRs, FDR == 0.05 & tail == "high")$thesholds) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = fdr_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
 # filter for low mexicana ancestry outliers
 anc %>%
   filter(anc_freq < filter(FDRs, FDR == 0.05 & tail == "low")$thesholds) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = fdr_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
 # what % of the genome meets the FDR threshold?
@@ -66,7 +66,7 @@ anc %>%
   filter(quantile > .98) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = perc_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 anc %>%
@@ -77,7 +77,7 @@ anc %>%
   filter(quantile < .02) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = perc_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 
 # p-value from simulations -- p-value = 0.05 cutoff is at quantiles c(2.5%, 97.5%) of simulated points
@@ -85,11 +85,11 @@ anc %>%
 anc %>%
   filter(anc_freq > quantile(MVN_mean, 0.975)) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = p_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 anc %>%
   filter(anc_freq < quantile(MVN_mean, 0.025)) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = p_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)

@@ -50,7 +50,7 @@ bind_cols(sites_bed, fits) %>%
   filter(slope > filter(FDRs, FDR == 0.1 & tail == "high")$thesholds) %>%
   #dplyr::select(., colnames(sites_bed), slope) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = fdr_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
 # filter for negative slope outliers above 5% FDR
@@ -58,7 +58,7 @@ bind_cols(sites_bed, fits) %>%
   rename(slope = envWeights) %>%
   filter(slope < filter(FDRs, FDR == 0.05 & tail == "low")$thesholds) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = fdr_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
 # what percent of the genome is in an outlier region?
@@ -78,7 +78,7 @@ bind_cols(sites_bed, fits) %>%
   filter(quantile > .98) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = perc_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 bind_cols(sites_bed, fits) %>%
@@ -89,7 +89,7 @@ bind_cols(sites_bed, fits) %>%
   filter(quantile < .02) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = perc_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 
 # p-value from simulations -- p-value = 0.05 cutoff is at quantiles c(2.5%, 97.5%) of simulated points
@@ -97,11 +97,11 @@ bind_cols(sites_bed, fits) %>%
 bind_cols(sites_bed, fits) %>%
   filter(envWeights > quantile(fits_sim$envWeights, 0.975)) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = p_pos,  sep = "\t", quote = F,
+  write.table(., file = pos_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 bind_cols(sites_bed, fits) %>%
   filter(envWeights < quantile(fits_sim$envWeights, 0.025)) %>%
   dplyr::select(., chr, start, end) %>%
-  write.table(., file = p_neg,  sep = "\t", quote = F,
+  write.table(., file = neg_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)
