@@ -1901,8 +1901,6 @@ Job counts:
 hilo$ snakemake all --quiet --profile slurm
 # RUNNING 11.16.2020 9:12pm. oops fixed 2nd for loop {{}} too. Fixed {POP} to {params.POP} in next rule.
 # added a bunch of rules to the pipeline to look at flowering time genes.
-
-
 # flowering time genes
 # downloaded Data S7 candidate genes compiled by Li et al 2016
 data/flowering_time/candidate_flowering_time_genes_Li_et_al_2016_data_S7.csv
@@ -1914,10 +1912,45 @@ Erin$ cat data/flowering_time/v2_gene_names_Li_et_al_2016.csv | sort | uniq  > d
 https://www.maizegdb.org/gene_center/gene#ncbi
 (Complete B73 v4 (Zm00001d.2) gene model cross reference)
 data/refMaize/geneAnnotations/gene_model_xref_v4_from_gramene.txt
-# find matching gene on v4 genome:
+
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       add_10kb_flowering_time_genes
+        1       all
+        3       calc_Dstat
+        3       calc_and_plot_f4
+        24      calc_overlap
+        3       combine_abba_baba_for_Dstat
+        2       f4_from_abba_baba
+        1       find_flowering_time_genes_v4
+        2       fit_lm_elev
+        2       make_bed_anc_outliers
+        2       make_bed_slope_elev
+        24      merge_bed_outliers
+        2       plot_slope_elev
+        70 # 11.20.2020: RUNNING 11:23pm. Many jobs didn't run:
+        hilo$ snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                3       calc_Dstat
+                3       calc_and_plot_f4 # error: inv_file must be character string or connection
+                24      calc_overlap
+                2       make_bed_anc_outliers
+                2       make_bed_slope_elev
+                24      merge_bed_outliers
+                59
+
 
 
 # TO DO:
+- get pi estimates within homozygous ancestry across the whole genome.
+- test pi script with small genome segment. then decide memory for running a whole pop.
+- test the 'domesticate asymilate hypothesis' for mexicana.
+- look at admixture at known domestication genes
+- flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
+
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools

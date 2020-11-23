@@ -35,7 +35,7 @@ png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
 # png_f4_num_denom = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 1000
-inv_file = snakemake@params[["inv_file"]]
+inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 
 source(colors_file)
