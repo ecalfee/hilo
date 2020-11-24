@@ -24,15 +24,15 @@ windows_file = snakemake@input[["windows"]]
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 png_r5 = snakemake@output[["png_r5"]]
-# png_r5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_byr5.png")
+# png_r5 = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_byr5.png")
 png_cd5 = snakemake@output[["png_cd5"]]
-# png_cd5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_bycd5.png")
+# png_cd5 = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_bycd5.png")
 png_r5_no_inv4m = snakemake@output[["png_r5_no_inv4m"]]
-# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_byr5_noinv4m.png")
+# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_byr5_noinv4m.png")
 png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
-# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_bycd5_noinv4m.png")
+# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_bycd5_noinv4m.png")
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
-# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_num_denom.png")
+# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 1000
 inv_file = snakemake@input[["inv_file"]]
@@ -100,7 +100,8 @@ d_f4 <- group_by(f4_num, window) %>%
   # instead or recombination rate, cM/Mb 
   dplyr::mutate(quintile_Mbp5 = 6 - quintile_r5,
                 bin_Mbp5 = sapply(bin_r5, function(x) convert_2_Mb_per_cM(x))
-  )
+  ) %>%
+  ungroup()
 
 # by recombination rate (inverse of bp density)
 f4_by_r <- d_f4 %>%
@@ -112,7 +113,8 @@ f4_by_r <- d_f4 %>%
             f4_mex = 1 - f4_alpha, # alpha measured proportion maize, so 1-alpha is proportion mexicana
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
             n_windows = length(unique(window))) %>%
-  arrange(quintile_Mbp5)
+  arrange(quintile_Mbp5) %>%
+  ungroup()
 #View(f4_by_r)
 
 # by coding density
@@ -125,7 +127,8 @@ f4_by_cd <- d_f4 %>%
             f4_mex = 1 - f4_alpha, # alpha measured proportion maize, so 1-alpha is proportion mexicana
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
             n_windows = length(unique(window))) %>%
-  arrange(quintile_cd5)
+  arrange(quintile_cd5) %>%
+  ungroup()
 #View(f4_by_cd)
 #View(f4_by_r)
 
@@ -158,8 +161,7 @@ calc_cor_r <- function(d, i) { # d is data, i is indices
 }
 
 # test:
-#filter(d_f4, !is.na(num_sites)) %>%
-#  calc_cor_r(., 1:nrow(.)) # all windows
+#filter(d_f4, !is.na(num_sites)) %>% calc_cor_r(., 1:nrow(.)) # all windows
 #filter(d_f4, !is.na(num_sites) & !inv4m) %>%
 #  calc_cor_r(., 1:nrow(.)) # all windows not overlapping inversion
 #filter(d_f4, !is.na(num_sites)) %>%
@@ -176,7 +178,7 @@ boot_r <- boot(data = filter(d_f4, !is.na(num_sites)),
 boot.ci(boot_r, index = 1, type = c("norm", "basic", "perc"))
 
 # bootstrap confidence interval for number of low recombination bins:
-boot.ci(boot_r, index = 7, type = c("norm", "basic", "perc"))
+#boot.ci(boot_r, index = 7, type = c("norm", "basic", "perc"))
 
 # bootstrap across all windows, but 
 # exclude windows overlapping inv4m
@@ -514,4 +516,3 @@ ggsave(file = png_f4_num_denom,
        device = "png",
        width = 7.5, height = 4.5, 
        units = "in", dpi = 300)
-
