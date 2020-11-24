@@ -14,10 +14,10 @@ sim_file = snakemake@input[["sim"]]
 # sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
 sites_file = snakemake@input[["bed"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
-fdr_pos = snakemake@output[["fdr_pos"]] # positive slope outliers
-# fdr_pos = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.fdr05.bed")
-fdr_neg = snakemake@output[["fdr_neg"]] # negative slope outliers
-# fdr_neg = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.fdr05.bed")
+pos_fdr = snakemake@output[["pos_fdr"]] # positive slope outliers
+# pos_fdr = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.fdr05.bed")
+neg_fdr = snakemake@output[["neg_fdr"]] # negative slope outliers
+# neg_fdr = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.fdr05.bed")
 
 # less stringent than 5% FDR:
 # use 2% empirical of the genome (not ancestry tracts) as an outlier cutoff

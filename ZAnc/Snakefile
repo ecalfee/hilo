@@ -134,8 +134,8 @@ rule make_bed_slope_elev:
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData",
         bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
-        fdr_pos = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.fdr05.bed",
-        fdr_neg = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.fdr05.bed",
+        pos_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.fdr05.bed",
+        neg_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.fdr05.bed",
         pos_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.perc02.bed",
         neg_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.perc02.bed",
         pos_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.p05.bed",
