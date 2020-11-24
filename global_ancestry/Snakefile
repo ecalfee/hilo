@@ -137,10 +137,15 @@ rule plot_NGSAdmix:
     input:
         meta = "samples/" + prefix_all + "_meta.RData",
         colors = "colors.R",
-        k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
+        k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData",
+        # teosinte occurence data from Gonzalez et al 2018:
+        # https://web.archive.org/web/20191010133021/https://www.biodiversidad.gob.mx/genes/monitoreo_teocintles.html
+        teo = "data/zea_occurence/teocintles_historico_jsgetal.xlsx"
     output:
         png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
+        png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png",
         png_structure = "global_ancestry/plots/structure_K2.png",
+        png_teo_hist = "global_ancestry/plots/teosinte_hx_occurence_hist.png"
         lm_tex = "global_ancestry/tables/lm_elevation.tex"
     params:
         p = "med2"

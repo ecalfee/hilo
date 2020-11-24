@@ -13,8 +13,12 @@ library(xtable)
 # get output plot and table filenames
 png_elev = snakemake@output[["png_elev"]]
 # png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png"
+png_elev_symp_allo = snakemake@output[["png_elev_symp_allo"]]
+# png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png"
 png_structure = snakemake@output[["png_structure"]]
 # png_structure = "global_ancestry/plots/structure_K2.png"
+png_teo_hist = snakemake@output[["png_teo_hist"]] # histogram of teosinte occurence across elevation
+# png_teo_hist = "global_ancestry/plots/teosinte_hx_occurence_hist.png"
 lm_tex = snakemake@output[["lm_tex"]]
 # lm_tex = "global_ancestry/tables/lm_elevation.tex"
 
@@ -26,7 +30,22 @@ source(snakemake@input[["colors"]])
 load(snakemake@input[["k2"]])
 # load("global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_ind.RData")
 
+teosinte_excel = snakemake@input[["teo"]]
+# teosinte_excel = "data/zea_occurence/teocintles_historico_jsgetal.xlsx"
 
+# read in teosinte occurence data (parviglumis & mexicana)
+teo <- readxl::read_xlsx(teosinte_excel, 
+                         sheet = "RegistrosFinal") %>%
+  filter(Taxa %in% c("Zea mays parviglumis", "Zea mays mexicana")) %>%
+  rename(ELEVATION = Alt,
+         zea = Subespecie,
+         year = Fecha) %>%
+  arrange(ELEVATION) %>%
+  mutate(latlonelev = paste(Latitud, Longitud, ELEVATION),
+         latlon = paste(Latitud, Longitud),
+         latlonelevyear = paste(Latitud, Longitud, ELEVATION, year)) %>%
+  filter(!duplicated(latlonelevyear)) %>% # only keep unique occurence observations per location (lat/lon + elevation) and year
+  dplyr::select(zea, ELEVATION, Estado, Latitud, Longitud, year)
 
 # make STRUCTURE-like ancestry plots:
 p_structure <- d_admix2 %>%
@@ -97,3 +116,70 @@ p_symp_elev <- d_admix2 %>%
 ggsave(filename = png_elev,
        plot = p_symp_elev,
        device = "png", height = 6, width = 7.5, units = "in", dpi = 300)
+
+# plot all individuals (including allopatric) with elevation:
+# note: the plotted line still only is fitted to sympatric individuals
+shape_group_zea2 <- shape_group_zea 
+shape_group_zea2[2] <- 6 # changes to upside down triangle to make more distinguishable
+d_admix3 <- d_admix2 %>% # add elevation for Palmar Chico allopatric maize samples
+  mutate(., ELEVATION = ifelse(LOCALITY == "Palmar Chico" & 
+                                 group == "allopatric_maize", 
+                               983, # elevation of Palmar Chico maize landrace samples from Yang 2019 https://doi.org/10.1073/pnas.1820997116
+                               ELEVATION)) %>%
+  arrange(., ELEVATION) %>%
+  mutate(., LOCALITY = ifelse(symp_allo == "allopatric",
+                              paste0(LOCALITY, "*"), LOCALITY)) %>% # add astericks to allopatric localities
+  mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY)))
+p_symp_allo_elev <- d_admix3 %>%
+  ggplot(., aes(x = ELEVATION, 
+                y = mexicana, 
+                color = LOCALITY,
+                shape = group)) +
+  stat_smooth(data = filter(d_admix2, symp_allo == "sympatric"),
+              method = "lm", se = T, color = "black") +
+  geom_point(data = d_admix3, alpha = 0.75, size = 2) +
+  ylab("Proportion mexicana ancestry") +
+  xlab("Elevation (m)") +
+  ggtitle("Clines in mexicana ancestry across elevation") +
+  labs(color = "Location", shape = "Zea") +
+  theme_classic() +
+  scale_shape_manual(values = shape_group_zea2, labels = zea_group_labels) +
+  coord_cartesian(ylim = 0:1, clip = "off") +
+  scale_y_continuous(expand=c(0,0)) +
+  xlim(c(950, 2650)) + # upper elevation for sympatric pops is 1609m but mexicana grows up to nearly 3000m
+  #xlim(c(950, 3000)) +
+  #geom_segment(x = 900, xend = 2000, y = -.15, yend = -.15, 
+               #color = col_maize_mex_parv[["parviglumis"]],
+               #arrow = arrow(ends = "first", type = "open", length = unit(.1, "inches"))) +
+  #geom_segment(x = 1500, xend = 3000, y = -.2, yend = -.2, color = col_maize_mex_parv[["mexicana"]]) +
+  #theme(plot.margin = unit(c(1,1,5,0), "lines")) +
+  scale_color_viridis_d(direction = -1, option = "viridis")
+#p_symp_allo_elev
+ggsave(filename = png_elev_symp_allo,
+       plot = p_symp_allo_elev,
+       device = "png", height = 6.5, width = 7.5, units = "in", dpi = 300)
+
+# histogram of teosinte occurence data
+p_teo_hist <- teo %>%
+  ggplot(.) +
+  geom_histogram(aes(x = ELEVATION, fill = zea),
+                 alpha = 0.5, 
+                 bins = 35,
+                 position = "identity") +
+  theme_classic() +
+  #xlim(c(850, 3050)) +
+  scale_fill_manual(values = col_maize_mex_parv) +
+  ggtitle("Teosinte occurence data 1842–2016") +
+  labs(fill = "", x = "Elevation", y = "Observations")
+# plot(p_teo_hist)
+ggsave(filename = png_teo_hist,
+       plot = p_teo_hist,
+       device = "png", 
+       height = 3, width = 5, 
+       units = "in", dpi = 300)
+
+# elevational range limits observed teosinte:
+#teo %>%
+#  group_by(zea) %>%
+#  summarise(min = min(ELEVATION),
+#            max = max(ELEVATION))
