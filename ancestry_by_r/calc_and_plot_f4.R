@@ -9,11 +9,11 @@ library(boot)
 # with no tripsacum reads mapped. See last line of depthSample -- hilo$ tail -n 1 ancestry_by_r/results/f4/sympatric_maize/W384.depthSample
 
 # load variables from Snakefile
-sympatric_pop = snakemake@params[["sympatric_pop"]]
+#sympatric_pop = snakemake@params[["sympatric_pop"]]
 # sympatric_pop = "sympatric_maize"
-# sympatric_pop = "sympatric_mexicana"
+sympatric_pop = "sympatric_mexicana"
 # zea is maize or mexicana. Only used for colors on plots. maize pops have index numbers > 100
-zea = ifelse(sympatric_pop == "sympatric_maize" || as.integer(substr(sympatric_pop, 4, 7)) > 100, "maize", "mexicana") 
+zea = ifelse(sympatric_pop == "sympatric_maize" || (substr(sympatric_pop, 1, 3) == "pop" && as.integer(substr(sympatric_pop, 4, 7)) > 100), "maize", "mexicana") 
 
 f4_num_file = snakemake@input[["f4_num"]]
 # f4_num_file = paste0("ancestry_by_r/results/f4/", sympatric_pop, ".f4")
@@ -34,7 +34,7 @@ png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
 # png_f4_num_denom = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
-# n_boot = 1000
+# n_boot = 100
 inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 
@@ -319,13 +319,13 @@ text_spearman_r = paste0("Spearman's rho = ", ci_spearman_r$t0,
 
 p_r5 <- ggplot(data = d_boot_r, aes(x = mbp_bin)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(d_boot_r, boot > 0), 
+  geom_point(data = filter(d_boot_r, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
              aes(y = f4_mex)) +
   # then add mean for that group
-  geom_point(data = filter(d_boot_r, boot == 0), 
+  geom_point(data = filter(d_boot_r, boot == 0),
              pch = 18, size = 2,
              aes(y = f4_mex)) +
   # and errorbars for 90% CI around that mean
@@ -345,7 +345,7 @@ p_r5 <- ggplot(data = d_boot_r, aes(x = mbp_bin)) +
 ggsave(file = png_r5,
        plot = p_r5,
        device = "png",
-       width = 5.5, height = 4.5, 
+       width = 5.5, height = 4.5,
        units = "in", dpi = 300)
 
 # plot w/out inv4m:
@@ -366,13 +366,13 @@ text_spearman_r_no_inv4m = paste0("Spearman's rho = ", ci_spearman_r_no_inv4m$t0
 
 p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = mbp_bin)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(d_boot_r_no_inv4m, boot > 0), 
+  geom_point(data = filter(d_boot_r_no_inv4m, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
              aes(y = f4_mex)) +
   # then add mean for that group
-  geom_point(data = filter(d_boot_r_no_inv4m, boot == 0), 
+  geom_point(data = filter(d_boot_r_no_inv4m, boot == 0),
              pch = 18, size = 2,
              aes(y = f4_mex)) +
   # and errorbars for 90% CI around that mean
@@ -392,7 +392,7 @@ p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = mbp_bin)) +
 ggsave(file = png_r5_no_inv4m,
        plot = p_r5_no_inv4m,
        device = "png",
-       width = 5.5, height = 4.5, 
+       width = 5.5, height = 4.5,
        units = "in", dpi = 300)
 
 
@@ -414,13 +414,13 @@ text_spearman_cd = paste0("Spearman's rho = ", ci_spearman_cd$t0,
 
 p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(d_boot_cd, boot > 0), 
+  geom_point(data = filter(d_boot_cd, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
              aes(y = f4_mex)) +
   # then add original estimate for that group
-  geom_point(data = filter(d_boot_cd, boot == 0), 
+  geom_point(data = filter(d_boot_cd, boot == 0),
              pch = 18, size = 2,
              aes(y = f4_mex)) +
   # and errorbars for 90% CI around that mean
@@ -440,7 +440,7 @@ p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
 ggsave(file = png_cd5,
        plot = p_cd5,
        device = "png",
-       width = 5.5, height = 4.5, 
+       width = 5.5, height = 4.5,
        units = "in", dpi = 300)
 
 
@@ -462,13 +462,13 @@ text_spearman_cd_no_inv4m = paste0("Spearman's rho = ", ci_spearman_cd_no_inv4m$
 
 p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(d_boot_cd_no_inv4m, boot > 0), 
+  geom_point(data = filter(d_boot_cd_no_inv4m, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
              aes(y = f4_mex)) +
   # then add original estimate for that group
-  geom_point(data = filter(d_boot_cd_no_inv4m, boot == 0), 
+  geom_point(data = filter(d_boot_cd_no_inv4m, boot == 0),
              pch = 18, size = 2,
              aes(y = f4_mex)) +
   # and errorbars for 90% CI around that mean
@@ -488,13 +488,13 @@ p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
 ggsave(file = png_cd5_no_inv4m,
        plot = p_cd5_no_inv4m,
        device = "png",
-       width = 5.5, height = 4.5, 
+       width = 5.5, height = 4.5,
        units = "in", dpi = 300)
 
 
 # plot separately f4's for numerator and denominator
 p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
-  pivot_longer(., cols = c("f4_num", "f4_denom"), 
+  pivot_longer(., cols = c("f4_num", "f4_denom"),
                names_to = "num_denom", values_to = "f4") %>%
   pivot_longer(., cols = c("quintile_Mbp5", "quintile_cd5"),
                names_to = "type", values_to = "quintile") %>%
@@ -514,5 +514,5 @@ p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
 ggsave(file = png_f4_num_denom,
        plot = p_f4_num_denom,
        device = "png",
-       width = 7.5, height = 4.5, 
+       width = 7.5, height = 4.5,
        units = "in", dpi = 300)

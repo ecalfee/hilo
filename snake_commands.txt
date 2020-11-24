@@ -1940,9 +1940,20 @@ Job counts:
                 2       make_bed_anc_outliers # error: fdr_pos file not found (to write to)
                 2       make_bed_slope_elev # fixed output file name errors in R script.
                 24      merge_bed_outliers
-                59 # trying again:
-
-
+                59 # trying again. RUNNING 10:26am 11.23.2020. Oops still some errors. fixed make_bed_slope_outliers but still troubleshooting calc_and_plot_f4
+                /hilo$ snakemake all --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       all
+                        2       calc_and_plot_f4
+                        12      calc_overlap
+                        2       make_bed_slope_elev
+                        12      merge_bed_outliers
+                        29 # RUNNING 11.24.2020 11:55am
+# problem with errors in calc_and_plot_f4:
+`summarise()` regrouping output by 'bin_cd5' (override with `.groups` argument)
+Error: Aesthetics must be either length 1 or the same as the data (5000): colour
+Backtrace: ggplot2. # I fixed a problem with 'zea' variable being NA. rerunning:
 
 # TO DO:
 - get pi estimates within homozygous ancestry across the whole genome.
