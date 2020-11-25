@@ -1954,6 +1954,11 @@ Job counts:
 `summarise()` regrouping output by 'bin_cd5' (override with `.groups` argument)
 Error: Aesthetics must be either length 1 or the same as the data (5000): colour
 Backtrace: ggplot2. # I fixed a problem with 'zea' variable being NA. rerunning:
+# COMPLETED.
+Oops I switched around my f4 populations for the f4 ratio. I'm rerunning these analyses f4(trip, parv; X, allo_maize)
+where X is a sympatric population (numerator) or allopatric mexicana (pop 22 = Amecameca, denominator)
+# new files will be in output directory f4/ . I have moved all previous f4's in this folder to a new folder f4_allopatric_mexicana/
+
 
 # TO DO:
 - get pi estimates within homozygous ancestry across the whole genome.

@@ -259,16 +259,16 @@ rule summarise_local_anc_by_1cM:
         "summarise_local_anc_by_1cM.R"
 
 ## input_abba_baba: creates input size and bam_list for running abba baba (f4) calcs
-## where POP is the focal population and ALLO_MEX is the allopatric mexicana reference group (either all allopatric_mexicana or just pop22)
+## where POP is the focal population
 rule input_abba_baba:
     input:
         parv_bams = "samples/ALL_byPop/parv_bams.list",
-        mex_bams = "samples/ALL_byPop/{ALLO_MEX}_bams.list",
+        maize_bams = "samples/ALL_byPop/allopatric_maize_bams.list",
         x_bams = "samples/ALL_byPop/{POP}_bams.list",
         trip_bams = "samples/ALL_byPop/trip_bams.list"
     output:
-        bam_list = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}_bams.list",
-        pops_size = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.size"
+        bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     params:
         p = "med2"
     resources:
@@ -276,11 +276,11 @@ rule input_abba_baba:
         mem = 1
     shell:
         """
-        cat {input.parv_bams} {input.mex_bams} {input.x_bams} {input.trip_bams} > {output.bam_list}
-        < {input.parv_bams} wc -l > {output.pops_size}
-        < {input.mex_bams} wc -l >> {output.pops_size}
+        cat {input.trip_bams} {input.parv_bams} {input.x_bams} {input.maize_bams} > {output.bam_list}
+        < {input.trip_bams} wc -l > {output.pops_size}
+        < {input.parv_bams} wc -l >> {output.pops_size}
         < {input.x_bams} wc -l >> {output.pops_size}
-        < {input.trip_bams} wc -l >> {output.pops_size}
+        < {input.maize_bams} wc -l >> {output.pops_size}
         """
 
 ## get_region_from_bed(): helper function to extract region in format chr:start-end from a single region bed file
@@ -300,21 +300,21 @@ def get_size_region_from_bed(window):
     return (int(row[2]) - int(row[1]))/1000000 # units Mbp
 
 ## do_abba_baba: runs angsd abba_baba2 to get f4 statistic for 1 genomic window
-# output file has all possible population orders .. will later extract f4(parv, mex; x, trip)
+# output file has all possible population orders .. will later extract f4(trip, parv; x, maize)
 rule do_abba_baba:
     input:
         bams = all_bams_parv_trip, # all input bams
         bais = [bam + ".bai" for bam in all_bams_parv_trip], # all input bam indexes
-        bam_list = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}_bams.list",
+        bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
         bed_window = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
-        pops_size = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.size"
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     output:
-        abbababa = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}/{WINDOW}.abbababa2",
-        sample_depth = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}/{WINDOW}.depthSample",
-        global_depth = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}/{WINDOW}.depthGlobal"
+        abbababa = "ancestry_by_r/results/f4/{POP}/{WINDOW}.abbababa2",
+        sample_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthSample",
+        global_depth = "ancestry_by_r/results/f4/{POP}/{WINDOW}.depthGlobal"
     params:
         p = "med2",
-        out_prefix = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}/{WINDOW}",
+        out_prefix = "ancestry_by_r/results/f4/{POP}/{WINDOW}",
         region = lambda wildcards: get_region_from_bed(wildcards.WINDOW)
     shadow:
         "minimal"
@@ -331,27 +331,26 @@ rule do_abba_baba:
         "-doCounts 1 -doDepth 1 "
         "-maxDepth 10000 "
         "-useLast 1 "
-        "-blockSize 60000000 "
+        "-blockSize 5000000 "
         "-checkBamHeaders 0"
 
 # -doAbbababa2 options: -maxDepth=max depth of each site allowed (default 100)
 # -sizeFile = file with sizes of the populations
 # -doCounts 1 = make counts (required)
 # -useLast 1 = use the last group of bam files as outgroup (tripsacum)
-# -blockSize should exceed LD, here I make it bigger than the largest 1cM window, but note that some windows are still split across blocks
+# -blockSize should exceed LD (important only for ANGSD built-in D calcs and confidence intervals), here I make it 5Mbp
 
-## f4_from_abba_baba: extracts f4(parv, allo_mex; x, trip) from .abbababa2 output
+## f4_from_abba_baba: extracts f4(trip, parv; x, allo_maize) from .abbababa2 output
 # Each set of 3 lines represents one possible 4-pop tree. For the correct tree for f4-ratio estimates we take the
-# 1st and every 3rd line. (some windows have more than 1 line because they spanned multiple 60Mbp chunks)
+# 1st line and every 3rd line thereafter. (e.g. 1, 3, 7, windows have more than 1 line because they span multiple 5Mbp chunks)
 rule f4_from_abba_baba:
     input:
         expand("ancestry_by_r/results/f4_{{ALLO_MEX}}/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
     output:
-        f4 = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4"
+        f4 = "ancestry_by_r/results/f4/{POP}.f4"
     params:
         p = "med2",
-        POP = "{POP}",
-        ALLO_MEX = "{ALLO_MEX}"
+        POP = "{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -359,28 +358,28 @@ rule f4_from_abba_baba:
         mem = 2
     shell:
         """
-        (head -n 1 ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W1.abbababa2 | \\
+        (head -n 1 ancestry_by_r/results/f4/{params.POP}/W1.abbababa2 | \\
         cut -f1-6 | awk -v OFS='\\t' '{{print "window",$0,"pop1","pop2","pop3","pop4"}}'
         for i in {{1..1520}}
-        do tail -n +2 ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W$i.abbababa2 | \\
-        cut -f1-6 | awk -v i=$i -v pop={params.POP} -v OFS='\\t' 'NR%3==1 {{print "W"i,$0,"parviglumis","allopatric_mexicana",pop,"tripsacum"}}'
+        do tail -n +2 ancestry_by_r/results/f4/{params.POP}/W$i.abbababa2 | \\
+        cut -f1-6 | awk -v i=$i -v pop={params.POP} -v OFS='\\t' 'NR%3==1 {{print "W"i,$0,"tripsacum","parviglumis",pop,"allopatric_maize"}}'
         done) > {output.f4}
         """
 
 ## calc_and_plot_f4: calculates and plots f4 ratio for admixture proportion estimates (with bootstrap results)
 rule calc_and_plot_f4:
     input:
-        f4_num = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.f4",
-        f4_denom = "ancestry_by_r/results/f4_{ALLO_MEX}/allopatric_maize.f4",
+        f4_num = "ancestry_by_r/results/f4/{POP}.f4",
+        f4_denom = "ancestry_by_r/results/f4/{ALLO_MEX}.f4",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
         inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
         colors = "colors.R"
     output:
-        png_r5 = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5.png",
-        png_cd5 = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_bycd5.png",
-        png_r5_no_inv4m = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_byr5_noinv4m.png",
-        png_cd5_no_inv4m = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_bycd5_noinv4m.png",
-        png_f4_num_denom = "ancestry_by_r/plots/f4_allo_{ALLO_MEX}_symp_{POP}_num_denom.png"
+        png_r5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png",
+        png_cd5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5.png",
+        png_r5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5_noinv4m.png",
+        png_cd5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5_noinv4m.png",
+        png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png"
     params:
         p = "med2",
         sympatric_pop = "{POP}",
@@ -397,14 +396,13 @@ rule calc_and_plot_f4:
 ## combine_abba_baba_for_Dstat: combines .abbababa2 files across the genome for input to D-statistic calc
 rule combine_abba_baba_for_Dstat:
     input:
-        expand("ancestry_by_r/results/f4_{{ALLO_MEX}}/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
     output:
-        abbababa = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.all.abbababa2",
-        pop_names = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.names"
+        abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
+        pop_names = "ancestry_by_r/results/f4/{POP}.names"
     params:
         p = "med2",
-        POP = "{POP}",
-        ALLO_MEX = "{ALLO_MEX}"
+        POP = "{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -412,28 +410,28 @@ rule combine_abba_baba_for_Dstat:
         mem = 2
     shell:
         """
-        (cat ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W1.abbababa2
+        (cat ancestry_by_r/results/f4/{params.POP}/W1.abbababa2
         for i in {{2..1520}}
-        do tail -n +2 ancestry_by_r/results/f4_{params.ALLO_MEX}/{params.POP}/W$i.abbababa2
+        do tail -n +2 ancestry_by_r/results/f4/{params.POP}/W$i.abbababa2
         done) > {output.abbababa}
-        echo "parviglumis" > {output.pop_names}
-        echo "allopatric_mexicana" >> {output.pop_names}
+        echo "tripsacum" > {output.pop_names}
+        echo "parviglumis" >> {output.pop_names}
         echo {params.POP} >> {output.pop_names}
-        echo "tripsacum" >> {output.pop_names}
+        echo "allopatric_maize" >> {output.pop_names}
         """
 
 ## calc_Dstat: calculates D-statistic genomewide with bootstrap confidence intervals
 rule calc_Dstat:
     input:
-        abbababa = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.all.abbababa2",
-        pops_name = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.names",
-        pops_size = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.size"
+        abbababa = "ancestry_by_r/results/f4/{POP}.all.abbababa2",
+        pops_name = "ancestry_by_r/results/f4/{POP}.names",
+        pops_size = "ancestry_by_r/results/f4/{POP}.size"
     output:
-        "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats.Observed.txt"
+        "ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt"
     params:
         p = "med2",
-        prefix_out = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.Dstats",
-        prefix_in = "ancestry_by_r/results/f4_{ALLO_MEX}/{POP}.all"
+        prefix_out = "ancestry_by_r/results/f4/{POP}.Dstats",
+        prefix_in = "ancestry_by_r/results/f4/{POP}.all"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -441,22 +439,6 @@ rule calc_Dstat:
         mem = 2
     shell:
         "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={params.prefix_in} out={params.prefix_out} sizeFile={input.pops_size} nameFile={input.pops_name}"
-
-
-## subsample_group: takes a random subsample (no-repeats) of bams from a group of bams
-# rule subsample_group:
-#     input:
-#         all_bams = "samples/ALL_byPop/{GROUP}_bams.list"
-#     output:
-#         sub_bams = "samples/ALL_byPop/{GROUP}_subsample{SUBSAMPLE}_bams.list"
-#     params:
-#         p = "med2",
-#         i = "{SUBSAMPLE}"
-#     resources:
-#         time_min = 1,
-#         mem = 1
-#     shell:
-#         shuf -n {params.i} {input.all_bams} > {output.sub_bams}
 
 
 ## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
