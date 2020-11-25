@@ -345,7 +345,7 @@ rule do_abba_baba:
 # 1st line and every 3rd line thereafter. (e.g. 1, 3, 7, windows have more than 1 line because they span multiple 5Mbp chunks)
 rule f4_from_abba_baba:
     input:
-        expand("ancestry_by_r/results/f4_{{ALLO_MEX}}/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/f4/{{POP}}/{WINDOW}.abbababa2", WINDOW = windows_1cM)
     output:
         f4 = "ancestry_by_r/results/f4/{POP}.f4"
     params:
