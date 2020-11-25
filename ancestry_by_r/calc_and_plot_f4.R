@@ -9,9 +9,9 @@ library(boot)
 # with no tripsacum reads mapped. See last line of depthSample -- hilo$ tail -n 1 ancestry_by_r/results/f4/sympatric_maize/W384.depthSample
 
 # load variables from Snakefile
-#sympatric_pop = snakemake@params[["sympatric_pop"]]
+sympatric_pop = snakemake@params[["sympatric_pop"]]
 # sympatric_pop = "sympatric_maize"
-sympatric_pop = "sympatric_mexicana"
+# sympatric_pop = "sympatric_mexicana"
 # zea is maize or mexicana. Only used for colors on plots. maize pops have index numbers > 100
 zea = ifelse(sympatric_pop == "sympatric_maize" || (substr(sympatric_pop, 1, 3) == "pop" && as.integer(substr(sympatric_pop, 4, 7)) > 100), "maize", "mexicana") 
 
