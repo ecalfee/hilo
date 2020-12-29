@@ -2027,10 +2027,15 @@ Job counts:
                 1       f4_from_abba_baba
                 6 # running 12.11.2020. Abba-baba is job 28550210 for W635 sympatric_mexicana
 
+# trying out pipeline to get pi estimates across the genome for each population within homozygous ancestry segments
+# test pipeline using a small 500 kb test region on chr1 
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm
+
+
 # TO DO:
 - get pi estimates within homozygous ancestry across the whole genome.
 - test pi script with small genome segment. then decide memory for running a whole pop.
-- test the 'domesticate asymilate hypothesis' for mexicana.
+- test the 'domesticate assymilate hypothesis' for mexicana.
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
 

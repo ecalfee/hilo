@@ -111,7 +111,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
 #include: "ZAnc/Snakefile"
-#include: "diversity/Snakefile"
+include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
