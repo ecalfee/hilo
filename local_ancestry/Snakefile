@@ -365,6 +365,7 @@ rule get_homozygous_ancestry_tracts:
         "./local_ancestry/get_homozygous_ancestry_tracts.sh {input.bed} {params.ZEA} {input.ploidy} {params.dir_post} {params.dir_out} && touch {output.complete}"
 
 ## get_homozygous_ancestry_bams: filters bams to only include reads within homozygous ancestry tracts for every sample in a sympatric population
+# and creates .bai index file for each new bam
 rule get_homozygous_ancestry_bams:
     input: # this file tracts that the posteriors are complete, but actually posterior files vary
         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts/{POP}.completed",
@@ -384,8 +385,8 @@ rule get_homozygous_ancestry_bams:
     shell:
         "./local_ancestry/get_homozygous_ancestry_bams.sh {input.ploidy} {params.dir_tracts} {params.dir_in_bams} {params.dir_out} && touch {output.complete}"
 
-## index_and_list_homozygous_ancestry_bams: creates .bai file for bams with only reads from homozygous ancestry tracts and a list of bams per population
-rule index_and_list_homozygous_ancestry_bams:
+## list_homozygous_ancestry_bams: creates a list of bams per population including only reads overlapping homozygous ancestry tracts
+rule list_homozygous_ancestry_bams:
     input: # doesn't track all input files, just one file that updates when the homozygous ancestry bams are updated
         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed",
         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
@@ -401,11 +402,9 @@ rule index_and_list_homozygous_ancestry_bams:
         mem = 2
     shell:
         """
-        touch {output.list}
-        for SAMPLE in $(cat {input.ploidy} | cut -f1)
-            do echo {params.dir_bams}/$SAMPLE.sort.dedup.bam >> {output.list}
-            samtools index {params.dir_bams}/$SAMPLE.sort.dedup.bam
-        done
+        (for SAMPLE in $(cat {input.ploidy} | cut -f1)
+            do echo {params.dir_bams}/$SAMPLE.sort.dedup.bam
+        done) > {output.list}
         """
 
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds

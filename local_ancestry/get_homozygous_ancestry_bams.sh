@@ -44,7 +44,7 @@ for (( i=0; i<$n_ids; i++ )); do
 		echo "filtering bam for homozygous ancestry regions $ID"
 
 		bedtools intersect -sorted -a "$DIR_IN_BAMS/$ID.sort.dedup.bam" \
-		-b $DIR_OUT/tracts/"$ID".bed > "$DIR_OUT/$ID.sort.dedup.bam"
+		-b "$DIR_TRACTS/$ID.bed" > "$DIR_OUT/$ID.sort.dedup.bam"
 
 		echo "now indexing new bam!"
 		sleep 5s # because index needs to have a later timestamp

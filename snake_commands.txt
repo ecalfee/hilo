@@ -2029,8 +2029,15 @@ Job counts:
 
 # making input bams lists:
 # test one:
-hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yeOZYG/maize/bams/pop363_bams.list --quiet --profile slurm
-# run them all:
+hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/bams/pop363_bams.list --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       index_and_list_homozygous_ancestry_bams
+        1 # grr there is something wrong with the input bams! they are empty :(
+        # I fixed file naming error in get_homozygous_ancestry_bams.sh script.
+        # also deleting 'completed' files for bams so they are re-run.
+        hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/*/bams/*.completed
+# re-run them all to make bams and then also create input bams lists:
 hilo$ snakemake all --quiet --profile slurm
 
 
