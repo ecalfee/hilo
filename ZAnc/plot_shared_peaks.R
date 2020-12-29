@@ -89,8 +89,8 @@ sim_outliers <- data.frame(MVN_sim, stringsAsFactors = F) %>%
 outliers_bypop <- bind_rows(mutate(anc_outliers, source = "data"),
                             mutate(sim_outliers, source = "mvn_sim", inv4m = F)) %>%
   group_by(chr, pos, source, inv4m) %>%
-  summarise(outlier_pops = sum(top_sd2)) %>%
-  filter(outlier_pops > 0) # only include if at least one outlier
+  summarise(outlier_pops = sum(top_sd2)) #%>%
+  #filter(outlier_pops > 0) # only include if at least one outlier
 
 # get ratio observed/simulated shared outliers:
 # but first find a maximum # sharing pops with simulated values
@@ -123,7 +123,7 @@ p_hist = outliers_bypop %>%
   scale_fill_manual(values = col_obs_sim,
                     name = NULL, 
                     labels = c("observed", "simulated")) +
-  ylim(c(0, 0.7)) +
+  #ylim(c(0, 0.7)) +
   theme_classic() +
   xlab("Number of populations with high introgression") +
   ylab("Proportion of outliers") +

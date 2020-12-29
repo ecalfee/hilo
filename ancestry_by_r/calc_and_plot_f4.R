@@ -18,7 +18,7 @@ zea = ifelse(sympatric_pop == "sympatric_maize" || (substr(sympatric_pop, 1, 3) 
 f4_num_file = snakemake@input[["f4_num"]]
 # f4_num_file = paste0("ancestry_by_r/results/f4/", sympatric_pop, ".f4")
 f4_denom_file = snakemake@input[["f4_denom"]]
-# f4_denom_file = paste0("ancestry_by_r/results/f4/allopatric_maize.f4")
+# f4_denom_file = paste0("ancestry_by_r/results/f4/pop22.f4")
 windows_file = snakemake@input[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 colors_file = snakemake@input[["colors"]]
@@ -40,24 +40,16 @@ inv_file = snakemake@input[["inv_file"]]
 
 source(colors_file)
 
-# population permutation used to calculate D-statistic:
-# (ABBA-BABA)/(ABBA+BABA) in phylogeny (((parv, x), allo_mex), trip)
-#d_symp <- read.table(paste0("ancestry_by_r/results/f4/", sympatric_pop, ".2.f4"),
-#                     stringsAsFactors = F, sep = "\t", header = T)
-# d-stat across all sites in genome:
-#sum(d_symp$Numer)/sum(d_symp$Denom)
-
-
-# population permutation used to calculate f4-ratio:
-# f4(parv, allo_mex; X, trip) = E[(x_parv - x_allo_mex)*(x_X - x_trip)] in phylogeny (((parv, x), allo_mex), trip)
+# f4-ratio calculation for alpha, admixture proportion from mexicana into X:
+# f4(trip, parv; X, allo_maize) = E[(x_trip - x_parv)*(x_X - x_allo_maize)] in phylogeny (((parv, allo_maize), allo_mex), trip)
 # where X is a sympatric population (numerator)
-# or X is non-admixed allopatric maize (denominator)
+# or X is non-admixed allopatric mexicana (denominator)
 
 # f4 ratio numerator
 f4_num <- read.table(f4_num_file, stringsAsFactors = F, sep = "\t", header = T)
 # f4 ratio denominator allopatric maize
 f4_denom <- read.table(f4_denom_file, stringsAsFactors = F, sep = "\t", header = T)
-# angsd outputs sum of (x_parv - x_allo_mex)*(x_X - x_trip)
+# angsd outputs sum of (x_trip - x_parv)*(x_X - x_allo_maize)
 # so I divide by number of sites to get the expectation
 alpha = (sum(f4_num$Numer)/sum(f4_num$numSites))/(sum(f4_denom$Numer)/sum(f4_denom$numSites))
 # genomewide the alpha estimate for % maize is ~ 58% in sympatric maize
@@ -88,6 +80,8 @@ convert_2_Mb_per_cM <- function(bin){
 # convert_2_Mb_per_cM("(2,5.8]")
 
 # combine data
+
+# by Mbp per cM
 d_f4 <- group_by(f4_num, window) %>%
   summarise(num_stat = sum(Numer),
             num_sites = sum(numSites)) %>%
@@ -105,15 +99,14 @@ d_f4 <- group_by(f4_num, window) %>%
 
 # by recombination rate (inverse of bp density)
 f4_by_r <- d_f4 %>%
-  group_by(., bin_Mbp5, quintile_Mbp5) %>%
+  group_by(., bin_r5, quintile_r5) %>%
   filter(!is.na(num_sites)) %>% # eliminates 2 windows w/out data
   summarise(f4_num = sum(num_stat)/sum(num_sites),
             f4_denom = sum(denom_stat)/sum(denom_sites),
             f4_alpha = f4_num/f4_denom,
-            f4_mex = 1 - f4_alpha, # alpha measured proportion maize, so 1-alpha is proportion mexicana
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
             n_windows = length(unique(window))) %>%
-  arrange(quintile_Mbp5) %>%
+  arrange(quintile_r5) %>%
   ungroup()
 #View(f4_by_r)
 
@@ -124,40 +117,37 @@ f4_by_cd <- d_f4 %>%
   summarise(f4_num = sum(num_stat)/sum(num_sites),
             f4_denom = sum(denom_stat)/sum(denom_sites),
             f4_alpha = f4_num/f4_denom,
-            f4_mex = 1 - f4_alpha, # alpha measured proportion maize, so 1-alpha is proportion mexicana
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
             n_windows = length(unique(window))) %>%
   arrange(quintile_cd5) %>%
   ungroup()
 #View(f4_by_cd)
-#View(f4_by_r)
 
-# with(f4_by_r, cor(x = quintile_Mbp5, y = f4_mex, method = "spearman"))
+# with(f4_by_r, cor(x = quintile_r5, y = f4_alpha, method = "spearman"))
 
 # bootstrap
 # function to calc stat
 calc_cor_r <- function(d, i) { # d is data, i is indices
   b = d[i, ] %>%
-    group_by(., bin_Mbp5, quintile_Mbp5) %>%
+    group_by(., bin_r5, quintile_r5) %>%
     summarise(f4_num = sum(num_stat)/sum(num_sites),
               f4_denom = sum(denom_stat)/sum(denom_sites),
               f4_alpha = f4_num/f4_denom,
-              f4_mex = 1 - f4_alpha,
               n = n()) %>%
-    arrange(quintile_Mbp5)
-  return(c(spearman = with(b, cor(x = quintile_Mbp5, 
-                                  y = f4_mex, 
+    arrange(quintile_r5)
+  return(c(spearman = with(b, cor(x = quintile_r5, 
+                                  y = f4_alpha, 
                                   method = "spearman")),
            # also get alpha estimates for each quintile in the bootstrap sample
-           unlist(pivot_wider(b, names_from = quintile_Mbp5, 
-                              names_prefix = "Mbp", 
-                              values_from = f4_mex, 
-                              id_cols = quintile_Mbp5)),
+           unlist(pivot_wider(b, names_from = quintile_r5, 
+                              names_prefix = "r", 
+                              values_from = f4_alpha, 
+                              id_cols = quintile_r5)),
            # and return number of windows per quintile in bootstrap sample
-           unlist(pivot_wider(b, names_from = quintile_Mbp5, 
+           unlist(pivot_wider(b, names_from = quintile_r5, 
                               names_prefix = "n", 
                               values_from = n, 
-                              id_cols = quintile_Mbp5))))
+                              id_cols = quintile_r5))))
 }
 
 # test:
@@ -203,22 +193,21 @@ calc_cor_r5 <- function(d, i) { # d is data, i is indices
   j = ifelse(i == all, i, # original sample (not bootstrap) 
              # ignore original boostrap sample i and use instead new sample j:
              do.call(c, lapply(1:5, function(x) # resample only within quintiles, not across
-               sample(all[d$quintile_Mbp5 == x], replace = T))))
+               sample(all[d$quintile_r5 == x], replace = T))))
   b = d[j, ] %>%
-    group_by(., bin_Mbp5, quintile_Mbp5) %>%
+    group_by(., bin_r5, quintile_r5) %>%
     summarise(f4_num = sum(num_stat)/sum(num_sites),
               f4_denom = sum(denom_stat)/sum(denom_sites),
-              f4_alpha = f4_num/f4_denom,
-              f4_mex = 1 - f4_alpha) %>%
-    arrange(quintile_Mbp5)
-  return(c(spearman = with(b, cor(x = quintile_Mbp5, 
-                                  y = f4_mex, 
+              f4_alpha = f4_num/f4_denom) %>%
+    arrange(quintile_r5)
+  return(c(spearman = with(b, cor(x = quintile_r5, 
+                                  y = f4_alpha, 
                                   method = "spearman")),
            # also get alpha estimates for each quintile in the bootstrap sample
-           unlist(pivot_wider(b, names_from = quintile_Mbp5, 
-                              names_prefix = "Mbp", 
-                              values_from = f4_mex, 
-                              id_cols = quintile_Mbp5))))
+           unlist(pivot_wider(b, names_from = quintile_r5, 
+                              names_prefix = "r", 
+                              values_from = f4_alpha, 
+                              id_cols = quintile_r5))))
 }
 
 # test:
@@ -258,16 +247,15 @@ calc_cor_cd <- function(d, i) { # d is data, i is indices
     group_by(., bin_cd5, quintile_cd5) %>%
     summarise(f4_num = sum(num_stat)/sum(num_sites),
               f4_denom = sum(denom_stat)/sum(denom_sites),
-              f4_alpha = f4_num/f4_denom,
-              f4_mex = 1 - f4_alpha) %>%
+              f4_alpha = f4_num/f4_denom) %>%
     arrange(quintile_cd5)
   return(c(spearman = with(b, cor(x = quintile_cd5, 
-                                  y = f4_mex, 
+                                  y = f4_alpha, 
                                   method = "spearman")),
            # also get estimates for each quintile in the bootstrap sample
            unlist(pivot_wider(b, names_from = quintile_cd5, 
                               names_prefix = "cd", 
-                              values_from = f4_mex, 
+                              values_from = f4_alpha, 
                               id_cols = quintile_cd5))))
 }
 
@@ -305,42 +293,47 @@ boot_cd_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m),
 d_boot_r <- as.data.frame(rbind(boot_r$t0, boot_r$t)) %>%
   data.table::setnames(names(boot_r$t0)) %>%
   dplyr::mutate(boot = 0:n_boot) %>% # original estimate I set to boot '0'
-  pivot_longer(., cols = starts_with("Mbp"), 
-               names_to = "mbp_bin", values_to = "f4_mex")
+  pivot_longer(., cols = starts_with("r"), 
+               names_to = "r_bin", values_to = "f4_alpha")
 ci_boot_r <- t(sapply(1:5, function(x)
   boot.ci(boot_r, index = 1+x, conf = 0.95, type = "basic")$basic[4:5])) %>%
   data.frame(.) %>%
   data.table::setnames(c("low", "high")) %>%
-  mutate(mbp_bin = paste0("Mbp", 1:5))
+  mutate(r_bin = paste0("r", 1:5))
 ci_spearman_r = boot.ci(boot_r, index = 1, conf = 0.95, type = "basic")
 text_spearman_r = paste0("Spearman's rho = ", ci_spearman_r$t0, 
                          " CI_95%(", ci_spearman_r$basic[4], ", ",
                          ci_spearman_r$basic[5], ")")
+x_axis_labels_r = filter(winds, !duplicated(paste(bin_r5))) %>%
+  arrange(quintile_r5) %>%
+  dplyr::select(bin_r5)
+  
 
-p_r5 <- ggplot(data = d_boot_r, aes(x = mbp_bin)) +
+p_r5 <- ggplot(data = d_boot_r, aes(x = r_bin)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(d_boot_r, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
-             aes(y = f4_mex)) +
+             aes(y = f4_alpha)) +
   # then add mean for that group
   geom_point(data = filter(d_boot_r, boot == 0),
              pch = 18, size = 2,
-             aes(y = f4_mex)) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
+             aes(y = f4_alpha)) +
+  # and errorbars for 95% CI around that mean
   geom_errorbar(data = ci_boot_r, aes(ymin = low,
                                       ymax = high),
                 width = .5) +
-  xlab("Mbp per cM (quintiles low -> high)") +
+  xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Proportion mexicana ancestry") +
-  labs(subtitle = text_spearman_r) +
+  #labs(subtitle = text_spearman_r) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by bp density in", sympatric_pop)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ggtitle(paste("Ancestry by recombination rate in sympatric", zea)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(labels = x_axis_labels_r$bin_r5) +
+  ylim(0:1)
 #p_r5
 ggsave(file = png_r5,
        plot = p_r5,
@@ -352,42 +345,43 @@ ggsave(file = png_r5,
 d_boot_r_no_inv4m <- as.data.frame(rbind(boot_r_no_inv4m$t0, boot_r_no_inv4m$t)) %>%
   data.table::setnames(names(boot_r_no_inv4m$t0)) %>%
   dplyr::mutate(boot = 0:n_boot) %>% # original estimate I set to boot '0'
-  pivot_longer(., cols = starts_with("Mbp"), 
-               names_to = "mbp_bin", values_to = "f4_mex")
+  pivot_longer(., cols = starts_with("r"), 
+               names_to = "r_bin", values_to = "f4_alpha")
 ci_boot_r_no_inv4m <- t(sapply(1:5, function(x)
   boot.ci(boot_r_no_inv4m, index = 1+x, conf = 0.95, type = "basic")$basic[4:5])) %>%
   data.frame(.) %>%
   data.table::setnames(c("low", "high")) %>%
-  mutate(mbp_bin = paste0("Mbp", 1:5))
+  mutate(r_bin = paste0("r", 1:5))
 ci_spearman_r_no_inv4m = boot.ci(boot_r_no_inv4m, index = 1, conf = 0.95, type = "basic")
 text_spearman_r_no_inv4m = paste0("Spearman's rho = ", ci_spearman_r_no_inv4m$t0, 
                                   " CI_95%(", ci_spearman_r_no_inv4m$basic[4], ", ",
                                   ci_spearman_r_no_inv4m$basic[5], ")")
 
-p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = mbp_bin)) +
+p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = r_bin)) +
   # first plot original point estimates for ind. ancestry
   geom_point(data = filter(d_boot_r_no_inv4m, boot > 0),
              color = col_maize_mex_parv[zea],
              position = position_jitter(0.2),
              size = 0.1,
-             aes(y = f4_mex)) +
+             aes(y = f4_alpha)) +
   # then add mean for that group
   geom_point(data = filter(d_boot_r_no_inv4m, boot == 0),
              pch = 18, size = 2,
-             aes(y = f4_mex)) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
+             aes(y = f4_alpha)) +
+  # and errorbars for 95% CI around that mean
   geom_errorbar(data = ci_boot_r_no_inv4m, aes(ymin = low,
-                                               ymax = high),
+                                      ymax = high),
                 width = .5) +
-  xlab("Mbp per cM (quintiles low -> high)") +
+  xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Proportion mexicana ancestry") +
-  labs(subtitle = text_spearman_r_no_inv4m) +
+  #labs(subtitle = text_spearman_r) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by bp density in", sympatric_pop, "no inv4m")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ggtitle(paste("Ancestry by recombination rate in sympatric", zea, "(excl. inv4m)")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(labels = x_axis_labels_r$bin_r5) +
+  ylim(0:1)
 #p_r5_no_inv4m
 ggsave(file = png_r5_no_inv4m,
        plot = p_r5_no_inv4m,
@@ -409,8 +403,11 @@ ci_boot_cd <- t(sapply(1:5, function(x)
   mutate(cd_bin = paste0("cd", 1:5))
 ci_spearman_cd = boot.ci(boot_cd, index = 1, conf = 0.95, type = "basic")
 text_spearman_cd = paste0("Spearman's rho = ", ci_spearman_cd$t0, 
-                          " CI_95%(", ci_spearman_cd$basic[4], ", ",
-                          ci_spearman_cd$basic[5], ")")
+                          " CI_95%(", round(ci_spearman_cd$basic[4],2), ", ",
+                          round(ci_spearman_cd$basic[5],2), ")")
+x_axis_labels_cd = filter(winds, !duplicated(paste(bin_cd5))) %>%
+  arrange(quintile_cd5) %>%
+  dplyr::select(bin_cd5)
 
 p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
   # first plot original point estimates for ind. ancestry
@@ -423,19 +420,20 @@ p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
   geom_point(data = filter(d_boot_cd, boot == 0),
              pch = 18, size = 2,
              aes(y = f4_mex)) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
+  # and errorbars for 95% CI around that mean
   geom_errorbar(data = ci_boot_cd, aes(ymin = low,
                                        ymax = high),
                 width = .5) +
-  xlab("Coding bp per cM (quintiles low -> high)") +
+  xlab("Coding density quintile (bp/cM)") +
   ylab("Proportion mexicana ancestry") +
-  labs(subtitle = text_spearman_cd) +
+  #labs(subtitle = text_spearman_cd) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by gene density in", sympatric_pop)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ggtitle(paste("Ancestry by gene density in sympatric", zea)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ylim(0:1) +
+  scale_x_discrete(labels = x_axis_labels_cd$bin_cd5)
 #p_cd5
 ggsave(file = png_cd5,
        plot = p_cd5,
@@ -457,8 +455,8 @@ ci_boot_cd_no_inv4m <- t(sapply(1:5, function(x)
   mutate(cd_bin = paste0("cd", 1:5))
 ci_spearman_cd_no_inv4m = boot.ci(boot_cd_no_inv4m, index = 1, conf = 0.95, type = "basic")
 text_spearman_cd_no_inv4m = paste0("Spearman's rho = ", ci_spearman_cd_no_inv4m$t0, 
-                                   " CI_95%(", ci_spearman_cd_no_inv4m$basic[4], ", ",
-                                   ci_spearman_cd_no_inv4m$basic[5], ")")
+                                   " CI_95%(", round(ci_spearman_cd_no_inv4m$basic[4], 2), ", ",
+                                   round(ci_spearman_cd_no_inv4m$basic[5], 2), ")")
 
 p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
   # first plot original point estimates for ind. ancestry
@@ -476,14 +474,16 @@ p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
   geom_errorbar(data = ci_boot_cd_no_inv4m, aes(ymin = low,
                                                 ymax = high),
                 width = .5) +
-  xlab("Coding bp per cM (quintiles low -> high)") +
+  xlab("Coding density quintile (bp/cM)") +
   ylab("Proportion mexicana ancestry") +
-  labs(subtitle = text_spearman_cd_no_inv4m) +
+  #labs(subtitle = text_spearman_cd_no_inv4m) +
   theme_classic() +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by gene density in", sympatric_pop, "no inv4m")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  ggtitle(paste("Ancestry by gene density in sympatric", zea, "(excl. inv4m)")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ylim(0:1) +
+  scale_x_discrete(labels = x_axis_labels_cd$bin_cd5)
 #p_cd5_no_inv4m
 ggsave(file = png_cd5_no_inv4m,
        plot = p_cd5_no_inv4m,
@@ -496,20 +496,21 @@ ggsave(file = png_cd5_no_inv4m,
 p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
   pivot_longer(., cols = c("f4_num", "f4_denom"),
                names_to = "num_denom", values_to = "f4") %>%
-  pivot_longer(., cols = c("quintile_Mbp5", "quintile_cd5"),
+  pivot_longer(., cols = c("quintile_r5", "quintile_cd5"),
                names_to = "type", values_to = "quintile") %>%
   filter(!is.na(quintile)) %>% # pivot longer creates some NAs because rows either have cd5 or Mbp5 data
   mutate(neg_f4 = -f4) %>%
   ggplot(., aes(x = quintile, y = neg_f4, color = num_denom)) +
   geom_point() +
   facet_wrap(~type) +
-  ggtitle(paste("f4 estimates for", sympatric_pop, "(num) and allopatric maize (denom)")) +
-  xlab("Mbp per cM quintile (low -> high)") +
+  ggtitle(paste("f4 estimates for sympatric", zea, "(num) and allopatric maize (denom)")) +
+  xlab("Recombination rate quintile (cM/Mb)") +
   ylab("f4 estimate (negative of angsd output)") +
-  labs(subtitle = "f4_num/f4_denom = alpha (maize ancestry estimate)",
+  labs(subtitle = "alpha = f4_num/f4_denom",
        color = "f4 ratio components") +
   theme_light() +
-  geom_hline(yintercept = 0)
+  geom_hline(yintercept = 0) +
+  scale_x_discrete(labels = x_axis_labels_r$bin_r5)
 # p_f4_num_denom
 ggsave(file = png_f4_num_denom,
        plot = p_f4_num_denom,

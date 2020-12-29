@@ -384,6 +384,29 @@ rule get_homozygous_ancestry_bams:
     shell:
         "./local_ancestry/get_homozygous_ancestry_bams.sh {input.ploidy} {params.dir_tracts} {params.dir_in_bams} {params.dir_out} && touch {output.complete}"
 
+## index_and_list_homozygous_ancestry_bams: creates .bai file for bams with only reads from homozygous ancestry tracts and a list of bams per population
+rule index_and_list_homozygous_ancestry_bams:
+    input: # doesn't track all input files, just one file that updates when the homozygous ancestry bams are updated
+        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed",
+        ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy"
+    output: # doesn't track all output files, just one file that updates when the population is completed
+        list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list"
+    params:
+        p = "med2",
+        dir_bams = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        """
+        (for SAMPLE in $(cat {input.ploidy} | cut -f1)
+            do echo {params.dir_bams}/$SAMPLE.bam
+            samtools index {params.dir_bams}/$SAMPLE.bam
+            done) > {output.list}
+        """
+
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data:
     input:

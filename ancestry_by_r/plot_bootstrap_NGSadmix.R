@@ -305,7 +305,7 @@ p_facet_r5 <- r5$anc_ind %>%
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies"),
          fill = guide_legend("Subspecies"))
-#p_facet_r
+#p_facet_r5
 ggsave(file = png_facet_r5,
        plot = p_facet_r5,
        device = "png",
@@ -335,6 +335,41 @@ ggsave(file = png_color_elev_r5,
        device = "png",
        width = 7, height = 6, 
        units = "in", dpi = 300)
+
+# mexicana ancestry for K=2 in maize and mexicana, colored by elevation:
+p_r5_color_elev <- r5$anc_group_confidence_intervals %>%
+  dplyr::filter(ancestry == "mexicana_ancestry") %>%
+  dplyr::filter(symp_allo == "sympatric") %>%
+  ggplot(aes(x = bin, y = p, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+             aes(x = bin,
+                 y = p,
+                 shape = zea,
+                 color = ELEVATION),
+             position = position_jitter(0.2)) +
+  scale_color_viridis(direction = -1, option = "viridis") +
+  # then add mean for that group
+  geom_point(pch = 18, size = .1, alpha = 0.75) +
+  # and errorbars for 90% CI around that mean
+  # based on bootstrap with NGSAdmix
+  geom_errorbar(aes(ymin = low,
+                    ymax = high),
+                width = .5) +
+  xlab("Recombination rate quintile (cM/Mb)") +
+  ylab("Proportion mexicana ancestry") +
+  theme_classic() +
+  facet_grid(zea ~ symp_allo) +
+  guides(color = guide_legend("Elevation"),
+         shape = guide_legend("Subspecies")) +
+  ggtitle("Mexicana ancestry by recombination rate") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+p_r5_color_elev
+#ggsave(file = png_r5_color_elev,
+#       plot = p_r5_color_elev,
+#       device = "png",
+#       width = 7,5, height = 4, 
+#       units = "in", dpi = 300)
 
 
 
@@ -806,4 +841,40 @@ ggsave(png_boot_cor_local_anc_bp,
 #   ggtitle("Mexicana ancestry by recombination rate")
 # ggsave("plots/K3_ind_ancestries_jitter_and_mean_bootstrap_90CI.png",
 #        width = 8, height = 8, units = "in")
-
+# 
+# # what are the spearman's rank correlations for NGSAdmix mexicana ancestry estimates vs. recombination rate quintile?
+# filter(r5$anc_boot_mean, zea != "parviglumis" & symp_allo == "sympatric") %>%
+#   group_by(zea, bootstrap) %>%
+#   filter(bootstrap != 0) %>%
+#   summarise(spearmans.cor = cor(quintile, mexicana_ancestry, method = "spearman")) %>%
+#   group_by(zea) %>%
+#   summarise(#min = min(spearmans.cor),
+#             median = median(spearmans.cor),
+#             #max = max(spearmans.cor),
+#             q_.025 = quantile(spearmans.cor, 0.025),
+#             q_.975 = quantile(spearmans.cor, 0.975)) %>%
+#   left_join(filter(r5$anc_boot_mean, zea != "parviglumis" & symp_allo == "sympatric") %>%
+#               filter(bootstrap == 0) %>%
+#               group_by(zea) %>%
+#               summarise(rho = cor(quintile, mexicana_ancestry, method = "spearman")),
+#             .,
+#             by = "zea") %>%
+#   mutate(., lower = 2*rho - q_.975,
+#          upper = 2*rho - q_.025)
+# # vs. coding density quintile?
+# filter(cd5$anc_boot_mean, zea != "parviglumis" & symp_allo == "sympatric") %>%
+#   group_by(zea, bootstrap) %>%
+#   filter(bootstrap != 0) %>%
+#   summarise(spearmans.cor = cor(quintile, mexicana_ancestry, method = "spearman")) %>%
+#   group_by(zea) %>%
+#   summarise(median = median(spearmans.cor),
+#     q_.025 = quantile(spearmans.cor, 0.025),
+#     q_.975 = quantile(spearmans.cor, 0.975)) %>%
+#   left_join(filter(cd5$anc_boot_mean, zea != "parviglumis" & symp_allo == "sympatric") %>%
+#               filter(bootstrap == 0) %>%
+#               group_by(zea) %>%
+#               summarise(rho = cor(quintile, mexicana_ancestry, method = "spearman")),
+#             .,
+#             by = "zea") %>%
+#   mutate(., lower = 2*rho - q_.975,
+#          upper = 2*rho - q_.025)

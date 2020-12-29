@@ -262,6 +262,29 @@ rule calc_overlap:
         done
         """
 
+## plot_overlap_flowering_time: plot overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
+rule plot_overlap_flowering_time:
+    input:
+        pos_fdr05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_pos_{STAT}_outliers.fdr05.counts",
+        neg_fdr05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_neg_{STAT}_outliers.fdr05.counts",
+        pos_p05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_pos_{STAT}_outliers.p05.counts",
+        neg_p05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_neg_{STAT}_outliers.p05.counts",
+        pos_perc02 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_pos_{STAT}_outliers.perc02.counts",
+        neg_perc02 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_neg_{STAT}_outliers.perc02.counts"
+    output:
+        png = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.overlap.{ZEA}.{STAT}_outliers.png"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "plot_overlap_flowering_time.R"
+
 
 ## fit_zAnc: zTz, lm(zAnc ~ zElev) and lm(zAnc ~ intercept) transforms ancestry using cholesky rotation, then fits association with transformed variables, or null model
 rule fit_zAnc:
@@ -319,7 +342,6 @@ rule plot_shared_peaks:
         colors = "colors.R",
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         inv = "data/refMaize/inversions/knownInv_v4_coord.txt"
-
     output:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_hist_outlier_peaks.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_ratio_outlier_peaks.png",

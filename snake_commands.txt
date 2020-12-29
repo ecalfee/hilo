@@ -1958,7 +1958,74 @@ Backtrace: ggplot2. # I fixed a problem with 'zea' variable being NA. rerunning:
 Oops I switched around my f4 populations for the f4 ratio. I'm rerunning these analyses f4(trip, parv; X, allo_maize)
 where X is a sympatric population (numerator) or allopatric mexicana (pop 22 = Amecameca, denominator)
 # new files will be in output directory f4/ . I have moved all previous f4's in this folder to a new folder f4_allopatric_mexicana/
-
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        3       calc_Dstat
+        2       calc_and_plot_f4
+        3       combine_abba_baba_for_Dstat
+        4560    do_abba_baba
+        3       f4_from_abba_baba
+        3       input_abba_baba
+        4575 # RUNNING 11.25.2020 2:15pm. CANCELLED because forgot to limit --jobs to just 6. rerunning:
+b/c I cancelled jobs I had to 'unlock' the directory to rerun snakemake:
+Error: Directory cannot be locked. Please make sure that no other Snakemake process is trying to create the same files in the following directory:
+/home/ecalfee/hilo
+If you are sure that no other instances of snakemake are running on this directory, the remaining lock was likely caused by a kill signal or a power loss. It can be removed with the --unlock argument.
+(hilo-env) ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm --jobs 5 --unlock
+# Note: should just do snakemake --unlock I think next time!! Doesn't run when you use --unlock
+ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm --jobs 5
+# still running, but moving on to sympatric_maize from mexicana. will check on one missing files:
+hilo$ for i in {1..1520}; do ls ancestry_by_r/results/f4/sympatric_mexicana/*W$i.abbababa2; done
+ls: cannot access 'ancestry_by_r/results/f4/sympatric_mexicana/*W635.abbababa2': No such file or directory
+OOPS ran out of time on this one. Will need to rerun after with extra time:
+ecalfee@c6-89:~/hilo$ tail snake_logs/do_abba_baba.POP=sympatric_mexicana,WINDOW=W635.27964807.out
+End                 : 2020-11-30T04:29:32
+Reserved walltime   : 02:38:00
+Used walltime       : 02:38:10
+# FARM had some kind of 16hr downtime (?). My screen and jobs all stopped... just logged back in Dec 2, 1pm
+ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm --jobs 6
+Job counts:
+        count   jobs
+        1       all
+        3       calc_Dstat
+        2       calc_and_plot_f4
+        3       combine_abba_baba_for_Dstat
+        2208    do_abba_baba
+        3       f4_from_abba_baba
+        2220 # RUNNING 12/2/2020 1:20pm. Weird it only ran like 100 jobs then quit.
+        # like the snakemake run just stopped. So I'm starting snakemake again:
+        hilo$ snakemake all --quiet --profile slurm --jobs 5
+        Job counts:
+                count   jobs
+                1       all
+                3       calc_Dstat
+                2       calc_and_plot_f4
+                3       combine_abba_baba_for_Dstat
+                2100    do_abba_baba
+                3       f4_from_abba_baba
+                2112 12/2/2020 10:45pm
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       calc_Dstat
+        2       calc_and_plot_f4
+        2       combine_abba_baba_for_Dstat
+        2       do_abba_baba
+        2       f4_from_abba_baba
+        11 # running 12.9.2020 . Checked in on Dec 11 and weirdly looks like it got frozen and didn't run through. so stopped & re-started same command:
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1       calc_Dstat
+                1       calc_and_plot_f4
+                1       combine_abba_baba_for_Dstat
+                1       do_abba_baba
+                1       f4_from_abba_baba
+                6 # running 12.11.2020. Abba-baba is job 28550210 for W635 sympatric_mexicana
 
 # TO DO:
 - get pi estimates within homozygous ancestry across the whole genome.
