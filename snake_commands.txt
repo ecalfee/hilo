@@ -2027,8 +2027,15 @@ Job counts:
                 1       f4_from_abba_baba
                 6 # running 12.11.2020. Abba-baba is job 28550210 for W635 sympatric_mexicana
 
+# making input bams lists:
+# test one:
+hilo$ snakemake local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yeOZYG/maize/bams/pop363_bams.list --quiet --profile slurm
+# run them all:
+hilo$ snakemake all --quiet --profile slurm
+
+
 # trying out pipeline to get pi estimates across the genome for each population within homozygous ancestry segments
-# test pipeline using a small 500 kb test region on chr1 
+# test pipeline using a small 500 kb test region on chr1
 hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm
 
 

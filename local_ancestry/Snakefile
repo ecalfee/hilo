@@ -403,8 +403,8 @@ rule index_and_list_homozygous_ancestry_bams:
         """
         touch {output.list}
         for SAMPLE in $(cat {input.ploidy} | cut -f1)
-            do echo {params.dir_bams}/$SAMPLE.bam >> {output.list}
-            samtools index {params.dir_bams}/$SAMPLE.bam
+            do echo {params.dir_bams}/$SAMPLE.sort.dedup.bam >> {output.list}
+            samtools index {params.dir_bams}/$SAMPLE.sort.dedup.bam
             done
         """
 
