@@ -405,7 +405,7 @@ rule index_and_list_homozygous_ancestry_bams:
         for SAMPLE in $(cat {input.ploidy} | cut -f1)
             do echo {params.dir_bams}/$SAMPLE.sort.dedup.bam >> {output.list}
             samtools index {params.dir_bams}/$SAMPLE.sort.dedup.bam
-            done
+        done
         """
 
 ## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
