@@ -33,7 +33,8 @@ rule estimate_saf_pop: # TEST WITH SMALL REGION!
         bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list",
         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed" # has bams
     output:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx" # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz"
     params:
         p = "med2",
         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
@@ -76,7 +77,7 @@ rule estimate_sfs:
 ## calc_thetas: calculates thetas for each site from saf and sfs in ANGSD
 rule calc_thetas:
     input:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx",
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz",
         sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.sfs"
     output:
         gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.thetas.gz",
@@ -92,4 +93,4 @@ rule calc_thetas:
         time_min = 48*60,
         mem = lambda wildcards, attempt: attempt * 8 + 16
     shell:
-        "realSFS saf2theta {input.saf} -sfs {input.sfs} -out {params.out_prefix}"
+        "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"

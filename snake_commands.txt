@@ -2066,7 +2066,22 @@ Job counts:
         1       calc_thetas
         1       estimate_saf_pop
         1       estimate_sfs
-        3 # RUNNING 1.1.2021 12:30pm
+        3 # RUNNING 1.1.2021 12:30pm. Fixed the double .. in file extension output and re-trying:
+
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm --restart-times 0
+# estimate_saf_pop took ~15sec and esitmate_sfs took ~10sec computing time for .5Mb ..
+# so scaling that to whole genome is about 18 hrs and 12 hrs based on scaling up to 2.2Tb
+# calc_thetas failed:
+Problem opening file: 'diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.gz'
+# hilo$ realSFS saf2theta diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.idx -sfs diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs -outname diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small
+	-> Version of fname:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.idx is:2
+	-> Assuming .saf.gz file: diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.gz
+	-> Assuming .saf.pos.gz: diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.pos.gz
+	-> args: tole:0.000001 nthreads:4 maxiter:100 nsites:0 start:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs chr:(null) start:-1 stop:-1 fstout:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small oldout:0 seed:1609607311 bootstrap:0 resample_chr:0 whichFst:0 fold:0 ref:(null) anc:(null)
+	-> Will read chunks of size: 4096
+	-> Reading: diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs assuming counts (will normalize to probs internally)
+File:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs looks empty
+# the sfs file is empty!!
 
 # TO DO:
 - test the 'domesticate asymmilate hypothesis' for mexicana.
