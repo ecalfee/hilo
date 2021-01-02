@@ -36,7 +36,7 @@ rule estimate_saf_pop: # TEST WITH SMALL REGION!
         saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx" # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small."
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -83,7 +83,7 @@ rule calc_thetas:
         idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.thetas.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small."
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
     shadow:
         "minimal"
     conda:

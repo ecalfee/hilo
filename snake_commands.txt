@@ -2038,18 +2038,38 @@ Job counts:
         # also deleting 'completed' files for bams so they are re-run.
         hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/*/bams/*.completed
 # re-run them all to make bams and then also create input bams lists:
-hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        56      get_homozygous_ancestry_bams
+        56      list_homozygous_ancestry_bams
+        113 # RUNNING 12.29.2020 1:26pm
+
+# some missing files: pop18, pop23, pop28, pop29, pop34 for maize ancestry bams list.
+# weird that it's a timeout error for such a small task (echo)
+# I'll just rerun without edits .. maybe some issue with the computer nodes
+hilo$ snakemake all --quiet --profile slurm                                      Job counts:
+        count   jobs
+        1       all
+        14      list_homozygous_ancestry_bams
+        15 # RUNNING 12.31.2020 5pm
 
 
+## Get pi estimates within homozygous ancestry across the whole genome.
+# - test pi script with small genome segment. then decide memory for running a whole pop.
 # trying out pipeline to get pi estimates across the genome for each population within homozygous ancestry segments
 # test pipeline using a small 500 kb test region on chr1
 hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm
-
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       calc_thetas
+        1       estimate_saf_pop
+        1       estimate_sfs
+        3 # RUNNING 1.1.2021 12:30pm
 
 # TO DO:
-- get pi estimates within homozygous ancestry across the whole genome.
-- test pi script with small genome segment. then decide memory for running a whole pop.
-- test the 'domesticate assymilate hypothesis' for mexicana.
+- test the 'domesticate asymmilate hypothesis' for mexicana.
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
 
