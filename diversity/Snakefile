@@ -27,28 +27,27 @@ rule make_fasta:
         "-doCounts 1 "
 
 ## estimate_saf_pop: estimate site allele frequency likelihoods using ANGSD for a population
-rule estimate_saf_pop: # TEST WITH SMALL REGION!
+rule estimate_saf_pop:
     input:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
         bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list",
         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed" # has bams
     output:
-        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
-        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz",
-        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.pos.gz"
+        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.gz",
+        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.pos.gz"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}"
     conda:
         "../envs/environment.yaml"
     threads:
-        6
+        4
     resources:
-        time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 8 + 16
+        time_min = 24*60,
+        mem = lambda wildcards, attempt: attempt * 8 + 8
     shell:
         "angsd -out {params.out_prefix} "
-        "-r 1:1000000-1500000 "
         "-doSaf 1 -anc {input.anc} "
         "-GL 1 "
         "-P {threads} "
@@ -58,9 +57,9 @@ rule estimate_saf_pop: # TEST WITH SMALL REGION!
 ## estimate_sfs: estimates site frequency spectrum (sfs) by maximum likelihood in ANGSD
 rule estimate_sfs:
     input:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx"
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx"
     output:
-        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.sfs"
+        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.sfs"
     params:
         p = "med2"
     conda:
@@ -68,26 +67,26 @@ rule estimate_sfs:
     threads:
         6
     resources:
-        time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 8 + 16
+        time_min = 24*60,
+        mem = lambda wildcards, attempt: attempt * 16 + 8 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf} -P {threads} > {output.sfs}"
 
 ## calc_thetas: calculates thetas for each site from saf and sfs in ANGSD
 rule calc_thetas:
     input:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx",
-        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.sfs"
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx",
+        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.sfs"
     output:
-        gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.thetas.gz",
-        idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.thetas.idx"
+        gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz",
+        idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 8 + 16
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 8
     shell:
         "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"

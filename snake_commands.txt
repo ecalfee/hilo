@@ -2102,10 +2102,19 @@ Problem opening file: 'diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG
 Version of fname:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.idx is:2
 # got rid of 'shadow' for these rules, deleted all intermediate output files, and restarting snakemake:
 hilo$ rm diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.*
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       calc_thetas
+        1       estimate_saf_pop
+        1       estimate_sfs
+        3 # ran through!! Now figure out best resources/timing for whole genome. removed all 'small' and genome segment/regions portions of code to run on full genome.         #"-r 1:1000000-1500000 "
+hilo$ snakemake -n all --quiet --profile slurm
 
 
 # TO DO:
 - test the 'domesticate asymmilate hypothesis' for mexicana.
+- need to make a 'all pops but X list of individuals'
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
 
