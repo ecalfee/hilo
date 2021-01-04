@@ -34,7 +34,8 @@ rule estimate_saf_pop: # TEST WITH SMALL REGION!
         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed" # has bams
     output:
         saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
-        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz"
+        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz",
+        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.pos.gz"
     params:
         p = "med2",
         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
@@ -62,8 +63,6 @@ rule estimate_sfs:
         sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.sfs"
     params:
         p = "med2"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -77,7 +76,7 @@ rule estimate_sfs:
 ## calc_thetas: calculates thetas for each site from saf and sfs in ANGSD
 rule calc_thetas:
     input:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.gz",
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.saf.idx",
         sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.sfs"
     output:
         gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small.thetas.gz",
@@ -85,8 +84,6 @@ rule calc_thetas:
     params:
         p = "med2",
         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.small"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     resources:

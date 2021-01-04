@@ -2081,7 +2081,28 @@ Problem opening file: 'diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG
 	-> Will read chunks of size: 4096
 	-> Reading: diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs assuming counts (will normalize to probs internally)
 File:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs looks empty
-# the sfs file is empty!!
+# the sfs file is empty!! But that rule runs fine manually when I create sfs in command line..
+Deleted intermediate files and running test again:
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.thetas.gz --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       calc_thetas
+        1       estimate_saf_pop
+        1       estimate_sfs
+        3 # 1.2.2020. calc_thetas rule didn't run!
+        # errors:
+        -> Version of fname:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.gz is:2
+        /bin/bash: line 1: 41159 Segmentation fault      realSFS saf2theta diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.gz -sfs diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs -outna$
+# ok so I fixed .saf.gz -> .saf.idx typo. Now I need to figure out what's wrong with .sfs file:
+File:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.sfs looks empty
+
+# hmm... in rule estimate_sfs logs I have this error:
+Problem opening file: 'diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.gz
+# and it keeps giving me a warning about version fname is 2:
+Version of fname:diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.saf.idx is:2
+# got rid of 'shadow' for these rules, deleted all intermediate output files, and restarting snakemake:
+hilo$ rm diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize/pop362.small.*
+
 
 # TO DO:
 - test the 'domesticate asymmilate hypothesis' for mexicana.
