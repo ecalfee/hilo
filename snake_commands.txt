@@ -2113,7 +2113,9 @@ hilo$ snakemake -n all --quiet --profile slurm
 
 
 # TO DO:
-- test the 'domesticate asymmilate hypothesis' for mexicana.
+- test the 'domesticate assymmilate hypothesis' for mexicana.
+- Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
+- set up FST calculations
 - need to make a 'all pops but X list of individuals'
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
