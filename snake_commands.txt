@@ -2109,13 +2109,22 @@ Job counts:
         1       estimate_saf_pop
         1       estimate_sfs
         3 # ran through!! Now figure out best resources/timing for whole genome. removed all 'small' and genome segment/regions portions of code to run on full genome.         #"-r 1:1000000-1500000 "
-hilo$ snakemake -n all --quiet --profile slurm
-
+        (hilo-env) ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                56      calc_thetas
+                56      estimate_saf_pop
+                56      estimate_sfs
+                56      get_homozygous_ancestry_bams
+                56      get_homozygous_ancestry_tracts
+                56      list_homozygous_ancestry_bams
+                337 # RUNNING 1.4.2020
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
-- set up FST calculations
+- set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
 - need to make a 'all pops but X list of individuals'
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?

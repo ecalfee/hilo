@@ -8,6 +8,8 @@ library(ggplot2)
 library(broom)
 library(viridis)
 library(xtable)
+library(grid)
+library(gridExtra)
 
 # load variables from snakemake
 # get output plot and table filenames
@@ -21,6 +23,8 @@ png_teo_hist = snakemake@output[["png_teo_hist"]] # histogram of teosinte occure
 # png_teo_hist = "global_ancestry/plots/teosinte_hx_occurence_hist.png"
 lm_tex = snakemake@output[["lm_tex"]]
 # lm_tex = "global_ancestry/tables/lm_elevation.tex"
+png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
+# png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
 
 # get colors for plot
 # source("colors.R")
@@ -146,7 +150,7 @@ p_symp_allo_elev <- d_admix3 %>%
   scale_shape_manual(values = shape_group_zea2, labels = zea_group_labels) +
   coord_cartesian(ylim = 0:1, clip = "off") +
   scale_y_continuous(expand=c(0,0)) +
-  xlim(c(950, 2650)) + # upper elevation for sympatric pops is 1609m but mexicana grows up to nearly 3000m
+  xlim(c(950, 2650)) + # upper elevation for sympatric pops is 2609m but mexicana grows up to nearly 3000m
   #xlim(c(950, 3000)) +
   #geom_segment(x = 900, xend = 2000, y = -.15, yend = -.15, 
                #color = col_maize_mex_parv[["parviglumis"]],
@@ -170,7 +174,7 @@ p_teo_hist <- teo %>%
   #xlim(c(850, 3050)) +
   scale_fill_manual(values = col_maize_mex_parv) +
   ggtitle("Teosinte occurence data 1842–2016") +
-  labs(fill = "", x = "Elevation", y = "Observations")
+  labs(fill = "Teosinte", x = "Elevation (m)", y = "Observations")
 # plot(p_teo_hist)
 ggsave(filename = png_teo_hist,
        plot = p_teo_hist,
@@ -183,3 +187,133 @@ ggsave(filename = png_teo_hist,
 #  group_by(zea) %>%
 #  summarise(min = min(ELEVATION),
 #            max = max(ELEVATION))
+
+
+# multipanel plot of global ancestry data:
+# allopatric maize/mexicana structure only
+p_structure_allo_maize <- d_admix2 %>%
+  filter(group == "allopatric_maize") %>%
+  mutate(ELEVATION = ifelse(group == "allopatric_maize", 983, ELEVATION)) %>% # add dummy elevation for allopatric maize (from Palmar Chico)
+  arrange(., ELEVATION, popN) %>%
+  mutate(sample = 1:nrow(.)) %>%
+  tidyr::gather(., "ancestry", "p", c("mexicana", "maize")) %>%
+  ggplot(., aes(fill = ancestry, y = p, x = sample)) +
+  geom_bar(stat = "identity", position = "fill") + 
+  scale_fill_manual(values = col_maize_mex_parv) +
+  labs(fill = "Ancestry", y = "Proportion") +
+  theme_classic() +
+  theme(axis.ticks.x = element_blank()) +
+  scale_x_discrete(name = element_blank(), 
+                   limits = c(27.5),
+                   labels = c("Palmar Chico\n(983m)"))
+p_structure_allo_maize
+p_structure_allo_mexicana <- d_admix2 %>%
+  filter(group == "allopatric_mexicana") %>%
+  arrange(., ELEVATION, popN) %>%
+  mutate(sample = 1:nrow(.)) %>%
+  mutate(sample = ifelse(LOCALITY == "Malinalco", sample + 1, ifelse(LOCALITY == "Amecameca", sample + 2, sample))) %>%
+  tidyr::gather(., "ancestry", "p", c("mexicana", "maize")) %>%
+  ggplot(., aes(fill = ancestry, y = p, x = sample)) +
+  geom_bar(stat = "identity", position = "fill") + 
+  scale_fill_manual(values = col_maize_mex_parv) +
+  labs(fill = "Ancestry", 
+       y = "Proportion") +
+  theme_classic() +
+  theme(axis.ticks.x = element_blank()) +
+  scale_x_discrete(name = element_blank(), 
+                   limits = c(5.5, 20, 37.5),
+                   labels = c("Puerta Encantada\n(1,658m)", 
+                              "Malinalco\n(1,887m)", 
+                              "Amecameca\n(2,467m)")) +
+  guides(fill = guide_legend(override.aes = list(size = smallPointSize,
+                                                 shape = 0.1))) +
+  theme(legend.title = element_text(size = smallLegendTitle), 
+        legend.text  = element_text(size = smallLegendText),
+        legend.key.size = unit(smallLegendSpacing, "lines"),
+        legend.key.width = unit(smallLegendSpacing, "lines"))
+p_structure_allo_mexicana
+# to teo occurrence plot add arrows for our sympatric sampling range
+smallPointSize = 0.25
+smallLabel = 7
+smallLegendText = 6
+smallLegendSize = 2
+p_combined <- grid.arrange(grobs = list(ggplotGrob(p_symp_elev +
+                                       guides(color = F) +
+                                       labs(shape = "Sympatric") +
+                                       scale_shape_discrete(labels = c("Sympatric maize", "Sympatric mexicana")) +
+                                       theme(plot.title = element_blank(),
+                                             legend.position = "top",
+                                             legend.text = element_text(size = smallLabel + 1),
+                                             legend.title = element_blank(),
+                                             legend.margin = margin(c(0,0,0,0)))),
+                          ggplotGrob(p_structure_allo_mexicana +
+                                       labs(subtitle = "Allopatric mexicana") +
+                                       guides(fill = F) +
+                                       theme(axis.text.x = element_text(size = smallLabel),
+                                             plot.subtitle = element_text(size = smallLabel + 1),
+                                             axis.title = element_text(size = smallLabel + 1))
+                                       ),
+                          ggplotGrob(p_structure_allo_maize + 
+                                       labs(subtitle = "Allopatric maize") +
+                                       guides(fill = F) +
+                                       theme(axis.text.x = element_text(size = smallLabel),
+                                             plot.subtitle = element_text(size = smallLabel + 1),
+                                             axis.title = element_text(size = smallLabel + 1))
+                                     ),
+                          ggplotGrob(p_teo_hist + #ggtitle("C") + 
+                                       theme(plot.title = element_blank(),
+                                             axis.title = element_text(size = smallLabel + 1)) +
+                                       guides(fill = F) +
+                                       geom_segment(aes(x = min(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"]), 
+                                                        y = 110, 
+                                                        xend = max(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"]), 
+                                                        yend = 110),
+                                                    #lineend = "butt",
+                                                    #linejoin = "mitre",
+                                                    arrow = arrow(length = unit(1, "mm"), 
+                                                                  ends = "both",
+                                                                  type = "closed")) +
+                                       geom_text(aes(x = mean(range(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"])), 
+                                                     y = 120, 
+                                                     label = "sampled range"),
+                                                 size = 2)
+                                     ),
+                          cowplot::get_legend(p_structure_allo_mexicana +
+                                                theme(legend.title = element_text(size = smallLabel), 
+                                                      legend.text  = element_text(size = smallLegendText),
+                                                      legend.key.size = unit(smallLegendSize, "mm"),
+                                                      legend.key.width = unit(smallLegendSize, "mm"),
+                                                      legend.margin = margin(c(1,1,5,0)),
+                                                      plot.margin = margin(c(0,0,0,0)))),
+                          cowplot::get_legend(p_teo_hist +
+                                                theme(legend.title = element_text(size = smallLabel), 
+                                                      legend.text  = element_text(size = smallLegendText),
+                                                      legend.key.size = unit(smallLegendSize, "mm"),
+                                                      legend.key.width = unit(smallLegendSize, "mm"),
+                                                      legend.margin = margin(c(1,1,5,0)),
+                                                      plot.margin = margin(c(0,0,0,0)))), # top, right, bottom, left
+                          textGrob(label = "A", 
+                                   x = unit(0.5, "lines"), 
+                                   y = unit(0, "lines")),
+                          textGrob(label = "B", 
+                                   x = unit(0.5, "lines"), 
+                                   y = unit(0, "lines")),
+                          textGrob(label = "C", 
+                                   x = unit(0.5, "lines"), 
+                                   y = unit(0.5, "lines"))),
+             layout_matrix = rbind(c(7, 8, NA),
+                                   c(1, 2, 5),
+                                   c(1, 3, 3),
+                                   c(1, 9, NA),
+                                   c(1, 4, 6)),
+             heights = c(.1, 2, 2, .1, 2),
+             widths = c(5, 4.75, 0.75))
+#plot_grid(lambda1,lambda12,labels=c('a)','b)'),ncol=1)
+p_combined
+ggsave(png_global_anc_multi, 
+       plot = p_combined, 
+       device = "png", 
+       width = 7.5, 
+       height = 4, 
+       units = "in",
+       dpi = 300)

@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 library(dplyr)
 library(ggplot2)
+# coord_cartesian() to get histogram w/out 1st bar
 
 # this script plots ancestry outliers across the genome,
 # from individual populations, and shared across pops

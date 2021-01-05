@@ -146,7 +146,8 @@ rule plot_NGSAdmix:
         png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png",
         png_structure = "global_ancestry/plots/structure_K2.png",
         png_teo_hist = "global_ancestry/plots/teosinte_hx_occurence_hist.png"
-        lm_tex = "global_ancestry/tables/lm_elevation.tex"
+        lm_tex = "global_ancestry/tables/lm_elevation.tex",
+        png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
     params:
         p = "med2"
     shadow:
