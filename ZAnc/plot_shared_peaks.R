@@ -35,6 +35,7 @@ png_chr_i_prefix = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/", zea, "_share
 
 # load data
 source(colors_file)
+mex_maize = c("mexicana", "maize")
 load(anc_file)
 load(sim_file)
 load(meta_file)
@@ -127,8 +128,9 @@ p_hist = outliers_bypop %>%
   #ylim(c(0, 0.7)) +
   theme_classic() +
   xlab("Number of populations with high introgression") +
-  ylab("Proportion of outliers") +
-  ggtitle(paste("Distribution of shared outliers in", zea))
+  ylab("Proportion of SNPs") +
+  ggtitle(paste("Distribution of shared outliers in", zea)) +
+  coord_cartesian(xlim = c(1, 14), ylim = c(0, 0.17))
 #p_hist
 ggsave(file = png_hist,
        plot = p_hist,
@@ -183,24 +185,54 @@ ggsave(file = png_hist_ratio,
 for (i in 1:10){
   p_chr_i = anc_outliers %>%
     filter(chr == i) %>%
-    ggplot(., aes(pos/10^6, anc, color = top_sd2)) + # plot by position on chromosome (Mb), not relative position
-    geom_point(size = .1) +
-    geom_hline(data = meta_pops, 
-               aes(yintercept = alpha_local_ancestry), 
-               linetype = "dashed", alpha = .5,
-               color = col_maize_mex_parv[[zea]]) +
+    mutate(top_sd2 = ifelse(top_sd2, "outlier", "non-outlier")) %>%
+    # plot population ancestry at each SNP by position on chromosome (Mb)
+    ggplot(., aes(pos/10^6, anc, color = top_sd2)) + 
+    geom_point(size = 0.5,
+               shape = 20) +
     facet_grid(reorder(LOCALITY, desc(ELEVATION)) ~ .) +
-    xlab("position (Mbp)") +
-    ylab("introgressed ancestry frequency") +
-    ggtitle(paste("Chr", i)) +
-    ylim(c(0,1)) +
-    scale_colour_manual(values = c("grey", "blue")) + 
-    theme_classic() +
-    coord_cartesian(ylim=c(0,1)) + 
-    theme(legend.position = "none") +
-    theme(strip.text.y = element_text(angle=0))
+    # add population mean introgressed ancestry
+    geom_hline(data = meta_pops, 
+               aes(yintercept = alpha_local_ancestry,
+                   color = zea), 
+               linetype = "dashed",
+               alpha = 1
+    ) +
+    # add vertical lines for known inversions
+    geom_vline(data = filter(inv, chr == i) %>%
+                 left_join(., mutate(meta_pops, chr = 4), by = "chr") %>%
+                 pivot_longer(cols = c("start", "end"),
+                              names_to = "which_end",
+                              values_to = "inv_pos"),
+               size = 0.25,
+               alpha = 1,
+               mapping = aes(xintercept = inv_pos/10^6)) +
+    xlab(paste0("Chr ", i, " position (Mbp)")) +
+    ylab(paste0("Introgressed ", mex_maize[mex_maize != zea], " ancestry frequency")) +
+    scale_color_manual(values = c(col_maize_mex_parv[[zea]], "#00BFC4", "darkgrey"),
+                       labels = c("mean ancestry", "> 2 s.d. above mean", "non-outlier"),
+                       limits = c(zea, "outlier", "non-outlier")) + 
+    theme_light() +
+    scale_y_continuous(breaks = c(0, 1)) +
+    scale_x_continuous(expand = expand_scale(mult = c(0, 0), # remove extra expanded scale 
+                                             add = c(2, 2))) +
+    coord_cartesian(ylim = c(0, 1)) + 
+    theme(strip.text.y = element_text(angle=0),
+          legend.position = "bottom",
+          legend.title = element_blank(),
+          panel.border = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank(),
+          legend.margin = margin(c(0,1,1,0)), # top, right, bottom, left
+          legend.box.margin = margin(c(-5,0,0,0))
+    ) + 
+    guides(color = guide_legend(override.aes = list(shape = 15, 
+                                                    linetype = 0,
+                                                    size = 3)))
   ggsave(file = paste0(png_chr_i_prefix, i, ".png"),
          plot = p_chr_i,
-         height = 8, width = 16, units = "in",
+         height = 5, 
+         width = 7.5, 
+         units = "in",
          device = "png")
 }

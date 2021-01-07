@@ -2128,7 +2128,7 @@ Job counts:
                         35      estimate_saf_pop
                         35      estimate_sfs
                         4       list_homozygous_ancestry_bams
-                        110
+                        110 # 1.6.2020 9pm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
