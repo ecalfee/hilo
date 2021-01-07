@@ -5,18 +5,8 @@ library(ggplot2)
 # from individual populations, and shared across pops
 
 # load variables from Snakefile
-#zea = snakemake@params[["zea"]]
-# zea = "maize"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
-
-#sim_file = snakemake@input[["sim"]]
-# sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
-#anc_file = snakemake@input[["anc"]]
-# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
-#meta_file = snakemake@input[["meta_pop"]]
-# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
-
 sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 inv_file = snakemake@input[["inv"]]
