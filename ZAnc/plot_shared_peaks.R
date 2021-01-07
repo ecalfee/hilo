@@ -200,7 +200,7 @@ for (i in 1:10){
     ) +
     # add vertical lines for known inversions
     geom_vline(data = filter(inv, chr == i) %>%
-                 left_join(., mutate(meta_pops, chr = 4), by = "chr") %>%
+                 left_join(., mutate(meta_pops, chr = i), by = "chr") %>%
                  pivot_longer(cols = c("start", "end"),
                               names_to = "which_end",
                               values_to = "inv_pos"),
