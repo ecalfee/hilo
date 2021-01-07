@@ -2119,7 +2119,16 @@ Job counts:
                 56      get_homozygous_ancestry_bams
                 56      get_homozygous_ancestry_tracts
                 56      list_homozygous_ancestry_bams
-                337 # RUNNING 1.4.2020
+                337 # RUNNING 1.4.2020. some ran out of memory for estimate_saf_pop. so I'm increasing and rerunning:
+                hilo$ snakemake all --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       all
+                        35      calc_thetas
+                        35      estimate_saf_pop
+                        35      estimate_sfs
+                        4       list_homozygous_ancestry_bams
+                        110
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

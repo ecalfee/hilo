@@ -45,7 +45,7 @@ rule estimate_saf_pop:
         4
     resources:
         time_min = 24*60,
-        mem = lambda wildcards, attempt: attempt * 8 + 8
+        mem = lambda wildcards, attempt: attempt * 8 + 32
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "
@@ -68,7 +68,7 @@ rule estimate_sfs:
         6
     resources:
         time_min = 24*60,
-        mem = lambda wildcards, attempt: attempt * 16 + 8 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        mem = lambda wildcards, attempt: attempt * 16 + 16 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf} -P {threads} > {output.sfs}"
 
