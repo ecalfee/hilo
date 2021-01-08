@@ -2128,7 +2128,7 @@ Job counts:
                         35      estimate_saf_pop
                         35      estimate_sfs
                         4       list_homozygous_ancestry_bams
-                        110 # 1.6.2020 9pm
+                        110 # 1.6.2020 9pm. some error could not assign memory. not sure issue but lessened total possible memory for 1 rule nad trying again.
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

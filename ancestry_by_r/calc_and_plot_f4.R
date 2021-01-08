@@ -24,15 +24,15 @@ windows_file = snakemake@input[["windows"]]
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 png_r5 = snakemake@output[["png_r5"]]
-# png_r5 = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_byr5.png")
+# png_r5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5.png")
 png_cd5 = snakemake@output[["png_cd5"]]
-# png_cd5 = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_bycd5.png")
+# png_cd5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5.png")
 png_r5_no_inv4m = snakemake@output[["png_r5_no_inv4m"]]
-# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_byr5_noinv4m.png")
+# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5_noinv4m.png")
 png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
-# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_bycd5_noinv4m.png")
+# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5_noinv4m.png")
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
-# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_allo_pop22_symp_", sympatric_pop, "_num_denom.png")
+# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 100
 inv_file = snakemake@input[["inv_file"]]
@@ -52,7 +52,7 @@ f4_denom <- read.table(f4_denom_file, stringsAsFactors = F, sep = "\t", header =
 # angsd outputs sum of (x_trip - x_parv)*(x_X - x_allo_maize)
 # so I divide by number of sites to get the expectation
 alpha = (sum(f4_num$Numer)/sum(f4_num$numSites))/(sum(f4_denom$Numer)/sum(f4_denom$numSites))
-# genomewide the alpha estimate for % maize is ~ 58% in sympatric maize
+# genomewide the alpha estimate for % mexicana is ~ 21% in sympatric maize
 
 # look at f4 across recombination rates:
 # get windows
@@ -66,18 +66,8 @@ winds$inv4m = winds$chr == inv$chr[inv$inv == "inv4m"] &
   winds$start < inv$end[inv$inv == "inv4m"] &
   winds$end > inv$start[inv$inv == "inv4m"]
 
-convert_2_Mb_per_cM <- function(bin){
-  start = substr(bin, 1, 1)
-  end = substr(bin, nchar(bin), nchar(bin))
-  middle = substr(bin, 2, nchar(bin) - 1) %>%
-    strsplit(., split = ",") %>%
-    unlist(.) %>%
-    as.numeric(.)
-  range = round(1/middle, 4) # 1cM*1/(cM/Mb) = Mb/cM, rounded to 4 decimal places
-  return(paste0(start, range[2], ",", range[1], end))
-}
-# test:
-# convert_2_Mb_per_cM("(2,5.8]")
+
+
 
 # combine data
 
@@ -90,11 +80,6 @@ d_f4 <- group_by(f4_num, window) %>%
                         denom_sites = sum(numSites)),
             by = "window") %>%
   left_join(winds, ., by = "window") %>%
-  # report quintiles for # bp in a cM window (analogous to cd5, which is coding bp/cM)
-  # instead or recombination rate, cM/Mb 
-  dplyr::mutate(quintile_Mbp5 = 6 - quintile_r5,
-                bin_Mbp5 = sapply(bin_r5, function(x) convert_2_Mb_per_cM(x))
-  ) %>%
   ungroup()
 
 # by recombination rate (inverse of bp density)
@@ -165,7 +150,7 @@ boot_r <- boot(data = filter(d_f4, !is.na(num_sites)),
                R = n_boot)
 
 # bootstrap confidence interval for spearman's rank correlation:
-boot.ci(boot_r, index = 1, type = c("norm", "basic", "perc"))
+#boot.ci(boot_r, index = 1, type = c("norm", "basic", "perc"))
 
 # bootstrap confidence interval for number of low recombination bins:
 #boot.ci(boot_r, index = 7, type = c("norm", "basic", "perc"))
@@ -328,9 +313,7 @@ p_r5 <- ggplot(data = d_boot_r, aes(x = r_bin)) +
   ylab("Proportion mexicana ancestry") +
   #labs(subtitle = text_spearman_r) +
   theme_classic() +
-  guides(color = guide_legend("Subspecies"),
-         shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by recombination rate in sympatric", zea)) +
+  #ggtitle(paste("Ancestry by recombination rate in sympatric", zea)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_x_discrete(labels = x_axis_labels_r$bin_r5) +
   ylim(0:1)
@@ -374,11 +357,11 @@ p_r5_no_inv4m <- ggplot(data = d_boot_r_no_inv4m, aes(x = r_bin)) +
                 width = .5) +
   xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Proportion mexicana ancestry") +
-  #labs(subtitle = text_spearman_r) +
+  #labs(subtitle = text_spearman_r_no_inv4m) +
   theme_classic() +
-  guides(color = guide_legend("Subspecies"),
-         shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by recombination rate in sympatric", zea, "(excl. inv4m)")) +
+  #guides(color = guide_legend("Subspecies"),
+  #       shape = guide_legend("Subspecies")) +
+  #ggtitle(paste("Ancestry by recombination rate in sympatric", zea, "(excl. inv4m)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_x_discrete(labels = x_axis_labels_r$bin_r5) +
   ylim(0:1)
@@ -424,13 +407,13 @@ p_cd5 <- ggplot(data = d_boot_cd, aes(x = cd_bin)) +
   geom_errorbar(data = ci_boot_cd, aes(ymin = low,
                                        ymax = high),
                 width = .5) +
-  xlab("Coding density quintile (bp/cM)") +
+  xlab("Gene density quintile (coding bp/cM)") +
   ylab("Proportion mexicana ancestry") +
   #labs(subtitle = text_spearman_cd) +
   theme_classic() +
-  guides(color = guide_legend("Subspecies"),
-         shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by gene density in sympatric", zea)) +
+  #guides(color = guide_legend("Subspecies"),
+  #       shape = guide_legend("Subspecies")) +
+  #ggtitle(paste("Ancestry by gene density in sympatric", zea)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   ylim(0:1) +
   scale_x_discrete(labels = x_axis_labels_cd$bin_cd5)
@@ -478,9 +461,7 @@ p_cd5_no_inv4m <- ggplot(data = d_boot_cd_no_inv4m, aes(x = cd_bin)) +
   ylab("Proportion mexicana ancestry") +
   #labs(subtitle = text_spearman_cd_no_inv4m) +
   theme_classic() +
-  guides(color = guide_legend("Subspecies"),
-         shape = guide_legend("Subspecies")) +
-  ggtitle(paste("Ancestry by gene density in sympatric", zea, "(excl. inv4m)")) +
+  #ggtitle(paste("Ancestry by gene density in sympatric", zea, "(excl. inv4m)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   ylim(0:1) +
   scale_x_discrete(labels = x_axis_labels_cd$bin_cd5)
