@@ -109,12 +109,12 @@ anc_by_wind_and_zea <- anc_by_wind %>%
 
 # make plots
 # mexicana ancestry for K=2 in sympatric maize and mexicana:
-p_r5_symp <- r5$anc_group_confidence_intervals %>%
+p_r5_symp <- r5$anc_boot_perc %>%
   dplyr::filter(ancestry == "mexicana_ancestry") %>%
   dplyr::filter(symp_allo == "sympatric") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(r5$anc_ind, zea != "parviglumis" & ancestry == "mexicana"),
+  geom_point(data = filter(r5$anc_ind, ancestry == "mexicana"),
              aes(x = bin,
                  y = p,
                  shape = zea,
@@ -123,10 +123,10 @@ p_r5_symp <- r5$anc_group_confidence_intervals %>%
   scale_color_manual(values = col_maize_mex_parv) +
   # then add mean for that group
   geom_point(pch = 18, size = 2) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
-  geom_errorbar(aes(ymin = low,
-                    ymax = high),
+  # and errorbars for 95% CI around that mean
+  # based on bootstrap with NGSAdmix (percentile method)
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
                 width = .5) +
   xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Proportion mexicana ancestry") +
@@ -143,7 +143,7 @@ ggsave(file = png_r5_symp,
        units = "in", dpi = 300)
 
 # by coding bp per cM
-p_cd5_symp <- cd5$anc_group_confidence_intervals %>%
+p_cd5_symp <- cd5$anc_boot_perc %>%
   dplyr::filter(ancestry == "mexicana_ancestry") %>%
   dplyr::filter(symp_allo == "sympatric") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
@@ -157,10 +157,10 @@ p_cd5_symp <- cd5$anc_group_confidence_intervals %>%
   scale_color_manual(values = col_maize_mex_parv) +
   # then add mean for that group
   geom_point(pch = 18, size = 2) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
-  geom_errorbar(aes(ymin = low,
-                    ymax = high),
+  # and errorbars for 95% CI around that mean
+  # based on bootstrap with NGSAdmix (based on percentile method)
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
                 width = .5) +
   xlab("Gene density (coding bp/cM)") +
   ylab("Proportion mexicana ancestry") +
@@ -177,7 +177,7 @@ ggsave(file = png_cd5_symp,
        units = "in", dpi = 300)
 
 # mexicana ancestry for K=2 in sympatric and allopatric maize/mex
-p_r5_symp_allo <- r5$anc_group_confidence_intervals %>%
+p_r5_symp_allo <- r5$anc_boot_perc %>%
   dplyr::filter(ancestry == "mexicana_ancestry") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
@@ -187,22 +187,13 @@ p_r5_symp_allo <- r5$anc_group_confidence_intervals %>%
                  shape = zea,
                  color = zea),
              position = position_jitter(0.2)) +
-  #geom_point(data = filter(r5$anc_ind, # apply same stringency of filters as for local ancestry estimates
-  #                         zea != "parviglumis" & ancestry == "mexicana" & est_coverage >= 0.5) %>%
-  #             dplyr::group_by(zea, ancestry, symp_allo, bin) %>%
-  #             dplyr::summarise(p = mean(p)),
-  #           aes(x = bin,
-  #               y = p),
-  #           size = 5,
-  #           color = "black",
-  #           shape = 1) +
   scale_color_manual(values = col_maize_mex_parv) +
   # then add mean for that group
   geom_point(pch = 18, size = 2) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
-  geom_errorbar(aes(ymin = low,
-                    ymax = high),
+  # and errorbars for 95% CI around that mean
+  # based on bootstrap with NGSAdmix (percentile method)
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
                 width = .5) +
   facet_wrap(~symp_allo) +
   theme_classic() +
@@ -219,7 +210,7 @@ ggsave(file = png_r5_symp_allo,
        width = 7, height = 7, 
        units = "in", dpi = 300)
 
-p_cd5_symp_allo <- cd5$anc_group_confidence_intervals %>%
+p_cd5_symp_allo <- cd5$anc_boot_perc %>%
   dplyr::filter(ancestry == "mexicana_ancestry") %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
@@ -232,10 +223,10 @@ p_cd5_symp_allo <- cd5$anc_group_confidence_intervals %>%
   scale_color_manual(values = col_maize_mex_parv) +
   # then add mean for that group
   geom_point(pch = 18, size = 2) +
-  # and errorbars for 90% CI around that mean
-  # based on bootstrap with NGSAdmix
-  geom_errorbar(aes(ymin = low,
-                    ymax = high),
+  # and errorbars for 95% CI around that mean
+  # based on bootstrap with NGSAdmix (percentile method)
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
                 width = .5) +
   xlab("Gene density (coding bp/cM)") +
   ylab("Proportion mexicana ancestry") +

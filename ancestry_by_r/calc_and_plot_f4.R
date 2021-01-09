@@ -34,7 +34,7 @@ png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
 # png_f4_num_denom = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
-# n_boot = 100
+# n_boot = 1000
 inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 
@@ -498,3 +498,4 @@ ggsave(file = png_f4_num_denom,
        device = "png",
        width = 7.5, height = 4.5,
        units = "in", dpi = 300)
+

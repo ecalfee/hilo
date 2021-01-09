@@ -2129,6 +2129,41 @@ Job counts:
                         35      estimate_sfs
                         4       list_homozygous_ancestry_bams
                         110 # 1.6.2020 9pm. some error could not assign memory. not sure issue but lessened total possible memory for 1 rule nad trying again.
+                        hilo$ snakemake all --quiet --profile slurm
+                        Job counts:
+                                count   jobs
+                                1       all
+                                35      calc_thetas
+                                35      estimate_saf_pop
+                                35      estimate_sfs
+                                4       list_homozygous_ancestry_bams
+                                110
+                        Traceback (most recent call last):
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/__init__.py", line 665, in snakemake
+                            keepincomplete=keep_incomplete,
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/workflow.py", line 908, in execute
+                            success = scheduler.schedule()
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/scheduler.py", line 378, in schedule
+                            self.run(job)
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/scheduler.py", line 397, in run
+                            error_callback=self._error,
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/executors.py", line 915, in run
+                            shell=True,
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 356, in check_output
+                            **kwargs).stdout
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 423, in run
+                            with Popen(*popenargs, **kwargs) as process:
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 729, in __init__
+                            restore_signals, start_new_session)
+                          File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 1295, in _execute_child
+                            restore_signals, start_new_session, preexec_fn)
+                        OSError: [Errno 12] Cannot allocate memory
+                        # HMM.. problem with rule estimate_saf_pop on cluser, e.g. job 28893369
+# pausing on this for a min to re-do some results for bootstrapping ancestry ~ r:
+# first remove results
+hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/*.Rdata
+# then remake them:
+hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

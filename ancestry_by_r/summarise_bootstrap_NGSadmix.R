@@ -17,7 +17,7 @@ K = snakemake@params[["k"]]
 windows_file = snakemake@params[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 alpha = snakemake@params[["alpha"]]
-# alpha = 0.1 # use 90% confidence intervals for bootstrap
+# alpha = 0.05 # use 95% confidence intervals for bootstrap
 rdata_out = snakemake@output[["rdata"]]
 # rdata_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata"
 
@@ -67,22 +67,36 @@ anc_group_estimate <- anc_boot_mean %>%
          paste(ancestries[1:K], "ancestry", sep = "_"))
 
 
-# get percentiles from bootstrap
+# calculate percentiles confidence intervals from bootstrap
 anc_boot_perc <- anc_boot_mean %>%
   filter(bootstrap != 0) %>% # boot = 0 is the original sample
   gather(., key = "ancestry", value = "p",
          paste(ancestries[1:K], "ancestry", sep = "_")) %>%
   group_by(ancestry, group, bin, quintile, feature) %>%
   summarise(low_boot = quantile(p, alpha/2), # low and high bounds
-            high_boot = quantile(p, 1-alpha/2), # of 90% conf. interval
+            high_boot = quantile(p, 1-alpha/2), # of conf. interval
             median_boot = median(p),
-            mean_boot = mean(p))
+            mean_boot = mean(p)) %>%
+  left_join(anc_group_estimate, ., by = c("ancestry", "group", "bin", "quintile", "feature"))
 
-# calculate basic bootstrap (i.e. 'pivot') confidence intervals together (to plot later as range)
-anc_group_confidence_intervals <- anc_group_estimate %>%
-  left_join(., anc_boot_perc, by = c("ancestry", "group", "bin", "quintile")) %>%
-  mutate(low = 2*p - high_boot, # p is the estimate from the original sample
-         high = 2*p - low_boot)
+# calculate Spearman's rank correlation mexicana ancestry ~ feature (feature = r/cd)
+# and 95% percentile confidence intervals from the bootstrap results
+# first calculate mean across individuals in each group (sympatric maize, allopatric mexicana..)..
+# (so it's just 5 points in the rank correlation; like f4s)
+spearman = anc_boot_mean %>%
+  group_by(group, bootstrap) %>%
+  summarise(rho = cor(x = mexicana_ancestry, 
+                           y = quintile, 
+                           method = "spearman")) %>%
+  ungroup() %>%
+  group_by(group) %>%
+  summarise(rho_estimate = rho[bootstrap == 0], # original sample
+            boot_low = quantile(rho[bootstrap != 0], alpha/2), # percentiles from bootstrap (excl. original sample)
+            boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2))
+  #ggplot(., aes(fill = group, x = group, y = rho)) +
+  #geom_violin()
+
+# calculate significance of change in slope across elevation (elevation*feature interaction)
 
 # save
 feature_name = paste0(FEATURE, "5")
@@ -91,7 +105,7 @@ assign(x = feature_name,
                     anc_ind = anc_ind,
                     anc_boot_mean = anc_boot_mean,
                     anc_boot_perc = anc_boot_perc,
-                    anc_group_confidence_intervals = anc_group_confidence_intervals,
+                    spearman = spearman,
                     alpha = alpha))
 save(list = c(feature_name), file = rdata_out)
 

@@ -187,7 +187,7 @@ rule summarise_bootstrap_anc_by_r:
         feature = lambda wildcards: wildcards.FEATURE,
         meta = "samples/HILO_MAIZE55_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        alpha = 0.1 # use 90% confidence intervals for bootstrap
+        alpha = 0.05 # use 95% confidence intervals for bootstrap
     conda:
          "../envs/environment.yaml"
     resources:
