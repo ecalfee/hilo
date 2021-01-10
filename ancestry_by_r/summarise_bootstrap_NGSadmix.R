@@ -57,7 +57,8 @@ anc_ind <- anc_boot %>%
 anc_boot_mean <- anc_boot %>%
   group_by(group, zea, symp_allo, bootstrap, bin, quintile, feature) %>%
   summarise(mexicana_ancestry = mean(mexicana),
-            maize_ancestry = mean(maize))
+            maize_ancestry = mean(maize)) %>%
+  ungroup()
 
 
 # group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
@@ -65,7 +66,6 @@ anc_group_estimate <- anc_boot_mean %>%
   filter(bootstrap == 0) %>%
   gather(., key = "ancestry", value = "p",
          paste(ancestries[1:K], "ancestry", sep = "_"))
-
 
 # calculate percentiles confidence intervals from bootstrap
 anc_boot_perc <- anc_boot_mean %>%
@@ -77,7 +77,9 @@ anc_boot_perc <- anc_boot_mean %>%
             high_boot = quantile(p, 1-alpha/2), # of conf. interval
             median_boot = median(p),
             mean_boot = mean(p)) %>%
-  left_join(anc_group_estimate, ., by = c("ancestry", "group", "bin", "quintile", "feature"))
+  ungroup() %>%
+  left_join(anc_group_estimate, ., by = c("ancestry", "group", "bin", "quintile", "feature")) %>%
+  dplyr::select(-bootstrap)
 
 # calculate Spearman's rank correlation mexicana ancestry ~ feature (feature = r/cd)
 # and 95% percentile confidence intervals from the bootstrap results
@@ -86,13 +88,13 @@ anc_boot_perc <- anc_boot_mean %>%
 spearman = anc_boot_mean %>%
   group_by(group, bootstrap) %>%
   summarise(rho = cor(x = mexicana_ancestry, 
-                           y = quintile, 
-                           method = "spearman")) %>%
+                      y = quintile, 
+                      method = "spearman")) %>%
   ungroup() %>%
   group_by(group) %>%
   summarise(rho_estimate = rho[bootstrap == 0], # original sample
-            boot_low = quantile(rho[bootstrap != 0], alpha/2), # percentiles from bootstrap (excl. original sample)
-            boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2))
+            boot_low = quantile(rho[bootstrap != 0], alpha/2, na.rm = T), # percentiles from bootstrap (excl. original sample)
+            boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2, na.rm = T)) # must remove NAs because one bootstrap sample for allopatric maize in cd's has no variance (therefore correlation is NA)
   #ggplot(., aes(fill = group, x = group, y = rho)) +
   #geom_violin()
 

@@ -2163,7 +2163,14 @@ Job counts:
 # first remove results
 hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/*.Rdata
 # then remake them:
-hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
+hilo$ snakemake ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       summarise_bootstrap_anc_by_r
+        2 # RUNNING 1.9.2020 12:30pm. needed to add na.rm to quantiles after correlation
+        # because one bootstrap sample for cd's within allopatric maize has no variance (all ancestry = 100% maize)
+        # rerunning:
+        snakemake ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
