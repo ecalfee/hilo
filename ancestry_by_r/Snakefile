@@ -441,17 +441,17 @@ rule calc_Dstat:
         "Rscript ../software/angsd_0.932/R/estAvgError.R angsdFile={params.prefix_in} out={params.prefix_out} sizeFile={input.pops_size} nameFile={input.pops_name}"
 
 
-## plot_bootstrap_anc_by_r: plots bootstrap results for global & local ancestry by recombination rate
-rule plot_bootstrap_anc_by_r:
+## plot_bootstrap_NGSadmix_by_r: plots bootstrap results for global ancestry (NGSAdmix) by recombination rate
+rule plot_bootstrap_NGSadmix_by_r:
     input:
         colors = "colors.R",
         meta = "samples/HILO_MAIZE55_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
         inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
         r5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_K2.Rdata",
-        cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata",
-        local_anc = ["ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/" + POP + ".anc.wind" for POP in symp_pops]
+        cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata"
     output:
+        png_multi = "ancestry_by_r/plots/K2_by_r_multi_panel.png",
         png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
         png_cd5_symp = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png",
@@ -459,12 +459,31 @@ rule plot_bootstrap_anc_by_r:
         png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png",
         png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png",
         png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
-        png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+    params:
+        p = "med2",
+        alpha = 0.05
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 4
+    script:
+         "plot_bootstrap_NGSadmix.R"
+
+## plot_bootstrap_local_ancestry_by_r: plots bootstrap results for local ancestry by recombination rate
+rule plot_bootstrap_local_ancestry_by_r:
+    input:
+        colors = "colors.R",
+        meta = "samples/HILO_MAIZE55_meta.RData",
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        local_anc = ["ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/" + POP + ".anc.wind" for POP in symp_pops]
+    output:
         png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_sympatric_only.png",
         png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png",
         png_boot_cor_local_anc_bp = "ancestry_by_r/plots/boot_cor_local_anc_bp.png",
         png_boot_cor_local_anc_r5 = "ancestry_by_r/plots/boot_cor_local_anc_r5.png"
-
     params:
         p = "med2",
         alpha = 0.05,
@@ -472,7 +491,7 @@ rule plot_bootstrap_anc_by_r:
     conda:
          "../envs/environment.yaml"
     resources:
-         time_min = 5,
+         time_min = 15,
          mem = 4
     script:
-         "plot_bootstrap_NGSadmix.R"
+         "plot_bootstrap_local_ancestry.R"
