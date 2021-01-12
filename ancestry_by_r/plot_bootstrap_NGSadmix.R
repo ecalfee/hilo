@@ -177,7 +177,7 @@ p_r5_symp_allo <- r5$anc_boot_perc %>%
   theme_classic() +
   xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Proportion mexicana ancestry") +
-  guides(color = guide_legend("Subspecies"),
+  guides(color = guide_legend("Subspecies", override.aes = list(size = 3)),
          shape = guide_legend("Subspecies")) +
   #ggtitle("Mexicana ancestry by recombination rate") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -210,7 +210,7 @@ p_cd5_symp_allo <- cd5$anc_boot_perc %>%
   ylab("Proportion mexicana ancestry") +
   theme_classic() +
   facet_wrap(~symp_allo) +
-  guides(color = guide_legend("Subspecies"),
+  guides(color = guide_legend("Subspecies", override.aes = list(size = 3)),
          shape = guide_legend("Subspecies")) +
   #ggtitle("Mexicana ancestry by gene density") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -311,8 +311,6 @@ ggsave(file = png_color_elev_r5,
        units = "in", dpi = 300)
 
 # multipanel plot:
-p_r5_symp_allo
-
 # facet label names
 r5.labs <- c("Low r: [0.0185, 0.0524] cM/Mb", 
              "High r: (1.09, 287] cM/Mb")
@@ -337,28 +335,33 @@ p_elev_facet_2 <- r5$anc_ind %>%
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies"),
          fill = guide_legend("Subspecies"))
-p_elev_facet_2
+#p_elev_facet_2
 
-p_multi <- grid.arrange(grobs = list(ggplotGrob(p_r5_symp_allo),
+p_multi <- grid.arrange(grobs = list(ggplotGrob(p_r5_symp_allo +
+                                                  theme(legend.position = "none")),
                                         ggplotGrob(p_elev_facet_2 +
-                                                     theme(legend.position = "none")),
+                                                     theme(legend.position = "none",
+                                                           plot.margin = margin(l = 8, r = 5.5, 
+                                                                                t = 5.5, b = 5.5, 
+                                                                                unit = "pt"))),
                                      textGrob(label = "A", 
                                               x = unit(0.5, "lines"), 
                                               y = unit(0, "lines")),
                                      textGrob(label = "B", 
                                               x = unit(0.5, "lines"), 
-                                              y = unit(0, "lines"))
+                                              y = unit(0, "lines")),
+                                     cowplot::get_legend(p_r5_symp_allo +
+                                                           theme(legend.position = "bottom"))
                                         ),
-                           layout_matrix = rbind(c(3,4), c(1,2)),
-                           heights = c(0.1, 1),
-                           widths = c(4, 2))
-
+                           layout_matrix = rbind(c(3,4), c(1,2), c(5,5)),
+                           heights = c(0.1, 1, 0.1),
+                           widths = c(5, 3))
 p_multi
 ggsave(png_multi, 
        plot = p_multi, 
        device = "png", 
        width = 7.5, 
-       height = 8.75, 
+       height = 6, 
        units = "in",
        dpi = 300)
 
