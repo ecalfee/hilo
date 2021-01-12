@@ -2171,7 +2171,10 @@ Job counts:
         # because one bootstrap sample for cd's within allopatric maize has no variance (all ancestry = 100% maize)
         # rerunning:
         snakemake ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata --quiet --profile slurm
-
+        Job counts:
+        count   jobs
+        2       summarise_bootstrap_anc_by_r
+        2
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
