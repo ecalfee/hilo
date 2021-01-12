@@ -150,6 +150,11 @@ rule all:
         "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        "ancestry_by_r/tables/elev_r_interaction.tex",
+        "ancestry_by_r/plots/local_anc_by_r_sympatric_only.png",
+        "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png",
+        "ancestry_by_r/plots/boot_cor_local_anc_bp.png",
+        "ancestry_by_r/plots/boot_cor_local_anc_r5.png",
         # local ancestry inference
         #expand("local_ancestry/results/alloFreqs/" + prefix_all + "/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",

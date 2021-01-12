@@ -10,6 +10,9 @@ library(bedr)
 library(grid)
 library(gridExtra)
 library(cowplot)
+library(broom)
+library(purrr)
+library(xtable)
 
 # load variables from Snakefile
 alpha = as.numeric(snakemake@params[["alpha"]]) # for confidence intervals
@@ -47,7 +50,8 @@ png_facet_r5 = snakemake@output[["png_facet_r5"]]
 # png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
 png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
-
+file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]]
+# file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
 
 # load inversion coordinates
 inv = read.table(inv_file, stringsAsFactors = F, header = F) %>%
@@ -365,9 +369,54 @@ ggsave(png_multi,
        units = "in",
        dpi = 300)
 
+# test for significant difference in slope ancestry ~ elev
+# between highest and lowest r bins
+tbl_elev_r_interation = r5$anc_ind %>%
+  dplyr::filter(., symp_allo == "sympatric") %>%
+  dplyr::filter(., ancestry == "mexicana") %>%
+  dplyr::filter(., quintile %in% c(1,5)) %>%
+  mutate(.,
+    elevation_km = ELEVATION/1000,
+    r = ifelse(quintile == 5, "high_r", ifelse(quintile == 1, "low_r", NA))) %>%
+  nest(., -zea) %>%
+  mutate(.,
+         model = map(data, ~lm(p ~ elevation_km + r + r*elevation_km, 
+                               data = .)),
+         tidy = map(model, tidy)) %>%
+  unnest(tidy) %>%
+  dplyr::select(-model, -data) %>%
+  mutate(model = "mexicana ancestry ~ elevation + r + r*elevation") %>%
+  rename(term_messy = term) %>%
+  # make a pretty table
+  left_join(., data.frame(term_messy = c("(Intercept)", "elevation_km",
+                                         "rlow_r", "elevation_km:rlow_r"),
+                          term = c("intercept", "elevation (km)",
+                                   "r (low recombination)", "elevation*r"),
+                          stringsAsFactors = F),
+            by = "term_messy") %>%
+  dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
 
-
-
-
-
-
+# print table to file
+print(xtable(tbl_elev_r_interation, 
+             digits = c(1, 0, 0, 3, 3, 3, -2),
+             label = "tbl_elev_r_interaction",
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_elev_r_interaction)
+      
+  
+# use all quintiles (ordinal) as numeric
+# and interaction term is also significant
+print("maize then mexicana model results -- using ordinal r quintiles as numeric")
+for (z in c("maize", "mexicana")){
+  r5$anc_ind %>%
+    dplyr::filter(., symp_allo == "sympatric") %>%
+    dplyr::filter(., ancestry == "mexicana") %>%
+    mutate(., 
+           elevation_km = ELEVATION/1000) %>%
+    dplyr::filter(., zea == z) %>%
+    with(data = ., lm(p ~ elevation_km + quintile + quintile*elevation_km)) %>%
+    summary(.) %>%
+    print(.)
+}
