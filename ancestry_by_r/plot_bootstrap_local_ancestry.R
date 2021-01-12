@@ -410,3 +410,27 @@ ggsave(png_boot_cor_local_anc_bp,
        plot = p_boot_cor_local_anc_bp,
        device = "png", dpi = 300,
        height = 5, width = 8, units = "in")
+
+
+
+rho = bind_rows(mutate(r5$spearman, 
+                       method = "NGSAdmix",
+                       feature = "recombination rate (cM/Mb)"),
+                mutate(cd5$spearman,
+                       method = "NGSAdmix",
+                       feature = "gene density (coding bp/cM)")) %>%
+  mutate(group = stringr::str_replace(group, "_", " "),
+         resolution = "genomic quintiles") %>%
+  dplyr::select(method, feature, resolution, group, rho_estimate, boot_low, boot_high) %>%
+  rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+
+# print table to file for estimates of Pearson's rank correlation
+print(xtable(rho, 
+             digits = 3,
+             label = "tbl_pearsons_rho_ngsadmix",
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_pearsons_rho_ngsadmix)
+
+

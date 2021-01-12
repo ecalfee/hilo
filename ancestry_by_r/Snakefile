@@ -379,7 +379,8 @@ rule calc_and_plot_f4:
         png_cd5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5.png",
         png_r5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5_noinv4m.png",
         png_cd5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5_noinv4m.png",
-        png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png"
+        png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png",
+        file_pearsons_rho_f4 = "ancestry_by_r/tables/tbl_pearsons_rho_f4_{ZEA}.tex"
     params:
         p = "med2",
         sympatric_pop = "{POP}",

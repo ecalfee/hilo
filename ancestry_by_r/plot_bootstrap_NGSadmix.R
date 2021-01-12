@@ -425,12 +425,13 @@ for (z in c("maize", "mexicana")){
 
 rho = bind_rows(mutate(r5$spearman, 
                        method = "NGSAdmix",
-                       quintiles = "recombination rate (cM/Mb)"),
+                       feature = "recombination rate (cM/Mb)"),
                 mutate(cd5$spearman,
                        method = "NGSAdmix",
-                       quintiles = "gene density (coding bp/cM)")) %>%
-  mutate(group = stringr::str_replace(group, "_", " ")) %>%
-  dplyr::select(method, quintiles, group, rho_estimate, boot_low, boot_high) %>%
+                       feature = "gene density (coding bp/cM)")) %>%
+  mutate(group = stringr::str_replace(group, "_", " "),
+         resolution = "genomic quintiles") %>%
+  dplyr::select(method, feature, resolution, group, rho_estimate, boot_low, boot_high) %>%
   rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
 
 # print table to file for estimates of Pearson's rank correlation
