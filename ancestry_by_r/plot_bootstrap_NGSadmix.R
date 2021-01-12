@@ -52,6 +52,8 @@ png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
 file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]]
 # file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
+file_pearsons_rho_ngsadmix = snakemake@output[["file_pearsons_rho_ngsadmix.tex"]]
+# file_pearsons_rho_ngsadmix = "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex"
 
 # load inversion coordinates
 inv = read.table(inv_file, stringsAsFactors = F, header = F) %>%
@@ -420,3 +422,22 @@ for (z in c("maize", "mexicana")){
     summary(.) %>%
     print(.)
 }
+
+rho = bind_rows(mutate(r5$spearman, 
+                       method = "NGSAdmix",
+                       quintiles = "recombination rate (cM/Mb)"),
+                mutate(cd5$spearman,
+                       method = "NGSAdmix",
+                       quintiles = "gene density (coding bp/cM)")) %>%
+  mutate(group = stringr::str_replace(group, "_", " ")) %>%
+  dplyr::select(method, quintiles, group, rho_estimate, boot_low, boot_high) %>%
+  rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+
+# print table to file for estimates of Pearson's rank correlation
+print(xtable(rho, 
+             digits = 3,
+             label = "tbl_pearsons_rho_ngsadmix",
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_pearsons_rho_ngsadmix)

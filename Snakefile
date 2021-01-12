@@ -155,6 +155,8 @@ rule all:
         "ancestry_by_r/plots/local_anc_by_cd_sympatric_only.png",
         "ancestry_by_r/plots/boot_cor_local_anc_bp.png",
         "ancestry_by_r/plots/boot_cor_local_anc_r5.png",
+        "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex",
+        "ancestry_by_r/tables/elevation_r_interaction.tex",
         # local ancestry inference
         #expand("local_ancestry/results/alloFreqs/" + prefix_all + "/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
         #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
