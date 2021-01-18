@@ -10,6 +10,7 @@ library(widyr) # to count peaks pairwise
 library(tidygraph)
 library(ggraph)
 library(geodist) # to calculate distances between locations by lat/lon
+library(grid)
 library(gridExtra)
 library(cowplot)
 
@@ -282,8 +283,8 @@ p_net_maize <- ggraph(peak_network[["maize"]], layout = "linear") +
     #                           unit = "pt")) +
   labs(edge_width = "% SNPs in shared peaks\n beyond expectation",
        color = "Elevation (m)") +
-    ggtitle("Shared introgression peaks in maize")
-p_net_maize
+  ggtitle("Shared introgression peaks in maize")
+#p_net_maize
 
 p_net_mexicana <- ggraph(peak_network[["mexicana"]], layout = "linear") +
   geom_edge_arc(aes(width = surplus_shared_peaks*100), alpha = 0.5) +
@@ -299,19 +300,31 @@ p_net_mexicana <- ggraph(peak_network[["mexicana"]], layout = "linear") +
 
 # combine maize and mexicana networks into 1 plot:
 p_net_multi <- grid.arrange(grobs = list(ggplotGrob(p_net_maize +
+                                                      #labs(subtitle = "maize") +
                                                       theme(plot.margin = margin(c(t = 0, r = 5, b = 95, l = 2.5), unit = "pt"),
-                                                            legend.position = "none",
-                                                            plot.title = element_blank())),
+                                                            plot.title = element_blank(),
+                                                            legend.position = "none"
+                                                            )),
                                      ggplotGrob(p_net_mexicana +
+                                                  #labs(subtitle = "mexicana") +
                                                   theme(plot.margin = margin(c(t = 5, r = 5, b = 5, l = 2.5), unit = "pt"),
-                                                        legend.position = "none",
-                                                        plot.title = element_blank())),
-                                     cowplot::get_legend(p_net_maize)),
-                            layout_matrix = rbind(c(1, NA, 3),
-                                                  c(2, NA, 3)),
+                                                        plot.title = element_blank(),
+                                                        legend.position = "none"
+                                                        )),
+                                     cowplot::get_legend(p_net_maize),
+                                     textGrob(label = "maize", 
+                                              x = unit(1, "lines"), 
+                                              y = unit(10, "lines"),
+                                              rot = 90),
+                                     textGrob(label = "mexicana", 
+                                              x = unit(1, "lines"), 
+                                              y = unit(9, "lines"),
+                                              rot = 90)),
+                            layout_matrix = rbind(c(4, 1, NA, 3),
+                                                  c(5, 2, NA, 3)),
                             heights = c(1, 
                                         0.7),
-                            widths = c(5, 0.2, 1.3))
+                            widths = c(0.1, 5, 0.2, 1.3))
 
 #p_net_multi
 
