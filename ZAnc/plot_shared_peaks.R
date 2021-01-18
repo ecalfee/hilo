@@ -1,6 +1,16 @@
 #!/usr/bin/env Rscript
 library(dplyr)
 library(ggplot2)
+library(tidyr)
+library(widyr) # to count peaks pairwise
+#library(GGally) # ggnet2
+#library(network) # for graph/networks
+#library(sna) # for graph/networks
+# tidyverse networks/graphs and plotting:
+library(tidygraph)
+library(ggraph)
+library(geodist) # to calculate distances between locations by lat/lon
+
 # this script plots ancestry outliers across the genome,
 # from individual populations, and shared across pops
 
@@ -46,6 +56,7 @@ mex_maize = c("mexicana", "maize")
 
 meta_pops_list = list(mexicana = NULL, maize = NULL)
 anc_outliers_list = list(mexicana = NULL, maize = NULL)
+sim_outliers_list = list(mexicana = NULL, maize = NULL)
 outliers_by_pop_list = list(mexicana = NULL, maize = NULL)
 
 for (zea in mex_maize){
@@ -94,6 +105,7 @@ for (zea in mex_maize){
   
   meta_pops_list[[zea]] <- meta_pops
   anc_outliers_list[[zea]] <- anc_outliers
+  sim_outliers_list[[zea]] <- sim_outliers
   outliers_by_pop_list[[zea]] <- outliers_by_pop
   }
 
@@ -194,3 +206,248 @@ ggsave(file = png_hist,
        height = 4, width = 6, 
        units = "in",
        device = "png") 
+
+# ------------------------------------------------------------#
+# get pairwise peak sharing
+# pairwise_count(dat, letter, group, sort = TRUE, upper = F)
+# (I'll need this for the simulated data too)
+# now plot as network
+
+# tidygraph/ggraph way:
+nodes <- meta_pops_list[["maize"]] %>%
+  arrange(ELEVATION) %>%
+  mutate(id = 1:14) %>% # must be contiguous id's for nodes
+  #dplyr::select(., id, pop, LOCALITY, ELEVATION) %>%
+  rename(name = LOCALITY)
+total_snps_data <- nrow(sites)
+edges_data <- anc_outliers_list[["maize"]] %>%
+  dplyr::filter(top_sd2) %>%
+  dplyr::mutate(snp = paste(chr, pos, sep = "_")) %>%
+  widyr::pairwise_count(., LOCALITY, snp, sort = F, upper = F) %>% # upper = F means no repeat counts for pairs
+  dplyr::rename(from = item1, to = item2, n_peaks_shared_data = n) %>%
+  dplyr::mutate(p_snps_shared_data = n_peaks_shared_data/total_snps_data) %>%
+  arrange(from) # arrange by id
+
+# get geographic distances between populations!
+
+net_tidy_data <- tbl_graph(nodes = nodes, 
+                      edges = edges_data, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                      directed = F)
+
+# circle plot
+p_net_circular <- ggraph(net_tidy_data, layout = "circle") +
+  geom_edge_link(aes(width = p_snps_shared_data*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 4) +
+  theme_graph() +
+  geom_node_text(aes(label = name), repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  labs(edge_width = "% SNPs shared\n introgression peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_circular
+ggsave(file = "ZAnc/plots/network_maize_peak_sharing_circular.png",
+       plot = p_net_circular,
+       height = 4, width = 6, 
+       units = "in",
+       device = "png") 
+# geom_node_text(nudge_x = p$data$x * .1, nudge_y = p$data$y * .1)
+
+# by lat/lon
+p_net_map <- layout_tbl_graph_manual(net_tidy_data,
+                           x = LAT, y = LONG) %>%
+  ggraph(.) +
+  geom_edge_link(aes(width = p_snps_shared_data*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 4) +
+  theme_graph() +
+  geom_node_text(aes(label = name), repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  labs(edge_width = "% SNPs shared\n introgression peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_map
+
+# linear plot
+p_net_linear <- ggraph(net_tidy_data, layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_data*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "% SNPs shared\n introgression peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_linear
+# I could color the arcs by geographic distance between pops
+ggsave(file = "ZAnc/plots/network_maize_peak_sharing_linear.png",
+       plot = p_net_linear,
+       height = 4, width = 6, 
+       units = "in",
+       device = "png") 
+
+# make linear network plot of enrichment over simulations 
+# for pairwise sharing
+# tidygraph/ggraph way:
+total_snps_sim <- length(unique(sim_outliers_list[["maize"]]$pos))
+edges_sim <- sim_outliers_list[["maize"]] %>%
+  dplyr::filter(top_sd2) %>%
+  dplyr::mutate(snp = paste("sim", pos, sep = "_")) %>%
+  widyr::pairwise_count(., LOCALITY, snp, sort = F, upper = F) %>% # upper = F means no repeat counts for pairs
+  dplyr::rename(from = item1, to = item2, n_peaks_shared_sim = n) %>%
+  # proportion of snps that are shared as peaks > 2sd above mean introgression
+  dplyr::mutate(p_snps_shared_sim = n_peaks_shared_sim/total_snps_sim) %>%
+  arrange(from) # arrange by id
+edges_both <- full_join(edges_data, edges_sim, by = c("from", "to")) %>%
+  dplyr::mutate(enrichment_shared_peaks = p_snps_shared_data-p_snps_shared_sim)
+
+net_tidy_both <- tbl_graph(nodes = nodes, 
+                      edges = edges_both, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                      directed = F)
+# linear plot
+p_net_linear_enrich <- ggraph(net_tidy_both, layout = "linear") +
+  geom_edge_arc(aes(width = enrichment_shared_peaks*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "Enrichment of shared peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_linear_enrich
+# I could color the arcs by geographic distance between pops
+ggsave(file = "ZAnc/plots/network_maize_peak_sharing_enrichment_linear.png",
+       plot = p_net_linear_enrich,
+       height = 4, width = 6, 
+       units = "in",
+       device = "png") 
+
+# simulation data only -- linear plot
+net_tidy_sim <- tbl_graph(nodes = nodes, 
+                           edges = edges_sim, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                           directed = F)
+p_net_linear_sim <- ggraph(net_tidy_sim, layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_sim*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "% SNPs shared as peaks") +
+  ggtitle("MVN simulated introgression in maize")
+p_net_linear_sim
+ggsave(file = "ZAnc/plots/network_maize_peak_sharing_simulations_linear.png",
+       plot = p_net_linear_sim,
+       height = 4, width = 6, 
+       units = "in",
+       device = "png") 
+
+# get geographic distances between populations!
+
+
+# --------------------------------------------------------------#
+# repeat analysis defining outliers as > 50% mexicana ancestry
+edges_data50 <- anc_outliers_list[["maize"]] %>%
+  dplyr::filter(anc > 0.5) %>%
+  dplyr::mutate(snp = paste(chr, pos, sep = "_")) %>%
+  widyr::pairwise_count(., LOCALITY, snp, sort = F, upper = F) %>% # upper = F means no repeat counts for pairs
+  dplyr::rename(from = item1, to = item2, n_peaks_shared_data = n) %>%
+  dplyr::mutate(p_snps_shared_data = n_peaks_shared_data/total_snps_data) %>%
+  arrange(from) # arrange by id
+
+net_tidy_data50 <- tbl_graph(nodes = nodes, 
+                           edges = edges_data50, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                           directed = F)
+edges_sim50 <- sim_outliers_list[["maize"]] %>%
+  dplyr::filter(anc > 0.5) %>%
+  dplyr::mutate(snp = paste("sim", pos, sep = "_")) %>%
+  widyr::pairwise_count(., LOCALITY, snp, sort = F, upper = F) %>% # upper = F means no repeat counts for pairs
+  dplyr::rename(from = item1, to = item2, n_peaks_shared_sim = n) %>%
+  # proportion of snps that are shared as peaks > 2sd above mean introgression
+  dplyr::mutate(p_snps_shared_sim = n_peaks_shared_sim/total_snps_sim) %>%
+  arrange(from) # arrange by id
+edges_both50 <- full_join(edges_data50, edges_sim50, by = c("from", "to")) %>%
+  dplyr::mutate(enrichment_shared_peaks = p_snps_shared_data/p_snps_shared_sim)
+
+net_tidy_both50 <- tbl_graph(nodes = nodes, 
+                           edges = edges_both50, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                           directed = F)
+# linear plot of data
+p_net_linear50 <- ggraph(net_tidy_data50, layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_data*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "% SNPs shared\n introgression peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_linear50
+# linear plot of enrichment
+p_net_linear_enrich50 <- ggraph(net_tidy_both50, layout = "linear") +
+  geom_edge_arc(aes(width = enrichment_shared_peaks), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "Enrichment of shared peaks") +
+  ggtitle("Shared introgression peaks in maize")
+p_net_linear_enrich50
+
+# simulation data only -- linear plot
+net_tidy_sim50 <- tbl_graph(nodes = nodes, 
+                          edges = edges_sim50, # tbl_graph() automatically substitutes node id #'s for names on each edge
+                          directed = F)
+p_net_linear_sim50 <- ggraph(net_tidy_sim50, layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_sim*100), alpha = 0.5) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
+  theme_graph() +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_width(range = c(0.01, 2)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
+                             unit = "pt")) +
+  labs(edge_width = "% SNPs shared as peaks") +
+  ggtitle("MVN simulated introgression in maize")
+p_net_linear_sim50
