@@ -2,6 +2,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(boot)
+library(xtable)
+
 # this script calculated f4-ratio to get an admixture proportion estimate
 # for a sympatric population across recombination rate and coding density quintiles
 # working directory "~/Documents/gitErin/hilo")
