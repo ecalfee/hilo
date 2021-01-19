@@ -45,16 +45,16 @@ dependencies:
   - r-reader =1.0.6
   - r-xtable =1.8_4
   - r-pracma =2.2.9
-  - r-grid
-  - r-cowplot
-  - r-widyr
-  - r-tidygraph
-  - r-ggraph
-  - r-geosphere
-  - r-geodist
-  - r-readxl
-  - r-MASS
-  - r-ade4
+  - r-cowplot =1.1.1
+  - r-widyr =0.1.3
+  - r-tidygraph =1.2.0
+  - r-ggraph =2.0.4
+  - r-geosphere =1.5_10
+  - r-geodist =0.0.3
+  - r-readxl=1.3.1
+  - r-mass =7.3_53
+  - r-ade4 =1.7_16
+  - r-igraph =1.2.6
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm

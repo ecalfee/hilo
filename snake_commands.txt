@@ -2190,7 +2190,16 @@ Job counts:
         Error in rule estimate_saf_pop -- attempt 1 ran out of memory (at 40G)
         angsd -out diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/maize/pop19
         cluster_jobid: 29386913 # will wait to see if it's a larger problem across populations/attempts.
-
+        Job counts:
+                count   jobs
+                1       all
+                2       calc_and_plot_f4
+                21      calc_thetas
+                21      estimate_saf_pop
+                21      estimate_sfs
+                1       plot_bootstrap_NGSadmix_by_r
+                1       plot_bootstrap_local_ancestry_by_r
+                68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts.
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
