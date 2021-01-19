@@ -384,11 +384,11 @@ rule calc_and_plot_f4:
     params:
         p = "med2",
         sympatric_pop = "{POP}",
-        n_boot = 1000
+        n_boot = 10000
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 15,
+        time_min = 60,
         mem = 2
     script:
         "calc_and_plot_f4.R"

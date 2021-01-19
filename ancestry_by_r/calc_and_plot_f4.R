@@ -36,13 +36,15 @@ png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
 # png_f4_num_denom = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_num_denom.png")
 n_boot = snakemake@params[["n_boot"]]
-# n_boot = 1000
+# n_boot = 10000
 inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 file_pearsons_rho_f4 = snakemake@output[["tbl_pearsons_rho_f4"]]
-file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/tbl_pearsons_rho_f4_", zea, ".tex")
+# file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/tbl_pearsons_rho_f4_", zea, ".tex")
 
 source(colors_file)
+
+random_seed = 15378925 # random seed for reproducing bootstrap analyses
 
 # f4-ratio calculation for alpha, admixture proportion from mexicana into X:
 # f4(trip, parv; X, allo_maize) = E[(x_trip - x_parv)*(x_X - x_allo_maize)] in phylogeny (((parv, allo_maize), allo_mex), trip)
@@ -75,13 +77,14 @@ winds$inv4m = winds$chr == inv$chr[inv$inv == "inv4m"] &
 # combine data
 d_f4 <- group_by(f4_num, window) %>%
   summarise(num_stat = sum(Numer),
-            num_sites = sum(numSites)) %>%
+            num_sites = sum(numSites),
+            .groups = "drop") %>%
   full_join(., group_by(f4_denom, window) %>%
               summarise(denom_stat = sum(Numer),
-                        denom_sites = sum(numSites)),
+                        denom_sites = sum(numSites),
+                        .groups = "drop"),
             by = "window") %>%
-  left_join(winds, ., by = "window") %>%
-  ungroup()
+  left_join(winds, ., by = "window")
 
 # by recombination rate
 f4_by_r <- d_f4 %>%
@@ -91,9 +94,9 @@ f4_by_r <- d_f4 %>%
             f4_denom = sum(denom_stat)/sum(denom_sites),
             f4_alpha = f4_num/f4_denom,
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
-            n_windows = length(unique(window))) %>%
-  arrange(quintile_r5) %>%
-  ungroup()
+            n_windows = length(unique(window)),
+            .groups = "drop") %>%
+  arrange(quintile_r5)
 #View(f4_by_r)
 
 # by coding density
@@ -104,9 +107,9 @@ f4_by_cd <- d_f4 %>%
             f4_denom = sum(denom_stat)/sum(denom_sites),
             f4_alpha = f4_num/f4_denom,
             n_sites_tot = (sum(num_sites) + sum(denom_sites))/2,
-            n_windows = length(unique(window))) %>%
-  arrange(quintile_cd5) %>%
-  ungroup()
+            n_windows = length(unique(window)),
+            .groups = "drop") %>% # ungroup
+  arrange(quintile_cd5)
 #View(f4_by_cd)
 
 
@@ -124,7 +127,8 @@ calc_cor_r5 <- function(d, i) { # d is data, i is indices
     group_by(., bin_r5, quintile_r5) %>%
     summarise(f4_num = sum(num_stat)/sum(num_sites),
               f4_denom = sum(denom_stat)/sum(denom_sites),
-              f4_alpha = f4_num/f4_denom) %>%
+              f4_alpha = f4_num/f4_denom,
+              .groups = "drop") %>%
     arrange(quintile_r5)
   return(c(spearman = with(b, cor(x = quintile_r5, 
                                   y = f4_alpha, 
@@ -137,6 +141,7 @@ calc_cor_r5 <- function(d, i) { # d is data, i is indices
 }
 
 # bootstrap resampling each recombination rate quintile independently
+set.seed(random_seed)
 boot_r5 <- boot(data = filter(d_f4, !is.na(num_sites)), 
                 statistic = calc_cor_r5,
                 sim = "ordinary",
@@ -147,6 +152,7 @@ boot_r5 <- boot(data = filter(d_f4, !is.na(num_sites)),
 
 # bootstrap resampling each recombination rate quintile independently, BUT
 # excluding all windows overlapping inv4m
+set.seed(random_seed)
 boot_r5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
                          statistic = calc_cor_r5,
                          sim = "ordinary",
@@ -168,7 +174,8 @@ calc_cor_cd5 <- function(d, i) { # d is data, i is indices
     group_by(., bin_cd5, quintile_cd5) %>%
     summarise(f4_num = sum(num_stat)/sum(num_sites),
               f4_denom = sum(denom_stat)/sum(denom_sites),
-              f4_alpha = f4_num/f4_denom) %>%
+              f4_alpha = f4_num/f4_denom,
+              .groups = "drop") %>%
     arrange(quintile_cd5)
   return(c(spearman = with(b, cor(x = quintile_cd5, 
                                   y = f4_alpha, 
@@ -181,6 +188,7 @@ calc_cor_cd5 <- function(d, i) { # d is data, i is indices
 }
 
 # bootstrap of correlation across coding density
+set.seed(random_seed)
 boot_cd5 <- boot(data = filter(d_f4, !is.na(num_sites)), 
                 statistic = calc_cor_cd5,
                 sim = "ordinary",
@@ -191,6 +199,7 @@ boot_cd5 <- boot(data = filter(d_f4, !is.na(num_sites)),
 #boot.ci(boot_cd5, index = 1, type = c("norm", "basic", "perc"))
 
 # bootstrap of correlation across coding density
+set.seed(random_seed)
 boot_cd5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
                          statistic = calc_cor_cd5,
                          sim = "ordinary",
@@ -248,7 +257,7 @@ for (i in 1:4){
     theme_classic() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     scale_x_discrete(labels = x_axis_labels[i]$bin) +
-    ylim(0:1)
+    ylim(c(-0.1, 1))
   #p
   ggsave(file = plots[i],
          plot = p,
@@ -297,12 +306,11 @@ rho = data.frame(method = "f4 ratio",
                                                conf = 0.95, type = "perc")$perc[4]),
     boot_high = sapply(1:4, function(i) boot.ci(boots[[i]], index = 1, 
                                                conf = 0.95, type = "perc")$perc[5])) %>%
-  #dplyr::select(method, feature, resolution, group, rho_estimate, boot_low, boot_high) %>%
   rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
 
 # print table to file for estimates of Pearson's rank correlation
 print(xtable(rho, 
-             digits = 3,
+             digits = 5,
              label = paste0("tbl_pearsons_rho_f4_", zea),
              type = "latex", 
              latex.environments = NULL),
