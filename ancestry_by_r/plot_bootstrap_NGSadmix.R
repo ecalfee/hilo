@@ -15,12 +15,11 @@ library(purrr)
 library(xtable)
 
 # load variables from Snakefile
-alpha = as.numeric(snakemake@params[["alpha"]]) # for confidence intervals
-# alpha = 0.05
 windows_file = snakemake@input[["windows"]] # feature information for 1cM windows
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 inv_file = snakemake@input[["inv"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
+alpha = 0.05 # use 95% confidence level for bootstraps
 
 load(snakemake@input[["r5"]]) # NGSAdmix results by recombination quintile
 # load("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata")
@@ -50,8 +49,10 @@ png_facet_r5 = snakemake@output[["png_facet_r5"]]
 # png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
 png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
-file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]]
+file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]] # high vs. low
 # file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
+file_elev_r_interaction_5 = snakemake@output[["file_elev_r_interaction_5"]] # all 5 r bins (for supplement)
+# file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex"
 file_pearsons_rho_ngsadmix = snakemake@output[["file_pearsons_rho_ngsadmix.tex"]]
 # file_pearsons_rho_ngsadmix = "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex"
 
@@ -279,17 +280,18 @@ p_facet_r5 <- r5$anc_ind %>%
   scale_color_manual(values = col_maize_mex_parv) +
   scale_fill_manual(values = col_maize_mex_parv) +
   theme_light() +
-  facet_wrap(~ bin) +
+  facet_wrap(~ bin, ncol = 5) +
   xlab("Elevation (m)") +
   ylab("Proportion mexicana ancestry") +
   guides(color = guide_legend("Subspecies"),
          shape = guide_legend("Subspecies"),
-         fill = guide_legend("Subspecies"))
+         fill = guide_legend("Subspecies")) +
+  theme(legend.position = "bottom")
 #p_facet_r5
 ggsave(file = png_facet_r5,
        plot = p_facet_r5,
        device = "png",
-       width = 7, height = 4, 
+       width = 7.5, height = 3, 
        units = "in", dpi = 300)
 
 
@@ -362,7 +364,7 @@ p_multi <- grid.arrange(grobs = list(ggplotGrob(p_r5_symp_allo +
                            layout_matrix = rbind(c(3,4), c(1,2), c(5,5)),
                            heights = c(0.1, 1, 0.1),
                            widths = c(5, 3))
-p_multi
+#p_multi
 ggsave(png_multi, 
        plot = p_multi, 
        device = "png", 
@@ -406,23 +408,41 @@ print(xtable(tbl_elev_r_interation,
              latex.environments = NULL),
       include.rownames = F,
       file = file_elev_r_interaction)
-      
-  
-# use all quintiles (ordinal) as numeric
-# and interaction term is also significant
-print("maize then mexicana model results -- using ordinal r quintiles as numeric")
-for (z in c("maize", "mexicana")){
-  r5$anc_ind %>%
-    dplyr::filter(., symp_allo == "sympatric") %>%
-    dplyr::filter(., ancestry == "mexicana") %>%
-    mutate(., 
-           elevation_km = ELEVATION/1000) %>%
-    dplyr::filter(., zea == z) %>%
-    with(data = ., lm(p ~ elevation_km + quintile + quintile*elevation_km)) %>%
-    summary(.) %>%
-    print(.)
-}
 
+# use all quintiles (ordinal) as numeric (for supplement)
+tbl_elev_r_interaction_5 = r5$anc_ind %>%
+  dplyr::filter(., symp_allo == "sympatric") %>%
+  dplyr::filter(., ancestry == "mexicana") %>%
+  mutate(.,
+         elevation_km = ELEVATION/1000) %>%
+  nest(., -zea) %>%
+  mutate(.,
+         model = map(data, ~lm(p ~ elevation_km + quintile + quintile*elevation_km, 
+                               data = .)),
+         tidy = map(model, tidy)) %>%
+  unnest(tidy) %>%
+  dplyr::select(-model, -data) %>%
+  mutate(model = "mexicana ancestry ~ elevation + quintile + quintile*elevation") %>%
+  rename(term_messy = term) %>%
+  # make a pretty table
+  left_join(., data.frame(term_messy = c("(Intercept)", "elevation_km",
+                                         "quintile", "elevation_km:quintile"),
+                          term = c("intercept", "elevation (km)",
+                                   "r quintile", "elevation*r quintile"),
+                          stringsAsFactors = F),
+            by = "term_messy") %>%
+  dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
+
+# print table to file
+print(xtable(tbl_elev_r_interaction_5, 
+             digits = c(1, 0, 0, 3, 3, 3, -2),
+             label = "tbl_elev_r_interaction_5",
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_elev_r_interaction_5)      
+
+# make tidy table of rho spearman's rank correlations across quintiles
 rho = bind_rows(mutate(r5$spearman, 
                        method = "NGSAdmix",
                        feature = "recombination rate (cM/Mb)"),
@@ -431,12 +451,12 @@ rho = bind_rows(mutate(r5$spearman,
                        feature = "gene density (coding bp/cM)")) %>%
   mutate(group = stringr::str_replace(group, "_", " "),
          resolution = "genomic quintiles") %>%
-  dplyr::select(method, feature, resolution, group, rho_estimate, boot_low, boot_high) %>%
+  dplyr::select(method, group, feature, resolution, rho_estimate, boot_low, boot_high) %>%
   rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
 
 # print table to file for estimates of Pearson's rank correlation
 print(xtable(rho, 
-             digits = 3,
+             digits = 4,
              label = "tbl_pearsons_rho_ngsadmix",
              type = "latex", 
              latex.environments = NULL),

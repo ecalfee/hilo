@@ -40,7 +40,7 @@ n_boot = snakemake@params[["n_boot"]]
 inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 file_pearsons_rho_f4 = snakemake@output[["tbl_pearsons_rho_f4"]]
-# file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/tbl_pearsons_rho_f4_", zea, ".tex")
+# file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/pearsons_rho_f4_", zea, ".tex")
 
 source(colors_file)
 
@@ -306,11 +306,12 @@ rho = data.frame(method = "f4 ratio",
                                                conf = 0.95, type = "perc")$perc[4]),
     boot_high = sapply(1:4, function(i) boot.ci(boots[[i]], index = 1, 
                                                conf = 0.95, type = "perc")$perc[5])) %>%
+  dplyr::select(method, group, feature, resolution, rho_estimate, boot_low, boot_high) %>%
   rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
 
 # print table to file for estimates of Pearson's rank correlation
 print(xtable(rho, 
-             digits = 5,
+             digits = 4,
              label = paste0("tbl_pearsons_rho_f4_", zea),
              type = "latex", 
              latex.environments = NULL),
