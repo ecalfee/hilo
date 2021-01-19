@@ -2,14 +2,14 @@
 library(dplyr)
 library(ggplot2)
 library(tidyr)
-library(widyr) # to count peaks pairwise
-#library(GGally) # ggnet2
-#library(network) # for graph/networks
-#library(sna) # for graph/networks
+# to count peaks pairwise:
+library(widyr)
 # tidyverse networks/graphs and plotting:
 library(tidygraph)
 library(ggraph)
-library(geodist) # to calculate distances between locations by lat/lon
+# to calculate distances between locations by lat/lon:
+library(geodist) 
+# for multi-panel plots:
 library(grid)
 library(gridExtra)
 library(cowplot)

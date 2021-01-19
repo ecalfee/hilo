@@ -10,6 +10,7 @@ library(viridis)
 library(xtable)
 library(grid)
 library(gridExtra)
+library(readxl)
 
 # load variables from snakemake
 # get output plot and table filenames

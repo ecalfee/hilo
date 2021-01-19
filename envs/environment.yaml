@@ -52,6 +52,9 @@ dependencies:
   - r-ggraph
   - r-geosphere
   - r-geodist
+  - r-readxl
+  - r-MASS
+  - r-ade4
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
