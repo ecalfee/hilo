@@ -45,6 +45,13 @@ dependencies:
   - r-reader =1.0.6
   - r-xtable =1.8_4
   - r-pracma =2.2.9
+  - r-grid
+  - r-cowplot
+  - r-widyr
+  - r-tidygraph
+  - r-ggraph
+  - r-geosphere
+  - r-geodist
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm
