@@ -2199,9 +2199,30 @@ Job counts:
                 21      estimate_sfs
                 1       plot_bootstrap_NGSadmix_by_r
                 1       plot_bootstrap_local_ancestry_by_r
-                68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts. 1.19.2020 3pm
-
-# error in calc_and_plot_f4: wrong filename from Snakefile (fixing)
+                68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts. 1.19.2021 3pm
+# all sfs and saf estimates ran! yay more memory!
+# error in calc_and_plot_f4: wrong filename from Snakefile (fixed)
+hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       calc_and_plot_f4
+        12      calc_overlap
+        1       combine_genome_scan_plots
+        2       make_bed_anc_outliers
+        12      merge_bed_outliers
+        1       plot_NGSAdmix
+        1       plot_bootstrap_NGSadmix_by_r
+        1       plot_bootstrap_local_ancestry_by_r
+        2       plot_mean_anc
+        1       plot_shared_peaks
+        2       plot_slope_elev
+        38 # RUNNING 1.20.2021
+        # what's wrong with plot_mean_anc? job id 29409323 -- object 'rds' not found
+        # and plot_bootstrap_NGSadmix_by_r? job id 29409322 -- Error in read.table(inv_file, stringsAsFactors = F, header = F) :
+  'file' must be a character string or connection
+        # also these 2 and plot_shared_peaks are being held up by priority on med2 (I could run on bigmemm or on high2)
+        # resolved these variable naming issues.
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

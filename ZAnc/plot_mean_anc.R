@@ -26,7 +26,7 @@ png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_mean_anc.png")
 fdr_out = snakemake@output[["fdr"]]
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
-rds_out = snakemake@output[["rds"]]
+rds = snakemake@output[["rds"]]
 # rds = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
 
 # load data

@@ -372,7 +372,7 @@ rule calc_and_plot_f4:
         f4_num = "ancestry_by_r/results/f4/{POP}.f4",
         f4_denom = "ancestry_by_r/results/f4/{ALLO_MEX}.f4",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         colors = "colors.R"
     output:
         png_r5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png",
@@ -448,7 +448,7 @@ rule plot_bootstrap_NGSadmix_by_r:
         colors = "colors.R",
         meta = "samples/HILO_MAIZE55_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         r5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_K2.Rdata",
         cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata"
     output:
@@ -480,7 +480,7 @@ rule plot_bootstrap_local_ancestry_by_r:
         colors = "colors.R",
         meta = "samples/HILO_MAIZE55_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         local_anc = ["ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/" + POP + ".anc.wind" for POP in symp_pops]
     output:
         png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_quintiles.png",
