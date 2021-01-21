@@ -22,6 +22,8 @@ genome_file = snakemake@input[["genome"]]
 # genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_slope_elev.png")
+rds = snakemake@output[["rds"]]
+# rds = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, ".lmElev.plot.rds")
 
 # load data
 source(colors_file)
@@ -56,9 +58,9 @@ p_elev = bind_cols(sites, fits) %>%
          zea = zea) %>%
   ggplot(., aes(pos_cum, envWeights, 
                 color = even_chr)) +
-  geom_abline(slope = 0, intercept = filter(FDRs, FDR == 0.05)$thesholds, linetype = "solid", color = "blue") +
+  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$thesholds, linetype = "solid", color = "#00BFC4") +
   geom_point(size = .1) +
-  geom_abline(slope = 0, intercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
+  geom_hline(yintercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
   xlab("bp position on chromosomes (total length = 2.3Gb)") +
   ylab("slope ancestry ~ elev") +
   scale_colour_manual(values = c(odd = "darkgrey", even = unname(col_maize_mex_parv[zea]))) + 
@@ -74,3 +76,6 @@ ggsave(plot = p_elev,
        height = 3, width = 12, 
        units = "in", dpi = 300,
        device = "png")
+
+# also save ggplot as R object
+saveRDS(object = p_elev, file = rds)

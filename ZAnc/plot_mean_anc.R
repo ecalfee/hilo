@@ -26,6 +26,8 @@ png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_mean_anc.png")
 fdr_out = snakemake@output[["fdr"]]
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
+rds_out = snakemake@output[["rds"]]
+# rds = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
 
 # load data
 source(fdr_functions)
@@ -73,20 +75,43 @@ save(FDRs, file = fdr_out)
 p_combined = bind_cols(sites, anc = anc_mean) %>%
   mutate(even_chr = ifelse(chr %% 2 == 0, "even", "odd"),
          zea = zea) %>%
-  ggplot(., aes(pos_cum, anc, 
-                color = even_chr)) +
-  geom_abline(slope = 0, intercept = filter(FDRs, FDR == 0.05, thesholds < Inf & thesholds > -Inf)$thesholds, linetype = "solid", color = "blue") +
-  geom_point(size = .1) +
-  geom_abline(slope = 0, intercept = mean(anc_mean), color = "black", linetype = "dashed") +
+  ggplot(.) +
+  geom_hline(data = data.frame(intercept = filter(FDRs, FDR == 0.05, thesholds < Inf & 
+                                   thesholds > -Inf)$thesholds, 
+                                label = "fdr5",
+                                stringsAsFactors = F),
+              linetype = "solid", 
+              aes(yintercept = intercept, 
+                  color = label)) +
+  geom_point(size = .1,
+             aes(pos_cum, anc, 
+                 color = even_chr)) +
+  geom_hline(data = data.frame(genomewide_mean = mean(anc_mean),
+                                label = "genomewide_mean",
+                                stringsAsFactors = F),
+                aes(yintercept = genomewide_mean, 
+                    color = label), 
+              linetype = "dashed") +
   xlab("bp position on chromosomes (total length = 2.3Gb)") +
   ylab("mean mexicana ancestry") +
-  scale_colour_manual(values = c(odd = "darkgrey", even = unname(col_maize_mex_parv[zea]))) + 
-  scale_x_continuous(label = axis_spacing$chr, breaks= axis_spacing$center) +
-  theme(legend.position = "none") +
+  scale_colour_manual(values = c(odd = "darkgrey", 
+                                 even = unname(col_maize_mex_parv[zea]),
+                                 genomewide_mean = "black",
+                                 fdr5 = "#00BFC4"),
+                      labels = c("odd chr", "even chr", "genomewide mean", "5% FDR"),
+                      limits = c("odd", "even", "genomewide_mean", "fdr5")) + 
+  scale_x_continuous(label = axis_spacing$chr, 
+                     breaks = axis_spacing$center,
+                     expand = expansion(mult = c(0, 0),
+                                        add = c(0, 0))) +
   theme_classic() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
   ggtitle(paste("Sympatric", zea)) +
-  guides(color = F) +
-  ylim(0:1)
+  ylim(0:1) +
+  guides(color = guide_legend(override.aes = list(shape = NA, 
+                                                  linetype = c("dotted", "dotted", "dashed", "solid"),
+                                                  width = 3)))
 # p_combined
 
 ggsave(plot = p_combined,
@@ -94,3 +119,6 @@ ggsave(plot = p_combined,
        height = 3, width = 12, 
        units = "in", dpi = 300,
        device = "png")
+
+# also save ggplot as R object
+saveRDS(object = p_combined, file = rds)

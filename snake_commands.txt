@@ -2199,7 +2199,7 @@ Job counts:
                 21      estimate_sfs
                 1       plot_bootstrap_NGSadmix_by_r
                 1       plot_bootstrap_local_ancestry_by_r
-                68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts.
+                68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts. 1.19.2020 3pm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

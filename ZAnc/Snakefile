@@ -84,7 +84,8 @@ rule plot_mean_anc:
         genome = ref_chr
     output:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png",
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData"
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
+        rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.plot.rds" # ggplot object
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA
@@ -110,7 +111,8 @@ rule plot_slope_elev:
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         genome = ref_chr
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png"
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png",
+        rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.plot.rds" # ggplot object
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA
@@ -125,6 +127,29 @@ rule plot_slope_elev:
         mem = 2
     script:
         "plot_slope_elev.R"
+
+## combine_genome_scan_plots: plots maize/mex mean ancestry and slope with elevation outliers plots across the genome in one figure
+rule combine_genome_scan_plots:
+    input:
+        rds_maize_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.meanAnc.plot.rds",
+        rds_mexicana_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.plot.rds",
+        rds_maize_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.lmElev.plot.rds",
+        rds_mexicana_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.plot.rds"
+    output:
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "combine_genome_scan_plots.R"
 
 ## make_bed_slope_elev: makes bed files with outlier regions for ancestry slope with elevation
 rule make_bed_slope_elev:
