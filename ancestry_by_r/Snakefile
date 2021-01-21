@@ -382,7 +382,7 @@ rule calc_and_plot_f4:
         png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png",
         file_pearsons_rho_f4 = "ancestry_by_r/tables/pearsons_rho_f4_{POP}_{ALLO_MEX}.tex"
     params:
-        p = "med2",
+        p = "bigmemm",
         sympatric_pop = "{POP}",
         n_boot = 10000
     conda:
@@ -465,7 +465,7 @@ rule plot_bootstrap_NGSadmix_by_r:
         file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex",
         file_pearsons_rho_ngsadmix = "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex"
     params:
-        p = "med2"
+        p = "bigmemm"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -488,7 +488,7 @@ rule plot_bootstrap_local_ancestry_by_r:
         png_r_cont_local_anc = "ancestry_by_r/plots/local_anc_by_r_continuous.png",
         file_pearsons_rho_local_anc = "ancestry_by_r/tables/pearsons_rho_local_ancestry.tex"
     params:
-        p = "med2",
+        p = "bigmemm",
         dir_anc = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot",
         n_boot = 10000
     conda:

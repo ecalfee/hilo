@@ -2223,6 +2223,20 @@ Job counts:
   'file' must be a character string or connection
         # also these 2 and plot_shared_peaks are being held up by priority on med2 (I could run on bigmemm or on high2)
         # resolved these variable naming issues.
+        snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                12      calc_overlap
+                1       combine_genome_scan_plots
+                2       make_bed_anc_outliers
+                12      merge_bed_outliers
+                1       plot_bootstrap_NGSadmix_by_r
+                1       plot_bootstrap_local_ancestry_by_r
+                2       plot_mean_anc
+                1       plot_shared_peaks
+                33 # RUNNING 1.21.2021 11a:15m. changed on farm temporarily some rules to bigmemm node because wasn't getting priority to run on med2
+# fixed variable naming in plot_bootstrap_NGSadmix_by_r R script
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
