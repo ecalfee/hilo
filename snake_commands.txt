@@ -2237,6 +2237,9 @@ Job counts:
                 1       plot_shared_peaks
                 33 # RUNNING 1.21.2021 11a:15m. changed on farm temporarily some rules to bigmemm node because wasn't getting priority to run on med2
 # fixed variable naming in plot_bootstrap_NGSadmix_by_r R script
+# error in plot_shared_peaks: Error in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  invalid font type.... so I changed the default font in theme_graph to a common font:
+  theme_graph(base_family = 'Helvetica'). Alt option would be to import Arial Narrow with extrafonts package.
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

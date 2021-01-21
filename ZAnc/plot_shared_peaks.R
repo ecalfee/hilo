@@ -32,6 +32,7 @@ prefix_all = snakemake@params[["prefix_all"]]
 # prefix_all = "HILO_MAIZE55"
 
 png_hist = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_peaks.png")
+png_net_multi = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
 
 # load data
 source(colors_file)
@@ -270,7 +271,7 @@ for (zea in mex_maize){
 p_net_maize <- ggraph(peak_network[["maize"]], layout = "linear") +
     geom_edge_arc(aes(width = surplus_shared_peaks*100), alpha = 0.5) +
     geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-    theme_graph() +
+    theme_graph(base_family = 'Helvetica') +
     geom_node_text(aes(label = name), 
                    angle = 90,
                    hjust = 1,
@@ -289,7 +290,7 @@ p_net_maize <- ggraph(peak_network[["maize"]], layout = "linear") +
 p_net_mexicana <- ggraph(peak_network[["mexicana"]], layout = "linear") +
   geom_edge_arc(aes(width = surplus_shared_peaks*100), alpha = 0.5) +
   geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-  theme_graph() +
+  theme_graph(base_family = 'Helvetica') +
   scale_edge_width(range = c(0, 2.5), limits = c(0, 2.5)) +
   scale_color_viridis(direction = -1) +
   coord_cartesian(clip = "off") +
@@ -328,7 +329,7 @@ p_net_multi <- grid.arrange(grobs = list(ggplotGrob(p_net_maize +
 
 #p_net_multi
 
-ggsave(file = "ZAnc/plots/network_peak_sharing.png",
+ggsave(file = png_net_multi,
          plot = p_net_multi,
          height = 6.5, width = 6, 
          units = "in",
@@ -370,7 +371,7 @@ p_geo_dist <- ggraph(net_tidy_geo, layout = "linear") +
   geom_edge_arc(aes(width = log(distance_km)), alpha = 0.5,
                 force_flip = T) +
   geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-  theme_graph() +
+  theme_graph(base_family = 'Helvetica') +
   scale_edge_width(range = c(2, 0.01)) +
   scale_color_viridis(direction = -1) +
   coord_cartesian(clip = "off") +
