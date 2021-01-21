@@ -39,7 +39,7 @@ n_boot = snakemake@params[["n_boot"]]
 # n_boot = 10000
 inv_file = snakemake@input[["inv_file"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
-file_pearsons_rho_f4 = snakemake@output[["tbl_pearsons_rho_f4"]]
+file_pearsons_rho_f4 = snakemake@output[["file_pearsons_rho_f4"]]
 # file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/pearsons_rho_f4_", zea, ".tex")
 
 source(colors_file)

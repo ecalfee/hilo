@@ -2194,12 +2194,14 @@ Job counts:
                 count   jobs
                 1       all
                 2       calc_and_plot_f4
-                21      calc_thetas
+                21      cqalc_thetas
                 21      estimate_saf_pop
                 21      estimate_sfs
                 1       plot_bootstrap_NGSadmix_by_r
                 1       plot_bootstrap_local_ancestry_by_r
                 68 # trying again with more memory for estimate_saf_pop and an updated environment for R scripts. 1.19.2020 3pm
+
+# error in calc_and_plot_f4: wrong filename from Snakefile (fixing)
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
