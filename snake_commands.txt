@@ -2240,6 +2240,16 @@ Job counts:
 # error in plot_shared_peaks: Error in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
   invalid font type.... so I changed the default font in theme_graph to a common font:
   theme_graph(base_family = 'Helvetica'). Alt option would be to import Arial Narrow with extrafonts package.
+  hilo$ snakemake all --quiet --profile slurm
+  Job counts:
+          count   jobs
+          1       all
+          1       plot_bootstrap_NGSadmix_by_r
+          1       plot_shared_peaks # object 'places' not found
+          3 # RUNNING 2.21.2021 1:45pm
+          # Neither worked: 29499646 29535376
+
+
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

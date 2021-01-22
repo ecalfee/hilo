@@ -401,7 +401,7 @@ tbl_elev_r_interation = r5$anc_ind %>%
   dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
 
 # print table to file
-print(xtable(file_elev_r_interation, 
+print(xtable(tbl_elev_r_interation, 
              digits = c(1, 0, 0, 3, 3, 3, -2),
              label = "tbl_elev_r_interaction",
              type = "latex", 
@@ -434,7 +434,7 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
   dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
 
 # print table to file
-print(xtable(file_elev_r_interaction_5, 
+print(xtable(tbl_elev_r_interaction_5, 
              digits = c(1, 0, 0, 3, 3, 3, -2),
              label = "tbl_elev_r_interaction_5",
              type = "latex", 
