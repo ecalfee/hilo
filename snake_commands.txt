@@ -2248,6 +2248,20 @@ Job counts:
           1       plot_shared_peaks # object 'places' not found
           3 # RUNNING 2.21.2021 1:45pm
           # Neither worked: 29499646 29535376
+          hilo$ snakemake all --quiet --profile slurm
+          Job counts:
+                  count   jobs
+                  1       all
+                  1       plot_bootstrap_NGSadmix_by_r
+                  1       plot_shared_peaks
+                  3 # RUNNING 1.21.2021 5pm. Not getting priority on queue. So I upped to high2 and bigmemh for just 2 jobs here. Cancelled and will rerun:
+          hilo$ snakemake all --quiet --profile slurm
+
+
+# oops I accidentally ran all my pi/diversity stats wiht Ne = 100k instead of 10k. Will need to rerun.
+# but first to test 1 pop on new rules with what I have (so I can move forward with how to summarise/plot results):
+# getting pi in 5kb non-overlapping windows.
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.allChr diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.windows.5000.5000.pestPG --quiet --profile slurm
 
 
 

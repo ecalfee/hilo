@@ -22,6 +22,8 @@ wildcard_constraints:
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac", # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
     COVERAGE = "ALL|Over0.5x" # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)
+    WIN = "[0-9]+" # window size
+    STEP = "[0-9]+" # window step size (non-overlapping windows if STEP = WIN)
 
 # reference genome and associated files
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -107,10 +109,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
-include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "global_ancestry/Snakefile"
+#include: "local_ancestry/Snakefile"
+#include: "ancestry_by_r/Snakefile"
+#include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -188,7 +190,9 @@ rule all:
         expand("ancestry_by_r/results/f4/{POP}.f4", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
         expand("ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana"]),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus10kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"], SUFFIX = ["bed", "counts"]),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 100000, YESNO = "yes", ZEA = zea, POP = symp_pops)
+        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops)
     params:
         p = "med2"
     resources:
