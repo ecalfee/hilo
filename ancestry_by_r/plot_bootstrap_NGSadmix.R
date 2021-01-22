@@ -53,7 +53,7 @@ file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]] # high v
 # file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
 file_elev_r_interaction_5 = snakemake@output[["file_elev_r_interaction_5"]] # all 5 r bins (for supplement)
 # file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex"
-file_pearsons_rho_ngsadmix = snakemake@output[["file_pearsons_rho_ngsadmix.tex"]]
+file_pearsons_rho_ngsadmix = snakemake@output[["file_pearsons_rho_ngsadmix"]]
 # file_pearsons_rho_ngsadmix = "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex"
 
 # load inversion coordinates

@@ -412,6 +412,6 @@ rule plot_shared_peaks:
         1
     resources:
         time_min = 30,
-        mem = 8
+        mem = 16
     script:
         "plot_shared_peaks.R"
