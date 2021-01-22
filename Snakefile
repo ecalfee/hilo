@@ -21,8 +21,8 @@ wildcard_constraints:
     SUBSAMPLE = "[0-9]+",
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac", # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
-    COVERAGE = "ALL|Over0.5x" # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)
-    WIN = "[0-9]+" # window size
+    COVERAGE = "ALL|Over0.5x", # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)
+    WIN = "[0-9]+", # window size
     STEP = "[0-9]+" # window step size (non-overlapping windows if STEP = WIN)
 
 # reference genome and associated files
