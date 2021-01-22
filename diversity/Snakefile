@@ -108,7 +108,7 @@ rule calc_pi_by_windows:
         time_min = 4*60,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
-        "thetaStat do_stat {input.idx} -win {WIN} -step {STEP} -outnames {params.out_prefix}"
+        "thetaStat do_stat {input.idx} -win {params.WIN} -step {params.STEP} -outnames {params.out_prefix}"
 
 ## calc_pi_all_chr: calculates pi for each chromosome in the genome (for background diversity rates)
 rule calc_pi_all_chr:

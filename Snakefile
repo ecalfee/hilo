@@ -202,7 +202,8 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
-
+        "diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.allChr.pestPG",
+        "diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.windows.5000.5000.pestPG"
     params:
         p = "med2"
     resources:

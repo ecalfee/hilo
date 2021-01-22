@@ -2260,8 +2260,19 @@ Job counts:
 # oops I accidentally ran all my pi/diversity stats wiht Ne = 100k instead of 10k. Will need to rerun.
 # but first to test 1 pop on new rules with what I have (so I can move forward with how to summarise/plot results):
 # getting pi in 5kb non-overlapping windows.
-hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.allChr diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.windows.5000.5000.pestPG --quiet --profile slurm
-
+hilo$ snakemake diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.allChr.pestPG diversity/results/pi/HILO_MAIZE55/Ne100000_yesBoot/HOMOZYG/mexicana/pop366.pi.windows.5000.5000.pestPG --quiet --profile slurm
+# I decided to just run all of them overnight instead. so I added these 2 files to rule 'some'
+hilo$ snakemake all some --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        57      calc_pi_all_chr
+        57      calc_pi_by_windows
+        56      calc_thetas
+        56      estimate_saf_pop
+        56      estimate_sfs
+        1       some
+        284
 
 
 # TO DO:
