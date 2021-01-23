@@ -98,7 +98,7 @@ rule calc_pi_by_windows:
     output:
         thetas = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG"
     params:
-        p = "bigmemm",
+        p = "med2",
         WIN = lambda wildcards: wildcards.WIN,
         STEP = lambda wildcards: wildcards.STEP,
         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}"
@@ -117,7 +117,7 @@ rule calc_pi_all_chr:
     output:
         thetas = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG"
     params:
-        p = "bigmemm",
+        p = "med2",
         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr"
     conda:
         "../envs/environment.yaml"

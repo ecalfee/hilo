@@ -87,7 +87,7 @@ rule plot_mean_anc:
         fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
         rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.plot.rds" # ggplot object
     params:
-        p = "bigmemm",
+        p = "med2",
         zea = lambda wildcards: wildcards.ZEA
     shadow:
         "minimal"
@@ -114,7 +114,7 @@ rule plot_slope_elev:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png",
         rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.plot.rds" # ggplot object
     params:
-        p = "bigmemm",
+        p = "med2",
         zea = lambda wildcards: wildcards.ZEA
     shadow:
         "minimal"
@@ -138,7 +138,7 @@ rule combine_genome_scan_plots:
     output:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png"
     params:
-        p = "bigmemm"
+        p = "med2"
     shadow:
         "minimal"
     conda:
@@ -161,7 +161,7 @@ rule plotQQ:
     output:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png"
     params:
-        p = "bigmemm",
+        p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO
     shadow:
