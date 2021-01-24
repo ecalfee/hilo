@@ -135,12 +135,12 @@ rule calc_mean_pi_in_outliers_vs_not:
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
         meta = "samples/" + prefix_all + "_meta.RData",
-        pi_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{yes}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG",
-        pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{yes}Boot/anc/{POP}.anc.freq"
+        pi_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG",
+        pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq"
     output:
-        txt = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{yes}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt"
+        txt = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt"
     params:
-        p = "med2",
+        p = "low2",
         pop = lambda wildcards: wildcards.POP,
         zea = lambda wildcards: wildcards.ZEA
     shadow:
@@ -149,7 +149,7 @@ rule calc_mean_pi_in_outliers_vs_not:
         "../envs/environment.yaml"
     resources:
         time_min = 15,
-        mem = 4
+        mem = lambda wildcards, attempt: attempt * 4
     script:
         "calc_mean_pi_in_outliers_vs_not.R"
 
