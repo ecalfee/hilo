@@ -2281,6 +2281,15 @@ cp pop366.thetas.idx TEST_pop366.thetas.idx
 cp pop366.thetas.gz TEST_pop366.thetas.gz
 thetaStat do_stat TEST_pop366.thetas.idx -win 5000 -step 5000 -outnames TEST_pop366.pi.windows.5000.5000.pestPG
 thetaStat do_stat TEST_pop366.thetas.idx -outnames TEST_pop366.pi.allChr.pestPG
+copied these to laptop into test directory: hilo/test/.
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        51      calc_pi_all_chr
+        52      calc_pi_by_windows
+        104 # TRYING TO RUN on low2 1.23.2021 4pm. COMPLETED.
+
 
 
 # TO DO:
