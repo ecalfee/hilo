@@ -108,7 +108,7 @@ window_peaks %>%
               mutate(windows = "genomewide")) %>%
   mutate(pop = pop,
          ancestry = zea) %>%
-  dplyr::select(pop, ancestry, pi, n_windows, n_sites, n_chr) %>%
+  dplyr::select(pop, ancestry, windows, pi, n_windows, n_sites, n_chr) %>%
   write.table(x = ., file = txt_out, quote = F, sep = "\t", row.names = F, col.names = T)
 
 # option 1: for each population, plot mean pi within peaks vs. outside of peaks
