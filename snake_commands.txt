@@ -2272,7 +2272,15 @@ Job counts:
         56      estimate_saf_pop
         56      estimate_sfs
         1       some
-        284
+        284. Mostly ran except calc_pi rules didn't get priority. I reduced time and memory and am trying on low2
+# cancelling pending jobs:
+hilo$ squeue -u ecalfee | grep 'calc_pi' | awk '{print $1}' | xargs -n 1 scancel
+# restarting snakemake:
+# also made one test file interactively (took < 5 min and 2G):
+cp pop366.thetas.idx TEST_pop366.thetas.idx
+cp pop366.thetas.gz TEST_pop366.thetas.gz
+thetaStat do_stat TEST_pop366.thetas.idx -win 5000 -step 5000 -outnames TEST_pop366.pi.windows.5000.5000.pestPG
+thetaStat do_stat TEST_pop366.thetas.idx -outnames TEST_pop366.pi.allChr.pestPG
 
 
 # TO DO:
