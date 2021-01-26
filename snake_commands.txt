@@ -2289,7 +2289,20 @@ Job counts:
         51      calc_pi_all_chr
         52      calc_pi_by_windows
         104 # TRYING TO RUN on low2 1.23.2021 4pm. COMPLETED.
-
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                56      calc_mean_pi_in_outliers_vs_not
+                57 # summarising pi by outliers vs not # RUNNING 1.24.2021 10am. COMPLETED (very fast). But rerunning b/c missing column in output ('windows')
+                hilo$ snakemake all --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       all
+                        56      calc_mean_pi_in_outliers_vs_not
+                        57 # COMPLETED
+# try doing fst between sympatric maize and mexicana within mexicana ancestry for 1 location: Jicaltepec
+hilo$ snakemake all "diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop366.pop24.fst.allChr.txt" --quiet --profile slurm
 
 
 # TO DO:

@@ -9,6 +9,8 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
     POP = "pop[0-9]+|allopatric_maize|allopatric_maize_subsample[0-9]+|sympatric_maize|sympatric_mexicana|allopatric_mexicana", # for f4 stats allopatric_maize needs to be treated like a pop
+    POP1 = "pop[0-9]+", # pop 1 and pop 2 for pairwise Fst calculations
+    POP2 = "pop[0-9]+",
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
@@ -78,10 +80,11 @@ zea = ["maize", "mexicana"]
 Nes = [1000, 10000, 100000]
 
 # sympatric populations (maize and mexicana)
-symp_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
-"pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35",
-"pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
+symp_mexicana_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
+"pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35"]
+symp_maize_pops = ["pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
 "pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
+symp_pops = symp_mexicana_pops + symp_maize_pops
 # allopatric mexicana pops
 allo_mex_pops = ["pop20", "pop22", "pop33"]
 # includes all pops sequenced by this study (allopatric maize, parviglumis & tripsacum published by other studies)
@@ -203,6 +206,8 @@ rule all:
 ## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule some:
     input:
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt",
+        Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = "pop366", POP2 = "pop24")
     params:
         p = "med2"
     resources:

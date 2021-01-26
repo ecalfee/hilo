@@ -154,3 +154,103 @@ rule calc_mean_pi_in_outliers_vs_not:
         "calc_mean_pi_in_outliers_vs_not.R"
 
 ## plot_mean_pi_in_outliers_vs_not: script to plot diversity (pi) by population and ancestry for homozygous ancestry windows within high introgression outliers vs outside
+rule plot_mean_pi_in_outliers_vs_not:
+    input:
+        meta = "samples/" + prefix_all + "_meta.RData",
+        colors = "colors.R",
+        txt = expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{{WIN}}.{{STEP}}.txt", ZEA = zea, POP = symp_pops)
+    output:
+        png_out = "diversity/plots/Ne{Ne}_{YESNO}Boot/pi.outliers_vs_not.{WIN}.{STEP}.png"
+    params:
+        p = "low2",
+        pop = lambda wildcards: wildcards.POP,
+        Ne = lambda wildcards: wildcards.Ne,
+        yesno = lambda wildcards: wildcards.YESNO,
+        win = lambda wildcards: wildcards.WIN,
+        step = lambda wildcards: wildcards.STEP,
+        prefix_all = prefix_all
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    script:
+        "plot_mean_pi_in_outliers_vs_not.R"
+
+
+## estimate_2D_sfs: estimates 2D site frequency spectrum (sfs) for 2 populations jointly by maximum likelihood in ANGSD
+rule estimate_2D_sfs:
+    input:
+        saf1 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.saf.idx"
+    output:
+        sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        6
+    resources:
+        time_min = 24*60,
+        mem = lambda wildcards, attempt: attempt * 16 + 32 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+    shell:
+        "realSFS {input.saf1} {input.saf2} -P {threads} > {output.sfs}"
+
+## calc_fst_idx: calculates fst for each sites using 2Dsfs and saf's for each population (can later be summarised by window or genomewide)
+rule calc_fst_idx:
+    input:
+        saf1 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.saf.idx",
+        sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+    output:
+        gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz",
+        idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx"
+    params:
+        p = "med2",
+        out_prefix = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix}"
+
+## calc_fst_by_windows: calculates fst for windows of set size
+rule calc_fst_by_windows:
+    input:
+        idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx",
+        gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz"
+    output:
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt"
+    params:
+        p = "low2",
+        WIN = lambda wildcards: wildcards.WIN,
+        STEP = lambda wildcards: wildcards.STEP
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    shell:
+        "realSFS fst stats2 {input.idx} -win {params.WIN} -step {params.STEP} > {output.fst}"
+
+## calc_fst_all_chr: calculates fst for each chromosome in the genome (for background divergence rates between population pair)
+rule calc_fst_all_chr:
+    input:
+        idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx",
+        gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz"
+    output:
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt"
+    params:
+        p = "low2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    shell:
+        "realSFS fst stats {input.idx} > {output.fst}"
