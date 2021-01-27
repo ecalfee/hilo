@@ -201,10 +201,10 @@ rule all:
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         # get fst between sympatric maize and mexicana pairs for both high confidence maize and mexicana ancestry.
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
     params:
         p = "med2"
     resources:
