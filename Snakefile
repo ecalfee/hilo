@@ -204,7 +204,7 @@ rule all:
         expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt", zip, WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt", zip, Ne = 10000, YESNO = "yes", ZEA = "maize", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
     params:
         p = "med2"
     resources:
