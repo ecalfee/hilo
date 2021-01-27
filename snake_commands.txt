@@ -2307,9 +2307,11 @@ Job counts:
         count   jobs
         1       calc_fst_all_chr
         1       calc_fst_idx
-        1       estimate_2D_sfs # FAILED ON CLUSTER -- WILL SEE WHY
+        1       estimate_2D_sfs
         3 # RUNNING 1.26.2021 2:30pm (I tested this fst pipeline with pop362.small paired with itself for fst, see eg test/pop362.pop362.fst.allChr.txt)
-# ADDED A BUNCH OF MEMORY and restarting (estimate_2D_sfs  now has only 4 threads (not 6) and starts w/ 64G of memory (not 48))
+# ADDED A BUNCH OF MEMORY before running all jobs because don't want it to restart each one:
+# estimate_2D_sfs now starts w/ 64G of memory (not 48) and adds 8G from there.
+
 
 
 
