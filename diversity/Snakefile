@@ -194,8 +194,8 @@ rule estimate_2D_sfs:
     threads:
         6
     resources:
-        time_min = 24*60,
-        mem = lambda wildcards, attempt: attempt * 16 + 32 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        time_min = 32*60,
+        mem = lambda wildcards, attempt: attempt * 8 + 56 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf1} {input.saf2} -P {threads} > {output.sfs}"
 

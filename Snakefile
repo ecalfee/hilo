@@ -80,15 +80,18 @@ zea = ["maize", "mexicana"]
 Nes = [1000, 10000, 100000]
 
 # sympatric populations (maize and mexicana)
-symp_mexicana_pops = ["pop18", "pop19", "pop21", "pop23", "pop24", "pop25", "pop26",
-"pop27", "pop28", "pop29", "pop30", "pop31", "pop34", "pop35"]
-symp_maize_pops = ["pop360", "pop361", "pop362", "pop363", "pop365", "pop366", "pop367",
-"pop368", "pop369", "pop370", "pop371", "pop372", "pop373", "pop374"]
+# (in order of elevation)
+symp_mexicana_pops = ["pop29", "pop27", "pop19", "pop28", "pop18", "pop21", "pop34", "pop26", "pop35", "pop25", "pop23", "pop30", "pop24", "pop31"]
+symp_maize_pops = ["pop371", "pop369", "pop361", "pop370", "pop360", "pop363", "pop362", "pop368", "pop374", "pop367", "pop365", "pop372", "pop366", "pop373"]
 symp_pops = symp_mexicana_pops + symp_maize_pops
 # allopatric mexicana pops
 allo_mex_pops = ["pop20", "pop22", "pop33"]
 # includes all pops sequenced by this study (allopatric maize, parviglumis & tripsacum published by other studies)
 hilo_pops = allo_mex_pops + symp_pops
+
+symp_mexicana_nots = ["not29", "not27", "not19", "not28", "not18", "not21", "not34", "not26", "not35", "not25", "not23", "not30", "not24", "not31"]
+symp_maize_nots = ["not371", "not369", "not361", "not370", "not360", "not363", "not362", "not368", "not374", "not367", "not365", "not372", "not366", "not373"]
+
 
 # create a dictionary that has one entry for each sympatric population
 # containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)
