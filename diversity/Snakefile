@@ -27,29 +27,27 @@ rule make_fasta:
         "-doCounts 1 "
 
 ## list_not_pops: makes lists of all homozygous ancestry bams in sympatric maize or mexicana EXCEPT one focal population (only included samples at 0.05x threshold ("samples/ALL_byPop"))
-list_not_pops:
+rule list_not_pops:
     input:
         symp_pops = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}_bams.list", POP = symp_pops)
     output:
-        file = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{NOTPOP}_bams.list"
+        file = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{NOTPOP}_bams.list"
     params:
-        p = "med2",
+        p = "high2",
         file_prefix = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/",
         symp_maize_pops = symp_maize_pops,
         symp_mexicana_pops = symp_mexicana_pops,
         POP = lambda wildcards: "pop" + wildcards.NOTPOP[3:] # extract just the population number and add prefix 'pop'
     resources:
-        time_min = 15,
+        time_min = 5,
         mem = 2
-    conda:
-        "../envs/environment.yaml"
     run:
         if {params.POP} in {params.symp_maize_pops}:
             all_pops = {params.symp_maize_pops}
         elif {params.POP} in {params.symp_mexicana_pos}:
             all_pops = {params.symp_mexicana_pops}
         else:
-            end
+            raise NameError('output file must have the form not360, where 360 stands in for any population number for sympatric maize or mexicana')
         with open({output.file}, 'w') as outfile:
             for p in all_pops:
                 with open({params.file_prefix + {params.POP} + "_bams.list"}) as infile:
