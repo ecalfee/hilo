@@ -11,6 +11,7 @@ wildcard_constraints:
     POP = "pop[0-9]+|allopatric_maize|allopatric_maize_subsample[0-9]+|sympatric_maize|sympatric_mexicana|allopatric_mexicana", # for f4 stats allopatric_maize needs to be treated like a pop
     POP1 = "pop[0-9]+", # pop 1 and pop 2 for pairwise Fst calculations
     POP2 = "pop[0-9]+",
+    NOTPOP = "not[0-9]+", # eg. not360 is all maize EXCEPT population 360
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
@@ -91,7 +92,7 @@ hilo_pops = allo_mex_pops + symp_pops
 
 symp_mexicana_nots = ["not29", "not27", "not19", "not28", "not18", "not21", "not34", "not26", "not35", "not25", "not23", "not30", "not24", "not31"]
 symp_maize_nots = ["not371", "not369", "not361", "not370", "not360", "not363", "not362", "not368", "not374", "not367", "not365", "not372", "not366", "not373"]
-
+symp_nots = symp_mexicana_nots + symp_maize_nots
 
 # create a dictionary that has one entry for each sympatric population
 # containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)

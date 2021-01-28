@@ -2321,7 +2321,17 @@ Job counts:
         2       calc_fst_idx
         2       estimate_2D_sfs
         9 # SHOULD be 14 * 2 jobs per rule because there's 14 symp_maize_pops and 14 symp_mexicana_pops. trying again only putting in symp_maize_pops and symp_mexicana_pops as parameters to zip:
-
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                27      calc_fst_all_chr
+                28      calc_fst_by_windows
+                27      calc_fst_idx
+                27      estimate_2D_sfs
+                110 # RUNNING 1.27.2021
+# test making bam file lists for all other sympatric individuals maize or mexicana except focal population:
+hilo$ snakemake -n "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/bams/not360_bams.list" --quiet --profile slurm
 
 
 

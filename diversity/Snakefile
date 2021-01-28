@@ -26,12 +26,42 @@ rule make_fasta:
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 "
 
+## list_not_pops: makes lists of all homozygous ancestry bams in sympatric maize or mexicana EXCEPT one focal population (only included samples at 0.05x threshold ("samples/ALL_byPop"))
+list_not_pops:
+    input:
+        symp_pops = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}_bams.list", POP = symp_pops)
+    output:
+        file = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{NOTPOP}_bams.list"
+    params:
+        p = "med2",
+        file_prefix = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/",
+        symp_maize_pops = symp_maize_pops,
+        symp_mexicana_pops = symp_mexicana_pops,
+        POP = lambda wildcards: "pop" + wildcards.NOTPOP[3:] # extract just the population number and add prefix 'pop'
+    resources:
+        time_min = 15,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    run:
+        if {params.POP} in {params.symp_maize_pops}:
+            all_pops = {params.symp_maize_pops}
+        elif {params.POP} in {params.symp_mexicana_pos}:
+            all_pops = {params.symp_mexicana_pops}
+        else:
+            end
+        with open({output.file}, 'w') as outfile:
+            for p in all_pops:
+                with open({params.file_prefix + {params.POP} + "_bams.list"}) as infile:
+                    for line in infile:
+                        outfile.write(line)
+
 ## estimate_saf_pop: estimate site allele frequency likelihoods using ANGSD for a population
 rule estimate_saf_pop:
     input:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
         bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list",
-        complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed" # has bams
+        complete = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}.completed", POP = symp_pops) # all pops have completed bams
     output:
         saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
         saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.gz",
@@ -227,7 +257,7 @@ rule calc_fst_by_windows:
     output:
         fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt"
     params:
-        p = "low2",
+        p = "med2",
         WIN = lambda wildcards: wildcards.WIN,
         STEP = lambda wildcards: wildcards.STEP
     conda:
@@ -246,7 +276,7 @@ rule calc_fst_all_chr:
     output:
         fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt"
     params:
-        p = "low2"
+        p = "med2"
     conda:
         "../envs/environment.yaml"
     resources:
