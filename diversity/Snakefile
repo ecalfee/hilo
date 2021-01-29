@@ -52,7 +52,7 @@ rule list_not_pops:
         with open(output.file, 'w') as outfile:
             for p in all_pops:
                 if p != params.POP:
-                    with open(params.file_prefix + params.POP + "_bams.list") as infile:
+                    with open(params.file_prefix + p + "_bams.list") as infile:
                         for line in infile:
                             outfile.write(line)
 
