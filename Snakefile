@@ -9,9 +9,9 @@ path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on 
 wildcard_constraints:
     ID = "[A-Za-z0-9]+",
     POP = "pop[0-9]+|allopatric_maize|allopatric_maize_subsample[0-9]+|sympatric_maize|sympatric_mexicana|allopatric_mexicana", # for f4 stats allopatric_maize needs to be treated like a pop
-    POP1 = "pop[0-9]+", # pop 1 and pop 2 for pairwise Fst calculations
-    POP2 = "pop[0-9]+",
     NOTPOP = "not[0-9]+", # eg. not360 is all maize EXCEPT population 360
+    POP1 = "pop[0-9]+|not[0-9]+", # pop 1 and pop 2 for pairwise Fst calculations and saf/sfs. Can be 1 population (e.g. pop360) or all individuals in that subspecies except 1 population (e.g. not360)
+    POP2 = "pop[0-9]+|not[0-9]+",
     BOOT = "[0-9]+", # bootstrap
     YESNO = "yes|no",
     Ne = "[0-9]+",
@@ -205,7 +205,11 @@ rule all:
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots)
     params:
         p = "med2"
     resources:

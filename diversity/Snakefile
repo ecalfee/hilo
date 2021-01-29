@@ -33,40 +33,42 @@ rule list_not_pops:
     output:
         file = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{NOTPOP}_bams.list"
     params:
-        p = "high2",
+        p = "med2",
         file_prefix = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/",
-        symp_maize_pops = symp_maize_pops,
-        symp_mexicana_pops = symp_mexicana_pops,
         POP = lambda wildcards: "pop" + wildcards.NOTPOP[3:] # extract just the population number and add prefix 'pop'
     resources:
         time_min = 5,
         mem = 2
     run:
-        if {params.POP} in {params.symp_maize_pops}:
-            all_pops = {params.symp_maize_pops}
-        elif {params.POP} in {params.symp_mexicana_pos}:
-            all_pops = {params.symp_mexicana_pops}
+        print("Get all individuals EXCEPT population: " + params.POP)
+        if params.POP in symp_maize_pops:
+            print("a maize population!")
+            all_pops = symp_maize_pops
+        elif params.POP in symp_mexicana_pops:
+            print("a mexicana population!")
+            all_pops = symp_mexicana_pops
         else:
-            raise NameError('output file must have the form not360, where 360 stands in for any population number for sympatric maize or mexicana')
-        with open({output.file}, 'w') as outfile:
+            raise NameError('oops! not a recognized sympatric population')
+        with open(output.file, 'w') as outfile:
             for p in all_pops:
-                with open({params.file_prefix + {params.POP} + "_bams.list"}) as infile:
-                    for line in infile:
-                        outfile.write(line)
+                if p != params.POP:
+                    with open(params.file_prefix + params.POP + "_bams.list") as infile:
+                        for line in infile:
+                            outfile.write(line)
 
 ## estimate_saf_pop: estimate site allele frequency likelihoods using ANGSD for a population
 rule estimate_saf_pop:
     input:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
-        bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list",
+        bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP1}_bams.list",
         complete = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}.completed", POP = symp_pops) # all pops have completed bams
     output:
-        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
-        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.gz",
-        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.pos.gz"
+        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.gz",
+        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.pos.gz"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}"
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -85,9 +87,9 @@ rule estimate_saf_pop:
 ## estimate_sfs: estimates site frequency spectrum (sfs) by maximum likelihood in ANGSD
 rule estimate_sfs:
     input:
-        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx"
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx"
     output:
-        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.sfs"
+        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.sfs"
     params:
         p = "med2"
     conda:
