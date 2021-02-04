@@ -10,7 +10,6 @@ library(viridis)
 library(xtable)
 library(grid)
 library(gridExtra)
-library(readxl)
 
 # load variables from snakemake
 # get output plot and table filenames
@@ -20,8 +19,6 @@ png_elev_symp_allo = snakemake@output[["png_elev_symp_allo"]]
 # png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png"
 png_structure = snakemake@output[["png_structure"]]
 # png_structure = "global_ancestry/plots/structure_K2.png"
-png_teo_hist = snakemake@output[["png_teo_hist"]] # histogram of teosinte occurence across elevation
-# png_teo_hist = "global_ancestry/plots/teosinte_hx_occurence_hist.png"
 lm_tex = snakemake@output[["lm_tex"]]
 # lm_tex = "global_ancestry/tables/lm_elevation.tex"
 png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
@@ -40,23 +37,6 @@ source(snakemake@input[["colors"]])
 # get NGSAdmix results for K = 2, d_admix2
 load(snakemake@input[["k2"]])
 # load("global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_ind.RData")
-
-teosinte_excel = snakemake@input[["teo"]]
-# teosinte_excel = "data/zea_occurence/teocintles_historico_jsgetal.xlsx"
-
-# read in teosinte occurence data (parviglumis & mexicana)
-teo <- readxl::read_xlsx(teosinte_excel, 
-                         sheet = "RegistrosFinal") %>%
-  filter(Taxa %in% c("Zea mays parviglumis", "Zea mays mexicana")) %>%
-  rename(ELEVATION = Alt,
-         zea = Subespecie,
-         year = Fecha) %>%
-  arrange(ELEVATION) %>%
-  mutate(latlonelev = paste(Latitud, Longitud, ELEVATION),
-         latlon = paste(Latitud, Longitud),
-         latlonelevyear = paste(Latitud, Longitud, ELEVATION, year)) %>%
-  filter(!duplicated(latlonelevyear)) %>% # only keep unique occurence observations per location (lat/lon + elevation) and year
-  dplyr::select(zea, ELEVATION, Estado, Latitud, Longitud, year)
 
 # make STRUCTURE-like ancestry plots:
 p_structure <- d_admix2 %>%
@@ -82,9 +62,11 @@ ggsave(png_structure,
         dpi = 300)
 
 lm_maize = filter(d_admix2, group == "sympatric_maize") %>%
-  with(., lm(mexicana ~ ELEVATION))
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(mexicana ~ elevation_km))
 lm_mex = filter(d_admix2, group == "sympatric_mexicana") %>%
-  with(., lm(mexicana ~ ELEVATION))
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(mexicana ~ elevation_km))
 #glance(lm_maize)
 #summary(lm_mex)
 #glance(lm_mex)
@@ -92,15 +74,13 @@ lm_mex = filter(d_admix2, group == "sympatric_mexicana") %>%
 
 lm_table <- bind_rows(mutate(broom::tidy(lm_maize), subspecies = "maize"),
                       mutate(broom::tidy(lm_mex), subspecies = "mexicana")) %>%
-  dplyr::select(subspecies, term, estimate, std.error, statistic, p.value)
+  dplyr::select(subspecies, term, estimate, std.error, statistic, p.value) %>%
+  mutate(term = ifelse(term == "(Intercept)", "intercept", ifelse(term == "elevation_km", "elevation (km)", term)))
 
 # print linear model output to a file
 print(xtable(lm_table,
-             caption = "\\color{Gray} \\textbf{Elevational ancestry clines} Effect of elevation (m) on genomewide proportion \\texit{mexicana} ancestry in sympatric maize and \\textit{mexicana}",
-             label = "anova_lat_clines",
              type = "latex",
-             #display = c("f", "s", "s", "g", "g", "g", "g"),
-             digits = c(1, 1, 1, -2, -2, 2, -2),
+             digits = c(1, 1, 1, 4, 4, 1, -2),
              latex.environments = NULL),
       include.rownames = F,
       file = lm_tex)
@@ -118,7 +98,7 @@ p_symp_elev <- d_admix2 %>%
   ylab("Proportion mexicana ancestry") +
   xlab("Elevation (m)") +
   geom_abline(intercept = c(coef(lm_mex)[1], coef(lm_maize)[1]),
-              slope = c(coef(lm_mex)[2], coef(lm_maize)[2])) +
+              slope = c(coef(lm_mex)[2], coef(lm_maize)[2])/1000) + # divided by 1000 to put on meters, not km, x-axis scale
   ggtitle("Clines in mexicana ancestry across elevation") +
   labs(color = "Location", shape = "Subspecies") +
   theme_classic() +
@@ -127,67 +107,6 @@ p_symp_elev <- d_admix2 %>%
 ggsave(filename = png_elev,
        plot = p_symp_elev,
        device = "png", height = 6, width = 7.5, units = "in", dpi = 300)
-
-# plot all individuals (including allopatric) with elevation:
-# note: the plotted line still only is fitted to sympatric individuals
-shape_group_zea2 <- shape_group_zea 
-shape_group_zea2[2] <- 6 # changes to upside down triangle to make more distinguishable
-d_admix3 <- d_admix2 %>% # add elevation for Palmar Chico allopatric maize samples
-  mutate(., ELEVATION = ifelse(LOCALITY == "Palmar Chico" & 
-                                 group == "allopatric_maize", 
-                               983, # elevation of Palmar Chico maize landrace samples from Yang 2019 https://doi.org/10.1073/pnas.1820997116
-                               ELEVATION)) %>%
-  arrange(., ELEVATION) %>%
-  mutate(., LOCALITY = ifelse(symp_allo == "allopatric",
-                              paste0(LOCALITY, "*"), LOCALITY)) %>% # add astericks to allopatric localities
-  mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY)))
-p_symp_allo_elev <- d_admix3 %>%
-  ggplot(., aes(x = ELEVATION, 
-                y = mexicana, 
-                color = LOCALITY,
-                shape = group)) +
-  stat_smooth(data = filter(d_admix2, symp_allo == "sympatric"),
-              method = "lm", se = T, color = "black") +
-  geom_point(data = d_admix3, alpha = 0.75, size = 2) +
-  ylab("Proportion mexicana ancestry") +
-  xlab("Elevation (m)") +
-  ggtitle("Clines in mexicana ancestry across elevation") +
-  labs(color = "Location", shape = "Zea") +
-  theme_classic() +
-  scale_shape_manual(values = shape_group_zea2, labels = zea_group_labels) +
-  coord_cartesian(ylim = 0:1, clip = "off") +
-  scale_y_continuous(expand=c(0,0)) +
-  xlim(c(950, 2650)) + # upper elevation for sympatric pops is 2609m but mexicana grows up to nearly 3000m
-  scale_color_viridis_d(direction = -1, option = "viridis")
-#p_symp_allo_elev
-ggsave(filename = png_elev_symp_allo,
-       plot = p_symp_allo_elev,
-       device = "png", height = 6.5, width = 7.5, units = "in", dpi = 300)
-
-# histogram of teosinte occurence data
-p_teo_hist <- teo %>%
-  ggplot(.) +
-  geom_histogram(aes(x = ELEVATION, fill = zea),
-                 alpha = 0.5, 
-                 bins = 35,
-                 position = "identity") +
-  theme_classic() +
-  #xlim(c(850, 3050)) +
-  scale_fill_manual(values = col_maize_mex_parv) +
-  ggtitle("Teosinte occurence data 1842–2016") +
-  labs(fill = "Teosinte", x = "Elevation (m)", y = "Observations")
-# plot(p_teo_hist)
-ggsave(filename = png_teo_hist,
-       plot = p_teo_hist,
-       device = "png", 
-       height = 3, width = 5, 
-       units = "in", dpi = 300)
-
-# elevational range limits observed teosinte:
-#teo %>%
-#  group_by(zea) %>%
-#  summarise(min = min(ELEVATION),
-#            max = max(ELEVATION))
 
 # allopatric mexicana/maize structure only
 p_structure_allo <- d_admix2 %>%
@@ -214,7 +133,7 @@ p_structure_allo <- d_admix2 %>%
                               "Malinalco\n(1,887m)", 
                               "Amecameca\n(2,467m)")) +
   theme(plot.margin = margin(c(0,0,0,5.5)))
-p_structure_allo
+#p_structure_allo
 
 # multipanel plot of global ancestry data:
 p_combined <- grid.arrange(grobs = list(ggplotGrob(p_symp_elev +
@@ -232,45 +151,26 @@ p_combined <- grid.arrange(grobs = list(ggplotGrob(p_symp_elev +
                                                            plot.subtitle = element_text(size = smallLabel + 2),
                                                            axis.title = element_text(size = smallLabel + 2))
                                         ),
-                                        ggplotGrob(p_teo_hist + 
-                                                     theme(plot.title = element_blank(),
-                                                           axis.title = element_text(size = smallLabel + 3)) +
-                                                     geom_segment(aes(x = min(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"]), 
-                                                                      y = 110, 
-                                                                      xend = max(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"]), 
-                                                                      yend = 110),
-                                                                  arrow = arrow(length = unit(1, "mm"), 
-                                                                                ends = "both",
-                                                                                type = "closed")) +
-                                                     geom_text(aes(x = mean(range(d_admix2$ELEVATION[d_admix2$symp_allo == "sympatric"])), 
-                                                                   y = 125, 
-                                                                   label = "sampled range"),
-                                                               size = 4)
-                                        ),
                                         textGrob(label = "A", 
                                                  x = unit(0.5, "lines"), 
                                                  y = unit(0, "lines")),
                                         textGrob(label = "B", 
                                                  x = unit(0.5, "lines"), 
-                                                 y = unit(0, "lines")),
-                                        textGrob(label = "C", 
-                                                 x = unit(0.5, "lines"), 
-                                                 y = unit(0.5, "lines"))),
+                                                 y = unit(0, "lines"))
+                                       ),
                                         layout_matrix = rbind(
                                           c(4),
                                           c(2),
                                           c(5),
-                                          c(1),
-                                          c(6),
-                                          c(3)),
-                           heights = c(.1, 1, .1, 5, .1, 1.5),
+                                          c(1)),
+                           heights = c(.1, 1, .1, 5),
                            widths = c(1))
 
-p_combined
+#p_combined
 ggsave(png_global_anc_multi, 
        plot = p_combined, 
        device = "png", 
        width = 7.5, 
-       height = 8.75, 
+       height = 7.5, 
        units = "in",
        dpi = 300)
