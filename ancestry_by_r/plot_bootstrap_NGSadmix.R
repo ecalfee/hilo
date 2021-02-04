@@ -268,7 +268,7 @@ print("quintile_r5 ~ quintile_cd5")
 print(cor(windows$quintile_r5, windows$quintile_cd5))
 
 # plot ancestry across recombination bins and elevation:
-p_facet_r5 <- r5$anc_ind %>%
+p_elev_facet_r5 <- r5$anc_ind %>%
   dplyr::filter(., symp_allo == "sympatric") %>%
   dplyr::filter(., ancestry == "mexicana") %>%
   ggplot(., aes(x = ELEVATION, y = p,
@@ -287,9 +287,9 @@ p_facet_r5 <- r5$anc_ind %>%
          shape = guide_legend("Subspecies"),
          fill = guide_legend("Subspecies")) +
   theme(legend.position = "bottom")
-#p_facet_r5
+# p_elev_facet_r5
 ggsave(file = png_facet_r5,
-       plot = p_facet_r5,
+       plot = p_elev_facet_r5,
        device = "png",
        width = 7.5, height = 3, 
        units = "in", dpi = 300)
@@ -320,56 +320,41 @@ ggsave(file = png_color_elev_r5,
 
 # multipanel plot:
 # facet label names
-r5.labs <- c("Low r: [0.0185, 0.0524] cM/Mb", 
-             "High r: (1.09, 287] cM/Mb")
-names(r5.labs) <- c("[0.0185,0.0524]", "(1.09,287]")
-
-# plots across elevation of lowest and highest quintiles
-p_elev_facet_2 <- r5$anc_ind %>%
-  dplyr::filter(., symp_allo == "sympatric") %>%
-  dplyr::filter(., ancestry == "mexicana") %>%
-  dplyr::filter(., quintile %in% c(1,5)) %>% # only show lowest and highest recomb. quintiles
-  ggplot(., aes(x = ELEVATION, y = p,
-                color = zea,
-                shape = zea)) +
-  geom_point() +
-  geom_smooth(method = "lm", aes(group = zea, color = zea, fill = zea)) +
-  scale_color_manual(values = col_maize_mex_parv) +
-  scale_fill_manual(values = col_maize_mex_parv) +
-  theme_light() +
-  facet_wrap(~bin, nrow = 2, labeller = labeller(bin = r5.labs)) +
-  xlab("Elevation (m)") +
-  ylab("Proportion mexicana ancestry") +
-  guides(color = guide_legend("Subspecies"),
-         shape = guide_legend("Subspecies"),
-         fill = guide_legend("Subspecies"))
-#p_elev_facet_2
-
+r5.labs0 <- paste0(c("lowest r", "low r", "middle r", "high r", "highest r"))
+r5.labs <- paste(levels(r5$anc_ind$bin), "cM/Mb")
+names(r5.labs) <- levels(r5$anc_ind$bin)
 p_multi <- grid.arrange(grobs = list(ggplotGrob(p_r5_symp_allo +
-                                                  theme(legend.position = "none")),
-                                        ggplotGrob(p_elev_facet_2 +
-                                                     theme(legend.position = "none",
-                                                           plot.margin = margin(l = 8, r = 5.5, 
-                                                                                t = 5.5, b = 5.5, 
-                                                                                unit = "pt"))),
+                                                  theme(legend.position = "none"#,
+                                                        #plot.margin = margin(t = 5.5, b = 20, l = 5.5, r = 5.5, unit = "pt")
+                                                        )),
+                                     ggplotGrob(p_elev_facet_r5 +
+                                                  theme(legend.position = "none") +
+                                                  facet_wrap(~ bin, ncol = 5, labeller = labeller(bin = r5.labs))),
                                      textGrob(label = "A", 
-                                              x = unit(0.5, "lines"), 
-                                              y = unit(0, "lines")),
+                                              just = "top",
+                                              x = unit(0.5, "lines")),
                                      textGrob(label = "B", 
-                                              x = unit(0.5, "lines"), 
-                                              y = unit(0, "lines")),
+                                              just = "top",
+                                              x = unit(0.5, "lines"),
+                                              y = unit(1, "lines")
+                                              ),
                                      cowplot::get_legend(p_r5_symp_allo +
-                                                           theme(legend.position = "bottom"))
+                                                           theme(legend.position = "right"))
                                         ),
-                           layout_matrix = rbind(c(3,4), c(1,2), c(5,5)),
-                           heights = c(0.1, 1, 0.1),
-                           widths = c(5, 3))
-#p_multi
+                           layout_matrix = rbind(c(3, NA, NA),
+                                                 c(NA, 1, 5),
+                                                 c(4, NA, NA),
+                                                 c(NA, 2, 2)),
+                           heights = c(.1, 4.8, .2, 2.3),
+                           widths = c(1, 40, 12))
+
+
+# p_multi
 ggsave(png_multi, 
        plot = p_multi, 
        device = "png", 
        width = 7.5, 
-       height = 6, 
+       height = 7, 
        units = "in",
        dpi = 300)
 
