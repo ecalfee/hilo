@@ -179,8 +179,8 @@ p_combined_color <- grid.arrange(grobs = list(
 ggsave(png_map_teo_color, 
        plot = p_combined_color, 
        device = "png", 
-       width = 7.2,#5, 
-       height = 5,#5, 
+       width = 7.2, 
+       height = 5,
        units = "in",
        dpi = 300)
 
@@ -223,91 +223,7 @@ p_combined_black <- grid.arrange(grobs = list(
 ggsave(png_map_teo_black, 
        plot = p_combined_black, 
        device = "png", 
-       width = 7.2,#5, 
-       height = 5,#5, 
+       width = 7.2,
+       height = 5,
        units = "in",
        dpi = 300)
-
-
-# ---------- geographic distance -------------- #
-# plot heatmap of geographic distance between populations
-
-# get geographic distances between populations!
-all_places <- pop_to_map %>%
-  arrange(., desc(ELEVATION)) %>%
-  .$LOCALITY
-edges_geo <- data.frame(from = unlist(lapply(1:length(all_places), 
-                                             function(i) 
-                                               rep(all_places[i], (length(all_places)-i)))),
-                        to = unlist(lapply(2:length(all_places), 
-                                           function(i) 
-                                             all_places[i:length(all_places)])),
-                        stringsAsFactors = F) %>% # list all unique pairs of locations
-  left_join(., 
-            dplyr::select(pop_to_map, LOCALITY, LAT, LON), 
-            by = c("from"="LOCALITY")) %>%
-  left_join(., 
-            dplyr::select(pop_to_map, LOCALITY, LAT, LON), 
-            by = c("to"="LOCALITY"),
-            suffix = c(".from", ".to")) %>%
-  # calculate pairwise geodesic distance between locations (in m)
-  dplyr::mutate(., distance = geodist(x = dplyr::select(., LON.from, LAT.from),
-                                      y = dplyr::select(., LON.to, LAT.to),
-                                      paired = T,
-                                      measure = "geodesic")) %>%
-  dplyr::mutate(distance_km = distance/1000) %>%
-  dplyr::mutate(distance_km_truncated = ifelse(distance_km > 500, 500, distance_km)) %>%
-  dplyr::select(from, to, distance_km, distance_km_truncated)
-
-distances <- bind_rows(edges_geo,
-          edges_geo %>%
-            mutate(from_old = from,
-                   from = to,
-                   to = from_old)) %>%
-  mutate(from = factor(from, ordered = T, levels = all_places[length(all_places):1]),
-         to = factor(to, ordered = T, levels = all_places[length(all_places):1]))
-
-dist_heatmap <- distances %>% # add 2nd half of pairs (reversed to <-> from)
-  ggplot(aes(x = from, y = to, fill = distance_km_truncated)) +
-  geom_tile() +
-  theme_classic() +
-  scale_fill_viridis()
-
-
-
-
-
-net_tidy_geo <- tbl_graph(nodes = nodes, 
-                          edges = edges_geo,
-                          directed = T)  
-# complement (upside down) of the linear network plot:
-p_geo_dist <- ggraph(net_tidy_geo, layout = "linear") +
-  geom_edge_arc(aes(width = log(distance_km)), alpha = 0.5,
-                force_flip = T) +
-  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-  theme_graph(base_family = 'Helvetica') +
-  scale_edge_width(range = c(2, 0.01)) +
-  scale_color_viridis(direction = -1) +
-  coord_cartesian(clip = "off") +
-  theme(plot.margin = margin(c(t = 20, r = 5.5, b = 100, l = 5.5), 
-                             unit = "pt")) +
-  guides(color = F) +
-  ggtitle("Geographic distance between populations")
-
-
-library(mapdata)
-map("worldHires","Mexico")
-x <- dplyr::select(meta, LOCALITY, ELEVATION, LAT, LON, group) %>%
-  filter(group == "sympatric_maize") %>%
-  unique()
-points(x$LON,x$LAT,pch=19)
-abline(h=15)
-ey<-rep(15,14)
-ex=-110+(x$ELEVATION-1500)/100
-points(ex,ey,pch=3)
-for(i in 1:14){
-  segments(ex[i],ey[i],x$LON[i],x$LAT[i])
-}
-text(ex+1,ey,labels=x$ELEVATION)
-
-plot(ex,ey,pch=3)
