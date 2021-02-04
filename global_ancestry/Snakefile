@@ -140,7 +140,6 @@ rule plot_NGSAdmix:
         k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
     output:
         png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
-        png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png",
         png_structure = "global_ancestry/plots/structure_K2.png",
         lm_tex = "global_ancestry/tables/lm_elevation.tex",
         png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
