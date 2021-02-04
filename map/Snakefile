@@ -1,0 +1,28 @@
+## map/Snakefile: pipeline to make a map of sampling locations
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+
+## plot_map: makes a map of Mexico with sampling locations
+rule plot_map:
+    input:
+        meta = "samples/" + prefix_all + "_meta.RData",
+        colors = "colors.R",
+        # teosinte occurence data from Gonzalez et al 2018:
+        # https://web.archive.org/web/20191010133021/https://www.biodiversidad.gob.mx/genes/monitoreo_teocintles.html
+        teo = "data/zea_occurence/teocintles_historico_jsgetal.xlsx"
+    output:
+        png_map = "map/plots/mexico_map_elev.png",
+        png_teo_hist = "map/plots/teosinte_hist.png",
+        png_map_teo_color = "map/plots/mexico_lines_elev_teo_color.png",
+        png_map_teo_black = "map/plots/mexico_lines_elev_teo_black.png",
+    params:
+        p = "med2"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "plot_map.R"
