@@ -98,7 +98,7 @@ p_map <- pop_to_map %>%
   xlab("Longitude") +
   ylab("Latitude") +
   scale_color_viridis_d(direction = 1, option = "viridis") +
-  guides(color = guide_legend(title = "Maize/Mexicana Sites", 
+  guides(color = guide_legend(title = "Maize/Mexicana sites", 
                        override.aes = list(linetype = 0, size = 2)))
 #p_map
 
@@ -150,47 +150,36 @@ p_combined_color <- grid.arrange(grobs = list(
                scale_color_viridis_d(direction = 1, option = "viridis") +
                theme(plot.title = element_blank(),
                      legend.position = "None",
-                     plot.margin = margin(t = 5, r = 5, b = 0, l = 5, unit = "pt")) +
-               geom_segment(x = 0, 
-                            y = 118, 
-                            xend = 3050, 
-                            yend = 118,
-                            color = col_maize_mex_parv[["maize"]],
-                            arrow = arrow(length = unit(1, "mm"), 
-                                          ends = "last",
-                                          type = "closed")) +
-               geom_text(x = 2700, 
-                         y = 102, 
-                         color = col_maize_mex_parv[["maize"]],
-                         label = "maize range",
-                         size = 3)
+                     plot.margin = margin(t = 5, r = 5, b = 0, l = 5, unit = "pt"))
     ),
   ggplotGrob(p_map_lines_color + 
                theme(legend.position = "None",
                      plot.margin = margin(t = 0, r = 5, b = 5, l = 5, unit = "pt"))),
   cowplot::get_legend(p_teo_hist + 
+                        labs(fill = "Teosinte ranges") +
                         theme(legend.position = "left")),
   cowplot::get_legend(p_map),
   textGrob(label = "A", 
            just = "top",
            x = unit(0.5, "lines"), 
-           y = unit(0, "lines")),
+           y = unit(7, "lines")
+           ),
   textGrob(label = "B", 
            just = "top",
            x = unit(0.5, "lines"), 
-           y = unit(0, "lines"))
+           y = unit(18, "lines"))
   ),
   layout_matrix = rbind(
-    c(5, 1,3),
-    c(6, 2,4)),
+    c(5, 1, 3),
+    c(6, 2, 4)),
   heights = c(2, 5),
-  widths = c(.1, 5, 2))
+  widths = c(.2, 5, 2))
 
-p_combined_color
-ggsave(png_map_and_teo_color, 
+# p_combined_color
+ggsave(png_map_teo_color, 
        plot = p_combined_color, 
        device = "png", 
-       width = 7.1,#5, 
+       width = 7.2,#5, 
        height = 5,#5, 
        units = "in",
        dpi = 300)
@@ -211,21 +200,30 @@ p_combined_black <- grid.arrange(grobs = list(
                theme(legend.position = "None",
                      plot.margin = margin(t = 0, r = 5, b = 5, l = 5, unit = "pt"))),
   cowplot::get_legend(p_teo_hist + 
-                        theme(legend.position = "left")),
-  cowplot::get_legend(p_map) 
-),
-layout_matrix = rbind(
-  c(1,3),
-  c(2,4)),
-heights = c(2, 5),
-widths = c(5, 2))
+                        theme(legend.position = "left") +
+                        labs(fill = "Teosinte ranges")),
+  cowplot::get_legend(p_map),
+  textGrob(label = "A", 
+         just = "top",
+         x = unit(0.5, "lines"), 
+         y = unit(7, "lines")
+  ),
+  textGrob(label = "B", 
+         just = "top",
+         x = unit(0.5, "lines"), 
+         y = unit(18, "lines"))
+  ),
+  layout_matrix = rbind(
+    c(5, 1, 3),
+    c(6, 2, 4)),
+  heights = c(2, 5),
+  widths = c(.2, 5, 2))
 
-p_combined_black
-png_map_and_teo_black = "map/plots/mexico_lines_elev_teo_black.png"
-ggsave(png_map_and_teo_black, 
+#p_combined_black
+ggsave(png_map_teo_black, 
        plot = p_combined_black, 
        device = "png", 
-       width = 7,#5, 
+       width = 7.2,#5, 
        height = 5,#5, 
        units = "in",
        dpi = 300)
