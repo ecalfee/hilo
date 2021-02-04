@@ -39,8 +39,8 @@ n_boot = snakemake@params[["n_boot"]]
 # n_boot = 10000
 inv_file = snakemake@input[["inv"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
-file_pearsons_rho_f4 = snakemake@output[["file_pearsons_rho_f4"]]
-# file_pearsons_rho_f4 = paste0("ancestry_by_r/tables/pearsons_rho_f4_", zea, ".tex")
+file_spearmans_rho_f4 = snakemake@output[["file_spearmans_rho_f4"]]
+# file_spearmans_rho_f4 = paste0("ancestry_by_r/tables/spearmans_rho_f4_", zea, ".tex")
 
 source(colors_file)
 
@@ -292,7 +292,7 @@ ggsave(file = png_f4_num_denom,
        width = 7.5, height = 4.5,
        units = "in", dpi = 300)
 
-# make table summarising pearson's correlations:
+# make table summarising spearman's correlations:
 rho = data.frame(method = "f4 ratio",
                  feature = c(rep("recombination rate (cM/Mb)", 2),
                              rep("gene density (coding bp/cM)", 2)),
@@ -306,16 +306,17 @@ rho = data.frame(method = "f4 ratio",
                                                conf = 0.95, type = "perc")$perc[4]),
     boot_high = sapply(1:4, function(i) boot.ci(boots[[i]], index = 1, 
                                                conf = 0.95, type = "perc")$perc[5])) %>%
-  dplyr::select(method, group, feature, resolution, rho_estimate, boot_low, boot_high) %>%
-  rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+  filter(data == "whole genome") %>%
+  dplyr::select(group, feature, rho_estimate, boot_low, boot_high) %>%
+  rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+  
 
-# print table to file for estimates of Pearson's rank correlation
+# print table to file for estimates of spearman's rank correlation
 print(xtable(rho, 
-             digits = 4,
-             label = paste0("tbl_pearsons_rho_f4_", zea),
+             digits = c(1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
-      file = file_pearsons_rho_f4)
+      file = file_spearmans_rho_f4)
 
 

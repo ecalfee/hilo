@@ -53,8 +53,8 @@ file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]] # high v
 # file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
 file_elev_r_interaction_5 = snakemake@output[["file_elev_r_interaction_5"]] # all 5 r bins (for supplement)
 # file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex"
-file_pearsons_rho_ngsadmix = snakemake@output[["file_pearsons_rho_ngsadmix"]]
-# file_pearsons_rho_ngsadmix = "ancestry_by_r/tables/pearsons_rho_ngsadmix.tex"
+file_spearmans_rho_ngsadmix = snakemake@output[["file_spearmans_rho_ngsadmix"]]
+# file_spearmans_rho_ngsadmix = "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex"
 
 # load inversion coordinates
 inv = read.table(inv_file, stringsAsFactors = F, header = F) %>%
@@ -398,7 +398,8 @@ tbl_elev_r_interation = r5$anc_ind %>%
                                    "r (low recombination)", "elevation*r"),
                           stringsAsFactors = F),
             by = "term_messy") %>%
-  dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
+  dplyr::mutate(group = paste("sympatric", zea)) %>%
+  dplyr::select(group, term, estimate, std.error, statistic, p.value) 
 
 # print table to file
 print(xtable(tbl_elev_r_interation, 
@@ -409,11 +410,12 @@ print(xtable(tbl_elev_r_interation,
       include.rownames = F,
       file = file_elev_r_interaction)
 
-# use all quintiles (ordinal) as numeric (for supplement)
+# use all quintiles as a numeric scale 0-4
 tbl_elev_r_interaction_5 = r5$anc_ind %>%
   dplyr::filter(., symp_allo == "sympatric") %>%
   dplyr::filter(., ancestry == "mexicana") %>%
   mutate(.,
+         quintile = quintile - 1, # make quintiles 0-4 instead of 1-5
          elevation_km = ELEVATION/1000) %>%
   nest(., -zea) %>%
   mutate(.,
@@ -431,7 +433,8 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
                                    "r quintile", "elevation*r quintile"),
                           stringsAsFactors = F),
             by = "term_messy") %>%
-  dplyr::select(zea, term, estimate, std.error, statistic, p.value) 
+  dplyr::mutate(group = paste("sympatric", zea)) %>%
+  dplyr::select(group, term, estimate, std.error, statistic, p.value) 
 
 # print table to file
 print(xtable(tbl_elev_r_interaction_5, 
@@ -451,14 +454,13 @@ rho = bind_rows(mutate(r5$spearman,
                        feature = "gene density (coding bp/cM)")) %>%
   mutate(group = stringr::str_replace(group, "_", " "),
          resolution = "genomic quintiles") %>%
-  dplyr::select(method, group, feature, resolution, rho_estimate, boot_low, boot_high) %>%
-  rename(`Pearson's rank correlation` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+  dplyr::select(group, feature, rho_estimate, boot_low, boot_high) %>%
+  rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
 
-# print table to file for estimates of Pearson's rank correlation
+# print table to file for estimates of spearman's rank correlation
 print(xtable(rho, 
-             digits = 4,
-             label = "tbl_pearsons_rho_ngsadmix",
+             digits = c(1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
-      file = file_pearsons_rho_ngsadmix)
+      file = file_spearmans_rho_ngsadmix)

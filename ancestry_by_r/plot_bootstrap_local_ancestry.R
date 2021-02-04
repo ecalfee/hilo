@@ -32,8 +32,8 @@ png_r_cont_local_anc = snakemake@output[["png_r_cont_local_anc"]]
 # png_r_cont_local_anc = "ancestry_by_r/plots/local_anc_by_r_continuous.png"
 png_cd5_local_anc = snakemake@output[["png_cd5_local_anc"]]
 # png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_quintiles.png"
-file_pearsons_rho = snakemake@output[["file_pearsons_rho_local_anc"]]
-# file_pearsons_rho = "ancestry_by_r/tables/pearsons_rho_local_ancestry.tex"
+file_spearmans_rho = snakemake@output[["file_spearmans_rho_local_anc"]]
+# file_spearmans_rho = "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex"
 
 random_seed = 7135891 # for reproducing bootstrap results
 
@@ -274,16 +274,15 @@ rho <- ci_boot %>%
          method = "ancestry_hmm",
          group = paste("sympatric", zea, sep = "_"),
          resolution = "1cM windows") %>%
-  dplyr::select(method, group, feature, resolution, estimate, low, high) %>%
-  rename(`Pearson's rank correlation` = estimate, `2.5%` = low, `97.5%` = high)
+  dplyr::select(group, feature, estimate, low, high) %>%
+  rename(`Spearman's rho` = estimate, `2.5%` = low, `97.5%` = high)
 
-# print table to file for estimates of Pearson's rank correlation
+# print table to file for estimates of Spearman's rank correlation
 print(xtable(rho, 
-             digits = 4,
-             label = "tbl_pearsons_rho_local_ancestry",
+             digits = c(1, 0, 0, 3, 3, 3, -2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
-      file = file_pearsons_rho)
+      file = file_spearmans_rho)
 
 
