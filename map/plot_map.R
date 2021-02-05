@@ -14,8 +14,6 @@ library(maps)
 
 # load variables from snakemake
 # get output plot filenames
-png_map = snakemake@output[["png_map"]]
-# png_map = "map/plots/mexico_map_elev.png"
 png_teo_hist = snakemake@output[["png_teo_hist"]]
 # png_teo_hist = "map/plots/teosinte_hist.png"
 png_map_teo_color = snakemake@output[["png_map_teo_color"]]
