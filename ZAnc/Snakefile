@@ -403,6 +403,8 @@ rule plot_shared_peaks:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m_data_only.png",
+        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_data_only.png",
+        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_sims_only.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_maize.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_mexicana.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/shared_peaks_on_genome.png",

@@ -7,13 +7,10 @@ library(widyr)
 # tidyverse networks/graphs and plotting:
 library(tidygraph)
 library(ggraph)
-# to calculate distances between locations by lat/lon:
-library(geodist) 
 # for multi-panel plots:
 library(grid)
 library(gridExtra)
 library(cowplot)
-library(forcats)
 
 # this script plots ancestry outliers across the genome,
 # from individual populations, and shared across pops
@@ -39,6 +36,7 @@ png_net_multi = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_shari
 png_net_multi_no_inv4m = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
 png_net_multi_no_inv4m_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m_data_only.png")
 png_net_multi_sims = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
+png_net_multi_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
 png_combmatrix_maize = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
 png_combmatrix_mexicana = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_mexicana.png")
 png_peaks_on_genome = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/shared_peaks_on_genome.png")
@@ -571,7 +569,7 @@ ggsave(file = png_net_multi_no_inv4m_data,
        units = "in",
        device = "png") 
 
-# ------plot simulated network data only ------------------------
+# ------------ plot simulated network data only ------------------------
 p_net_maize_sims <- ggraph(peak_network[["maize"]], layout = "linear") +
   geom_edge_arc(aes(width = p_snps_shared_sim*100,
                     alpha = p_snps_shared_sim*100)) +
@@ -642,6 +640,77 @@ ggsave(file = png_net_multi_sims,
        units = "in",
        device = "png") 
 
+# ---------plot network of all raw data only -----------------
+p_net_maize_data <- ggraph(peak_network[["maize"]], layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_data*100,
+                    alpha = p_snps_shared_data*100)) +
+  geom_node_point(aes(color = ELEVATION), size = 3) +
+  theme_graph(base_family = 'Helvetica') +
+  geom_node_text(aes(label = name), 
+                 angle = 90,
+                 hjust = 1,
+                 y = -0.5,
+                 repel = F) +
+  scale_edge_alpha(range = c(0, 1), limits = c(0, 3.5)) +
+  scale_edge_width(range = c(0, 3), limits = c(0, 3.5)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  labs(edge_width = "% SNPs in\n shared peaks",
+       edge_alpha = "% SNPs in\n shared peaks",
+       color = "Elevation (m)") +
+  ggtitle("Shared introgression peaks in maize")
+# p_net_maize_data
+
+p_net_mexicana_data <- ggraph(peak_network[["mexicana"]], layout = "linear") +
+  geom_edge_arc(aes(width = p_snps_shared_data*100, 
+                    alpha = p_snps_shared_data*100)) +
+  geom_node_point(aes(color = ELEVATION), size = 3) + 
+  theme_graph(base_family = 'Helvetica') +
+  scale_edge_alpha(range = c(0, 1), limits = c(0, 3.5)) +
+  scale_edge_width(range = c(0, 3), limits = c(0, 3.5)) +
+  scale_color_viridis(direction = -1) +
+  coord_cartesian(clip = "off") +
+  labs(edge_width = "% SNPs in\n shared peaks",
+       edge_alpha = "% SNPs in\n shared peaks",
+       color = "Elevation (m)") +
+  ggtitle("Shared introgression peaks in mexicana")
+# p_net_mexicana_data
+
+# combine maize and mexicana networks into 1 plot:
+p_net_multi_data <- grid.arrange(grobs = list(ggplotGrob(p_net_maize_data +
+                                                           theme(plot.margin = margin(c(t = 0, r = 5, b = 95, l = 2.5), unit = "pt"),
+                                                                 plot.title = element_blank(),
+                                                                 legend.position = "none"
+                                                           )),
+                                              ggplotGrob(p_net_mexicana_data +
+                                                           theme(plot.margin = margin(c(t = 5, r = 5, b = 5, l = 2.5), unit = "pt"),
+                                                                 plot.title = element_blank(),
+                                                                 legend.position = "none"
+                                                           )),
+                                              cowplot::get_legend(p_net_maize_data),
+                                              textGrob(label = "maize", 
+                                                       x = unit(1, "lines"), 
+                                                       y = unit(10, "lines"),
+                                                       rot = 90),
+                                              textGrob(label = "mexicana", 
+                                                       x = unit(1, "lines"), 
+                                                       y = unit(9, "lines"),
+                                                       rot = 90)),
+                                 layout_matrix = rbind(c(4, 1, NA, 3),
+                                                       c(5, 2, NA, 3)),
+                                 heights = c(1, 
+                                             0.7),
+                                 widths = c(0.1, 5, 0.2, 1.7))
+
+# p_net_multi_data
+
+ggsave(file = png_net_multi_data,
+       plot = p_net_multi_data,
+       height = 6.5, width = 6.2, 
+       units = "in",
+       device = "png") 
+
+
 
 # ----------which pops commonly share peaks? plot ggupset or other combination matrix ---------
 maize_pops_shared <- anc_outliers_list[["maize"]] %>% 
@@ -650,7 +719,7 @@ maize_pops_shared <- anc_outliers_list[["maize"]] %>%
                                      " ",
                                      ELEVATION,
                                      "m"),
-         LOCALITY = forcats::fct_reorder(as.factor(LOCALITY), ELEVATION)) %>%
+         LOCALITY = reorder(LOCALITY, ELEVATION)) %>%
   filter(top_sd2) %>% 
   group_by(chr, pos) %>% 
   summarize(populations = paste0(sort(LOCALITY), collapse = "-"),
@@ -660,7 +729,7 @@ p_combmatrix_maize <- maize_pops_shared %>%
   group_by(populations, n) %>%
   summarise(freq = n()/nrow(sites)*100) %>%
   ungroup() %>%
-  mutate(populations = forcats::fct_reorder(as.factor(populations), -freq)) %>%
+  mutate(populations = reorder(populations, -freq)) %>%
   arrange(populations) %>%
   head(n = 100) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
@@ -698,7 +767,7 @@ mexicana_pops_shared <- anc_outliers_list[["mexicana"]] %>%
                                      " ",
                                      ELEVATION,
                                      "m"),
-         LOCALITY = forcats::fct_reorder(as.factor(LOCALITY), ELEVATION)) %>%
+         LOCALITY = reorder(LOCALITY, ELEVATION)) %>%
   filter(top_sd2) %>% 
   group_by(chr, pos) %>% 
   summarize(populations = paste0(sort(LOCALITY), collapse = "-"),
@@ -708,7 +777,7 @@ p_combmatrix_mexicana <- mexicana_pops_shared %>%
   group_by(populations, n) %>%
   summarise(freq = n()/nrow(sites)*100) %>%
   ungroup() %>%
-  mutate(populations = forcats::fct_reorder(as.factor(populations), -freq)) %>%
+  mutate(populations = reorder(populations, -freq)) %>%
   arrange(populations) %>%
   head(n = 100) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
@@ -740,42 +809,25 @@ ggsave(file = png_combmatrix_mexicana,
        device = "png") 
 
 # ----------plot where shared peaks are across the genome-------
-# defined by 2 sd > mean but also maybe a cutoff like 50% introgressed ancestry
-# or maybe top 1% of the genome for that population (?)
-
-
+# introgression peaks defined by 2 sd > mean 
 peaks_on_genome <- left_join(sites, 
                              bind_rows(outliers_by_pop_list[["maize"]],
                                        outliers_by_pop_list[["mexicana"]]),
           by = c("chr", "pos", "inv4m"))
 
-peaks_on_genome %>%
-  ggplot(., aes(x = pos_cum, y = outlier_pops, color = outlier_pops)) +
-  geom_point(size = 0.1) +
-  scale_x_continuous(label = axis_spacing$chr, 
-                   breaks = axis_spacing$center,
-                   expand = expansion(mult = c(0, 0),
-                                      add = c(0, 0))) +
-  theme_classic() +
-  facet_grid(zea~.) +
-  scale_color_viridis_c(limits = c(1, 14), option = "magma") +
-  labs(color = "number of\npopulations") +
-  xlab("position on genome") +
-  ylab("number of populations")
-
 top_shared_pops <- maize_pops_shared %>%
   group_by(populations, n) %>%
   summarise(freq = n()/nrow(sites)*100) %>%
   ungroup() %>%
-  mutate(populations = forcats::fct_reorder(as.factor(populations), -freq)) %>%
+  mutate(populations = reorder(populations, -freq)) %>%
   arrange(populations) %>%
   head(n = 100) %>%
   dplyr::select(populations, freq) 
 
-top_shared_pops %>%
+p_peaks_on_genome <- top_shared_pops %>%
   left_join(., maize_pops_shared, by = "populations") %>%
   filter(n >= 5) %>%
-  mutate(populations = forcats::fct_reorder(as.factor(populations), freq)) %>%
+  mutate(populations = reorder(populations, freq)) %>%
   inner_join(sites, ., by = c("chr", "pos")) %>%
   ggplot(., aes(x = pos_cum, y = populations, color = n)) +
   geom_point(size = 0.1) +
@@ -789,3 +841,9 @@ top_shared_pops %>%
   ylab("populations sharing peak") +
   theme_light()
 # this shows it's not just the inversions :) although they definitely contribute to the excess
+
+ggsave(file = png_peaks_on_genome,
+       plot = p_peaks_on_genome,
+       height = 5, width = 7.5, 
+       units = "in",
+       device = "png") 
