@@ -22,12 +22,14 @@ sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 genome_file = snakemake@input[["genome"]]
 # genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
+centromeres_file = snakemake@input[["centromeres"]]
+# centromeres_file = "data/refMaize/centromere_positions_v4.txt"
 png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_mean_anc.png")
 fdr_out = snakemake@output[["fdr"]]
 # fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
 rds = snakemake@output[["rds"]]
-# rds = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
+# rds = paste0("ZAnc/plots/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
 
 # load data
 source(fdr_functions)
@@ -36,12 +38,22 @@ load(anc_file)
 load(sim_file)
 load(meta_file)
 
+# load centromere positons
+centromeres <- read.table(centromeres_file, header = T, stringsAsFactors = F,
+                          sep = "\t")
+
 # load chromosome lengths
 genome <- read.table(genome_file, header = F, stringsAsFactors = F,
                      sep = "\t") %>%
   data.table::setnames(c("chr", "length")) %>%
   dplyr::mutate(chr_end = cumsum(length),
-                chr_start = c(0, chr_end[1:(nrow(.)-1)]))
+                chr_start = c(0, chr_end[1:(nrow(.)-1)])) %>%
+  left_join(., 
+            centromeres %>%
+              dplyr::group_by(chr) %>% # chr9 has 2 segments that map to centromere region, so I get an approximate midpoint using both pieces 
+              summarise(cent_mid = 10^6 * (max(end) + min(start))/2), # convert from Mb to bp
+            by = "chr") %>%
+  dplyr::mutate(centromere = chr_start + cent_mid) # cumulative centromere positions
 
 # and site/position information for SNPs with ancestry calls
 sites <- read.table(sites_file, header = F, stringsAsFactors = F,
@@ -50,12 +62,6 @@ sites <- read.table(sites_file, header = F, stringsAsFactors = F,
   left_join(., genome, by = "chr") %>%
   dplyr::mutate(pos_cum = chr_start + pos) # get cumulative chromosomal position
 
-# mean of each chromosome (cumulative position)
-axis_spacing = sites %>%
-  group_by(chr) %>% 
-  summarize(center=(max(pos_cum) + min(pos_cum)) / 2,
-            start = min(pos_cum),
-            end = max(pos_cum))
 
 # calculate false discovery rate thresholds
 FDRs = calc_FDR(d = anc_mean, 
@@ -100,8 +106,8 @@ p_combined = bind_cols(sites, anc = anc_mean) %>%
                                  fdr5 = "#00BFC4"),
                       labels = c("odd chr", "even chr", "genomewide mean", "5% FDR"),
                       limits = c("odd", "even", "genomewide_mean", "fdr5")) + 
-  scale_x_continuous(label = axis_spacing$chr, 
-                     breaks = axis_spacing$center,
+  scale_x_continuous(label = genome$chr, 
+                     breaks = genome$centromere,
                      expand = expansion(mult = c(0, 0),
                                         add = c(0, 0))) +
   theme_classic() +
