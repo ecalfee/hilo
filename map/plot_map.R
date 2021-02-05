@@ -50,7 +50,7 @@ teo <- readxl::read_xlsx(teosinte_excel,
   dplyr::select(zea, ELEVATION, Estado, Latitud, Longitud, year)
 
 # plot map of sampling locations
-mexico <- maps::map_data("world")  %>% # world data, country outlines
+mexico <- map_data("world")  %>% # world data, country outlines
   filter(., region == "Mexico")
 
 # function to scale elevation of pops to a bar across lat

@@ -3,6 +3,8 @@ data/
 slurm-log/
 plots/
 plots_old/
+tables/
+*/tables/
 */results/
 */metrics/
 *.Rhistory
