@@ -2384,8 +2384,14 @@ Job counts:
                 1       plot_bootstrap_local_ancestry_by_r
                 1       plot_shared_peaks
                 3 # still error in plot_bootstrap_local_ancestry_by_r -- renamed file in spearmans:
-          hilo$ snakemake ancestry_by_r/tables/spearmans_rho_local_ancestry.tex --quiet --profile slurm --restart-times 0      
-
+        hilo$ snakemake ancestry_by_r/tables/spearmans_rho_local_ancestry.tex --quiet --profile slurm --restart-times 0
+        Job counts:
+        count   jobs
+        1       plot_bootstrap_local_ancestry_by_r
+        1 # DONE
+        # still need maps:
+        hilo$ snakemake map/plots/mexico_lines_elev_teo_color.png --quiet --profile slurm --restart-times 0
+        
 # try getting fst (just for maize)
 hilo$ snakemake -n fst --quiet --profile slurm
 

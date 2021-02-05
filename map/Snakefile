@@ -16,7 +16,7 @@ rule plot_map:
         png_map = "map/plots/mexico_map_elev.png",
         png_teo_hist = "map/plots/teosinte_hist.png",
         png_map_teo_color = "map/plots/mexico_lines_elev_teo_color.png",
-        png_map_teo_black = "map/plots/mexico_lines_elev_teo_black.png",
+        png_map_teo_black = "map/plots/mexico_lines_elev_teo_black.png"
     params:
         p = "med2"
     conda:
