@@ -2376,7 +2376,15 @@ Job counts:
         2       plot_mean_anc
         1       plot_shared_peaks
         2       plot_slope_elev
-        13 # RUNNING 2.4.2020 11:15pm
+        13 # RUNNING 2.4.2020 11:15pm. 2 failed rules: plot_shared_peaks (ggupset) adn plot_bootstrap_local_ancestry_by_r (too many digits columns)
+        hilo$ snakemake all --quiet --profile slurm --restart-times 0
+        Job counts:
+                count   jobs
+                1       all
+                1       plot_bootstrap_local_ancestry_by_r
+                1       plot_shared_peaks
+                3 # still error in plot_bootstrap_local_ancestry_by_r -- renamed file in spearmans:
+          hilo$ snakemake ancestry_by_r/tables/spearmans_rho_local_ancestry.tex --quiet --profile slurm --restart-times 0      
 
 # try getting fst (just for maize)
 hilo$ snakemake -n fst --quiet --profile slurm
