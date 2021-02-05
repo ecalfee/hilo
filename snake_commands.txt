@@ -2391,7 +2391,10 @@ Job counts:
         1 # DONE
         # still need maps:
         hilo$ snakemake map/plots/mexico_lines_elev_teo_color.png --quiet --profile slurm --restart-times 0
-        
+        Job counts:
+        count   jobs
+        1       plot_map
+        1
 # try getting fst (just for maize)
 hilo$ snakemake -n fst --quiet --profile slurm
 

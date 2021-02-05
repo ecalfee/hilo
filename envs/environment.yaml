@@ -55,6 +55,7 @@ dependencies:
   - r-mass =7.3_53
   - r-ade4 =1.7_16
   - r-igraph =1.2.6
+  - r-maps =3.3.0
 
   # external dependencies:
   # ancestry_hmm # version 0.94 is called by ancestry_hmm

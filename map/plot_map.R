@@ -10,8 +10,7 @@ library(gridExtra)
 library(readxl)
 library(cowplot)
 library(scales)
-library(geodist)
-
+library(maps)
 
 # load variables from snakemake
 # get output plot filenames
@@ -51,7 +50,7 @@ teo <- readxl::read_xlsx(teosinte_excel,
   dplyr::select(zea, ELEVATION, Estado, Latitud, Longitud, year)
 
 # plot map of sampling locations
-mexico <- map_data("world")  %>% # world data, country outlines
+mexico <- maps::map_data("world")  %>% # world data, country outlines
   filter(., region == "Mexico")
 
 # function to scale elevation of pops to a bar across lat
