@@ -116,10 +116,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
-#include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
+include: "global_ancestry/Snakefile"
+include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
+include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -190,6 +190,7 @@ rule all:
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png", Ne = 10000, YESNO = "yes"),
+        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_{ZEA}.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
         trip_anc,
@@ -200,16 +201,16 @@ rule all:
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops)#,
         # get fst between sympatric maize and mexicana pairs for both high confidence maize and mexicana ancestry.
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots)
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots)
     params:
         p = "med2"
     resources:

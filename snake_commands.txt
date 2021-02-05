@@ -2333,16 +2333,42 @@ Job counts:
 # test making bam file lists for all other sympatric individuals maize or mexicana except focal population:
 # first cancel pending jobs on 'low2' priority (calc_fst_all_chr and calc_fst_by_windows)
 hilo$ squeue -u ecalfee | grep 'calc_fst' | awk '{print $1}' | xargs -n 1 scancel # 2.28.2021
-hilo$ snakemake -n "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/bams/not360_bams.list" --quiet --profile slurm --restart-times 0
-
-
-
+farm:~/hilo$ snakemake "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/bams/not360_bams.list" --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       list_not_pops
+        1 # COMPLETED 1.28.2021 (should have 111 # individuals in file output. CHECK!)
+# now added to list all. will check on SAF calculations later if memory is failing because of large # of bams..
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        55      calc_fst_all_chr
+        56      calc_fst_by_windows
+        28      calc_fst_idx
+        28      estimate_2D_sfs
+        28      estimate_saf_pop
+        27      list_not_pops
+        223 # RUNNING 1.28.2021. Not  enough memory, needs > 131Gb (!) for estimate_2D_sfs.
+        # also many estimate_saf_pop's failed too!
+      # trying with just 1 thread (not 6) and one job how much memory is needed:
+      hilo$ snakemake diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop363.not363.fst.allChr.txt --quiet --profile slurm --restart-times 0
+      Job counts:
+              count   jobs
+              1       calc_fst_all_chr
+              1       calc_fst_idx
+              1       estimate_2D_sfs
+              3 # attempting with 2D_sfs getting 140Gb of memory and 1 attempt.
+              # note: for 1D SFS for not pops (all but 1 population) I either need to increase memory or set -nSites. And increase time to 48 hrs (1 day is not enough)
+              JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+           30172287      med2 estimate  ecalfee  R        3:32      1 36  140G   c6-88
+# taking a break from fst calculations (commented those out from rule 'all') and remaking some plots (deleting old plots first).
+hilo$ snakemake all --quiet --profile slurm --restart-times 0
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
-- need to make a 'all pops but X list of individuals'
 - look at admixture at known domestication genes
 - flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
 
