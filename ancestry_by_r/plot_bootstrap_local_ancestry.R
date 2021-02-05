@@ -279,7 +279,7 @@ rho <- ci_boot %>%
 
 # print table to file for estimates of Spearman's rank correlation
 print(xtable(rho, 
-             digits = c(1, 0, 0, 3, 3, 3, -2),
+             digits = c(1, 0, 0, 3, 3, 3),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,

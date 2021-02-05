@@ -11,6 +11,7 @@ library(ggraph)
 library(grid)
 library(gridExtra)
 library(cowplot)
+library(ggupset)
 
 # this script plots ancestry outliers across the genome,
 # from individual populations, and shared across pops
@@ -734,7 +735,7 @@ p_combmatrix_maize <- maize_pops_shared %>%
   head(n = 100) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
   geom_col(position = position_dodge2(preserve = "single")) +
-  axis_combmatrix(sep = "-", 
+  ggupset::axis_combmatrix(sep = "-", 
                   levels = meta_pops_list[["maize"]] %>%
                     arrange(desc(ELEVATION)) %>%
                     .$LOCALITY) +
@@ -782,7 +783,7 @@ p_combmatrix_mexicana <- mexicana_pops_shared %>%
   head(n = 100) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
   geom_col(position = position_dodge2(preserve = "single")) +
-  axis_combmatrix(sep = "-", 
+  ggupset::axis_combmatrix(sep = "-", 
                   levels = meta_pops_list[["mexicana"]] %>%
                     arrange(desc(ELEVATION)) %>%
                     .$LOCALITY) +

@@ -2364,6 +2364,22 @@ Job counts:
            30172287      med2 estimate  ecalfee  R        3:32      1 36  140G   c6-88
 # taking a break from fst calculations (commented those out from rule 'all') and remaking some plots (deleting old plots first).
 hilo$ snakemake all --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       all
+        2       calc_and_plot_f4
+        1       combine_genome_scan_plots
+        1       plotQQ
+        1       plot_NGSAdmix
+        1       plot_bootstrap_NGSadmix_by_r
+        1       plot_bootstrap_local_ancestry_by_r
+        2       plot_mean_anc
+        1       plot_shared_peaks
+        2       plot_slope_elev
+        13 # RUNNING 2.4.2020 11:15pm
+
+# try getting fst (just for maize)
+hilo$ snakemake -n fst --quiet --profile slurm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

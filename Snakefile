@@ -116,8 +116,8 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
-include: "local_ancestry/Snakefile"
+#include: "global_ancestry/Snakefile"
+#include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
@@ -201,27 +201,25 @@ rule all:
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops)#,
-        # get fst between sympatric maize and mexicana pairs for both high confidence maize and mexicana ancestry.
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots)
+        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops)
     params:
         p = "med2"
     resources:
         time_min = 30,
         mem = 2
 
-## some: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
-rule some:
+## fst: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
+rule fst:
     input:
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt",
-        Ne = 10000, YESNO = "yes", ZEA = "mexicana", POP1 = "pop366", POP2 = "pop24")
+        # get fst between sympatric maize and mexicana pairs for both high confidence maize and mexicana ancestry.
+        ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
+        ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots)
     params:
         p = "med2"
     resources:
