@@ -2,18 +2,13 @@
 library(dplyr)
 library(ggplot2)
 
-# this script plots mean ancestry across the genome,
-# and calculates FDRs to show outlier loci
+# this script plots mean ancestry across the genome
 
 # load variables from Snakefile
 zea = snakemake@params[["zea"]]
 # zea = "maize"
-fdr_functions = snakemake@input[["fdr_functions"]]
-# fdr_functions = "ZAnc/FDR.R"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
-sim_file = snakemake@input[["sim"]]
-# sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
 anc_file = snakemake@input[["anc"]]
 # anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
 meta_file = snakemake@input[["meta_pop"]]
@@ -24,19 +19,18 @@ genome_file = snakemake@input[["genome"]]
 # genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 centromeres_file = snakemake@input[["centromeres"]]
 # centromeres_file = "data/refMaize/centromere_positions_v4.txt"
+fdr_in = snakemake@input[["fdr"]]
+# fdr_in = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
 png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_mean_anc.png")
-fdr_out = snakemake@output[["fdr"]]
-# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
 rds = snakemake@output[["rds"]]
 # rds = paste0("ZAnc/plots/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
 
 # load data
-source(fdr_functions)
 source(colors_file)
 load(anc_file)
-load(sim_file)
 load(meta_file)
+load(fdr_in) # false discovery rates, FDRs
 
 # load centromere positons
 centromeres <- read.table(centromeres_file, header = T, stringsAsFactors = F,
@@ -61,21 +55,6 @@ sites <- read.table(sites_file, header = F, stringsAsFactors = F,
   data.table::setnames(c("chr", "pos", "major", "minor")) %>%
   left_join(., genome, by = "chr") %>%
   dplyr::mutate(pos_cum = chr_start + pos) # get cumulative chromosomal position
-
-
-# calculate false discovery rate thresholds
-FDRs = calc_FDR(d = anc_mean, 
-                s = MVN_mean, 
-                test_values = seq(0, 1, by = .0001))
-
-# what % of SNPs exceed these thresholds?
-FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
-  ifelse(FDRs$tail[i] == "high", 
-         sum(anc_mean > FDRs$thesholds[i]),
-         sum(anc_mean < FDRs$thesholds[i])))
-FDRs$prop_SNPs = FDRs$n_SNPs/length(anc_mean)
-
-save(FDRs, file = fdr_out)
 
 # outlier plot whole genome
 p_combined = bind_cols(sites, anc = anc_mean) %>%

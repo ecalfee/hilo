@@ -72,12 +72,34 @@ rule fit_lm_elev:
     script:
         "fit_lm_elev.R"
 
-## plot_mean_anc: plots mean ancestry across all samples and outlier regions
-rule plot_mean_anc:
+## calc_fdr_mean_anc: calculates false discovery rates for mean ancestry based on MVN simulations
+rule calc_fdr_mean_anc:
     input:
         fdr_functions = "ZAnc/FDR.R",
         sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData"
+    output:
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData"
+    params:
+        p = "med2",
+        zea = lambda wildcards: wildcards.ZEA
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "calc_fdr_mean_anc.R"
+
+## plot_mean_anc: plots mean ancestry across all samples and outlier regions
+rule plot_mean_anc:
+    input:
         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
         colors = "colors.R",
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
@@ -85,7 +107,6 @@ rule plot_mean_anc:
         centromeres = "data/refMaize/centromere_positions_v4.txt"
     output:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png",
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
         rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.plot.rds" # ggplot object
     params:
         p = "med2",
