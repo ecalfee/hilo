@@ -72,10 +72,10 @@ rule estimate_saf_pop:
     conda:
         "../envs/environment.yaml"
     threads:
-        2
+        4
     resources:
-        time_min = 24*60,
-        mem = lambda wildcards, attempt: attempt * 16 + 32
+        time_min = 48*60,
+        mem = lambda wildcards, attempt: attempt * 16 + 40
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "
@@ -97,7 +97,7 @@ rule estimate_sfs:
     threads:
         6
     resources:
-        time_min = 24*60,
+        time_min = 48*60,
         mem = lambda wildcards, attempt: attempt * 8 + 32 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf} -P {threads} > {output.sfs}"
