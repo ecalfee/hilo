@@ -2394,9 +2394,30 @@ Job counts:
         Job counts:
         count   jobs
         1       plot_map
-        1
+        1 # COMPLETED 2.5.2020 1am
 # try getting fst (just for maize)
-hilo$ snakemake -n fst --quiet --profile slurm
+ecalfee@farm:~/hilo$ snakemake fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        13      calc_fst_all_chr
+        14      calc_fst_by_windows
+        13      calc_fst_idx
+        13      estimate_2D_sfs
+        12      estimate_saf_pop
+        1       fst
+        66 # RUNNING 2.5.2020 1:23am. OUT-OF-MEMORY in SAF stage.
+        hilo$ snakemake -n fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        12      calc_fst_all_chr
+        12      calc_fst_by_windows
+        12      calc_fst_idx
+        12      estimate_2D_sfs
+        12      estimate_saf_pop
+        1       fst
+        61 # ok. takign break from this task. Just trying to get genomewide fst for mexicana ancestry between
+        # all pairs of sympatric maize and sympatric mexicana:
+        hilo$ snakemake -n fst --quiet --profile slurm
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

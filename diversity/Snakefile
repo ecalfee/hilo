@@ -75,7 +75,7 @@ rule estimate_saf_pop:
         4
     resources:
         time_min = 48*60,
-        mem = lambda wildcards, attempt: [96, 128, 144][attempt - 1] # 48G, 96G, or 144G
+        mem = lambda wildcards, attempt: attempt * 16 + 40
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "
@@ -95,10 +95,10 @@ rule estimate_sfs:
     conda:
         "../envs/environment.yaml"
     threads:
-        4
+        6
     resources:
         time_min = 48*60,
-        mem = lambda wildcards, attempt: [96, 128, 144][attempt - 1] # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        mem = lambda wildcards, attempt: attempt * 8 + 32 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf} -P {threads} > {output.sfs}"
 
@@ -222,10 +222,10 @@ rule estimate_2D_sfs:
     conda:
         "../envs/environment.yaml"
     threads:
-        4
+        6
     resources:
-        time_min = 48*60,
-        mem = lambda wildcards, attempt: [144, 168, 192][attempt - 1] # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        time_min = 24*60,
+        mem = lambda wildcards, attempt: attempt * 16 + 40 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf1} {input.saf2} -P {threads} > {output.sfs}"
 
@@ -284,3 +284,54 @@ rule calc_fst_all_chr:
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"
+
+## get_pop_outliers_by_window: script to identify all populations with a high introgression outlier region overlapping each 5kb diversity window
+#rule get_pop_outliers_by_window:
+#    input:
+#        genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+#        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
+#        meta = "samples/" + prefix_all + "_meta.RData",
+#        fst_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt"
+#        #pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP1}.anc.freq"
+#    output:
+#        pop_outliers_by_window = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.pop.outliers.diversity.windows.RData"
+#    params:
+#        p = "med2",
+#        zea = lambda wildcards: wildcards.ZEA,
+#        ancestry = lambda wildcards: wildcars.ANCESTRY
+#    shadow:
+#        "minimal"
+#    conda:
+#        "../envs/environment.yaml"
+#    resources:
+#        time_min = 15,
+#        mem = 16
+#    script:
+#        "get_pop_outliers_by_window.R"
+
+
+
+## calc_fst_in_outliers: script to summarise pairwise differentiation (fst) for homozygous ancestry windows within high introgression outliers (by # pops sharing) vs outside
+#    input:
+#        genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+#        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
+#        meta = "samples/" + prefix_all + "_meta.RData",
+#        fst_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt",
+#        pop_outliers_by_window = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.pop.outliers.diversity.windows.RData"
+#        #pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP1}.anc.freq"
+#    output:
+#        txt = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.outliers.{WIN}.{STEP}.txt"
+#    params:
+#        p = "low2",
+#        pop1 = lambda wildcards: wildcards.POP1,
+#        zea = lambda wildcards: wildcards.ZEA,
+#        ancestry = **
+#    shadow:
+#        "minimal"
+#    conda:
+#        "../envs/environment.yaml"
+#    resources:
+#        time_min = 15,
+#        mem = lambda wildcards, attempt: attempt * 4
+#    script:
+#        "calc_fst_in_outliers.R"

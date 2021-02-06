@@ -219,10 +219,11 @@ rule fst:
         ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
         ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
         ##expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_mexicana_nots),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots)
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     params:
         p = "med2"
     resources:
