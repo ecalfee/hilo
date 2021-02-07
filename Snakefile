@@ -98,7 +98,7 @@ symp_nots = symp_mexicana_nots + symp_maize_nots
 # get all unique pairs of populations (all combinations with no same-same pairs):
 symp_maize_pairs = []
 for i in itertools.combinations(symp_maize_pops, 2):
-    symp_maize.pairs.append(i[0] + "." + i[1])
+    symp_maize_pairs.append(i[0] + "." + i[1])
 symp_mexicana_pairs = []
 for i in itertools.combinations(symp_mexicana_pops, 2):
     symp_mexicana_pairs.append(i[0] + "." + i[1])
