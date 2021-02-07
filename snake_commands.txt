@@ -2418,6 +2418,21 @@ Job counts:
         61 # ok. takign break from this task. Just trying to get genomewide fst for mexicana ancestry between
         # all pairs of sympatric maize and sympatric mexicana:
         hilo$ snakemake -n fst --quiet --profile slurm
+        /hilo$ snakemake fst --quiet --profile slurm
+        Job counts:
+          count   jobs
+          182     calc_fst_all_chr
+          182     calc_fst_idx
+          182     estimate_2D_sfs
+          1       fst
+          547 # RUNNING 2.5.2020 6:13pm. COMPLETED. BUT found fst is being calculated
+          # with old Weir and Cockerham method, when I want Bhatia 2013 method
+          # so I'm adding -whichFst 1 based on https://github.com/ANGSD/angsd/issues/239
+          # put old fst.gz, fst.idx, fst.allChr.txt and fst.windows.*.txt files into new subdirectory
+          #hilo/diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize$ mv *pop*fst* old_Weir_Cockerham_fst/.
+          # and now re-running. Including this time not only all maize-mexicana pairings but also within maize and within mexicana pairings
+
+
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.

@@ -247,7 +247,7 @@ rule calc_fst_idx:
         time_min = 12*60,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
-        "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix}"
+        "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix} -whichFst 1"
 
 ## calc_fst_by_windows: calculates fst for windows of set size
 rule calc_fst_by_windows:

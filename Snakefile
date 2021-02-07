@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from csv import DictReader
+import itertools
 
 #configfile: "config.yaml"
 path_hilo = os.getcwd() + "/" # get absolute path to this hilo git directory on the local machine
@@ -93,6 +94,15 @@ hilo_pops = allo_mex_pops + symp_pops
 symp_mexicana_nots = ["not29", "not27", "not19", "not28", "not18", "not21", "not34", "not26", "not35", "not25", "not23", "not30", "not24", "not31"]
 symp_maize_nots = ["not371", "not369", "not361", "not370", "not360", "not363", "not362", "not368", "not374", "not367", "not365", "not372", "not366", "not373"]
 symp_nots = symp_mexicana_nots + symp_maize_nots
+
+# get all unique pairs of populations (all combinations with no same-same pairs):
+symp_maize_pairs = []
+for i in itertools.combinations(symp_maize_pops, 2):
+    symp_maize.pairs.append(i[0] + "." + i[1])
+symp_mexicana_pairs = []
+for i in itertools.combinations(symp_mexicana_pops, 2):
+    symp_mexicana_pairs.append(i[0] + "." + i[1])
+
 
 # create a dictionary that has one entry for each sympatric population
 # containing a list of included id's for samples over 0.5x coverage (e.g. local ancestry inference)
@@ -223,7 +233,10 @@ rule fst:
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots)
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs)
     params:
         p = "med2"
     resources:
