@@ -233,10 +233,10 @@ rule fst:
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.5000.5000.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots),
         #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_maize_nots)
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # across subspecies
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/{ZEA}/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs, ZEA = zea) # within subspecies, fst for native and introgressed ancestry
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/{ZEA}/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs, ZEA = zea)
     params:
         p = "med2"
     resources:

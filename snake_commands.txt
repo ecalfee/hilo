@@ -2431,7 +2431,16 @@ Job counts:
           # put old fst.gz, fst.idx, fst.allChr.txt and fst.windows.*.txt files into new subdirectory
           #hilo/diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/maize$ mv *pop*fst* old_Weir_Cockerham_fst/.
           # and now re-running. Including this time not only all maize-mexicana pairings but also within maize and within mexicana pairings
-
+          # note: 574 is the correct number of jobs: 14*14*2+(13+12+11+10+9+8+7+6+5+4+3+2+1)*2.
+          # and using snakemake -n fst --profile slurm| less without --quiet shows reasonable jobs ready to run.
+          hilo$ snakemake fst --quiet --profile slurm
+          Job counts:
+                  count   jobs
+                  574     calc_fst_all_chr
+                  574     calc_fst_idx
+                  364     estimate_2D_sfs
+                  1       fst
+                  1513 # RUNNING 2.7.2021 12am
 
 
 # TO DO:
