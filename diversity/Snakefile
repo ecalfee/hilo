@@ -263,7 +263,7 @@ rule calc_fst_by_windows:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 15,
+        time_min = 60,
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "realSFS fst stats2 {input.idx} -win {params.WIN} -step {params.STEP} > {output.fst}"
@@ -280,7 +280,7 @@ rule calc_fst_all_chr:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 15,
+        time_min = 60,
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"

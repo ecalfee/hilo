@@ -2441,7 +2441,76 @@ Job counts:
                   364     estimate_2D_sfs
                   1       fst
                   1513 # RUNNING 2.7.2021 12am. COMPLETED. Add comparisons within native ancestry between sympatric pops of the same subspecies.
-
+# weird b/c it seems like it's locked for some jobs run above (?) but I can't unlock it.
+# the only thing unusual was having to do ctrl+c for the snake run (even though squeue indicated all jobs had run to completion and no errors were showing in screen)
+# so.. error only applies to 1 line in the fst rule (which I am commenting out):
+'input' line in fst:
+expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+more specifically error only occurs wiht one output file:
+expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops[3], POP2 = symp_mexicana_pops[5]),
+smallest command to reproduce error:
+snakemake -n diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop21.fst.allChr.txt --quiet --profile slurm
+error:
+Traceback (most recent call last):
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/__init__.py", line 665, in snakemake
+    keepincomplete=keep_incomplete,
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/workflow.py", line 619, in execute
+    dag.check_incomplete()
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 286, in check_incomplete
+    incomplete = self.incomplete_files
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 410, in incomplete_files
+    filterfalse(self.needrun, self.jobs),
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 407, in <genexpr>
+    job.output
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 205, in incomplete
+    return any(map(lambda f: f.exists and marked_incomplete(f), job.output))
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 205, in <lambda>
+    return any(map(lambda f: f.exists and marked_incomplete(f), job.output))
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 203, in marked_incomplete
+    return self._read_record(self._metadata_path, f).get("incomplete", False)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 322, in _read_record_cached
+    return self._read_record_uncached(subject, id)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 328, in _read_record_uncached
+    return json.load(f)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/__init__.py", line 299, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/__init__.py", line 354, in loads
+    return _default_decoder.decode(s)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+# I cleared this error by deleting the offending file:
+hilo$ cp diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop21.fst.allChr.txt diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop21.fst.allChr.txt_BACKUP
+hilo$ rm diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop21.fst.allChr.txt
+hilo$ snakemake -n diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop21.fst.allChr.txt --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       calc_fst_all_chr
+        1
+        # BUT ERROR RETURNED! CLEARLY NOT ONLY OFFENDING FILE.
+        hilo$ snakemake -n fst --quiet --profile slurm
+# found 2nd problem file!
+expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops[3], POP2 = symp_mexicana_pops[10])
+hilo$ snakemake -n diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop23.fst.allChr.txt --quiet --profile slurm
+hilo$ mv diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop23.fst.allChr.txt diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop370.pop23.fst.allChr.txt_BACKUP
+# having removed that output, snakemake now runs without errors:
+hilo$ snakemake fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        237     calc_fst_all_chr # ACTUALLY LOOKS LIKE SOME OF THESE DIDN'T FINISH RUNNING (?). MAYBE THAT CAUSED THE SNAKEMAKE ERROR.
+        182     calc_fst_idx
+        182     estimate_2D_sfs
+        1       fst
+        602 # RUNNING 2.7.2021 11pm. didn't update git for Snakefile (b/c git status is being super slow and not returning anythin. ok though b/c fst outputs running match what's on laptop)
+        # some timed out, so adding time and rerunning:
+hilo$ snakemake fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        21      calc_fst_all_chr
+        1       fst
+        22 # RUNNING 2.9.2020
 
 
 # TO DO:
