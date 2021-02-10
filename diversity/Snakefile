@@ -285,6 +285,27 @@ rule calc_fst_all_chr:
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"
 
+## print_fst_one_file: combines all population pairs genomewide fst results into 1 file
+rule print_fst_one_file:
+    input:
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # fst between subspecies
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs), # within subspecies, fst for introgressed ancestry
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs)
+    output:
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "grep "" {input} > {output.fst}"
+
 ## get_pop_outliers_by_window: script to identify all populations with a high introgression outlier region overlapping each 5kb diversity window
 #rule get_pop_outliers_by_window:
 #    input:

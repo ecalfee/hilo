@@ -2510,7 +2510,8 @@ Job counts:
         count   jobs
         21      calc_fst_all_chr
         1       fst
-        22 # RUNNING 2.9.2020
+        22 # RUNNING 2.9.2020. COMPLETED.
+added new rule to combine fst results into 1 file using grep.
 
 
 # TO DO:
