@@ -2,8 +2,11 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(ape)
+library(viridis)
 
-# script to summarise diversity (pi) for homozygous ancestry windows within high introgression peaks vs. not
+# script to summarise pairwise differentiation (fst) between populations
+# for homozygous ancestry windows across the genome
 
 # get snakemake variables
 input_file = snakemake@input[["fst"]]
@@ -16,7 +19,9 @@ png_out = snakemake@output[["png_out"]]
 meta_pops = meta %>%
   dplyr::select(popN, zea, symp_allo, group, LOCALITY, ELEVATION, LAT, LON) %>%
   dplyr::distinct() %>%
-  dplyr::mutate(., pop = paste0("pop", popN))
+  dplyr::mutate(., pop = paste0("pop", popN)) %>%
+  arrange(zea, ELEVATION) %>%
+  filter(symp_allo == "sympatric")
 
 fst0 <- read.table(input_file, sep = " ", header = F) %>%
   data.table::setnames(c("file_name", "fst")) %>%
@@ -101,3 +106,108 @@ fst %>%
   scale_size_manual(values = c(1, 2)) +
   scale_color_viridis_d(direction = 1, option = "viridis") +
   ggtitle("Fst within maize ancestry tracts (genomewide)")
+
+# make a tree for fst
+# using neighbor-joining
+
+# first, make a distance matrix using pairwise fst
+dist_matrix_mexicana <- matrix(0, 
+                      nrow(meta_pops),
+                      nrow(meta_pops),
+                      dimnames = list(meta_pops$pop, meta_pops$pop))
+fst_mexicana = filter(fst, ancestry == "mexicana")
+for (r in 1:nrow(fst_mexicana)){
+  dist_matrix_mexicana[fst_mexicana$pop1[r], fst_mexicana$pop2[r]] <- fst$fst[r]
+}
+tree_mexicana <- nj(X = dist_matrix_mexicana)
+
+# plot the tree
+col_locality <- viridis_pal(direction = -1, option = "viridis")(14)
+names(col_locality) <- unique(meta_pops$LOCALITY)
+plot(tree_mexicana, show.tip = F, cex = 0.6)
+title("Mexicana ancestry - NJ Tree (Fst)")
+tiplabels(text = paste(meta_pops$LOCALITY, meta_pops$zea),#tree_mexicana$tip.label, 
+          col = col_locality[meta_pops$LOCALITY],
+          bg = NULL,
+          frame = "none",
+          adj = -0.25,
+          cex = 0.6)
+ape::axisPhylo()
+
+# how good is nj tree fit? ok
+x_mexicana <- as.vector(dist_matrix_mexicana)
+y_mexicana <- as.vector(cophenetic(tree_mexicana))
+plot(x_mexicana, y_mexicana, 
+     xlim = c(0, max(x_mexicana, y_mexicana)),
+     ylim = c(0, max(x_mexicana, y_mexicana)),
+     xlab = "original pairwise fst", 
+     ylab = "pairwise distances on the NJ tree", 
+     main = "Fit of NJ tree to fst within mexicana")
+abline(a = 0, b = 1, col = "blue")
+cor(x_mexicana, y_mexicana)
+
+
+# now make the tree for maize ancestry:
+# first, make a distance matrix using pairwise fst
+dist_matrix_maize <- matrix(0, 
+                               nrow(meta_pops),
+                               nrow(meta_pops),
+                               dimnames = list(meta_pops$pop, meta_pops$pop))
+fst_maize = filter(fst, ancestry == "maize")
+for (r in 1:nrow(fst_maize)){
+  dist_matrix_maize[fst_maize$pop1[r], fst_maize$pop2[r]] <- fst$fst[r]
+}
+tree_maize <- nj(X = dist_matrix_maize)
+
+# plot the tree
+plot(tree_maize, show.tip = F, cex = 0.6)
+title("Maize ancestry - NJ Tree (Fst)")
+tiplabels(text = paste(meta_pops$LOCALITY, meta_pops$zea),#tree_maize$tip.label, 
+          col = col_locality[meta_pops$LOCALITY],
+          bg = NULL,
+          frame = "none",
+          adj = -0.25,
+          cex = 0.6)
+ape::axisPhylo()
+
+# how good is nj tree fit? ok
+x_maize <- as.vector(dist_matrix_maize)
+y_maize <- as.vector(cophenetic(tree_maize))
+plot(x_maize, y_maize, 
+     xlim = c(0, max(x_maize, y_maize)),
+     ylim = c(0, max(x_maize, y_maize)),
+     xlab = "original pairwise fst", 
+     ylab = "pairwise distances on the NJ tree", 
+     main = "Fit of NJ tree to fst within maize")
+abline(a = 0, b = 1, col = "blue")
+cor(x_maize, y_maize)
+
+# rather than a tree, draw the distance matrix:
+fst_mexicana %>%
+  ggplot(., 
+         aes(x = paste(zea.pop1, LOCALITY.pop1), 
+             y = paste(zea.pop2, LOCALITY.pop2), 
+             fill = fst)) +
+  geom_tile() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
+  labs(x = "population 1", y = "population 2") +
+  ggtitle("fst within mexicana ancestry")
+
+# tiles but for maize ancestry:
+fst_maize %>%
+  ggplot(., 
+         aes(x = paste(zea.pop1, LOCALITY.pop1), 
+             y = paste(zea.pop2, LOCALITY.pop2), 
+             fill = fst)) +
+  geom_tile() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
+  labs(x = "population 1", y = "population 2") +
+  ggtitle("fst within maize ancestry")
+# note: one fst value is very small but negative
+
+# to do: sort populations in matrix tiles by elevation
+# test if 'local sympatric' pops have lower fst? maybe use ~local adaptation test.
