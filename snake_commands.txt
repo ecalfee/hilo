@@ -2512,7 +2512,12 @@ Job counts:
         1       fst
         22 # RUNNING 2.9.2020. COMPLETED.
 added new rule to combine fst results into 1 file using grep.
-
+hilo$ snakemake fst --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       fst
+        1       print_fst_one_file
+        2 # COMPLETED
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
