@@ -304,7 +304,7 @@ rule print_fst_one_file:
         time_min = 15,
         mem = lambda wildcards, attempt: attempt * 2
     shell:
-        "for i in {input}; do awk -v i=$i '{print i,$2}' $i; done"
+        "(for i in {input}; do awk -v i=$i '{{print i,$2}}' $i; done) > {output.fst}"
 
 ## get_pop_outliers_by_window: script to identify all populations with a high introgression outlier region overlapping each 5kb diversity window
 #rule get_pop_outliers_by_window:
