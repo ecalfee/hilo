@@ -2518,6 +2518,21 @@ Job counts:
         1       fst
         1       print_fst_one_file
         2 # COMPLETED
+# number of overlapping sites can be pretty low but still many (not necessarily variable) between pops for homozygous ancestry, e.g.:
+ecalfee@c6-93:~/hilo$ zcat diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop18.fst.gz | wc -l
+676618
+ecalfee@c6-93:~/hilo$ zcat diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop34.fst.gz | wc -l
+661388
+ecalfee@c6-93:~/hilo$ zcat diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop35.fst.gz | wc -l
+722343
+ecalfee@c6-93:~/hilo$ zcat diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop373.fst.gz | wc -l
+393742
+ecalfee@c6-93:~/hilo$ zcat diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop361.fst.gz | wc -l
+293350
+# 3 types of mexicana:
+1) chalco central platue
+2) plateau
+3) nabogame is weird and different
 
 # TO DO:
 - test the 'domesticate assymmilate hypothesis' for mexicana.
