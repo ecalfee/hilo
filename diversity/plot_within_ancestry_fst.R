@@ -2,8 +2,6 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(ape)
-library(viridis)
 
 # script to summarise pairwise differentiation (fst) between populations
 # for homozygous ancestry windows across the genome
@@ -17,14 +15,6 @@ png_points_maize = snakemake@output[["png_points_maize"]]
 # png_points_maize = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_ancestry_genomewide_points.png"
 png_points_mexicana = snakemake@output[["png_points_mexicana"]]
 # png_points_mexicana = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_mexicana_ancestry_genomewide_points.png"
-png_tree_maize = snakemake@output[["png_tree_maize"]]
-# png_tree_maize = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_ancestry_genomewide_tree.png"
-png_tree_mexicana = snakemake@output[["png_tree_mexicana"]]
-# png_tree_mexicana = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_mexicana_ancestry_genomewide_tree.png"
-png_tree_fit_maize = snakemake@output[["png_tree_fit_maize"]]
-# png_tree_fit_maize = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_ancestry_genomewide_tree_fit.png"
-png_tree_fit_mexicana = snakemake@output[["png_tree_fit_mexicana"]]
-# png_tree_fit_mexicana = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_mexicana_ancestry_genomewide_tree_fit.png"
 png_heatmap_maize = snakemake@output[["png_heatmap_maize"]]
 # png_heatmap_maize = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_ancestry_genomewide_heatmap.png"
 png_heatmap_mexicana = snakemake@output[["png_heatmap_mexicana"]]
@@ -133,114 +123,18 @@ ggsave(file = png_points_maize,
        height = 7, width = 7.5, 
        units = "in", device = "png", dpi = 300)
 
-# make a neighbor-joining tree for fst
 
-# first, make a distance matrix using pairwise fst
-dist_matrix_mexicana <- matrix(0, 
-                      nrow(meta_pops),
-                      nrow(meta_pops),
-                      dimnames = list(meta_pops$pop, meta_pops$pop))
+# plot the fst distance matrix as a heatmap:
 fst_mexicana = filter(fst, ancestry == "mexicana")
-for (r in 1:nrow(fst_mexicana)){
-  dist_matrix_mexicana[fst_mexicana$pop1[r], fst_mexicana$pop2[r]] <- fst$fst[r]
-}
-tree_mexicana <- nj(X = dist_matrix_mexicana)
-
-# colors for tree tips
-col_locality <- viridis_pal(direction = -1, option = "viridis")(14)
-names(col_locality) <- unique(meta_pops$LOCALITY)
-
-# plot the tree mexicana ancestry
-png(filename = png_tree_mexicana,
-    width = 6, height = 4, 
-    units = "in", res = 300)
-plot(tree_mexicana, show.tip = F, 
-     cex = 0.6, x.lim = c(0, 0.4))
-title("Mexicana ancestry - NJ Tree (Fst)")
-tiplabels(text = paste(meta_pops$LOCALITY, meta_pops$zea),#tree_mexicana$tip.label, 
-          col = col_locality[meta_pops$LOCALITY],
-          bg = NULL,
-          frame = "none",
-          adj = -0.25,
-          cex = 0.6)
-ape::axisPhylo()
-dev.off()
-
-# how good is nj tree fit? ok
-x_mexicana <- as.vector(dist_matrix_mexicana)
-y_mexicana <- as.vector(cophenetic(tree_mexicana))
-png(filename = png_tree_fit_mexicana,
-    width = 5, height = 5, 
-    units = "in", res = 300)
-plot(x_mexicana, y_mexicana, 
-     xlim = c(0, max(x_mexicana, y_mexicana)),
-     ylim = c(0, max(x_mexicana, y_mexicana)),
-     xlab = "original pairwise fst", 
-     ylab = "pairwise distances on the NJ tree",
-     main = paste("Fit of NJ tree to fst within mexicana ancestry\nrho =", 
-                 round(cor(x_mexicana, y_mexicana, 
-                           method = "pearson"), 2)))
-abline(a = 0, b = 1, col = "blue")
-#abline(lm(y_mexicana ~ x_mexicana), col = "orange")
-dev.off()
-
-
-
-# now make the tree for maize ancestry:
-# first, make a distance matrix using pairwise fst
-dist_matrix_maize <- matrix(0, 
-                               nrow(meta_pops),
-                               nrow(meta_pops),
-                               dimnames = list(meta_pops$pop, meta_pops$pop))
 fst_maize = filter(fst, ancestry == "maize")
-for (r in 1:nrow(fst_maize)){
-  dist_matrix_maize[fst_maize$pop1[r], fst_maize$pop2[r]] <- fst$fst[r]
-}
-tree_maize <- nj(X = dist_matrix_maize)
 
-# plot the tree
-png(filename = png_tree_maize,
-    width = 6, height = 4, 
-    units = "in", res = 300)
-plot(tree_maize, show.tip = F, 
-     cex = 0.6, x.lim = c(0, 0.4))
-title("Maize ancestry - NJ Tree (Fst)")
-tiplabels(text = paste(meta_pops$LOCALITY, meta_pops$zea),#tree_maize$tip.label, 
-          col = col_locality[meta_pops$LOCALITY],
-          bg = NULL,
-          frame = "none",
-          adj = -0.25,
-          cex = 0.6)
-ape::axisPhylo()
-dev.off()
-
-# how good is nj tree fit? ok
-x_maize <- as.vector(dist_matrix_maize)
-y_maize <- as.vector(cophenetic(tree_maize))
-png(filename = png_tree_fit_maize,
-    width = 5, height = 5, 
-    units = "in", res = 300)
-plot(x_maize, y_maize, 
-     xlim = c(0, max(x_maize, y_maize)),
-     ylim = c(0, max(x_maize, y_maize)),
-     xlab = "original pairwise fst", 
-     ylab = "pairwise distances on the NJ tree",
-     main = paste("Fit of NJ tree to fst within maize ancestry\nrho =", 
-                  round(cor(x_maize, y_maize, 
-                            method = "pearson"), 2)))
-abline(a = 0, b = 1, col = "blue")
-#abline(lm(y_maize ~ x_maize), col = "orange")
-dev.off()
-
-
-# rather than a tree, draw the distance matrix:
 p_heatmap_mexicana <- fst_mexicana %>%
   arrange(., zea.pop1, ELEVATION.pop1) %>%
   mutate(INDEX.pop1 = 1:nrow(.)) %>%
   arrange(., zea.pop2, ELEVATION.pop2) %>%
   mutate(INDEX.pop2 = 1:nrow(.)) %>%
-  mutate(zea_loc1 = paste(zea.pop1, LOCALITY.pop1),
-         zea_loc2 = paste(zea.pop2, LOCALITY.pop2),
+  mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+         zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
          zea_loc1 = reorder(zea_loc1, INDEX.pop1),
          zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
   ggplot(., 
@@ -266,8 +160,8 @@ p_heatmap_maize <- fst_maize %>%
   mutate(INDEX.pop1 = 1:nrow(.)) %>%
   arrange(., zea.pop2, ELEVATION.pop2) %>%
   mutate(INDEX.pop2 = 1:nrow(.)) %>%
-  mutate(zea_loc1 = paste(zea.pop1, LOCALITY.pop1),
-         zea_loc2 = paste(zea.pop2, LOCALITY.pop2),
+  mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+         zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
          zea_loc1 = reorder(zea_loc1, INDEX.pop1),
          zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
   ggplot(., 
@@ -342,7 +236,7 @@ p_heatmap_both <- fst_maize %>%
         plot.title = element_blank()) +
   labs(color = NULL, fill = "Fst")
 # note: one fst value is very small but negative
-p_heatmap_both
+#p_heatmap_both
 
 ggsave(file = png_heatmap_both,
        plot = p_heatmap_both,

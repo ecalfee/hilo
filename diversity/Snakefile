@@ -315,10 +315,6 @@ rule plot_within_ancestry_fst:
         png_out = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_ancestry_genomewide.png",
         png_points_maize = "diversity/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_points.png",
         png_points_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_points.png",
-        png_tree_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_tree.png",
-        png_tree_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_tree.png",
-        png_tree_fit_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_tree_fit.png",
-        png_tree_fit_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_tree_fit.png",
         png_heatmap_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_heatmap.png",
         png_heatmap_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_heatmap.png",
         png_heatmap_both = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
