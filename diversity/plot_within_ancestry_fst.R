@@ -29,6 +29,9 @@ png_heatmap_maize = snakemake@output[["png_heatmap_maize"]]
 # png_heatmap_maize = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_ancestry_genomewide_heatmap.png"
 png_heatmap_mexicana = snakemake@output[["png_heatmap_mexicana"]]
 # png_heatmap_mexicana = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_mexicana_ancestry_genomewide_heatmap.png"
+png_heatmap_both = snakemake@output[["png_heatmap_both"]]
+# png_heatmap_both = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
+
 
 meta_pops = meta %>%
   dplyr::select(popN, zea, symp_allo, group, LOCALITY, ELEVATION, LAT, LON) %>%
@@ -285,4 +288,63 @@ ggsave(file = png_heatmap_maize,
        height = 6, width = 6, 
        units = "in", device = "png", dpi = 300)
 
-# test if 'local sympatric' pops have lower fst? maybe use ~local adaptation test.
+
+# plot both ancestries with one heatmap
+p_heatmap_both <- fst_maize %>%
+  arrange(., zea.pop1, ELEVATION.pop1) %>%
+  mutate(INDEX.pop1 = 1:nrow(.)) %>%
+  arrange(., zea.pop2, ELEVATION.pop2) %>%
+  mutate(INDEX.pop2 = 1:nrow(.)) %>%
+  mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+         zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
+         zea_loc1 = reorder(zea_loc1, INDEX.pop1),
+         zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+  filter(INDEX.pop1 < INDEX.pop2 | INDEX.pop1 == INDEX.pop2) %>%
+  bind_rows(.,
+            fst_mexicana %>%
+              arrange(., zea.pop1, ELEVATION.pop1) %>%
+              mutate(INDEX.pop1 = 1:nrow(.)) %>%
+              arrange(., zea.pop2, ELEVATION.pop2) %>%
+              mutate(INDEX.pop2 = 1:nrow(.)) %>%
+              mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+                     zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
+                     zea_loc1 = reorder(zea_loc1, INDEX.pop1),
+                     zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+              filter(INDEX.pop1 > INDEX.pop2 | INDEX.pop1 == INDEX.pop2)) %>%
+  mutate( comparison_type = ifelse(LOCALITY.pop1 == LOCALITY.pop2, "same location", "different location")) %>%
+  ggplot(., 
+         aes(x = zea_loc1, 
+             y = zea_loc2, 
+             fill = fst)) +
+  geom_tile() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
+  labs(x = "population 1", y = "population 2") +
+  ggtitle("fst within maize (top left)\nor mexicana (bottom right) ancestry") +
+  coord_fixed() +
+  geom_point(data = fst %>%
+                           arrange(., zea.pop1, ELEVATION.pop1) %>%
+                           mutate(INDEX.pop1 = 1:nrow(.)) %>%
+                           arrange(., zea.pop2, ELEVATION.pop2) %>%
+                           mutate(INDEX.pop2 = 1:nrow(.)) %>%
+                           mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+                                  zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
+                                  zea_loc1 = reorder(zea_loc1, INDEX.pop1),
+                                  zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+               mutate(comparison_type = ifelse(LOCALITY.pop1 == LOCALITY.pop2, "same location", "different location")) %>%
+               filter(comparison_type == "same location"),
+             aes(color = comparison_type),
+             size = 0.5,
+             pch = 19) +
+  scale_color_manual(values = "white", labels = "sympatric\npopulation pair") +
+  theme(legend.key = element_rect(fill = "darkgrey", color = NA),
+        plot.title = element_blank()) +
+  labs(color = NULL, fill = "Fst")
+# note: one fst value is very small but negative
+p_heatmap_both
+
+ggsave(file = png_heatmap_both,
+       plot = p_heatmap_both,
+       height = 4.75, width = 6, 
+       units = "in", device = "png", dpi = 300)
