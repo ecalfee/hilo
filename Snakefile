@@ -232,7 +232,7 @@ rule fst:
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
         "diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", NE = 10000, YESNO = "yes")
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:
