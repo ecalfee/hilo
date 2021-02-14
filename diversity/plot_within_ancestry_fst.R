@@ -2,6 +2,7 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(viridis)
 
 # script to summarise pairwise differentiation (fst) between populations
 # for homozygous ancestry windows across the genome
