@@ -129,7 +129,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
+include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 include: "map/Snakefile"
 
@@ -232,7 +232,8 @@ rule fst:
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
         "diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")#,
+        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.1000.1000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
     params:
         p = "med2"
     resources:
