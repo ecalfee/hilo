@@ -3,12 +3,6 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 # this script plots timing of admixture estimated from ancestry_hmm
-# # test snakemake
-# setClass("snake", slots=list(input="character", output="character", params="character"))
-# snakemake = new("snake")
-# snakemake@params = c(Ne = "10000", YESNO = "yes", alpha = 0.1, 
-#                      prefix_all = "HILO_MAIZE55", colors = "colors.R")
-# snakemake@output = c(png_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.png")
 
 # load variables from Snakefile
 Ne = snakemake@params[["Ne"]]
@@ -16,11 +10,15 @@ Ne = snakemake@params[["Ne"]]
 YESNO = snakemake@params[["YESNO"]]
 # YESNO = "yes"
 alpha = as.numeric(snakemake@params[["alpha"]])
-# alpha = 0.1
+# alpha = 0.05
 prefix_all = snakemake@params[["prefix_all"]]
 # prefix_all = "HILO_MAIZE55"
 png_times = snakemake@output[["png_times"]]
 # png_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.png"
+txt_times = snakemake@output[["txt_times"]]
+# txt_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.txt"
+rds_times = snakemake@output[["rds_times"]]
+# rds_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.txt"
 source(snakemake@params[["colors"]]) # plotting colors
 # source("colors.R")
 
@@ -40,9 +38,10 @@ for (z in zea){
   time_est = data.frame(time = unlist(times[1, ]),
                     low_boot = apply(boots, 2, function(x) quantile(x, alpha/2)),
                     high_boot = apply(boots, 2, function(x) quantile(x, 1 - alpha/2)),
-                    pop = colnames(times), stringsAsFactors = F) %>%
-    dplyr::mutate(low_bound = 2*time - low_boot,
-                  high_bound = 2*time - high_boot)
+                    pop = colnames(times), stringsAsFactors = F,
+                    alpha = alpha) %>%
+    dplyr::mutate(low_basic = 2*time - low_boot,
+                  high_basic = 2*time - high_boot)
   assign(x = z, value = left_join(meta_pops, time_est, by = "pop"))
   rm(meta_pops, times, time_est, boots)
 }
@@ -58,10 +57,10 @@ p_times <- d %>%
                 #alpha = introgress,
                 col = zea)) +
   geom_point() + # plot time estimate
-  # add errorbars for 90% CI around that mean
+  # add errorbars for 95% percentile CI around that mean
   # based on bootstrap
-  geom_errorbar(aes(ymin = low_bound,
-                    ymax = high_bound),
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
                 width = .5) +
   xlab("Sympatric population") +
   ylab("Admixture time (generations)") +
@@ -78,12 +77,22 @@ ggsave(file = png_times,
        width = 5, height = 4, 
        units = "in", dpi = 300)
 
+# save plot as RDS also
+saveRDS(object = p_times, file = rds_times)
+
 print("summary of time estimates")
-d %>%
+summary_times <- d %>%
   dplyr::group_by(zea) %>%
-  dplyr::summarise(min = min(time),
-                 mean = mean(time),
-                 max = max(time))
+  dplyr::summarise(subspecies_min = min(time),
+                 subspecies_mean = mean(time),
+                 subspecies_median = median(time),
+                 subspecies_max = max(time))
+print(summary_times)
+
+# write out results to a text file
+left_join(d, summary_times, by = "zea") %>%
+write.table(., file = txt_times, 
+            col.names = T, row.names = F, sep = "\t", quote = F)
 
 # so around 1300 generations on the high end.
 # how many markers do I have per block?
@@ -105,12 +114,3 @@ print("Mean markers per cM:")
 1/mean_cM_between_markers
 print("Mean markers per ancestry block:")
 mean_cM_block_length/mean_cM_between_markers
-
-# look at distribution, not just mean # markers per block:
-# fraction of ancestry blocks, under an exponential model, 
-# with x or fewer expected markers:
-#sapply(c(1,5,10,24,50), function(x) pexp(q = x*mean_cM_between_markers, lower.tail = T, rate = 1300/100))
-#curve(exp(-1300*(x/100)), 0, 1,
-#main = "expected dist. ancestry tracts",
-#xlab = "tract length (cM)", ylab = "Prob")
-#abline(v = mean_cM_block_length, col = "purple")

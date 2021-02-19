@@ -455,14 +455,16 @@ rule plot_admix_times:
         "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.allo.counts",
         "colors.R"
     output:
-        png_times = "local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png"
+        png_times = "local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png",
+        txt_times = "local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.txt",
+        rds_times = "local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.RDS"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
         prefix_all = prefix_all,
         colors = "colors.R",
-        alpha = 0.1
+        alpha = 0.05
     conda:
         "../envs/environment.yaml"
     resources:
