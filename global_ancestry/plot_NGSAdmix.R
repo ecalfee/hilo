@@ -89,6 +89,7 @@ print(xtable(lm_table,
 p_symp_elev <- d_admix2 %>%
   filter(., symp_allo == "sympatric") %>%
   arrange(., ELEVATION) %>%
+  mutate(zea = reorder(zea, desc(ELEVATION))) %>%
   mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
   ggplot(., aes(x = ELEVATION, 
                 y = mexicana, 
@@ -103,7 +104,7 @@ p_symp_elev <- d_admix2 %>%
   labs(color = "Location", shape = "Subspecies") +
   theme_classic() +
   scale_color_viridis_d(direction = -1, option = "viridis")
-#p_symp_elev
+# p_symp_elev
 ggsave(filename = png_elev,
        plot = p_symp_elev,
        device = "png", height = 6, width = 7.5, units = "in", dpi = 300)
@@ -121,8 +122,8 @@ p_structure_allo <- d_admix2 %>%
   tidyr::gather(., "ancestry", "p", c("mexicana", "maize")) %>%
   ggplot(., aes(fill = ancestry, y = p, x = sample)) +
   geom_bar(stat = "identity", position = "fill") + 
-  scale_fill_manual(values = col_maize_mex_parv) +
-  labs(fill = "Ancestry", 
+  scale_fill_manual(values = col_maize_mex_parv, labels = c("maize ancestry", "mexicana ancestry")) +
+  labs(fill = NULL, 
        y = "Proportion") +
   theme_classic() +
   theme(axis.ticks.x = element_blank()) +
@@ -133,23 +134,27 @@ p_structure_allo <- d_admix2 %>%
                               "Malinalco\n(1,887m)", 
                               "Amecameca\n(2,467m)")) +
   theme(plot.margin = margin(c(0,0,0,5.5)))
-#p_structure_allo
+# p_structure_allo
 
 # multipanel plot of global ancestry data:
 p_combined <- grid.arrange(grobs = list(ggplotGrob(p_symp_elev +
                                                      guides(color = F) +
                                                      labs(shape = "Sympatric") +
-                                                     scale_shape_discrete(labels = c("Sympatric maize", "Sympatric mexicana")) +
+                                                     scale_shape_discrete(labels = c("Sympatric\nmexicana", "Sympatric\nmaize")) +
                                                      theme(plot.title = element_blank(),
-                                                           legend.position = "top",
+                                                           legend.position = "right",
                                                            legend.text = element_text(size = smallLabel + 2),
                                                            legend.title = element_blank(),
+                                                           legend.key.size = unit(10, "mm"),
                                                            legend.margin = margin(c(0,0,0,0)))),
                                         ggplotGrob(p_structure_allo + 
-                                                     labs(subtitle = " Allopatric maize                                                                   Allopatric mexicana") +
+                                                     labs(subtitle = " Allopatric maize                                                                                     Allopatric mexicana") +
                                                      theme(axis.text.x = element_text(size = smallLabel + 1),
+                                                           legend.key.size = unit(4, "mm"),
                                                            plot.subtitle = element_text(size = smallLabel + 2),
-                                                           axis.title = element_text(size = smallLabel + 2))
+                                                           axis.title = element_text(size = smallLabel + 2),
+                                                           legend.margin = margin(c(0,0,0,0)),
+                                                           legend.position = "bottom")
                                         ),
                                         textGrob(label = "A", 
                                                  x = unit(0.5, "lines"), 
@@ -163,10 +168,10 @@ p_combined <- grid.arrange(grobs = list(ggplotGrob(p_symp_elev +
                                           c(2),
                                           c(5),
                                           c(1)),
-                           heights = c(.1, 1, .1, 5),
+                           heights = c(.1, 2, .1, 6),
                            widths = c(1))
 
-#p_combined
+# p_combined
 ggsave(png_global_anc_multi, 
        plot = p_combined, 
        device = "png", 
