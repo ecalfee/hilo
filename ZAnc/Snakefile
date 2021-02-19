@@ -380,7 +380,7 @@ rule test_key_genes:
         tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
     params:
         p = "med2",
-        Ne = lambda wildcards: wildcards.NE,
+        Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
         prefix = prefix_all
     shadow:

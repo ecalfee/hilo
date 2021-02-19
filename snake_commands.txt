@@ -2547,6 +2547,13 @@ Job counts:
         1       all
         24      calc_overlap
         25 # RUNNING 2.17.2021 11:36pm
+        hilo$ snakemake -n all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                3       plot_admix_times
+                1       test_key_genes
+                5 # RUNNING 2.18.2021
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
