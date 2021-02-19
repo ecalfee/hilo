@@ -14,11 +14,11 @@ alpha = as.numeric(snakemake@params[["alpha"]])
 prefix_all = snakemake@params[["prefix_all"]]
 # prefix_all = "HILO_MAIZE55"
 png_times = snakemake@output[["png_times"]]
-# png_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.png"
+# png_times = paste0("local_ancestry/plots/admix_times_Ne", Ne, "_", yesno, "Boot.png")
 txt_times = snakemake@output[["txt_times"]]
-# txt_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.txt"
+# txt_times = paste0("local_ancestry/results/admix_times_Ne", Ne, "_", yesno, "Boot.txt")
 rds_times = snakemake@output[["rds_times"]]
-# rds_times = "local_ancestry/plots/admix_times_Ne10000_yesBoot.txt"
+# rds_times = paste0("local_ancestry/results/admix_times_Ne", Ne, "_", yesno, "Boot.RDS")
 source(snakemake@params[["colors"]]) # plotting colors
 # source("colors.R")
 
@@ -40,11 +40,11 @@ for (z in zea){
                     high_boot = apply(boots, 2, function(x) quantile(x, 1 - alpha/2)),
                     mean_boot = apply(boots, 2, mean),
                     sd_boot = apply(boots, 2, sd),
-                    se_boot = sd_boot/sqrt(nrow(boots)),
                     pop = colnames(times), stringsAsFactors = F,
                     alpha = alpha) %>%
     dplyr::mutate(low_basic = 2*time - high_boot,
-                  high_basic = 2*time - low_boot)
+                  high_basic = 2*time - low_boot,
+                  se_boot = sd_boot/sqrt(nrow(boots)))
   assign(x = z, value = left_join(meta_pops, time_est, by = "pop"))
   rm(meta_pops, times, time_est, boots)
 }
