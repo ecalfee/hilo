@@ -349,12 +349,12 @@ rule summarise_overlap_flowering_time:
     output:
         txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
     params:
-        p = "med2"
-    shadow:
-        "minimal",
+        p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
         prefix = prefix_all
+    shadow:
+        "minimal"
     conda:
         "../envs/environment.yaml"
     resources:
