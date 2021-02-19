@@ -310,7 +310,7 @@ rule add_20kb_flowering_time_genes:
 ## calc_overlap: find overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
 rule calc_overlap:
     input:
-        genes = "ZAnc/results/flowering_time_genes_v4.plus10kb.bed",
+        genes = "ZAnc/results/flowering_time_genes_v4.plus20kb.bed",
         outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
         genome = ref_chr
     output:
