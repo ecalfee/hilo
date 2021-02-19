@@ -2,7 +2,6 @@ library(dplyr)
 library(tidyr)
 #setwd("~/Documents/gitErin/hilo")
 # load variables from Snakefile
-fdr_file = snakemake@input[["fdr"]]
 # unique flowering time candidate genes from Li et al 2016 supporting table S7
 flowering_time_genes_Li_2016 = snakemake@input[["Li"]]
 # flowering_time_genes_Li_2016 = "data/flowering_time/v2_unique_gene_names_Li_et_al_2016.csv"

@@ -210,6 +210,7 @@ rule all:
         expand("ancestry_by_r/results/f4/{POP}.f4", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
         expand("ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana"]),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"], SUFFIX = ["bed", "counts"]),
+        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
