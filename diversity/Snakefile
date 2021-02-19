@@ -377,3 +377,115 @@ rule plot_within_ancestry_fst:
 #        mem = lambda wildcards, attempt: attempt * 4
 #    script:
 #        "calc_fst_in_outliers.R"
+
+
+## get_rf_outliers: makes a regions file for a particular outlier set
+
+## index_rf_outliers: indexes regions file for particular outlier set
+
+## estimate_saf_pop_outliers: estimate site allele frequency likelihoods using ANGSD for a population and outlier regions only
+rule estimate_saf_pop:
+    input:
+        anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
+        bam_list = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP1}_bams.list",
+        complete = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}.completed", POP = symp_pops), # all pops have completed bams
+        regions_file = ***
+    output:
+        saf_idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.gz",
+        saf_pos = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.pos.gz"
+    params:
+        p = "med2",
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        4
+    resources:
+        time_min = 48*60,
+        mem = lambda wildcards, attempt: attempt * 16 + 40
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-doSaf 1 -anc {input.anc} "
+        "-rf {input.regions_file} "
+        "-GL 1 "
+        "-P {threads} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 -minMapQ 30 -minQ 20 "
+
+
+
+## calc_thetas_outliers: calculates thetas for each site from saf and sfs in ANGSD for outlier regions only
+rule calc_thetas_outliers:
+    input:
+        saf = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx",
+        sfs = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.sfs"
+    output:
+        gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz",
+        idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx"
+    params:
+        p = "med2",
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"
+
+## calc_pi_all_outliers: calculates pi across all outlier regions only
+rule calc_pi_all_outliers:
+    input:
+        idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx",
+        gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz"
+    output:
+        thetas = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG"
+    params:
+        p = "low2",
+        out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    shell:
+        "thetaStat do_stat {input.idx} -outnames {params.out_prefix}"
+
+
+## calc_fst_idx_outliers: calculates fst for each sites using 2Dsfs and saf's for each population for outlier regions only
+rule calc_fst_idx_outliers:
+    input:
+        saf1 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.saf.idx",
+        sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+    output:
+        gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz",
+        idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx"
+    params:
+        p = "med2",
+        out_prefix = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 12*60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix} -whichFst 1"
+
+## calc_fst_all_outliers: calculates fst for each chromosome in the genome across outlier regions only
+rule calc_fst_all_outliers:
+    input:
+        idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx",
+        gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz"
+    output:
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 60,
+        mem = lambda wildcards, attempt: attempt * 4
+    shell:
+        "realSFS fst stats {input.idx} > {output.fst}"
