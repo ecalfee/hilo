@@ -214,7 +214,8 @@ rule all:
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         "map/plots/mexico_lines_elev_teo_color.png",
-        "map/plots/mexico_lines_elev_teo_black.png"
+        "map/plots/mexico_lines_elev_teo_black.png",
+        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex"
     params:
         p = "med2"
     resources:
