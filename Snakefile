@@ -130,7 +130,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
-include: "diversity/Snakefile"
+#include: "diversity/Snakefile"
 include: "map/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -190,7 +190,8 @@ rule all:
         #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
         expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
-        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["png", "txt", "rds"]),
+        expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
+        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png", Ne = Nes, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
         expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png", Ne = 10000, YESNO = "yes"),
