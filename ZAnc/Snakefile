@@ -288,7 +288,7 @@ rule find_flowering_time_genes_v4:
     script:
         "flowering_time_genes.R"
 
-## add_20kb_flowering_time_genes: adds 10kb upstream and downstream to all flowering time genes found on v4 chromosome coordinates
+## add_20kb_flowering_time_genes: adds 20kb upstream and downstream to all flowering time genes found on v4 chromosome coordinates
 rule add_20kb_flowering_time_genes:
     input:
         bed = "ZAnc/results/flowering_time_genes_v4.bed",

@@ -2554,6 +2554,15 @@ Job counts:
                 3       plot_admix_times
                 1       test_key_genes
                 5 # RUNNING 2.18.2021
+# fixed an error affecting ZCMCCT10 in flowering time genes and re-running that enrichment analysis:
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       add_20kb_flowering_time_genes
+        1       all
+        24      calc_overlap
+        1       find_flowering_time_genes_v4
+        27 # 2.19.2021 10am
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
