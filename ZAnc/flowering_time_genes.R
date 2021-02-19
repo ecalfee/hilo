@@ -24,11 +24,14 @@ cross <- read.table(cross_ref_file, header = T,
 core_flower <- read.table(flowering_time_genes_Dong_2012, sep = ",", 
                    header = T, stringsAsFactors = F) %>%
   rename(v2_gene_model = geneID) %>%
+  mutate(v2_gene_model = trimws(v2_gene_model, "both")) %>% # trim any leading or trailing whitespace
   mutate(core_48 = T)
 # larger list of 905 flowering time genes
 larger_flower <- read.table(flowering_time_genes_Li_2016, sep = "\t", header = F,
                            stringsAsFactors = F) %>%
-  rename(v2_gene_model = V1)
+  rename(v2_gene_model = V1) %>% 
+  mutate(v2_gene_model = trimws(v2_gene_model, "both")) # trim any leading or trailing whitespace
+
 # all flowering time genes
 flower <- larger_flower %>%
   # add all core flowering time genes (most overlap)
@@ -39,7 +42,9 @@ flower <- larger_flower %>%
   # add v4 gene coordinates if found
   left_join(., cross, by = "v2_gene_model") %>%
   mutate(found_v4 = !is.na(v4_gene_model)) %>% # found gene on v4 genome
-  mutate(on_chr_v4 = v4_chr %in% paste0("Chr", 1:10))
+  mutate(on_chr_v4 = v4_chr %in% paste0("Chr", 1:10)) %>%
+  mutate(ZmGene = ifelse(v2_gene_model == "GRMZM2G004483" & is.na(ZmGene), 
+                         "ZmCCT9", ZmGene)) # identifying ZmCCT9 within the larger list
 #table(duplicated(flower))
 #dplyr::group_by(flower, found_v4, core_48) %>%
 #  count()
