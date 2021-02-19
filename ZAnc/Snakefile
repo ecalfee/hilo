@@ -376,8 +376,8 @@ rule test_key_genes:
         genes_list = "data/key_genes.csv",
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
-        txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{yesno}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{yesno}Boot/genes_mapped_to_outliers.tex"
+        txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
+        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.NE,
