@@ -38,10 +38,13 @@ for (z in zea){
   time_est = data.frame(time = unlist(times[1, ]),
                     low_boot = apply(boots, 2, function(x) quantile(x, alpha/2)),
                     high_boot = apply(boots, 2, function(x) quantile(x, 1 - alpha/2)),
+                    mean_boot = apply(boots, 2, mean),
+                    sd_boot = apply(boots, 2, sd),
+                    se_boot = sd_boot/sqrt(nrow(boots)),
                     pop = colnames(times), stringsAsFactors = F,
                     alpha = alpha) %>%
-    dplyr::mutate(low_basic = 2*time - low_boot,
-                  high_basic = 2*time - high_boot)
+    dplyr::mutate(low_basic = 2*time - high_boot,
+                  high_basic = 2*time - low_boot)
   assign(x = z, value = left_join(meta_pops, time_est, by = "pop"))
   rm(meta_pops, times, time_est, boots)
 }
