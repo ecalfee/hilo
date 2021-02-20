@@ -399,12 +399,12 @@ rule calc_pi_all_outliers:
 
 
 ## calc_fst_idx_outliers: calculates fst for each sites using 2Dsfs and saf's for each population for outlier regions only
-## note: outliers are always defined based on the first population.
+## note: outliers are always defined based on the first population and 2Dsfs prior is an estimate from all sites in the genome (not just outliers)
 rule calc_fst_idx_outliers:
     input:
         saf1 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP1}.saf.idx",
         saf2 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.{n}pop.outliers{POP1}.saf.idx",
-        sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.2Dsfs"
+        sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
     output:
         gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.gz",
         idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.idx"
