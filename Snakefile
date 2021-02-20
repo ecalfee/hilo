@@ -126,12 +126,12 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
-include: "local_ancestry/Snakefile"
+include: "global_ancestry/Snakefile"
+#include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 #include: "diversity/Snakefile"
-include: "map/Snakefile"
+#include: "map/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -217,7 +217,8 @@ rule all:
         expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
         "map/plots/mexico_lines_elev_teo_color.png",
         "map/plots/mexico_lines_elev_teo_black.png",
-        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex"
+        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex",
+        "global_ancestry/plots/global_anc_multi.png"
     params:
         p = "med2"
     resources:
