@@ -488,7 +488,7 @@ rule make_rf_outliers_by_pop:
         meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
-        expand("ZAnc/results/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{i}pop.outliers.{SUFFIX}", i = [1, 4], SUFFIX = ["regions", "bed"])
+        "ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{i}pop.outliers.{SUFFIX}", i = [1, 4], SUFFIX = ["regions", "bed"])
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA,
