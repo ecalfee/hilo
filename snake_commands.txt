@@ -2584,6 +2584,13 @@ Job counts:
 # getting pi and local Fst for introgression outlier regions:
 # will pipeline start? can cancel.
 hilo$ snakemake -n diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop29.4pop.outlierspop371.fst.allChr.txt --quiet --profile slurm --restart-times 0
+Job counts:
+        count   jobs
+        1       calc_fst_all_outliers
+        1       calc_fst_idx_outliers
+        2       estimate_saf_pop_outliers
+        1       make_rf_outliers_by_pop
+        5 # DID NOT RUN.
 
 
 
