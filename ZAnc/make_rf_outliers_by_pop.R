@@ -21,7 +21,7 @@ anc_file = snakemake@input[["anc"]]
 meta_file = snakemake@input[["meta"]]
 # meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
 dir_out = snakemake@params[["dir_out"]]
-# dir_out = "ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot"
+# dir_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea) 
 focal_pop = snakemake@params[["focal_pop"]]
 # focal_pop = "pop362"
 
