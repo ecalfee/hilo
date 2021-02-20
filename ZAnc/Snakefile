@@ -450,6 +450,7 @@ rule plot_shared_peaks:
         anc_mex = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
         meta_pop_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
         meta_pop_mex = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+        meta = "samples/" + prefix_all + "_meta.RData",
         colors = "colors.R",
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
         inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
@@ -484,15 +485,17 @@ rule plot_shared_peaks:
 ## make_rf_outliers_by_pop: make regions files (-rf for angsd) and bed files for high introgression outlier regions in a focal population that are shared by no other populations (1pop) or shared by at least 3 other populations (4pop)
 rule make_rf_outliers_by_pop:
     input:
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-        meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        anc_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+        anc_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
+        meta_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        meta_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+        meta = "samples/" + prefix_all + "_meta.RData",
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{ZEA}}/{{POP}}.{i}pop.outliers.{SUFFIX}", i = [1, 4], SUFFIX = ["regions", "bed"])
+        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{n}pop.outliers.{SUFFIX}", n = [1, 4], SUFFIX = ["regions", "bed"])
     params:
         p = "med2",
-        zea = lambda wildcards: wildcards.ZEA,
-        dir_out = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}",
+        dir_out = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot",
         focal_pop = lambda wildcards: wildcards.POP
     conda:
         "../envs/environment.yaml"

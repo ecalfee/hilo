@@ -27,7 +27,8 @@ wildcard_constraints:
     FEATURE = "r|cd|frac", # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
     COVERAGE = "ALL|Over0.5x", # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)
     WIN = "[0-9]+", # window size
-    STEP = "[0-9]+" # window step size (non-overlapping windows if STEP = WIN)
+    STEP = "[0-9]+", # window step size (non-overlapping windows if STEP = WIN)
+    n = "[0-9]+"
 
 # reference genome and associated files
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -126,7 +127,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
+#include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"

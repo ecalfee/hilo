@@ -1,8 +1,6 @@
 #!/usr/bin/env Rscript
 library(dplyr)
 library(tidyr)
-library(bedr)
-
 
 # this script identifies high introgression ancestry outlier regions
 # in an individual population and shared across pops
@@ -14,29 +12,49 @@ library(bedr)
 # load variables from Snakefile
 bed_sites = snakemake@input[["bed_sites"]]
 # bed_sites = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
-zea = snakemake@params[["zea"]]
-# zea = "maize"
-anc_file = snakemake@input[["anc"]]
-# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
-meta_file = snakemake@input[["meta"]]
-# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+anc_maize = snakemake@input[["anc_maize"]]
+# anc_maize = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.pops.anc.RData"
+meta_maize = snakemake@input[["meta_maize"]]
+# meta_maize = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.pop.meta.RData"
+anc_mexicana = snakemake@input[["anc_mexicana"]]
+# anc_mexicana = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/mexicana.pops.anc.RData"
+meta_mexicana = snakemake@input[["meta_mexicana"]]
+# meta_mexicana = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/mexicana.pop.meta.RData"
 dir_out = snakemake@params[["dir_out"]]
-# dir_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea) 
+# dir_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot") 
 focal_pop = snakemake@params[["focal_pop"]]
 # focal_pop = "pop362"
+meta_file = snakemake@input[["meta"]]
+# meta_file = "samples/HILO_MAIZE55_meta.RData"
 
-# load data
+# is the focal population sympatric maize or mexicana?
 load(meta_file)
-load(anc_file)
+meta_sympatric = meta %>%
+  filter(symp_allo == "sympatric") %>%
+  dplyr::select(popN, zea, symp_allo, LOCALITY, ELEVATION) %>%
+  filter(!duplicated(.)) %>%
+  mutate(pop = paste0("pop", popN))
+
+zea = meta_sympatric$zea[meta_sympatric$pop == focal_pop]
+
+# load ancestry and population metadata files
+# based on whether the focal population is sympatric
+# maize or mexicana
+if (zea == "maize"){
+  load(anc_maize)
+  load(meta_maize)
+}
+
+if (zea == "mexicana"){
+  load(anc_mexicana)
+  load(meta_mexicana)
+  anc = 1 - anc # always count minor (introgressed) ancestry
+  meta_pops$alpha_local_ancestry = 1 - meta_pops$alpha_local_ancestry
+}
 
 sites <- read.table(bed_sites, header = F, stringsAsFactors = F, sep = "\t") %>%
   data.table::setnames(c("chr", "start", "end", "length"))
 
-if (zea == "mexicana"){
-    anc = 1 - anc # always count minor (introgressed) ancestry
-    meta_pops$alpha_local_ancestry = 1 - meta_pops$alpha_local_ancestry
-}
-  
 # what is 2sd above the mean introgressed ancestry threshold for each pop?
 meta_pops$sd2 <- apply(anc, 2, mean) + 2*apply(anc, 2, sd)
   
