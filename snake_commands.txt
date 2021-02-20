@@ -2576,7 +2576,15 @@ Job counts:
                 count   jobs
                 1       make_rf_outliers_by_pop
                 1 # COMPLETED. But want to change file naming to not have a 'ZEA' wildcard.
-        hilo$ snakemake ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/pop25.4pop.outliers.regions --quiet --profile slurm
+        hilo$ snakemake ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/pop25.4pop.outliers.regions --quiet --profile slurm --restart-times 0
+        Job counts:
+                count   jobs
+                1       make_rf_outliers_by_pop
+                1
+# getting pi and local Fst for introgression outlier regions:
+# will pipeline start? can cancel.
+hilo$ snakemake -n diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop371.pop29.4pop.outliers371.fst.allChr.txt --quiet --profile slurm --restart-times 0
+
 
 
 # TO DO:

@@ -131,7 +131,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
-#include: "diversity/Snakefile"
+include: "diversity/Snakefile"
 #include: "map/Snakefile"
 
 ## all:  main rule to run all workflows
@@ -237,13 +237,41 @@ rule fst:
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
         "diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")#,
-        #expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.windows.1000.1000.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes"),
     params:
         p = "med2"
     resources:
         time_min = 30,
         mem = 2
+
+rule fst_mexicana_anc_outliers:
+    input:
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.thetas.gz", POP = symp_maize_pops, n = [1, 4]), # introgressed mexicana tracts within sympatric maize
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.1pop.outliers{POP2}.thetas.gz", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # mexicana ancestry within mexicana (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.4pop.outliers{POP2}.thetas.gz", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+    params:
+        p = "med2"
+    resources:
+        time_min = 30,
+        mem = 2
+
+rule fst_maize_anc_outliers:
+    input:
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP}.{n}pop.outliers{POP}.thetas.gz", POP = symp_mexicana_pops, n = [1, 4]), # introgressed maize tracts within sympatric mexicana
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.1pop.outliers{POP2}.thetas.gz", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops), # maize ancestry within maize (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.4pop.outliers{POP2}.thetas.gz", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        # fst between maize ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local mexicana)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
+    params:
+        p = "med2"
+    resources:
+        time_min = 30,
+        mem = 2
+
 
 ## test: for running test files
 rule test:
