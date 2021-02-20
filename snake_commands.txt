@@ -2564,6 +2564,16 @@ Job counts:
         1       find_flowering_time_genes_v4
         27 # 2.19.2021 10am
 
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1       plot_shared_peaks
+                2 # remaking shared peaks plots
+        # testing making regions file for getting pi/fst for a subset of the genome (outlier regions)
+        hilo$ snakemake ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/pop362.1pop.outliers.regions --quiet --profile slurm
+
+
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)

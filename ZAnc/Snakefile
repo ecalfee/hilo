@@ -463,7 +463,7 @@ rule plot_shared_peaks:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_maize.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_mexicana.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/shared_peaks_on_genome.png",
-        expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{zea}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], zea = zea)
+        expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea)
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
@@ -480,3 +480,26 @@ rule plot_shared_peaks:
         mem = 16
     script:
         "plot_shared_peaks.R"
+
+## make_rf_outliers_by_pop: make regions files (-rf for angsd) and bed files for high introgression outlier regions in a focal population that are shared by no other populations (1pop) or shared by at least 3 other populations (4pop)
+rule make_rf_outliers_by_pop:
+    input:
+        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        meta = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+    output:
+        expand("ZAnc/results/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{i}pop.outliers.{SUFFIX}", i = [1, 4], SUFFIX = ["regions", "bed"])
+    params:
+        p = "med2",
+        zea = lambda wildcards: wildcards.ZEA,
+        dir_out = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot",
+        focal_pop = lambda wildcards: wildcards.POP
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 4
+    script:
+        "make_rf_outliers_by_pop.R"
