@@ -35,7 +35,6 @@ prefix_all = snakemake@params[["prefix_all"]]
 png_hist = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_peaks.png")
 png_net_multi = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
 png_net_multi_no_inv4m = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
-png_net_multi_no_inv4m_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m_data_only.png")
 png_net_multi_sims = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
 png_net_multi_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
 png_combmatrix_maize = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
@@ -299,8 +298,8 @@ p_net_maize <- ggraph(peak_network[["maize"]], layout = "linear") +
     theme_graph(base_family = 'Helvetica') +
     geom_node_text(aes(label = name), 
                    angle = 90,
-                   hjust = 1,
-                   y = -0.5,
+                   hjust = 0.5, #1,
+                   y = -1.8, #-0.5,
                    repel = F) +
     scale_edge_alpha(range = c(0, 1), limits = c(0, 2.5)) +
     scale_edge_width(range = c(0, 2.5), limits = c(0, 2.5)) +
@@ -329,13 +328,11 @@ p_net_mexicana <- ggraph(peak_network[["mexicana"]], layout = "linear") +
 
 # combine maize and mexicana networks into 1 plot:
 p_net_multi <- grid.arrange(grobs = list(ggplotGrob(p_net_maize +
-                                                      #labs(subtitle = "maize") +
                                                       theme(plot.margin = margin(c(t = 0, r = 5, b = 95, l = 2.5), unit = "pt"),
                                                             plot.title = element_blank(),
                                                             legend.position = "none"
                                                             )),
                                      ggplotGrob(p_net_mexicana +
-                                                  #labs(subtitle = "mexicana") +
                                                   theme(plot.margin = margin(c(t = 5, r = 5, b = 5, l = 2.5), unit = "pt"),
                                                         plot.title = element_blank(),
                                                         legend.position = "none"
@@ -355,7 +352,7 @@ p_net_multi <- grid.arrange(grobs = list(ggplotGrob(p_net_maize +
                                         0.7),
                             widths = c(0.1, 5, 0.2, 1.7))
 
-# p_net_multi
+#p_net_multi
 
 ggsave(file = png_net_multi,
          plot = p_net_multi,
@@ -499,76 +496,6 @@ ggsave(file = png_net_multi_no_inv4m,
        units = "in",
        device = "png") 
 
-# ------plot original data network excluding inv4m (not surplus, ignore simulations) ----
-p_net_maize_no_inv4m_data <- ggraph(peak_network_no_inv4m[["maize"]], layout = "linear") +
-  geom_edge_arc(aes(width = p_snps_shared_data*100,
-                    alpha = p_snps_shared_data*100)) +
-  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-  theme_graph(base_family = 'Helvetica') +
-  geom_node_text(aes(label = name), 
-                 angle = 90,
-                 hjust = 1,
-                 y = -0.5,
-                 repel = F) +
-  scale_edge_alpha(range = c(0, 1), limits = c(0, 2.75)) +
-  scale_edge_width(range = c(0, 2.5), limits = c(0, 2.75)) +
-  scale_color_viridis(direction = -1) +
-  coord_cartesian(clip = "off") +
-  labs(edge_width = "% SNPs in\n shared peaks\n (raw data)",
-       edge_alpha = "% SNPs in\n shared peaks\n (raw data)",
-       color = "Elevation (m)") +
-  ggtitle("(Excl. inv4m) Shared introgression peaks in maize (raw data)")
-# p_net_maize_no_inv4m_data
-
-p_net_mexicana_no_inv4m_data <- ggraph(peak_network_no_inv4m[["mexicana"]], layout = "linear") +
-  geom_edge_arc(aes(width = p_snps_shared_data*100, 
-                    alpha = p_snps_shared_data*100)) +
-  geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
-  theme_graph(base_family = 'Helvetica') +
-  scale_edge_alpha(range = c(0, 1), limits = c(0, 2.75)) +
-  scale_edge_width(range = c(0, 2.5), limits = c(0, 2.75)) +
-  scale_color_viridis(direction = -1) +
-  coord_cartesian(clip = "off") +
-  labs(edge_width = "% SNPs in\n shared peaks\n (raw data)",
-       edge_alpha = "% SNPs in\n shared peaks\n (raw data)",
-       color = "Elevation (m)") +
-  ggtitle("(Excl. inv4m) Shared introgression peaks in mexicana (raw data)")
-# p_net_mexicana_no_inv4m_data
-# combine maize and mexicana networks into 1 plot:
-p_net_multi_no_inv4m_data <- grid.arrange(grobs = list(ggplotGrob(p_net_maize_no_inv4m_data +
-                                                               #labs(subtitle = "maize") +
-                                                               theme(plot.margin = margin(c(t = 0, r = 5, b = 95, l = 2.5), unit = "pt"),
-                                                                     plot.title = element_blank(),
-                                                                     legend.position = "none"
-                                                               )),
-                                                  ggplotGrob(p_net_mexicana_no_inv4m_data +
-                                                               #labs(subtitle = "mexicana") +
-                                                               theme(plot.margin = margin(c(t = 5, r = 5, b = 5, l = 2.5), unit = "pt"),
-                                                                     plot.title = element_blank(),
-                                                                     legend.position = "none"
-                                                               )),
-                                                  cowplot::get_legend(p_net_maize_no_inv4m_data),
-                                                  textGrob(label = "maize", 
-                                                           x = unit(1, "lines"), 
-                                                           y = unit(10, "lines"),
-                                                           rot = 90),
-                                                  textGrob(label = "mexicana", 
-                                                           x = unit(1, "lines"), 
-                                                           y = unit(9, "lines"),
-                                                           rot = 90)),
-                                     layout_matrix = rbind(c(4, 1, NA, 3),
-                                                           c(5, 2, NA, 3)),
-                                     heights = c(1, 
-                                                 0.7),
-                                     widths = c(0.1, 5, 0.2, 1.7))
-
-# p_net_multi_no_inv4m_data
-
-ggsave(file = png_net_multi_no_inv4m_data,
-       plot = p_net_multi_no_inv4m_data,
-       height = 6.5, width = 6.2, 
-       units = "in",
-       device = "png") 
 
 # ------------ plot simulated network data only ------------------------
 p_net_maize_sims <- ggraph(peak_network[["maize"]], layout = "linear") +
@@ -649,8 +576,8 @@ p_net_maize_data <- ggraph(peak_network[["maize"]], layout = "linear") +
   theme_graph(base_family = 'Helvetica') +
   geom_node_text(aes(label = name), 
                  angle = 90,
-                 hjust = 1,
-                 y = -0.5,
+                 hjust = 0.5, #1,
+                 y = -1.8, #-0.5,
                  repel = F) +
   scale_edge_alpha(range = c(0, 1), limits = c(0, 3.5)) +
   scale_edge_width(range = c(0, 3), limits = c(0, 3.5)) +
@@ -732,7 +659,7 @@ p_combmatrix_maize <- maize_pops_shared %>%
   ungroup() %>%
   mutate(populations = reorder(populations, -freq)) %>%
   arrange(populations) %>%
-  head(n = 100) %>%
+  head(n = 75) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
   geom_col(position = position_dodge2(preserve = "single")) +
   ggupset::axis_combmatrix(sep = "-", 
@@ -742,9 +669,11 @@ p_combmatrix_maize <- maize_pops_shared %>%
   scale_y_continuous(expand = c(0, 0)) +
   theme_classic() +
   theme_combmatrix(combmatrix.panel.point.color.fill = "#00BFC4",
-                   combmatrix.panel.point.color.empty = "darkgrey",
+                   combmatrix.panel.point.color.empty = "grey92",
                    combmatrix.panel.line.size = 0,
                    combmatrix.panel.point.size = 1.5,
+                   combmatrix.panel.striped_background.color.one = "white",
+                   combmatrix.panel.striped_background.color.two = "white",
                    combmatrix.label.make_space = FALSE) +
   scale_fill_viridis_c(option = "magma",
                        limits = c(1,14)) + 
@@ -760,6 +689,7 @@ ggsave(file = png_combmatrix_maize,
        height = 5, width = 7.5, 
        units = "in",
        device = "png") 
+
 
 # now mexicana
 mexicana_pops_shared <- anc_outliers_list[["mexicana"]] %>% 
@@ -780,7 +710,7 @@ p_combmatrix_mexicana <- mexicana_pops_shared %>%
   ungroup() %>%
   mutate(populations = reorder(populations, -freq)) %>%
   arrange(populations) %>%
-  head(n = 100) %>%
+  head(n = 75) %>%
   ggplot(data = ., mapping = aes(x = populations, y = freq, fill = n)) +
   geom_col(position = position_dodge2(preserve = "single")) +
   ggupset::axis_combmatrix(sep = "-", 
@@ -790,9 +720,11 @@ p_combmatrix_mexicana <- mexicana_pops_shared %>%
   scale_y_continuous(expand = c(0, 0)) +
   theme_classic() +
   theme_combmatrix(combmatrix.panel.point.color.fill = "#00BFC4",
-                   combmatrix.panel.point.color.empty = "darkgrey",
+                   combmatrix.panel.point.color.empty = "grey92",
                    combmatrix.panel.line.size = 0,
                    combmatrix.panel.point.size = 1.5,
+                   combmatrix.panel.striped_background.color.one = "white",
+                   combmatrix.panel.striped_background.color.two = "white",
                    combmatrix.label.make_space = FALSE) +
   scale_fill_viridis_c(option = "magma",
                        limits = c(1,14)) +

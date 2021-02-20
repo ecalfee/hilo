@@ -340,12 +340,6 @@ rule summarise_overlap_flowering_time:
     input:
         expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts",
         ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc02", "p05"])
-        #pos_fdr05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_pos_{STAT}_outliers.fdr05.counts",
-        #neg_fdr05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_neg_{STAT}_outliers.fdr05.counts",
-        #pos_p05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_pos_{STAT}_outliers.p05.counts",
-        #neg_p05 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_neg_{STAT}_outliers.p05.counts",
-        #pos_perc02 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_pos_{STAT}_outliers.perc02.counts",
-        #neg_perc02 = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_neg_{STAT}_outliers.perc02.counts"
     output:
         txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
     params:
@@ -464,7 +458,6 @@ rule plot_shared_peaks:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m.png",
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m_data_only.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_data_only.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_sims_only.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_maize.png",
