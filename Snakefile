@@ -246,9 +246,9 @@ rule fst:
 
 rule fst_mexicana_anc_outliers:
     input:
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.thetas.gz", POP = symp_maize_pops, n = [1, 4]), # introgressed mexicana tracts within sympatric maize
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.thetas.gz", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # mexicana ancestry within mexicana (outliers defined by local maize)
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.thetas.gz", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]), # introgressed mexicana tracts within sympatric maize
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # mexicana ancestry within mexicana (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
@@ -260,9 +260,9 @@ rule fst_mexicana_anc_outliers:
 
 rule fst_maize_anc_outliers:
     input:
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP}.{n}pop.outliers{POP}.thetas.gz", POP = symp_mexicana_pops, n = [1, 4]), # introgressed maize tracts within sympatric mexicana
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.1pop.outliers{POP1}.thetas.gz", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops), # maize ancestry within maize (outliers defined by local maize)
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.4pop.outliers{POP1}.thetas.gz", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_mexicana_pops, n = [1, 4]), # introgressed maize tracts within sympatric mexicana
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops), # maize ancestry within maize (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
         # fst between maize ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local mexicana)
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)

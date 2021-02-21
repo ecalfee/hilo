@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 library(dplyr)
 library(tidyr)
+library(bedr)
 
 # this script identifies high introgression ancestry outlier regions
 # in an individual population and shared across pops
@@ -12,6 +13,8 @@ library(tidyr)
 # load variables from Snakefile
 bed_sites = snakemake@input[["bed_sites"]]
 # bed_sites = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
+genome_file = snakemake@input[["genome"]]
+# genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 anc_maize = snakemake@input[["anc_maize"]]
 # anc_maize = "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.pops.anc.RData"
 meta_maize = snakemake@input[["meta_maize"]]
@@ -73,34 +76,53 @@ anc_outliers_by_pop <- anc_outliers %>%
     summarise(outlier_pops = sum(top_sd2)) %>%
     ungroup() %>%
   left_join(anc_outliers, ., by = c("chr", "start", "end")) %>%
-  filter(pop == focal_pop & top_sd2) %>% # must be an outlier in focal pop for that row
-  mutate(region = paste0(chr, ":", start + 1, "-", end)) # format for angsd regions file
+  filter(pop == focal_pop & top_sd2) # must be an outlier in focal pop for that row
 
-# print regions files (rf) for single pop outlier regions
-anc_outliers_by_pop %>%
-    filter(outlier_pops == 1) %>%
-    dplyr::select(region) %>% # only print region
-    write.table(., file = paste0(dir_out, "/", focal_pop, ".1pop.outliers.regions"),
-                col.names = F, row.names = F, sep = "\t", quote = F)
+# merge adjacent outlier regions for single (focal) population
+regions_1pop = anc_outliers_by_pop %>%
+  filter(outlier_pops == 1) %>%
+  dplyr::select(chr, start, end) %>% # only keep region
+  mutate(chr = as.character(chr)) %>%
+  as.data.frame(., stringsAsFactors = F)
 
-# print regions files (rf) for 4+ pop outlier regions
-anc_outliers_by_pop %>%
+regions_1pop_merged = bedr(
+    input = list(i = regions_1pop), 
+    method = "merge", 
+    check.chr = F,
+    params = paste("-sorted -header -g", genome_file)
+  )
+
+# merge adjacent outlier regions shared between focal population and 3 or more other populations
+regions_4pop = anc_outliers_by_pop %>%
   filter(outlier_pops >= 4) %>%
+  dplyr::select(chr, start, end) %>% # only keep region
+  mutate(chr = as.character(chr)) %>%
+  as.data.frame(., stringsAsFactors = F)
+
+regions_4pop_merged = bedr(
+  input = list(i = regions_4pop), 
+  method = "merge", 
+  check.chr = F,
+  params = paste("-sorted -header -g", genome_file)
+)
+
+# print regions files (rf)
+regions_1pop_merged %>%
+  mutate(region = paste0(chr, ":", start + 1, "-", end)) %>% # format for angsd regions file
+  dplyr::select(region) %>% # only print region
+  write.table(., file = paste0(dir_out, "/", focal_pop, ".1pop.outliers.regions"),
+              col.names = F, row.names = F, sep = "\t", quote = F)
+regions_4pop_merged %>%
+  mutate(region = paste0(chr, ":", start + 1, "-", end)) %>% # format for angsd regions file
   dplyr::select(region) %>% # only print region
   write.table(., file = paste0(dir_out, "/", focal_pop, ".4pop.outliers.regions"),
               col.names = F, row.names = F, sep = "\t", quote = F)
 
-
-# print bed file for single pop outlier regions
-anc_outliers_by_pop %>%
-  filter(outlier_pops == 1) %>%
-  dplyr::select(chr, start, end) %>% # only print region
+# print bed files
+dplyr::select(regions_1pop_merged, chr, start, end) %>%
   write.table(., file = paste0(dir_out, "/", focal_pop, ".1pop.outliers.bed"),
               col.names = F, row.names = F, sep = "\t", quote = F)
 
-# print bed file for 4+ pop outlier regions
-anc_outliers_by_pop %>%
-  filter(outlier_pops >= 4) %>%
-  dplyr::select(chr, start, end) %>% # only print region
+dplyr::select(regions_4pop_merged, chr, start, end) %>%
   write.table(., file = paste0(dir_out, "/", focal_pop, ".4pop.outliers.bed"),
               col.names = F, row.names = F, sep = "\t", quote = F)
