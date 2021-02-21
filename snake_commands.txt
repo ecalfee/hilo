@@ -2590,7 +2590,17 @@ Job counts:
         1       calc_fst_idx_outliers
         2       estimate_saf_pop_outliers
         1       make_rf_outliers_by_pop
-        5 # DID NOT RUN.
+        5 # DID NOT RUN, just checked what files it would make.
+        hilo$ snakemake fst_mexicana_anc_outliers --quiet --profile slurm
+        Job counts:
+                count   jobs
+                28      calc_fst_all_outliers
+                28      calc_fst_idx_outliers
+                56      calc_thetas_outliers
+                56      estimate_saf_pop_outliers
+                1       fst_mexicana_anc_outliers
+                14      make_rf_outliers_by_pop
+                183 # RUNNING 2.20.2021 4pm
 
 
 
