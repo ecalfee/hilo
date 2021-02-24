@@ -401,7 +401,7 @@ rule calc_pi_all_outliers:
 ## calc_fst_idx_outliers: calculates fst for each sites using 2Dsfs and saf's for each population for outlier regions only
 ## note: outliers are always defined based on the first population and 2Dsfs prior is an estimate from all sites in the genome (not just outliers)
 rule calc_fst_idx_outliers:
-    input:
+    input:q
         saf1 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP1}.saf.idx",
         saf2 = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.{n}pop.outliers{POP1}.saf.idx",
         sfs = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
@@ -435,3 +435,26 @@ rule calc_fst_all_outliers:
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"
+
+## print_fst_outliers_one_file: combines all fst results for outlier regions into 1 file
+rule print_fst_outliers_one_file:
+    input:
+        # introgressed mexicana tracts within sympatric maize
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]),
+        # mexicana ancestry within mexicana (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+    params:    output:
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.outliers.allChr.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "(for i in {input}; do awk -v i=$i '{{print i,$2}}' $i; done) > {output.fst}"

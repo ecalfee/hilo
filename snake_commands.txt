@@ -2600,7 +2600,25 @@ Job counts:
                 56      estimate_saf_pop_outliers
                 1       fst_mexicana_anc_outliers
                 14      make_rf_outliers_by_pop
-                183 # RUNNING 2.20.2021 4pm
+                183 # RUNNING 2.20.2021 4pm. weird error in fst files that the -sites weren't in order. Only didn't finish a few files despite error, but could affect many (?)
+                hilo$ grep 'Potential big problem' -A 5 snake_logs/calc_fst_idx_outliers*.err
+                # so I deleted outputs and redid the script to make contiguous regions files and am rerunning:
+                hilo$ rm ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/*.regions
+                hilo$ rm diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/*1pop.outlierspop*
+                hilo$ rm diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/*4pop.outlierspop*
+                /hilo$ snakemake fst_mexicana_anc_outliers --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        28      calc_fst_all_outliers
+                        28      calc_fst_idx_outliers
+                        56      calc_pi_all_outliers
+                        56      calc_thetas_outliers
+                        56      estimate_saf_pop_outliers
+                        1       fst_mexicana_anc_outliers
+                        14      make_rf_outliers_by_pop
+                        239 # RUNNING 2.21.2021
+# making summary file for all fst estimates for mexicana outlier regions:
+hilo$ snakemake fst_mexicana_anc_outliers --quiet --profile slurm
 
 
 
