@@ -468,7 +468,7 @@ rule print_pi_one_file:
         time_min = 15,
         mem = lambda wildcards, attempt: attempt * 2
     shell:
-        "(for i in {input}; do awk -v i=$i '{{print i,$2,$4,$14}}' $i; done) > {output.pi}"
+        "(for i in {input}; do awk -v i=$i '{{print i,$2,$5,$14}}' $i; done) > {output.pi}"
 
 
 ## print_pi_mexicana_peaks_one_file: combines all pi results for high mexicana ancestry peaks into 1 file (chr, Watterson's theta, nSites with data)
@@ -489,4 +489,4 @@ rule print_pi_mexicana_peaks_one_file:
         time_min = 15,
         mem = lambda wildcards, attempt: attempt * 2
     shell:
-        "(for i in {input}; do awk -v i=$i '{{print i,$2,$4,$14}}' $i; done) > {output.pi}"
+        "(for i in {input}; do awk -v i=$i '{{print i,$2,$5,$14}}' $i; done) > {output.pi}"
