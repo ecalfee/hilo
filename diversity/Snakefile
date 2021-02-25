@@ -459,7 +459,7 @@ rule print_pi_one_file:
     input:
         expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", POP = symp_pops, ZEA = zea)
     output:
-        pi = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt"
+        pi = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt"
     params:
         p = "med2"
     conda:
@@ -480,7 +480,7 @@ rule print_pi_mexicana_peaks_one_file:
         expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     output:
-        pi = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt"
+        pi = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt"
     params:
         p = "med2"
     conda:

@@ -2628,7 +2628,16 @@ Job counts:
 # copy over output files to laptop:
 Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary*.txt diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/.
 Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop*allChr.pestPG diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/.
-
+# actually make a new rule so you don't have to copy individual files (summarises into 1 file)
+hilo$ snakemake -n pi_fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       pi_fst
+        1       print_fst_mexicana_peaks_one_file
+        1       print_fst_one_file
+        1       print_pi_mexicana_peaks_one_file
+        1       print_pi_one_file
+        5 # redo so pi results go to their own directory
 
 
 # TO DO:
