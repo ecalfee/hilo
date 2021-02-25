@@ -2619,6 +2619,15 @@ Job counts:
                         239 # RUNNING 2.21.2021
 # making summary file for all fst estimates for mexicana outlier regions:
 hilo$ snakemake fst_mexicana_anc_outliers --quiet --profile slurm
+hilo$ snakemake -n fst_mexicana_anc_outliers --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       fst_mexicana_anc_outliers
+        1       print_fst_outliers_one_file
+        2 # RUNNING 2.24.2021
+# copy over output files to laptop:
+Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary*.txt diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/.
+Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/pop*allChr.pestPG diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/mexicana/.
 
 
 

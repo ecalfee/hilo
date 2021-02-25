@@ -436,19 +436,14 @@ rule calc_fst_all_outliers:
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"
 
-## print_fst_outliers_one_file: combines all fst results for outlier regions into 1 file
-rule print_fst_outliers_one_file:
+## print_fst_mexicana_peaks_one_file:: combines all fst results for high mexicana introgression peaks into 1 file
+rule print_fst_mexicana_peaks_one_file:
     input:
-        # introgressed mexicana tracts within sympatric maize
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]),
-        # mexicana ancestry within mexicana (outliers defined by local maize)
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     output:
-        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.outliers.allChr.txt"
+        fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt"
     params:
         p = "med2"
     conda:
@@ -458,3 +453,40 @@ rule print_fst_outliers_one_file:
         mem = lambda wildcards, attempt: attempt * 2
     shell:
         "(for i in {input}; do awk -v i=$i '{{print i,$2}}' $i; done) > {output.fst}"
+
+## print_pi_one_file: combines all within-ancestry pi results into 1 file (chr, Watterson's theta, nSites with data)
+rule print_pi_one_file:
+    input:
+        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", POP = symp_pops, Zea = zea)
+    output:
+        pi = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "(for i in {input}; do awk -v i=$i '{{print i,$2,$4,$14}}' $i; done) > {output.pi}"
+
+
+## print_pi_mexicana_peaks_one_file: combines all pi results for high mexicana ancestry peaks into 1 file (chr, Watterson's theta, nSites with data)
+rule print_pi_mexicana_peaks_one_file:
+    input:
+        # introgressed mexicana tracts within sympatric maize
+        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]),
+        # mexicana ancestry within mexicana (outliers defined by local maize)
+        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+    output:
+        pi = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 2
+    shell:
+        "(for i in {input}; do awk -v i=$i '{{print i,$2,$4,$14}}' $i; done) > {output.pi}"

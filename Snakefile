@@ -244,6 +244,18 @@ rule fst:
         time_min = 30,
         mem = 2
 
+rule pi_fst:
+    input:
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt", Ne = 10000, YESNO = "yes"),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt", Ne = 10000, YESNO = "yes"),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt", Ne = 10000, YESNO = "yes"),
+        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt", Ne = 10000, YESNO = "yes")
+    params:
+        p = "med2"
+    resources:
+        time_min = 30,
+        mem = 2
+
 rule fst_mexicana_anc_outliers:
     input:
         expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]), # introgressed mexicana tracts within sympatric maize
@@ -251,8 +263,7 @@ rule fst_mexicana_anc_outliers:
         expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
         # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.outliers.allChr.txt", Ne = 10000, YESNO = "yes")
+        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     params:
         p = "med2"
     resources:
