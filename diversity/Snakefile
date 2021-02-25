@@ -490,3 +490,27 @@ rule print_pi_mexicana_peaks_one_file:
         mem = lambda wildcards, attempt: attempt * 2
     shell:
         "(for i in {input}; do awk -v i=$i '{{print i,$2,$5,$14}}' $i; done) > {output.pi}"
+
+
+## plot_within_ancestry_fst_pi_peaks: plots pi and fst within ancestry for high introgression peaks
+rule plot_within_ancestry_fst_pi_peaks:
+    input:
+        colors = "colors.R",
+        fst_genomewide = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
+        fst_peaks = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/ssummary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt",
+        pi_genomewide = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt",
+        pi_peaks = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt",
+        meta = "samples/" + prefix_all + "_meta.RData"
+    output:
+        png_pi_mex = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png",
+        png_pi_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png",
+        png_fst_mex = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 4
+    script:
+        "plot_within_ancestry_fst_pi_peaks.R"

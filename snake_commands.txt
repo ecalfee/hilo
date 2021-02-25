@@ -2645,6 +2645,13 @@ Job counts:
                 1       print_pi_mexicana_peaks_one_file
                 1       print_pi_one_file
                 3 # COMPLETED 2.21.2021. oops want tP (pairwise theta) not tW (watterson's theta). re-doing:
+                hilo$ snakemake pi_fst --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       pi_fst
+        1       print_pi_mexicana_peaks_one_file
+        1       print_pi_one_file
+        3 # COMPLETED 2.21.2021.
 
 
 
