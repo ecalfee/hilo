@@ -457,7 +457,7 @@ rule print_fst_mexicana_peaks_one_file:
 ## print_pi_one_file: combines all within-ancestry pi results into 1 file (chr, Watterson's theta, nSites with data)
 rule print_pi_one_file:
     input:
-        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", POP = symp_pops, Zea = zea)
+        expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", POP = symp_pops, ZEA = zea)
     output:
         pi = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt"
     params:
