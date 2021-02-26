@@ -497,7 +497,7 @@ rule plot_within_ancestry_fst_pi_peaks:
     input:
         colors = "colors.R",
         fst_genomewide = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        fst_peaks = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/ssummary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt",
+        fst_peaks = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt",
         pi_genomewide = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt",
         pi_peaks = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt",
         meta = "samples/" + prefix_all + "_meta.RData"
