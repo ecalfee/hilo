@@ -312,7 +312,7 @@ rule plot_within_ancestry_fst:
         fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         meta = "samples/" + prefix_all + "_meta.RData"
     output:
-        png_points_maize = "diversity/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_points.png",
+        png_points_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_points.png",
         png_points_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_points.png",
         png_heatmap_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_heatmap.png",
         png_heatmap_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_heatmap.png",

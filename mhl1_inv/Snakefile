@@ -102,4 +102,29 @@ rule run_PCAngsd_mhl1_inv:
         """
 
 ## plot_mhl1_inv: plot ancestry outliers across chr9 bin 4 and PCA for putative mhl1 inversion
-# rule plot_mhl1_inv
+rule plot_mhl1_inv:
+    input:
+        colors = "colors.R",
+        cov = "mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov",
+        fdr_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
+        meta_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        meta_ind = "samples/" + prefix_all + "_meta.RData",
+        fit_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
+        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
+        mhl1_inv_bed = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed"
+    output:
+        png = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 4
+    script:
+        "plot_mhl1_inv.R"

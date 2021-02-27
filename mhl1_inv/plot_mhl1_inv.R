@@ -6,23 +6,23 @@ library(ggplot2)
 # and calculates FDRs to show outlier loci
 
 # load variables from Snakefile
-zea = snakemake@params[["zea"]]
-# zea = "maize"
+zea = "maize"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
-fdr_file = snakemake@input[["fdr"]]
-# fdr_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
-fit_file = snakemake@input[["fit"]]
-# fit_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
-meta_pops_file = snakemake@input[["meta_pop"]]
-# meta_pops_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+fdr_maize_file = snakemake@input[["fdr_maize"]]
+# fdr_maize_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
+fit_file = snakemake@input[["fit_maize"]]
+# fit_maize_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
+meta_maize_file = snakemake@input[["meta_maize"]]
+# meta_maize_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
 sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 png_out = snakemake@output[["png"]]
 # png_out = paste0("mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv.png")
-mhl1_bed = snakemake@input[["mhl1_bed"]]
-# mhl1_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed"
-
+mhl1_QTL_bed = snakemake@input[["mhl1_QTL_bed"]]
+# mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed"
+mhl1_inv_bed = snakemake@input[["mhl1_inv_bed"]]
+# mhl1_inv_bed = "mhl1_inv/results/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv.bed"
 
 # load data
 source(colors_file)
