@@ -2667,7 +2667,14 @@ Job counts:
         1       get_mhl1_inv_coord
         1       run_PCAngsd_mhl1_inv
         4 # RUNNING 2.27.2021. error w/ awk. fixed:
-
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1       get_GL_mhl1_inv
+                1       get_mhl1_inv_coord
+                1       run_PCAngsd_mhl1_inv
+                4 # fixed awk. but only that rule ran. needed to fix params -> input for regions_file
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)

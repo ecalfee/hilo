@@ -59,7 +59,7 @@ rule get_GL_mhl1_inv:
         mem = lambda wildcards, attempt: attempt * 16
     shell:
         "angsd -out {params.out_prefix} "
-        "-rf {params.regions_file} "
+        "-rf {input.regions_file} "
         "-ref {input.ref} "
         "-bam {input.bam_list} "
         "-remove_bads 1 "
