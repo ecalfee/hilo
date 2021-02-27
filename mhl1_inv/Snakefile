@@ -1,0 +1,105 @@
+## mhl1_inv/Snakefile: pipeline to test if outlier overlapping mhl1 QTL is an inversion
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+
+## get_mhl1_inv_coord: gets coordinates for putative mhl1 inversion by finding tracts in sympatric maize with high slope with elevation that are in bin 4 chr9 (mhl1 QTL)
+# note: merges regions within 10kb into 1 contiguous region
+rule get_mhl1_inv_coord:
+    input:
+        outliers_bed = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_pos_lmElev_outliers.fdr05.bed",
+        mhl1_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
+        genome = ref_chr
+    output:
+        bed = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed",
+        regions_file = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 5,
+        mem = 2
+    shell:
+        """
+        bedtools intersect -a {input.outliers_bed} -b {input.mhl1_bed} -sorted -g {input.genome} | bedtools merge -i - -d 10000 > {output.bed}
+        awk {output.bed} '{{print $1":"$2"-"$3}}' > {output.regions_file}
+        """
+    #bedtools intersect -a ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/maize_pos_lmElev_outliers.fdr05.bed
+    #-b data/known_QTL/chr9_bin4_mhl1_locus_v4.bed -sorted -g data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | bedtools merge -i -
+
+## get_GL_mhl1_inv: get genotype likelihoods for all SNPs maf > .05 (maize + mexicana) for mhl1 putative inversion region
+rule get_GL_mhl1_inv:
+    input:
+        bams = all_bams, # all input bams
+        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
+        bam_list = "samples/" + prefix_all + "_bams.list",
+        ref = ref,
+        fai = fai,
+        depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal",
+        regions_file = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
+    output: # outputs minor allele freq. file and beagle GL file
+        mafs = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.mafs.gz",
+        gl = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
+    params:
+        p = "med2",
+        out_prefix = "variant_sites/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv,
+        min_ind = 150, # a little less than 40% of the total sample (including ind's < 0.5x coverage that won't get ancestry calls)
+        # calculate 2.5x the mean depth
+        max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
+    shadow:
+        "minimal"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 16
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-rf {params.regions_file} "
+        "-ref {input.ref} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 "
+        "-minMapQ 30 -minQ 20 "
+        "-doMajorMinor 2 "
+        "-doCounts 1 -minMaf 0.05 -doMaf 8 "
+        "-GL 1 -doGlf 2 "
+        "-minInd {params.min_ind} "
+        "-P 2 "
+        "-baq 2 "
+        "-setMaxDepth {params.max_depth} "
+        "-checkBamHeaders 0"
+
+
+## run_PCAngsd_mhl1_inv: run pcangsd on maize + mexicana individuals for mhl1 putative inversion region
+rule run_PCAngsd_mhl1_inv:
+    input:
+        gl = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
+    output:
+        cov = "mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
+    params:
+        p = "med2",
+        prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        4
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        """
+        pcangsd \
+        -beagle {input.gl} \
+        -threads {threads} -iter 100 \
+        -minMaf 0 -admix \
+        -o {params.prefix_out}
+        """
+
+## plot_mhl1_inv: plot ancestry outliers across chr9 bin 4 and PCA for putative mhl1 inversion
+# rule plot_mhl1_inv

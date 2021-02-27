@@ -133,6 +133,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 #include: "map/Snakefile"
+include: "mhl1_inv/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -219,12 +220,23 @@ rule all:
         "map/plots/mexico_lines_elev_teo_color.png",
         "map/plots/mexico_lines_elev_teo_black.png",
         "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex",
-        "global_ancestry/plots/global_anc_multi.png"
+        "global_ancestry/plots/global_anc_multi.png",
+        expand("mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov", Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:
         time_min = 30,
         mem = 2
+
+## some: for running a subset of analyses
+rule some:
+    input:
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+
 
 ## fst: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
 rule fst:
