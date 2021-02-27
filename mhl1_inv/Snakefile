@@ -26,7 +26,7 @@ rule get_mhl1_inv_coord:
     shell:
         """
         bedtools intersect -a {input.outliers_bed} -b {input.mhl1_bed} -sorted -g {input.genome} | bedtools merge -i - -d 10000 > {output.bed}
-        awk {output.bed} '{{print $1":"$2"-"$3}}' > {output.regions_file}
+        awk {output.bed} '{{print $1"\:"$2"-"$3}}' > {output.regions_file}
         """
     #bedtools intersect -a ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/maize_pos_lmElev_outliers.fdr05.bed
     #-b data/known_QTL/chr9_bin4_mhl1_locus_v4.bed -sorted -g data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths | bedtools merge -i -

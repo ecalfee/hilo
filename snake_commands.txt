@@ -2658,6 +2658,15 @@ Job counts:
                 1       pi_fst
                 1       plot_within_ancestry_fst_pi_peaks
                 2 # COMPLETED 2.25.2021
+# running new scripts to get PCA for putative inversion at mhl1 on chr9:
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       get_GL_mhl1_inv
+        1       get_mhl1_inv_coord
+        1       run_PCAngsd_mhl1_inv
+        4 # RUNNING 2.27.2021. error w/ awk. fixed:
 
 
 # TO DO:
