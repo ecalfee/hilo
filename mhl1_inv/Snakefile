@@ -46,7 +46,7 @@ rule get_GL_mhl1_inv:
         gl = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
     params:
         p = "med2",
-        out_prefix = "variant_sites/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv",
+        out_prefix = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv",
         min_ind = 150, # a little less than 40% of the total sample (including ind's < 0.5x coverage that won't get ancestry calls)
         # calculate 2.5x the mean depth
         max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
