@@ -2681,7 +2681,14 @@ Job counts:
                         1       all
                         1       get_GL_mhl1_inv
                         1       run_PCAngsd_mhl1_inv
-                        3 # RUNNING 2.27.2021 10:45am
+                        3 # RUNNING 2.27.2021 10:45am. issue with typo in output prefix (no dir found). fixed and retrying:
+                        hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       get_GL_mhl1_inv
+        1       run_PCAngsd_mhl1_inv
+        3 # RUNNING 2.27.2021
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
