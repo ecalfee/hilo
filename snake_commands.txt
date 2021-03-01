@@ -2697,6 +2697,17 @@ Job counts:
                 1       test_key_genes
                 3 # REDOING domestication genes list and genome scan plots (adding labels)
                 # ACK NEED TO DEBBUG GENOME SCAN PLOTTING SCRIPT -- ADD INPUTS??
+                hilo$ snakemake all --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       all
+                        1       combine_genome_scan_plots
+                        1       plot_mhl1_inv
+                        1       plot_mhl1_inv_PCAngsd
+                        1       plot_within_ancestry_fst
+                        1       plot_within_ancestry_fst_pi_peaks
+                        6 # UPDATING SEVERAL PLOTS (incl. genomewide scan). All but pi_within_ancestry_fst ran. Fixed errors there and rerunning:
+
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)

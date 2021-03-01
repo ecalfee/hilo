@@ -221,7 +221,7 @@ rule all:
         "map/plots/mexico_lines_elev_teo_black.png",
         "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex",
         "global_ancestry/plots/global_anc_multi.png",
-        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png", Ne = 10000, YESNO = "yes")
+        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png", Ne = 10000, YESNO = "yes"),
         expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png", Ne = 10000, YESNO = "yes"),
         expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes"),
         expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),

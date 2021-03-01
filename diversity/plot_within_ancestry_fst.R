@@ -74,7 +74,7 @@ p_points_mexicana <- fst %>%
          LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
          LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
   ggplot(., aes(x = LOCALITY.pop1, 
-                y = expression(F[ST]),
+                y = fst,
                 color = LOCALITY.pop2,
                 shape = symp_allo,
                 size = symp_allo)) +
@@ -82,7 +82,7 @@ p_points_mexicana <- fst %>%
   facet_wrap(~comparison_type, nrow = 2) +
   coord_flip() +
   theme_light() +
-  labs(x = "Population 1", color = "Population 2", 
+  labs(x = "Population 1", color = "Population 2", y = expression(F[ST]),
        shape = "Comparison Type", size = "Comparison Type") +
   scale_shape_manual(values = c(19, 1)) +
   scale_size_manual(values = c(1, 2)) +
@@ -104,7 +104,7 @@ p_points_maize <- fst %>%
          LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
          LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
   ggplot(., aes(x = LOCALITY.pop1, 
-                y = expression(F[ST]),
+                y = fst,
                 color = LOCALITY.pop2,
                 shape = symp_allo,
                 size = symp_allo)) +
@@ -112,7 +112,7 @@ p_points_maize <- fst %>%
   facet_wrap(~comparison_type, nrow = 2) +
   coord_flip() +
   theme_light() +
-  labs(x = "Population 1", color = "Population 2", 
+  labs(x = "Population 1", color = "Population 2", y = expression(F[ST]),
        shape = "Comparison Type", size = "Comparison Type") +
   scale_shape_manual(values = c(19, 1)) +
   scale_size_manual(values = c(1, 2)) +
@@ -141,12 +141,12 @@ p_heatmap_mexicana <- fst_mexicana %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = expression(F[ST]))) +
+             fill = fst)) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
-  labs(x = "population 1", y = "population 2") +
+  labs(x = "population 1", y = "population 2", fill = expression(F[ST])) +
   #ggtitle("fst within mexicana ancestry") +
   coord_fixed()
 
@@ -168,12 +168,12 @@ p_heatmap_maize <- fst_maize %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = expression(F[ST]))) +
+             fill = fst)) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
-  labs(x = "population 1", y = "population 2") +
+  labs(x = "population 1", y = "population 2", fill = expression(F[ST])) +
   #ggtitle("fst within maize ancestry") +
   coord_fixed()
 # note: one fst value is very small but negative
@@ -210,7 +210,7 @@ p_heatmap_both <- fst_maize %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = expression(F[ST]))) +
+             fill = fst)) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
