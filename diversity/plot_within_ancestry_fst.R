@@ -74,7 +74,7 @@ p_points_mexicana <- fst %>%
          LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
          LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
   ggplot(., aes(x = LOCALITY.pop1, 
-                y = fst,
+                y = expression(F[ST]),
                 color = LOCALITY.pop2,
                 shape = symp_allo,
                 size = symp_allo)) +
@@ -104,7 +104,7 @@ p_points_maize <- fst %>%
          LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
          LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
   ggplot(., aes(x = LOCALITY.pop1, 
-                y = fst,
+                y = expression(F[ST]),
                 color = LOCALITY.pop2,
                 shape = symp_allo,
                 size = symp_allo)) +
@@ -235,7 +235,7 @@ p_heatmap_both <- fst_maize %>%
   scale_color_manual(values = "white", labels = "sympatric\npopulation pair") +
   theme(legend.key = element_rect(fill = "darkgrey", color = NA),
         plot.title = element_blank()) +
-  labs(color = NULL, fill = "Fst")
+  labs(color = NULL, fill = expression(F[ST]))
 # note: one fst value is very small but negative
 #p_heatmap_both
 

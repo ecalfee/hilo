@@ -141,9 +141,9 @@ p_fst_mex <- fst %>%
   theme_light() +
   scale_shape_manual(values = shapes_peaks, 
                      labels = labels_peaks_maize) +
-  labs(title = "Fst within mexicana ancestry\nbetween local population pairs", 
+  labs(#title = "Fst within mexicana ancestry\nbetween local population pairs", 
        x = "Location", 
-       y = "Fst", 
+       y = expression(F[ST]), 
        color = NULL, 
        shape = NULL) +
   theme(legend.key.size = unit(10, "mm"))
@@ -164,9 +164,9 @@ p_pi_mex <- pi %>%
   scale_shape_manual(values = shapes_peaks,
                      labels = labels_peaks_maize) +
   scale_color_manual(values = col_maize_mex_parv) +
-  labs(title = "Diversity within mexicana ancestry", 
+  labs(#title = "Diversity within mexicana ancestry", 
        x = "Location", 
-       y = "pi", 
+       y = expression(pi), 
        color = NULL, 
        shape = NULL) +
   theme(legend.key.size = unit(10, "mm"))
@@ -187,9 +187,9 @@ p_pi_maize <- pi %>%
   scale_shape_manual(values = shapes_peaks[3],
                      labels = labels_peaks_mex[3]) +
   scale_color_manual(values = col_maize_mex_parv) +
-  labs(title = "Diversity within maize ancestry", 
+  labs(#title = "Diversity within maize ancestry", 
        x = "Location", 
-       y = "pi", 
+       y = expression(pi), 
        color = NULL, 
        shape = NULL) +
   theme(legend.key.size = unit(10, "mm"))
