@@ -222,7 +222,11 @@ rule all:
         "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex",
         "global_ancestry/plots/global_anc_multi.png",
         expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png", Ne = 10000, YESNO = "yes")
-        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png", Ne = 10000, YESNO = "yes")
+        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png", Ne = 10000, YESNO = "yes"),
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes"),
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png", Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:
@@ -250,7 +254,7 @@ rule fst:
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
         expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
         "diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes"),
+        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:

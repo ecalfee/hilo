@@ -86,8 +86,8 @@ p_points_mexicana <- fst %>%
        shape = "Comparison Type", size = "Comparison Type") +
   scale_shape_manual(values = c(19, 1)) +
   scale_size_manual(values = c(1, 2)) +
-  scale_color_viridis_d(direction = 1, option = "viridis") +
-  ggtitle("Fst within mexicana ancestry tracts (genomewide)")
+  scale_color_viridis_d(direction = 1, option = "viridis")# +
+  #ggtitle("Fst within mexicana ancestry tracts (genomewide)")
 
 ggsave(file = png_points_mexicana,
        plot = p_points_mexicana,
@@ -116,8 +116,8 @@ p_points_maize <- fst %>%
        shape = "Comparison Type", size = "Comparison Type") +
   scale_shape_manual(values = c(19, 1)) +
   scale_size_manual(values = c(1, 2)) +
-  scale_color_viridis_d(direction = 1, option = "viridis") +
-  ggtitle("Fst within maize ancestry tracts (genomewide)")
+  scale_color_viridis_d(direction = 1, option = "viridis")# +
+  #ggtitle("Fst within maize ancestry tracts (genomewide)")
 
 ggsave(file = png_points_maize,
        plot = p_points_maize,
@@ -141,13 +141,13 @@ p_heatmap_mexicana <- fst_mexicana %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = fst)) +
+             fill = expression(F[ST]))) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
   labs(x = "population 1", y = "population 2") +
-  ggtitle("fst within mexicana ancestry") +
+  #ggtitle("fst within mexicana ancestry") +
   coord_fixed()
 
 ggsave(file = png_heatmap_mexicana,
@@ -168,13 +168,13 @@ p_heatmap_maize <- fst_maize %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = fst)) +
+             fill = expression(F[ST]))) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
   labs(x = "population 1", y = "population 2") +
-  ggtitle("fst within maize ancestry") +
+  #ggtitle("fst within maize ancestry") +
   coord_fixed()
 # note: one fst value is very small but negative
 
@@ -210,13 +210,13 @@ p_heatmap_both <- fst_maize %>%
   ggplot(., 
          aes(x = zea_loc1, 
              y = zea_loc2, 
-             fill = fst)) +
+             fill = expression(F[ST]))) +
   geom_tile() +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.01, 0.5)) +
   labs(x = "population 1", y = "population 2") +
-  ggtitle("fst within maize (top left)\nor mexicana (bottom right) ancestry") +
+  #ggtitle("fst within maize (top left)\nor mexicana (bottom right) ancestry") +
   coord_fixed() +
   geom_point(data = fst %>%
                            arrange(., zea.pop1, ELEVATION.pop1) %>%
