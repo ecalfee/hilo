@@ -2688,7 +2688,16 @@ Job counts:
         1       all
         1       get_GL_mhl1_inv
         1       run_PCAngsd_mhl1_inv
-        3 # RUNNING 2.27.2021
+        3 # RUNNING 2.27.2021 COMPLETED.
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1       combine_genome_scan_plots
+                1       test_key_genes
+                3 # REDOING domestication genes list and genome scan plots (adding labels)
+                # ACK NEED TO DEBBUG GENOME SCAN PLOTTING SCRIPT -- ADD INPUTS??
+
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)

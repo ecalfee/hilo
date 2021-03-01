@@ -157,7 +157,11 @@ rule combine_genome_scan_plots:
         rds_maize_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.meanAnc.plot.rds",
         rds_mexicana_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.plot.rds",
         rds_maize_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.lmElev.plot.rds",
-        rds_mexicana_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.plot.rds"
+        rds_mexicana_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.plot.rds",
+        genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+        mhl1_QTL =  "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
+        inv =  "data/refMaize/inversions/knownInv_v4_coord.txt",
+        genes = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt"
     output:
         png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png"
     params:
