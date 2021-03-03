@@ -61,7 +61,7 @@ rule filter_raisd_hits:
 rule calc_overlap_hits:
     input:
         hits = "domestication_scan/results/raisdHits_keep.bed",
-        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{STAT}_{POSNEG}_outliers.{SIG}.merged.bed",
+        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
         genome = ref_chr
         # introgression desert files:
         #maize_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_neg_meanAnc_outliers.perc02.bed",
