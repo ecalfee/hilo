@@ -131,9 +131,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
-include: "diversity/Snakefile"
+#include: "diversity/Snakefile"
 #include: "map/Snakefile"
-include: "mhl1_inv/Snakefile"
+#include: "mhl1_inv/Snakefile"
+include: "domestication_scan/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -236,6 +237,9 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
+        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc02.bed",
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc02.bed",
     params:
         p = "med2"
     resources:

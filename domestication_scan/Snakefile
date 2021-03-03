@@ -1,0 +1,90 @@
+## domestication_scan/Snakefile: pipeline to test for enrichment of overlap between domestication
+# scan outlier regions and 'introgression deserts'
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+## id_raisd_hits: creates bed file of top X% raisd hits (as contiguous regions) from raw raisd output
+rule id_raisd_hits:
+    input:
+        raisd = "domestication_scan/results/RAiSD_Output.Raisd"
+    output:
+        bed = "domestication_scan/results/raisdHits.bed"
+    params:
+        p = "med2",
+        top_x = .001
+    resources:
+        time_min = 15,
+        mem = 8
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "id_raisd_hits.R"
+
+## get_fasta_hits: gets fasta reference genome sequence for raisd hits
+rule get_fasta_hits:
+    input:
+        ref = ref,
+        bed = "domestication_scan/results/raisdHits.bed"
+    output:
+        fa = "domestication_scan/results/raisdHits.fa"
+    params:
+        p = "med2",
+        top_x = .001
+    resources:
+        time_min = 15,
+        mem = 8
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "bedtools getfasta -fi {input.ref} -fo {output.fa} -bed {input.bed}"
+
+## filter_raisd_hits: script filters raisd hits for too many Ns (missing data in reference genome)
+rule filter_raisd_hits:
+    input:
+        bed = "domestication_scan/results/raisdHits.bed",
+        fa = "domestication_scan/results/raisdHits.fa"
+    output:
+        bed = "domestication_scan/results/raisdHits_keep.bed"
+    params:
+        p = "med2",
+        maxN = .001
+    resources:
+        time_min = 15,
+        mem = 8
+    conda:
+        "../envs/environment.yaml"
+    script:
+        "filter_raisd_hits.R"
+
+## calc_overlap_hits: find overlap (in bp) for raisd hits & outliers for original raisd hits positions and 100 randomly shuffled positions
+rule calc_overlap_hits:
+    input:
+        hits = "domestication_scan/results/raisdHits_keep.bed",
+        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{STAT}_{POSNEG}_outliers.{SIG}.merged.bed",
+        genome = ref_chr
+        # introgression desert files:
+        #maize_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_neg_meanAnc_outliers.perc02.bed",
+        #mexicana_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana_pos_meanAnc_outliers.perc02.bed",
+    output:
+        bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
+        shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        """
+        bedtools intersect -a {input.hits} -b {input.outliers} -wo > {output.bed}
+        awk '{{count += 1; sum += $7;}} END{{print count,sum;}}' {output.bed} > {output.shuffle}
+        for i in {{1..100}}
+            do bedtools shuffle -i {input.hits} -g {input.genome} | \\
+            bedtools intersect -a - -b {input.outliers} -wo | \\
+            awk '{{count += 1; sum += $7;}} END{{print count,sum;}}' >> {output.shuffle}
+        done
+        """

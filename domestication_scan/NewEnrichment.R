@@ -4,38 +4,62 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(seqinr)
-setwd('/Users/danielgates/Desktop/ErinHybridization/')
+# script to calculate bp overlap between raisd putative domestication regions
+# and 'introgression deserts' in sympatric maize and mexicana 
+# working directory is hilo/
 
-#load in Raisd
-raisd<-fread('/Users/danielgates/Desktop/ErinHybridization/RAiSD_Output.Raisd',data.table = FALSE)
+# input files
+raisd_input <- "domestication_scan/results/RAiSD_Output.Raisd"
+rmap_file <- "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+maize_bed <- "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.combined.anc.bed"
+mexicana_bed <- "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/mexicana.combined.anc.bed"
+# output files
+ref_maize <- "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
+fa_out <- "domestication_scan/results/out.fa"
+raisd_bed <- "domestication_scan/results/raisdHits.bed" 
+
+  
+#load in Raisd results
+raisd<-fread(raisd_input,data.table = FALSE)
 colnames(raisd)<-c('seqnames','testsnp','start','end','a','b','c','score')
 
 raisd$seqnames<-paste('chr',raisd$seqnames,sep="")
 raisdraw<-raisd #for bootstrap test
 
 #pull in the genetic map
-#map<-fread('ogut_fifthcM_map_agpv4_EXTENDED.txt',data.table=FALSE)
-map<-fread('ogut_fifthcM_map_agpv4_INCLUDE.txt',data.table=FALSE)
+map<-fread(rmap_file,data.table=FALSE)
 colnames(map)<-c('SNP','marker','pos_cM', 'chr', 'pos_bp')
 
-#impute recomb rate for raisd snps:
-subsets<-lapply(1:10,function(cr){
+#impute recomb rate for raisd snps using linear interpolation:
+raisdNew <-do.call(rbind,
+                           lapply(1:10,function(cr){
   raisd_subset<-subset(raisd,seqnames==paste('chr',cr,sep=""))
   map_subset<-subset(map,chr==cr)
-  raisd_subset$pos_cm <-spline(x=map_subset$pos_bp,y=map_subset$pos_cM,xout=raisd_subset$testsnp, method = "hyman")$y
-  return(raisd_subset)
-})
+  raisd_subset$pos_cm <- approx(x = map_subset$pos_bp,
+                                y = map_subset$pos_cM,
+                                xout = raisd_subset$testsnp,
+                                method = "linear")$y
+   return(raisd_subset)
+}))
 
-raisdNew<-bind_rows(subsets)
-raisdNew<-raisdNew[-which(abs(raisdNew$pos_cm)>500),] #remove recombination outliers for pairing (around 1%)
+#raisdNew0<-bind_rows(subsets)
+#raisdNew0<-raisdNew0[-which(abs(raisdNew0$pos_cm)>500),] #remove recombination outliers for pairing (around 1%)
 
 #now chunk recombs into even deciles and sample windows evenly:
 bin<-as.numeric(cut_number(raisdNew$pos_cm,10))
 raisdNew$bin<-bin
-raisd<-raisdNew
+
+# plot: these bins are cM position deciles across genome (not cM/bp recombination rates)
+test_bins <- data.frame(bin = bin[c(T, rep(F, 999))], 
+                        bp_pos = raisdNew$testsnp[c(T, rep(F, 999))],
+                        chr = raisdNew$seqnames[c(T, rep(F, 999))])
+ggplot(test_bins, aes(x = bp_pos, y = bin, color = chr)) +
+  geom_point() +
+  theme_classic() +
+  facet_grid(chr~.)
 
 #calculate window width for matching
-raisd$width<-raisd$end-raisd$start
+raisdNew$width<-raisdNew$end-raisdNew$start
 
 #Now past the heavy lifting on raisd's end (make a save and load for dev)
 
@@ -43,105 +67,103 @@ raisd$width<-raisd$end-raisd$start
 #do the actual subsetting here by score (raisd score)
 #This sort is memory intensive, doing it in two steps
 #First remove the 0 scores first (we'll never select anyhow)
-raisd2<-raisd[-which(raisd$score==0),]
+raisdNew2<-raisdNew[-which(raisdNew$score==0),]
 
 #Then do the sort
-raisdSort<-raisd2[order(raisd2$score,decreasing=TRUE),]
+raisdSort<-raisdNew2[order(raisdNew2$score,decreasing=TRUE),]
 #Rough attempt to get top X%
-raisd<-raisdSort[1:round(nrow(raisd)*0.001),] #testing because the final length will depend on how much overlap is here
+raisdHits<-raisdSort[1:round(nrow(raisdNew)*0.001),] #testing because the final length will depend on how much overlap is here
 
-grRaisd <- makeGRangesFromDataFrame(raisd, keep.extra.columns=TRUE)
-grRaisd2<-grRaisd
-grRaisd<-reduce(grRaisd)
+grRaisd <- makeGRangesFromDataFrame(raisdHits, keep.extra.columns=TRUE) %>%
+  reduce()
 
 #write a bed file of grRaisd and remove the ones that are mostly Ns
 rdf<-data.frame(grRaisd)
-rdf$seqnames<-sapply(rdf$seqnames,substr,4,6)
+rdf$seqnames<-sapply(rdf$seqnames,substr,4,6) # chr2 -> 2
 
-write.table(rdf[,c(1:3)],file="raisdHits.bed",quote = FALSE,row.names = FALSE,col.names = FALSE,sep = '\t')
+write.table(rdf[,c(1:3)],file=raisd_bed,
+            quote = FALSE,row.names = FALSE,col.names = FALSE,sep = '\t')
 
 #now run bedtools:
-system("bedtools getfasta -fi Zea_mays.AGPv4.dna.chr.fa -fo out.fa -bed raisdHits.bed ")
-
+system(paste("bedtools getfasta -fi", ref_maize, "-fo", fa_out, "-bed", raisd_bed))
+       
 #now check to see which of the outliers are driven by N's
 
 #read in the bed file:
-hits<-fread('raisdHits.bed',data.table = FALSE)
+hits<-fread(raisd_bed,data.table = FALSE)
 
 #read in the sequences of the regions:
-fas<-read.fasta('out.fa')
+fas<-read.fasta(fa_out)
 totals<-sapply(fas,function(x) length(which(x == 'n')))
 percents<-sapply(fas,function(x) length(which(x == 'n'))/length(x))
 #Use for weighting bootstraps
-kps<-rdf[which(percents<0.5),]
+kps<-rdf[which(percents<0.5),] # keep only raisd hits that have less than 50% n's (missing data in reference genome)
 kps$seqnames<-sapply(kps$seqnames,function(x) paste('chr',x,sep=""))
 perc<-0.7
 #remake the genomicranges file:
-grRaisd <- makeGRangesFromDataFrame(kps, keep.extra.columns=TRUE)
+grRaisd_kps <- makeGRangesFromDataFrame(kps, keep.extra.columns=TRUE)
 
 
 #load in introgression scan data:
-maizraw<-fread('maize.combined.anc.bed',data.table = FALSE)
-maiz<-maizraw
-colnames(maiz)<-c('seqnames','start','end','testsnp','score')
-maiz$seqnames<-paste('chr',maiz$seqnames,sep="")
+# sympatric maize data (mean mexicana ancestry at each position)
+maizraw<-fread(maize_bed,data.table = FALSE)
+colnames(maizraw)<-c('seqnames','start','end','testsnp','score')
+maizraw$seqnames<-paste('chr',maizraw$seqnames,sep="")
 
 #find the break for candidates
-twop<-round(0.005*dim(maiz)[1])
+twop<-round(0.02*dim(maizraw)[1]) # changed from .005 to .02 for 2% (not 0.5%)
 
-#increasing:
-cutoff<-maiz$score[order(maiz$score)[twop]]
+# lowest 2% mexicana introgression in maize
+cutoff<-maizraw$score[order(maizraw$score)[twop]]
+# table(maiz$score<cutoff)/nrow(maiz)*100 # 2%
 #subset by score (mean mex ancestry)
-maiz<-maiz[which(maiz$score<cutoff),]
+maiz<-maizraw[which(maizraw$score<cutoff),]
 
-#decreasing:
-#cutoff<-maiz$score[order(maiz$score,decreasing = TRUE)[twop]]
-#maiz<-maiz[which(maiz$score>cutoff),]
-
-mexraw<-fread('mexicana.combined.anc.bed',data.table = FALSE)
-mex<-mexraw
-colnames(mex)<-c('seqnames','start','end','testsnp','score')
-mex$seqnames<-paste('chr',mex$seqnames,sep="")
+# sympatric mexicana data (mean mexicana ancestry at each position)
+mexraw<-fread(mexicana_bed,data.table = FALSE)
+colnames(mexraw)<-c('seqnames','start','end','testsnp','score')
+mexraw$seqnames<-paste('chr',mexraw$seqnames,sep="")
 #find the X% break
-twop<-round(0.06*dim(mex)[1])
+twop<-round(0.02*dim(mexraw)[1]) # changed from 0.06 to 0.02 for 2%
 
-#increasing
-cutoff<-mex$score[order(mex$score)[twop]]
+# highest 2% mexicana ancestry (low introgression) in mexicana
+cutoff<-mexraw$score[order(mexraw$score,decreasing = TRUE)[twop]]
 #subset by score (mean mex ancestry)
-mex<-mex[which(mex$score<cutoff),]
-
-#decreasing
-#cutoff<-mex$score[order(mex$score,decreasing = TRUE)[twop]]
-#subset by score (mean mex ancestry)
-#mex<-mex[which(mex$score>cutoff),]
+# table(mexraw$score>cutoff)/nrow(mexraw)*100 # 2%
+mex<-mexraw[which(mexraw$score>cutoff),]
 
 
 #cM spline for maiz/mex
 
-subsets<-lapply(1:10,function(cr){
+MaizNew <- do.call(rbind,
+                   lapply(1:10,function(cr){
   maiz_subset<-subset(maiz,seqnames==paste('chr',cr,sep=""))
   map_subset<-subset(map,chr==cr)
-  maiz_subset$pos_cm <-spline(x=map_subset$pos_bp,y=map_subset$pos_cM,xout=maiz_subset$testsnp, method = "hyman")$y
+  maiz_subset$pos_cm <- approx(x = map_subset$pos_bp,
+                               y = map_subset$pos_cM,
+                               xout = maiz_subset$testsnp,
+                               method = "linear")$y
   return(maiz_subset)
-})
+}))
 
-MaizNew<-bind_rows(subsets)
 MaizNew$width<-MaizNew$end-MaizNew$start
 
 grMaiz <- makeGRangesFromDataFrame(MaizNew, keep.extra.columns=TRUE)
 
 
 #be aware that based on filtering you may not have hits on a chromosome and that will trip up things downstream
-subsets<-lapply(c(1:10),function(cr){
+MexNew <- do.call(rbind, 
+                  lapply(c(1:10),function(cr){
   mex_subset<-subset(mex,seqnames==paste('chr',cr,sep=""))
   map_subset<-subset(map,chr==cr)
-  mex_subset$pos_cm <-spline(x=map_subset$pos_bp,y=map_subset$pos_cM,xout=mex_subset$testsnp, method = "hyman")$y
+  mex_subset$pos_cm <- approx(x = map_subset$pos_bp,
+                              y = map_subset$pos_cM,
+                              xout = mex_subset$testsnp,
+                              method = "linear")$y
   return(mex_subset)
-})
+}))
 
-MexNew<-bind_rows(subsets)
 MexNew$width<-MexNew$end-MexNew$start
-
 
 grMex <- makeGRangesFromDataFrame(MexNew, keep.extra.columns=TRUE)
 
@@ -150,18 +172,18 @@ grMex <- makeGRangesFromDataFrame(MexNew, keep.extra.columns=TRUE)
 #Get an estimate of the sizes of tests that I'm looking at to get an expectation based on percentage
 
 
-hitsMex <- countOverlaps(grRaisd, grMex, ignore.strand=TRUE)
+hitsMex <- countOverlaps(grRaisd_kps, grMex, ignore.strand=TRUE)
 #I don't think I want sum, I think I want is 0 or not
 length(which(hitsMex>0))
-raisdlen<-length(grRaisd)
-raisdlenbases<-sum(data.frame(grRaisd)$width)
+raisdlen<-length(grRaisd_kps)
+raisdlenbases<-sum(data.frame(grRaisd_kps)$width)
 Mexlen<-length(grMex)
-sum(data.frame( GenomicRanges::intersect(grRaisd, grMex,ignore.strand=TRUE))$width)
+sum(data.frame( GenomicRanges::intersect(grRaisd_kps, grMex,ignore.strand=TRUE))$width)
 
-hitsMaiz <- countOverlaps(grRaisd, grMaiz, ignore.strand=TRUE)
+hitsMaiz <- countOverlaps(grRaisd_kps, grMaiz, ignore.strand=TRUE)
 length(which(hitsMaiz>0))
 maizlen<-length(grMaiz)
-sum(data.frame( GenomicRanges::intersect(grRaisd, grMaiz,ignore.strand=TRUE))$width)
+sum(data.frame( GenomicRanges::intersect(grRaisd_kps, grMaiz,ignore.strand=TRUE))$width)
 
 hitsMexMaiz <- countOverlaps(grMex, grMaiz, ignore.strand=TRUE)
 length(which(hitsMexMaiz>0))
@@ -170,13 +192,12 @@ sum(data.frame( GenomicRanges::intersect(grMex, grMaiz,ignore.strand=TRUE))$widt
 #get approx proportions of bins from final:
 proportions<-table(raisd$bin)/nrow(raisd)
 
-bin<-as.numeric(cut_number(MaizNew$pos_cm,10))
-MaizNew$bin<-bin
+
+MaizNew$bin<-as.numeric(cut_number(MaizNew$pos_cm,10))
 maiz<-MaizNew
 maizproportions<-table(maiz$bin)
 
-bin<-as.numeric(cut_number(MexNew$pos_cm,10))
-MexNew$bin<-bin
+MexNew$bin<-as.numeric(cut_number(MexNew$pos_cm,10))
 mex<-MexNew
 mexproportions<-table(mex$bin)
 
@@ -189,7 +210,7 @@ mexproportions<-table(mex$bin)
 #raisdraw$seqnames<-paste('chr',raisdraw$seqnames,sep="")
 
 #get the window sizes of raisd:
-rdf<-data.frame(grRaisd)
+rdf_kps<-data.frame(grRaisd_kps)
 
 
 #Now the hybridization islands are held constant. I just permute the raisd window sizes onto different locations

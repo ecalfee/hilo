@@ -2707,7 +2707,18 @@ Job counts:
                         1       plot_within_ancestry_fst
                         1       plot_within_ancestry_fst_pi_peaks
                         6 # UPDATING SEVERAL PLOTS (incl. genomewide scan). All but pi_within_ancestry_fst ran. Fixed errors there and rerunning:
+                        hilo$ snakemake all --quiet --profile slurm
+                        Job counts:
+                                count   jobs
+                                1       all
+                                1       plot_within_ancestry_fst
+                                2 # COMPLETED. 2.28.2021
+# double-checking number of merged bams:
+hilo$ ls -lh filtered_bams/merged_bams/ | grep -v "home/ecalfee" > test/list_of_merged_bams.txt
 
+# I realized bedtools intesect should have -u option for flowering time genes (reports original gene once if it overlaps any outliers). this should be the same as without -u unless genes are very big and can span 2+ disjoint outliers
+# so I moved old flowering time overlap results to a new subdirectory: ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/old_intersect/.
+# and these will rerun when I do rule 'all'
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)

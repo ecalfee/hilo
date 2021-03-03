@@ -331,11 +331,11 @@ rule calc_overlap:
         mem = 2
     shell:
         """
-        bedtools intersect -a {input.genes} -b {input.outliers} > {output.bed}
+        bedtools intersect -a {input.genes} -b {input.outliers} -u > {output.bed}
         wc -l {output.bed} > {output.shuffle}
         for i in {{1..100}}
             do bedtools shuffle -i {input.genes} -g {input.genome} | \\
-            bedtools intersect -a - -b {input.outliers} | wc -l >> {output.shuffle}
+            bedtools intersect -a - -b {input.outliers} -u | wc -l >> {output.shuffle}
         done
         """
 
