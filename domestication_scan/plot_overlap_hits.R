@@ -55,7 +55,7 @@ data.frame(
   p_value = filter(overlap, d == "shuffled") %>%
     summarise(p_value = sum(percent_bp_overlap >= percent_bp_overlap_original)/n()),
   total_hits_kb = sum(hits$length)/1000) %>%
-  dplyr::mutate(perc_of_genome_in_hits = total_hits_kb/genome_length_kb) %>%
+  dplyr::mutate(perc_of_genome_in_hits = 100*total_hits_kb/genome_length_kb) %>%
   write.table(., 
             file = summary_out,
             quote = FALSE, sep = '\t',

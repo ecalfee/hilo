@@ -2736,7 +2736,29 @@ Job counts:                                                                     
                 1       filter_raisd_hits
                 1       get_fasta_hits
                 1       some
-                5 # RUNNING after I did 'touch' to trigger rerun: touch domestication_scan/results/raisdHits.bed 
+                5 # RUNNING after I did 'touch' to trigger rerun: touch domestication_scan/results/raisdHits.bed
+# deleted outputs startign with raisdHits.bed and rerunning after talking w/ Jeff:
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       calc_overlap_hits
+        1       filter_raisd_hits
+        1       get_fasta_hits
+        1       id_raisd_hits
+        1       some
+        6 # OOPS didn't pull from git. Retry:
+        hilo$ snakemake some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                2       calc_overlap_hits
+                1       filter_raisd_hits
+                1       get_fasta_hits
+                1       id_raisd_hits
+                2       plot_overlap_hits
+                1       some
+                8 # RUNNING 
+
+
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
