@@ -2773,7 +2773,15 @@ Job counts:
                         1       summarise_overlap_flowering_time
                         1       test_key_genes
                         33 # oops! new bed file didn't run for domestication genes. will fix script:
-                        
+                        hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       add_20kb_domestication_genes
+        1       all
+        2       calc_overlap_domestication_genes
+        1       make_bed_domestication_genes_from_lit
+        1       summarise_overlap_domestication_genes
+        6 # RUNNING
 
 
 

@@ -13,8 +13,8 @@ txt_out = snakemake@output[["txt"]] # txt output file
 
 # function to calculate p-values for overlap based on permutation test
 calc_pval = function(zea, sign, stat, sig, prefix_all, Ne, yesno){
-  results_file = paste0("ZAnc/results/", prefix_all, "/Ne", Ne, "_", yesno, 
-                        "Boot/flowering_time_genes_v4.plus20kb.", zea, "_", sign,
+  results_file = paste0("domestication_scan/results/", prefix_all, "/Ne", Ne, "_", yesno, 
+                        "Boot/domestication_genes_from_lit.plus20kb.", zea, "_", sign,
                         "_", stat, "_outliers.", sig, ".counts")
   count = read.table(results_file, header = F, nrows = 1)[1,1]
   shuffle = read.table(results_file, header = F, skip = 1)$V1
