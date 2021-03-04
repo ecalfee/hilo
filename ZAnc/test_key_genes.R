@@ -23,9 +23,6 @@ txt_out = snakemake@output[["txt"]]
 # txt_out = paste0("ZAnc/results/", prefix, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.txt")
 tbl_out = snakemake@output[["tbl"]]
 # tbl_out = paste0("ZAnc/tables/", prefix, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.tex")
-bed_domestication = snakemake@output[["bed_domestication"]]
-# bed_domestication = "domestication_scan/results/domestication_genes_from_lit.bed"
-
 
 bed_sites <- read.table(bed_sites_file, header = F, 
                         sep = "\t", stringsAsFactors = F) %>%
@@ -51,7 +48,7 @@ genes_coord_20kb = bedr(
   input = list(i = genes_coord),
   method = "slop",
   check.chr = F,
-  params = paste("-g", genome_file, "-b 10000")
+  params = paste("-g", genome_file, "-b 20000")
 )
 
 # compare to outliers in sympatric mexicana and maize
@@ -238,9 +235,3 @@ print(xtable(tbl_outliers,
 
 # print raw results
 write.table(outliers, file = txt_out, col.names = T, row.names = F, quote = F, sep = "\t")
-
-# print bed file of domestication genes only
-filter(outliers, category == "domestication") %>%
-  dplyr::select(chr, start, stop, name_short) %>%
-  write.table(., file = bed_domestication,
-            col.names = F, row.names = F, quote = F, sep = "\t")

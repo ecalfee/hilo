@@ -2756,7 +2756,8 @@ Job counts:
                 1       id_raisd_hits
                 2       plot_overlap_hits
                 1       some
-                8 # RUNNING 
+                8 # RUNNING hilo$ touch ZAnc/results/flowering_time_genes_v4.plus20kb.bed
+
 
 
 

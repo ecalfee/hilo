@@ -380,8 +380,7 @@ rule test_key_genes:
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
         txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex",
-        bed_domestication = "domestication_scan/results/domestication_genes_from_lit.bed"
+        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,

@@ -112,7 +112,26 @@ rule plot_overlap_hits:
     script:
         "plot_overlap_hits.R"
 
-# add 20 kb to domestication genes
+
+## make_bed_domestication_genes_from_lit.R: makes bed file for all domestication genes in the list from the literature
+rule make_bed_domestication_genes_from_lit:
+    input:
+        genes_list = "data/key_genes.csv"
+    output:
+        bed = "domestication_scan/results/domestication_genes_from_lit.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "make_bed_domestication_genes_from_lit.R"
+
+
 ## add_20kb_domestication_genes: adds 20kb upstream and downstream to all domestication genes
 rule add_20kb_domestication_genes:
     input:
