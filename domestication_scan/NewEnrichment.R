@@ -4,6 +4,7 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(seqinr)
+
 # script to calculate bp overlap between raisd putative domestication regions
 # and 'introgression deserts' in sympatric maize and mexicana 
 # working directory is hilo/
