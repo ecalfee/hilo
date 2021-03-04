@@ -17,8 +17,11 @@ maxN <- as.numeric(snakemake@params[["maxN"]])
 # maxN <- 0.5 # proportion to use as cutoff for maximum Ns
 
 # output files
-bed_out <- snakemake@output[["bed"]]
-# bed_out <- "domestication_scan/results/raisdHits_keep.bed"
+bed_keep <- snakemake@output[["bed_keep"]]
+# bed_keep <- "domestication_scan/results/raisdHits_keep.bed"
+bed_excl <- snakemake@output[["bed_excl"]]
+# bed_excl <- "domestication_scan/results/raisdHits_exclude.bed"
+
 
 # check to see which of the outliers are driven by N's
 
@@ -29,16 +32,20 @@ hits <- data.table::fread(bed_in, data.table = FALSE)
 fas <- read.fasta(fa_in)
 
 # calculate percent of bp with missing data in the reference
-Ns <- sapply(fas, function(x) length(which(x == 'n')))
+Ns <- sapply(fas, function(x) sum(x == 'n'))
 lengths <- sapply(fas, function(x) length(x))
 percents <- Ns/lengths
 
 # filter out raisd hits exceeding maximum missing data (likely false-positives)
 hits_keep <- hits[which(percents < maxN), ] 
+hits_excl <- hits[which(percents >= maxN), ]
 
 # sum(hits_keep$V3 - hits_keep$V2)/10^9/2.1 # covers about 2% of the ref genome
 
-write.table(hits_keep, file = bed_out,
+write.table(hits_keep, file = bed_keep,
             quote = FALSE, sep = '\t',
             row.names = FALSE, col.names = FALSE)
 
+write.table(hits_excl, file = bed_excl,
+            quote = FALSE, sep = '\t',
+            row.names = FALSE, col.names = FALSE)

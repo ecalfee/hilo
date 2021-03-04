@@ -10,7 +10,7 @@ raisd_input <- snakemake@input[["raisd"]]
 # raisd_input <- "domestication_scan/results/RAiSD_Output.Raisd"
 # parameters
 top_x <- as.numeric(snakemake@params[["top_x"]])
-# top_x <- 0.001 # proportion to use as cutoff
+# top_x <- 0.002 # proportion to use as cutoff
 # output files
 bed_out <- snakemake@output[["bed"]]
 # bed_out <- "domestication_scan/results/raisdHits.bed"
@@ -39,7 +39,7 @@ grRaisd <- makeGRangesFromDataFrame(raisdHits, keep.extra.columns=TRUE) %>%
 rdf <- data.frame(grRaisd)
 rdf$seqnames <- sapply(rdf$seqnames, substr, 4, 6) # chr2 -> 2
 
-# sum(rdf$width/10^9)/2.1 # top_x = 0.001 covers about 3% of the ref genome before filtering out high N (missing data) windows
+# sum(rdf$width/10^9)/2.1 # top_x = 0.002 covers about 5.5% of the ref genome before filtering out high N (missing data) windows
 
 write.table(rdf[ , c("seqnames", "start", "end")], file = bed_out,
             quote = FALSE, sep = '\t',

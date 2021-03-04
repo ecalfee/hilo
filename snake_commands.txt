@@ -2729,6 +2729,14 @@ Job counts:                                                                     
         1       some
         1       summarise_overlap_flowering_time
         31 # COMPLETED 3.3.2021. Oops! Need to reset maxN to 0.5 (not 0.001!)
+        hilo$ snakemake some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                2       calc_overlap_hits
+                1       filter_raisd_hits
+                1       get_fasta_hits
+                1       some
+                5 # RUNNING after I did 'touch' to trigger rerun: touch domestication_scan/results/raisdHits.bed 
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
