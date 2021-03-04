@@ -182,8 +182,8 @@ rule calc_overlap_domestication_genes:
 ## summarise_overlap_domestication_genes: summarises number of outliers in original gene set (line 1) and 1000 randomly shuffled positions from that gene set (lines 2-1001)
 rule summarise_overlap_domestication_genes:
     input:
-        maize = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.counts",
-        mexicana = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.counts"
+        maize = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.perc02.counts",
+        mexicana = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc02.counts"
     output:
         txt = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
     params:
