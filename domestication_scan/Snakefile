@@ -48,7 +48,7 @@ rule filter_raisd_hits:
         bed = "domestication_scan/results/raisdHits_keep.bed"
     params:
         p = "med2",
-        maxN = .001
+        maxN = .5
     resources:
         time_min = 15,
         mem = 8

@@ -2719,6 +2719,16 @@ hilo$ ls -lh filtered_bams/merged_bams/ | grep -v "home/ecalfee" > test/list_of_
 # I realized bedtools intesect should have -u option for flowering time genes (reports original gene once if it overlaps any outliers). this should be the same as without -u unless genes are very big and can span 2+ disjoint outliers
 # so I moved old flowering time overlap results to a new subdirectory: ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/old_intersect/.
 # and these will rerun when I do rule 'all'
+hilo$ snakemake some --quiet --profile slurm
+Job counts:                                                                                                                      count   jobs
+        24      calc_overlap
+        2       calc_overlap_hits
+        1       filter_raisd_hits
+        1       get_fasta_hits
+        1       id_raisd_hits
+        1       some
+        1       summarise_overlap_flowering_time
+        31 # COMPLETED 3.3.2021. Oops! Need to reset maxN to 0.5 (not 0.001!)
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
