@@ -333,13 +333,13 @@ rule calc_overlap:
         """
         bedtools intersect -a {input.genes} -b {input.outliers} -u > {output.bed}
         wc -l {output.bed} > {output.shuffle}
-        for i in {{1..100}}
+        for i in {{1..1000}}
             do bedtools shuffle -i {input.genes} -g {input.genome} | \\
             bedtools intersect -a - -b {input.outliers} -u | wc -l >> {output.shuffle}
         done
         """
 
-## summarise_overlap_flowering_time: summarises number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
+## summarise_overlap_flowering_time: summarises number of outliers in original gene set (line 1) and 1000 randomly shuffled positions from that gene set (lines 2-1001)
 rule summarise_overlap_flowering_time:
     input:
         expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts",
@@ -380,7 +380,8 @@ rule test_key_genes:
         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     output:
         txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
+        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex",
+        bed_domestication = "domestication_scan/results/domestication_genes_from_lit.bed"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,

@@ -111,3 +111,73 @@ rule plot_overlap_hits:
         mem = 2
     script:
         "plot_overlap_hits.R"
+
+# add 20 kb to domestication genes
+## add_20kb_domestication_genes: adds 20kb upstream and downstream to all domestication genes
+rule add_20kb_domestication_genes:
+    input:
+        bed = "domestication_scan/results/domestication_genes_from_lit.bed",
+        genome = ref_chr
+    output:
+        bed = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell: # also gets rid of header
+        "tail -n +2 {input.bed} | bedtools slop -i - -g {input.genome} -b 20000 > {output.bed}"
+
+## calc_overlap: find overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
+rule calc_overlap:
+    input:
+        genes = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed",
+        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
+        genome = ref_chr
+    output:
+        bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
+        shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        """
+        bedtools intersect -a {input.genes} -b {input.outliers} -u > {output.bed}
+        wc -l {output.bed} > {output.shuffle}
+        for i in {{1..1000}}
+            do bedtools shuffle -i {input.genes} -g {input.genome} | \\
+            bedtools intersect -a - -b {input.outliers} -u | wc -l >> {output.shuffle}
+        done
+        """
+
+## summarise_overlap_domestication_genes: summarises number of outliers in original gene set (line 1) and 1000 randomly shuffled positions from that gene set (lines 2-1001)
+rule summarise_overlap_domestication_genes:
+    input:
+        maize = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.counts",
+        mexicana = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.counts"
+    output:
+        txt = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
+    params:
+        p = "med2",
+        Ne = lambda wildcards: wildcards.Ne,
+        yesno = lambda wildcards: wildcards.YESNO,
+        prefix = prefix_all
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "summarise_overlap_domestication_genes.R"
