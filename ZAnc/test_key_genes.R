@@ -241,5 +241,6 @@ write.table(outliers, file = txt_out, col.names = T, row.names = F, quote = F, s
 
 # print bed file of domestication genes only
 filter(outliers, category == "domestication") %>%
+  dplyr::select(chr, start, stop, name_short) %>%
   write.table(., file = bed_domestication,
             col.names = F, row.names = F, quote = F, sep = "\t")
