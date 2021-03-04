@@ -2757,7 +2757,23 @@ Job counts:
                 2       plot_overlap_hits
                 1       some
                 8 # RUNNING hilo$ touch ZAnc/results/flowering_time_genes_v4.plus20kb.bed
-
+                # running simple enrichment test for domestication genes. Also re-doing test of key genes to use 20kb (not 10kb) buffer. And re-doing flowering time enrichment with N=1000 shuffles (not 100)
+                touch ZAnc/results/flowering_time_genes_v4.plus20kb.bed
+                touch data/key_genes.csv
+                hilo$ snakemake all --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       add_20kb_domestication_genes
+                        1       all
+                        24      calc_overlap
+                        2       calc_overlap_domestication_genes
+                        1       combine_genome_scan_plots
+                        1       make_bed_domestication_genes_from_lit
+                        1       summarise_overlap_domestication_genes
+                        1       summarise_overlap_flowering_time
+                        1       test_key_genes
+                        33 # oops! new bed file didn't run for domestication genes. will fix script:
+                        
 
 
 

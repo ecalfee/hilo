@@ -20,7 +20,7 @@ genes <- read.csv(genes_list, sep = ",", header = T) %>%
 
 
 # isolate just gene coordinates on v4
-genes_domestication <- dplyr::filter(genes, category == "domestication")
+genes_domestication <- dplyr::filter(genes, category == "domestication") %>%
   dplyr::select(chr, start, end, name_short) %>%
   dplyr::arrange(as.integer(chr), start)
 
