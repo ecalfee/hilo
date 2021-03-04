@@ -151,8 +151,8 @@ rule add_20kb_domestication_genes:
     shell: # also gets rid of header
         "tail -n +2 {input.bed} | bedtools slop -i - -g {input.genome} -b 20000 > {output.bed}"
 
-## calc_overlap: find overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
-rule calc_overlap:
+## calc_overlap_domestication_genes: find overlap gene set & outliers. Also count number of outliers in original gene set (line 1) and 100 randomly shuffled positions from that gene set (lines 2-101)
+rule calc_overlap_domestication_genes:
     input:
         genes = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed",
         outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
