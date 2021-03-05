@@ -177,6 +177,7 @@ for (zea in mex_maize){
       coord_cartesian(ylim = c(0, 1)) + 
       theme(strip.text.y = element_text(angle=0),
             legend.position = "bottom",
+            legend.key.width = unit(1.2,"cm"),
             legend.title = element_blank(),
             panel.border = element_blank(),
             panel.grid.minor = element_blank(),
@@ -184,9 +185,9 @@ for (zea in mex_maize){
             legend.margin = margin(c(0,1,1,0)), # top, right, bottom, left
             legend.box.margin = margin(c(-5,0,0,0))
       ) + 
-      guides(color = guide_legend(override.aes = list(shape = 15, 
-                                                      linetype = 0,
-                                                      size = 3)))
+      guides(color = guide_legend(override.aes = list(shape = c(NA, 15, 15), 
+                                                      linetype = c(2, 0, 0),
+                                                      size = c(1, 3, 3))))
     ggsave(file = paste0(png_chr_i_prefix, i, ".png"),
            plot = p_chr_i,
            height = 5, 
