@@ -221,6 +221,6 @@ rule get_ancestry_domestication_genes:
         mem = 2
     shell:
         """
-        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 4 -o max > {output.bed_max}
-        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 4 -o min > {output.bed_min}
+        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o max > {output.bed_max}
+        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o min > {output.bed_min}
         """

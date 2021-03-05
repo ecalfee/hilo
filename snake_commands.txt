@@ -2807,6 +2807,32 @@ Job counts:
                 61 # RUNNING 3.4.2021
       hilo$ rm ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/*.perc02.bed # also removed these old results files
       # oops forgot to change summarise overlap to 5% cutoff
+      hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       summarise_overlap_domestication_genes
+        1       summarise_overlap_flowering_time
+        3
+# should have taken min/max of 5th column (ancestry) not 4th (length). redo:
+
+genes in maize introgression deserts:
+1	4959130	5014850	zagl1
+1	23605800	23647370	gt1
+1	270533675	270574776	tb1*
+4	46330596	46375118	tga1*
+4	61295574	61341350	bt2*
+5	130767029	130809864	sweet4c
+7	113552409	113592937	ra1
+
+genes in mexicana introgression deserts:
+1	228660489	228705551	ZmSh1-1
+1	270533675	270574776	tb1*
+3	12138279	12179065	ra2
+4	43090568	43139167	su1
+4	46330596	46375118	tga1*
+4	61295574	61341350	bt2*
+5	172392994	172450415	ae1
 
 
 # TO DO:
