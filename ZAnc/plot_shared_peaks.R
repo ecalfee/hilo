@@ -155,8 +155,8 @@ for (zea in mex_maize){
                  linetype = "dashed",
                  alpha = 1
       ) +
-      # add vertical lines for known inversions
-      geom_vline(data = filter(inv, chr == i) %>%
+      # add vertical lines for known inversion at inv4m
+      geom_vline(data = filter(inv, ID == "inv4m") %>%
                    left_join(., mutate(meta_pops_list[[zea]], chr = i), 
                              by = "chr") %>%
                    pivot_longer(cols = c("start", "end"),

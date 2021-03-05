@@ -2829,7 +2829,13 @@ Job counts:
         2       get_ancestry_domestication_genes
         3 # done
 # updated legend to have dashed line on shared peaks plots for individual chromosomes
-
+hilo$ rm ZAnc/plots/Ne10000_yesBoot/*_chr_*.png
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_shared_peaks
+        2 # RUNNING.
 
 genes in maize introgression deserts:
 1	4959130	5014850	    zagl1
