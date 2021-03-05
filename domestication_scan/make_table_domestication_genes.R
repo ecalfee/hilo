@@ -25,7 +25,7 @@ maize <- read.table(maize_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
          min_intro_maize = ifelse(gene %in% maize_hits, paste0(min_intro, "*"), min_intro))
 
 mexicana_hits <- read.table(mexicana_overlap, stringsAsFactors = F, sep = "\t", header = F)$V4
-mexicana <- read.table(maize_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
+mexicana <- read.table(mexicana_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
   data.table::setnames(c("chr", "start", "end", "gene", "max_mex")) %>%
   mutate(min_intro = round(1 - max_mex, 3),
          min_intro_mex = ifelse(gene %in% mexicana_hits, paste0(min_intro, "*"), min_intro))
@@ -38,8 +38,28 @@ combined <- full_join(maize, mexicana, by = c("chr", "start", "end", "gene")) %>
          `min introgression\n in maize` = min_intro_maize,
          `min introgression\n in mexicana` = min_intro_mex)
 
-print(xtable(combined,
+meta <- rbind(c("zagl1", "ear size" , "cite{Wills:2018_zagl1}"),
+              c("gt1", "prolificacy" , "cite{Wills:2013_gt1}"),
+              c("ZmSh1-1", "seed shattering" , "cite{Lin:2012_shattering}"),
+              c("tb1", "branching" , "cite{Doebley_Stec_Gustus:1995_tb1, Doebley_Stec_Hubbard:1997_tb1, Dong:2019_reg_domestication}"),
+              c("zfl2", "cob rank ", "cite{Doebley_Stec:1991, Doebley_Stec:1993, Bomblies_Doebley:2006}"),
+              c("pbf1", "storage protein synthesis" , "cite{Wang:1998_pbf}"),
+              c("ra2" , "inflorescence architecture" , "cite{Vollbrecht:2005_ramosa}"),
+              c("ba1" , "plant architecture" , "cite{Gallavotti:2004_ba1}"),
+              c("su1" , "starch biosynthesis" , "cite{Whitt:2002_starch}"),
+              c("tga1" , "'naked' grains" , "cite{Dorweiler:1993, Wang:2005_tga1}"),
+              c("bt2" , "starch biosynthesis" , "cite{Whitt:2002_starch}"),
+              c("ZmSh1-5.1+ZmSh1-5.2" , "seed shattering" , "cite{Lin:2012_shattering}"),
+              c("sweet4c" , "sugar transport and seed size" , "cite{Sosso:2015}"),
+              c("ae1" , "starch biosynthesis" , "cite{Whitt:2002_starch}"),
+              c("ra1" , "inflorescence architecture" , "cite{Vollbrecht:2005_ramosa, Sigmon_Vollbrecht:2010}")
+              ) %>%
+  as.data.frame(., stringsAsFactors = F) %>%
+  data.table::setnames(c("gene", "phenotype", "refs"))
+
+print(xtable(x = left_join(meta, combined, by = "gene"),
              type = "latex",
              latex.environments = NULL),
       include.rownames = F,
+      digits = NULL,
       file = tbl_out)

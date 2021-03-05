@@ -2840,6 +2840,12 @@ genes in mexicana introgression deserts:
 4	46330596	46375118	tga1*
 4	61295574	61341350	bt2*
 5	172392994	172450415	ae1
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       make_table_domestication_genes
+        2 # making table
 
 
 # TO DO:
