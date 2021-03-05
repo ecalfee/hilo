@@ -1,0 +1,32 @@
+subspecies,symp_allo,location,country,elevation,latitude,longitude,accession
+mexicana,allopatric,Puerta Encantada,Mexico,1658,18.9725,-99.0298,RIMME0033
+mexicana,allopatric,Malinalco,Mexico,1887,18.9531,-99.503,RIMME0020
+mexicana,allopatric,Amecameca,Mexico,2467,19.139,-98.7733,RIMME0022
+maize,sympatric,Ixtlan,Mexico,1547,20.1683,-102.373,RIMMA0371
+maize,sympatric,Amatlan,Mexico,1658,18.9719,-99.0551,RIMMA0369
+maize,sympatric,Penjamillo,Mexico,1705,20.1176,-101.93,RIMMA0361
+maize,sympatric,Puruandiro,Mexico,1915,20.1076,-101.49,RIMMA0370
+maize,sympatric,Nabogame,Mexico,2020,26.2465,-106.915,RIMMA0360
+maize,sympatric,El Porvenir,Mexico,2094,19.6789,-100.64,RIMMA0363
+maize,sympatric,Santa Clara,Mexico,2173,19.4184,-101.642,RIMMA0362
+maize,sympatric,Opopeo,Mexico,2213,19.4181,-101.613,RIMMA0368
+maize,sympatric,Xochimilco,Mexico,2237,19.2861,-99.0827,RIMMA0374
+maize,sympatric,Cocotilan,Mexico,2269,19.2244,-98.8427,RIMMA0367
+maize,sympatric,Tlapala,Mexico,2272,19.2351,-98.8368,RIMMA0365
+maize,sympatric,San Pedro,Mexico,2459,19.0886,-98.4935,RIMMA0372
+maize,sympatric,Jicaltepec,Mexico,2587,19.3764,-99.6303,RIMMA0366
+maize,sympatric,Tenango del Aire,Mexico,2609,19.1197,-99.5896,RIMMA0373
+mexicana,sympatric,Ixtlan,Mexico,1547,20.1683,-102.373,RIMME0029
+mexicana,sympatric,Amatlan,Mexico,1658,18.9719,-99.0551,RIMME0027
+mexicana,sympatric,Penjamillo,Mexico,1705,20.1176,-101.93,RIMME0019
+mexicana,sympatric,Puruandiro,Mexico,1915,20.1076,-101.49,RIMME0028
+mexicana,sympatric,Nabogame,Mexico,2020,26.2465,-106.915,RIMME0018
+mexicana,sympatric,El Porvenir,Mexico,2094,19.6789,-100.64,RIMME0021
+mexicana,sympatric,Santa Clara,Mexico,2173,19.4184,-101.642,RIMME0034
+mexicana,sympatric,Opopeo,Mexico,2213,19.4181,-101.613,RIMME0026
+mexicana,sympatric,Xochimilco,Mexico,2237,19.2861,-99.0827,RIMME0035
+mexicana,sympatric,Cocotilan,Mexico,2269,19.2244,-98.8427,RIMME0025
+mexicana,sympatric,Tlapala,Mexico,2272,19.2351,-98.8368,RIMME0023
+mexicana,sympatric,San Pedro,Mexico,2459,19.0886,-98.4935,RIMME0030
+mexicana,sympatric,Jicaltepec,Mexico,2587,19.3764,-99.6303,RIMME0024
+mexicana,sympatric,Tenango del Aire,Mexico,2609,19.1197,-99.5896,RIMME0031
