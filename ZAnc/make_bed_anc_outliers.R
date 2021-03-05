@@ -18,11 +18,12 @@ neg_fdr = snakemake@output[["neg_fdr"]] # low ancestry outliers
 # neg_fdr = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_meanAnc_outliers.fdr05.bed")
 
 # less stringent than 5% FDR:
-# use 2% empirical of the genome (not ancestry tracts) as an outlier cutoff
+# use 5% empirical of the genome (not ancestry tracts) as an outlier cutoff
 pos_perc = snakemake@output[["pos_perc"]] # high ancestry outliers
-# pos_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_meanAnc_outliers.perc02.bed")
+# pos_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_meanAnc_outliers.perc05.bed")
 neg_perc = snakemake@output[["neg_perc"]] # low ancestry outliers
-# neg_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_meanAnc_outliers.perc02.bed")
+# neg_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_meanAnc_outliers.perc05.bed")
+
 
 # use p-value cutoff using from simulated data (p = 0.05 is top 5% simulated points)
 pos_p = snakemake@output[["pos_p"]] # high ancestry outliers
@@ -56,14 +57,14 @@ anc %>%
 #  mutate(length = end - start) %>%
 #  summarise(total = sum(length)/(2.3*10^9))
 
-# 2% of genome outliers (less stringent outlier criteria):
+# 5% of genome outliers (less stringent outlier criteria):
 # high
 anc %>%
   arrange(., anc_freq) %>%
   mutate(length = end - start,
          cum_length = cumsum(length),
          quantile = cum_length/sum(length)) %>%
-  filter(quantile > .98) %>%
+  filter(quantile > .95) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
   write.table(., file = pos_perc,  sep = "\t", quote = F,
@@ -74,7 +75,7 @@ anc %>%
   mutate(length = end - start,
          cum_length = cumsum(length),
          quantile = cum_length/sum(length)) %>%
-  filter(quantile < .02) %>%
+  filter(quantile < .05) %>%
   arrange(., chr, start) %>%
   dplyr::select(., chr, start, end) %>%
   write.table(., file = neg_perc,  sep = "\t", quote = F,

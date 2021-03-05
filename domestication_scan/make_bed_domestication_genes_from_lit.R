@@ -27,4 +27,4 @@ genes_domestication <- dplyr::filter(genes, category == "domestication") %>%
 
 # print bed file of domestication genes only
 write.table(genes_domestication, file = bed_out,
-            col.names = F, row.names = F, quote = F, sep = "\t")
+            col.names = T, row.names = F, quote = F, sep = "\t")

@@ -2781,7 +2781,15 @@ Job counts:
         2       calc_overlap_domestication_genes
         1       make_bed_domestication_genes_from_lit
         1       summarise_overlap_domestication_genes
-        6 # RUNNING
+        6 # RUNNING. Fixed typo in summarise script:
+        hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       summarise_overlap_domestication_genes
+        2 # ok but accidentally deleted 1st gene instead of header. also want ot use 5% cutoff. 2% is very very strict ~1% introgression into maize
+        hilo$ rm domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/*
+        hilo$ rm domestication_scan/results/domestication_genes_from_lit.*
 
 
 
