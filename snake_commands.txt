@@ -2835,7 +2835,16 @@ Job counts:
         count   jobs
         1       all
         1       plot_shared_peaks
-        2 # RUNNING.
+        2 # DONE but I want to change to only plotting inv4m (not all non-segregating inversions)
+        hilo$ rm ZAnc/plots/Ne10000_yesBoot/*_chr_*.png
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       all
+                1       plot_shared_peaks
+                2 # oops! getting rid of the inversions didn't quite work as I planned. redo:
+                
+
 
 genes in maize introgression deserts:
 1	4959130	5014850	    zagl1

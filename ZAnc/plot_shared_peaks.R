@@ -155,16 +155,6 @@ for (zea in mex_maize){
                  linetype = "dashed",
                  alpha = 1
       ) +
-      # add vertical lines for known inversion at inv4m
-      geom_vline(data = filter(inv, ID == "inv4m") %>%
-                   left_join(., mutate(meta_pops_list[[zea]], chr = i), 
-                             by = "chr") %>%
-                   pivot_longer(cols = c("start", "end"),
-                                names_to = "which_end",
-                                values_to = "inv_pos"),
-                 size = 0.25,
-                 alpha = 1,
-                 mapping = aes(xintercept = inv_pos/10^6)) +
       xlab(paste0("Chr ", i, " position (Mbp)")) +
       ylab(paste0("Introgressed ", mex_maize[mex_maize != zea], " ancestry frequency")) +
       scale_color_manual(values = c(col_maize_mex_parv[[zea]], "#00BFC4", "darkgrey"),
@@ -188,6 +178,20 @@ for (zea in mex_maize){
       guides(color = guide_legend(override.aes = list(shape = c(NA, 15, 15), 
                                                       linetype = c(2, 0, 0),
                                                       size = c(1, 3, 3))))
+    if (i == 4){
+      p_chr_i = p_chr_i +
+        # add vertical lines for known inversion at inv4m
+        geom_vline(data = filter(inv, chr == i) %>%
+                     left_join(., mutate(meta_pops_list[[zea]], chr = i), 
+                               by = "chr") %>%
+                     pivot_longer(cols = c("start", "end"),
+                                  names_to = "which_end",
+                                  values_to = "inv_pos"),
+                   size = 0.25,
+                   alpha = 1,
+                   mapping = aes(xintercept = inv_pos/10^6))
+    }
+    
     ggsave(file = paste0(png_chr_i_prefix, i, ".png"),
            plot = p_chr_i,
            height = 5, 
