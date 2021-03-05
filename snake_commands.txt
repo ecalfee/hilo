@@ -2843,7 +2843,12 @@ Job counts:
                 1       all
                 1       plot_shared_peaks
                 2 # oops! getting rid of the inversions didn't quite work as I planned. redo:
-                
+                hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_shared_peaks
+        2 # COMPLETED. Uploaded new figs and submitting to bioRxiv 3.5.2021, 1:45am.
 
 
 genes in maize introgression deserts:
