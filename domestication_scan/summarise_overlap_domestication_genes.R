@@ -26,7 +26,7 @@ calc_pval = function(zea, sign, stat, sig, prefix_all, Ne, yesno){
 all_combs = data.frame(zea = c("mexicana", "maize"), 
                        sign = c("pos", "neg"), 
                        stat = "meanAnc", 
-                       sig = "perc02")
+                       sig = "perc05")
 
 results = do.call(rbind,
                   apply(all_combs, 1, function(row) 

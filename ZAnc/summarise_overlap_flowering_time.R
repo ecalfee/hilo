@@ -14,7 +14,7 @@ txt_out = snakemake@output[["txt"]] # txt output file
 mex_maize = c("mexicana", "maize")
 posneg = c("pos", "neg")
 stats = c("meanAnc", "lmElev")
-sigs = c("fdr05", "perc02", "p05")
+sigs = c("fdr05", "perc05", "p05")
 
 # function to calculate p-values for overlap based on permutation test
 calc_pval = function(zea, sign, stat, sig, prefix_all, Ne, yesno){

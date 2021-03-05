@@ -2790,7 +2790,23 @@ Job counts:
         2 # ok but accidentally deleted 1st gene instead of header. also want ot use 5% cutoff. 2% is very very strict ~1% introgression into maize
         hilo$ rm domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/*
         hilo$ rm domestication_scan/results/domestication_genes_from_lit.*
-
+        hilo$ snakemake all --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       add_20kb_domestication_genes
+                1       all
+                24      calc_overlap
+                2       calc_overlap_domestication_genes
+                2       get_ancestry_domestication_genes
+                2       make_bed_anc_outliers
+                1       make_bed_domestication_genes_from_lit
+                2       make_bed_slope_elev
+                24      merge_bed_outliers
+                1       summarise_overlap_domestication_genes
+                1       summarise_overlap_flowering_time
+                61 # RUNNING 3.4.2021
+      hilo$ rm ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/*.perc02.bed # also removed these old results files
+      # oops forgot to change summarise overlap to 5% cutoff
 
 
 # TO DO:
