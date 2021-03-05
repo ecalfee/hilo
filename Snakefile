@@ -229,8 +229,8 @@ rule all:
         expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
         expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
-        "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
-        "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed"
+        expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
+        expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:

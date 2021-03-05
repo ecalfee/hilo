@@ -66,8 +66,8 @@ rule calc_overlap_hits:
         outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
         genome = ref_chr
         # introgression desert files:
-        #maize_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_neg_meanAnc_outliers.perc02.bed",
-        #mexicana_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana_pos_meanAnc_outliers.perc02.bed",
+        #maize_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_neg_meanAnc_outliers.perc05.bed",
+        #mexicana_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana_pos_meanAnc_outliers.perc05.bed",
     output:
         bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
         shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
