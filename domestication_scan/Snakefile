@@ -224,3 +224,24 @@ rule get_ancestry_domestication_genes:
         bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o max > {output.bed_max}
         bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o min > {output.bed_min}
         """
+
+## make_table_domestication_genes: make table with minimum introgression domestication genes
+rule make_table_domestication_genes:
+    input:
+        maize_bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
+        maize_overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.perc05.bed",
+        mexicana_bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
+        mexicana_overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc05.bed"
+    output:
+        tbl = "domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "make_table_domestication_genes.R"

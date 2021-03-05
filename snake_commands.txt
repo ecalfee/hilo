@@ -2815,9 +2815,16 @@ Job counts:
         1       summarise_overlap_flowering_time
         3
 # should have taken min/max of 5th column (ancestry) not 4th (length). redo:
+hilo$ rm domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.*.*_mexicana_ancestry.bed
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        2       get_ancestry_domestication_genes
+        3
 
 genes in maize introgression deserts:
-1	4959130	5014850	zagl1
+1	4959130	5014850	    zagl1
 1	23605800	23647370	gt1
 1	270533675	270574776	tb1*
 4	46330596	46375118	tga1*

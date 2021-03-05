@@ -104,10 +104,10 @@ for (zea in mex_maize){
                      end = max(end),
                      min_slope = min(slope),
                      max_slope = max(slope)) %>%
-    dplyr::mutate(min_sig = min_slope <= FDRs$thesholds[FDRs$tail == "low" & 
+    dplyr::mutate(min_sig = min_slope < FDRs$thesholds[FDRs$tail == "low" & 
                                                           FDRs$FDR == 0.05 &
                                                           FDRs$stat == "lmElev"],
-                  max_sig = max_slope >= FDRs$thesholds[FDRs$tail == "high" & 
+                  max_sig = max_slope > FDRs$thesholds[FDRs$tail == "high" & 
                                                           FDRs$FDR == 0.05 &
                                                           FDRs$stat == "lmElev"]) %>%
     dplyr::mutate(min_slope = paste0(round(min_slope, 5), 
@@ -131,26 +131,15 @@ for (zea in mex_maize){
                   end = as.numeric(end),
                   meanAnc = as.numeric(meanAnc))
   
-  # what are cutoffs for low ancestry @ 2-5% of the genome?
+  # what are cutoffs for low ancestry as empirical % of the genome?
   bed_anc <- dplyr::mutate(bed_sites, meanAnc = anc_mean) %>%
     arrange(meanAnc) %>%
     dplyr::mutate(length_Mb = length/10^6,
                   cum_length = cumsum(length_Mb),
                   percentile = cum_length/max(cum_length)*100)
-  # 2-5% based on genomic length (bp) covered
+  # 5% based on genomic length (bp) covered
   percentiles_anc <- bed_anc %>%
-    summarise(perc_2 = min(meanAnc[percentile >= 2]),
-              perc_5 = min(meanAnc[percentile >= 5]),
-              perc_98 = max(meanAnc[percentile <= 98]),
-              perc_95 = max(meanAnc[percentile <= 95]))
-  
-  # 2-5% of windows/tracts
-  # percentiles_tracts <- bed_anc %>% 
-  #   mutate(n = 1:nrow(.), percentile = n/max(n)*100) %>% 
-  #   summarise(perc_2 = min(meanAnc[percentile >= 2]),
-  #           perc_5 = min(meanAnc[percentile >= 5]),
-  #           perc_98 = max(meanAnc[percentile <= 98]),
-  #           perc_95 = max(meanAnc[percentile <= 95]))
+    summarise(perc_95 = max(meanAnc[percentile < 95]))
   
   
   # add in new columns, min, max, FDR
@@ -166,16 +155,14 @@ for (zea in mex_maize){
                   max_sig = max_ancestry >= FDRs$thesholds[FDRs$tail == "high" & 
                                                              FDRs$FDR == 0.05 &
                                                              FDRs$stat == "meanAnc"],
-                  min_perc2 = min_ancestry <= percentiles_anc$perc_2,
                   min_perc5 = min_ancestry <= percentiles_anc$perc_5,
-                  max_perc2 = max_ancestry >= percentiles_anc$perc_98,
                   max_perc5 = max_ancestry >= percentiles_anc$perc_95) %>%
     dplyr::mutate(min_ancestry = paste0(round(min_ancestry, 5), 
-                                        c("", "+", "++")[1 + min_perc2 + min_perc5], 
-                                        ifelse(min_sig, "*", "")),
+                                        ifelse(min_perc5, "*", ""), 
+                                        ifelse(min_sig, "+", "")),
                   max_ancestry = paste0(round(max_ancestry, 5), 
-                                        c("", "+", "++")[1 + max_perc2 + max_perc5], 
-                                        ifelse(max_sig, "*", "")))
+                                        ifelse(max_perc5, "*", ""), 
+                                        ifelse(max_sig, "+", "")))
   # View(summary_meanAnc)
   
   # make table: each gene, zea, prediction, high mean anc, low mean anc, high slope, low slope
@@ -185,14 +172,12 @@ for (zea in mex_maize){
     dplyr::select(name_short, gene, category, phenotype, citation, ensembl.org_id, chr, start, end, other_notes, max_slope, min_slope, max_ancestry, min_ancestry, admixture_prediction, phenotype, v4_coord) %>%
     dplyr::mutate(subspecies = zea)
   
-  # also make table with 2% and 5% cutoffs, and all FDR cutoffs
-  sig_cutoffs[[zea]] <- data.frame(percentile = c(0.02, 0.05, 0.98, 0.95),
-                                   threshold = c(percentiles_anc[["perc_2"]],
-                                                 percentiles_anc[["perc_5"]],
-                                                 percentiles_anc[["perc_98"]],
+  # also make table with 5% cutoffs, and all FDR cutoffs
+  sig_cutoffs[[zea]] <- data.frame(percentile = c(0.05, 0.95),
+                                   threshold = c(percentiles_anc[["perc_5"]],
                                                  percentiles_anc[["perc_95"]]),
                                    stat = "meanAnc",
-                                   tail = c("low", "low", "high", "high")) %>%
+                                   tail = c("low", "high")) %>%
     bind_rows(., rename(FDRs, threshold = thesholds)) %>%
     arrange(stat, tail, FDR) %>%
     dplyr::select(stat, tail, FDR, percentile, threshold, n_SNPs, prop_SNPs) %>%
