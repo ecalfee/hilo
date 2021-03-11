@@ -50,8 +50,8 @@ rule get_random_regions:
 ## calc_depth: calculate depth of sequencing coverage for the combined sample, only including bases meeting minQ >20
 rule calc_depth:
     input:
-        bams = all_bams, # all input bams
-        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
+        bams = lambda wildcards: get_all_bams(wildcards.PREFIX), # all input bams
+        bais = lambda wildcards: get_all_bais(wildcards.PREFIX), # all input bam indexes
         bam_list = "samples/{PREFIX}_bams.list",
         regions = "data/refMaize/random_regions/N1000.L100.regions"
     output:
@@ -91,22 +91,23 @@ rule calc_depth:
 #        row = line.split("\t")
 
 # define functions to get list of input bams and bais
-def get_all_bams(wildcards):
-    with open(path_hilo + expand("samples/{PREFIX}_bams.list", PREFIX = wildcards.PREFIX)) as f:
+def get_all_bams(prefix):
+    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
         bams = f.read().splitlines()
     return bams
 
-def get_all_bais(wildcards):
-    with open(path_hilo + expand("samples/{PREFIX}_bams.list", PREFIX = wildcards.PREFIX)) as f:
-        bais = f.read().splitlines() + ".bai"
+def get_all_bais(prefix):
+    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
+        bams = f.read().splitlines()
+        bais = [bam + ".bai" for bam in bams]
     return bais
 
 
 ## call_SNPs: identify variant sites in combined sampled across all autosomes
 rule call_SNPs:
     input:
-        bams = get_all_bams, # all input bams
-        bais = get_all_bais, # all input bam indexes
+        bams = lambda wildcards: get_all_bams(wildcards.PREFIX), # all input bams
+        bais = lambda wildcards: get_all_bais(wildcards.PREFIX), # all input bam indexes
         bam_list = "samples/{PREFIX}_bams.list",
         ref = ref,
         fai = fai,

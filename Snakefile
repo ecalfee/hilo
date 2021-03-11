@@ -223,8 +223,8 @@ rule all:
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes",
-        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png")
+        expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes"),
+        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png"
     params:
         p = "med2"
     resources:

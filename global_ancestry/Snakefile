@@ -7,7 +7,7 @@ workdir: path_hilo
 ## and returns one concatenated GL file for input to PCAngsd and NGSadmix
 rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
-        gl = expand("variant_sites/results/{PREFIX}/{REGION}.beagle.gz",
+        gl = expand("variant_sites/results/{{PREFIX}}/{REGION}.beagle.gz",
         REGION=list(regions_dict.keys()))
     output: # thinned GL file for whole genome
         gl = "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz"
