@@ -2875,20 +2875,20 @@ Job counts:
         1       make_table_domestication_genes
         2 # making table
 
+# making PREFIX be more flexible as a wildcard (HILO_MAIZE55 or HILO_MAIZE55_PARV50)
+# so I made a list of bams and ids for the new set HILO_MAIZE55_PARV50:
+hilo$ cp samples/HILO_MAIZE55_bams.list samples/HILO_MAIZE55_PARV50_bams.list
+hilo$ cat samples/ALL_byPop/parv_bams.list >> samples/HILO_MAIZE55_PARV50_bams.list
+hilo$ cp samples/HILO_MAIZE55_ids.list samples/HILO_MAIZE55_PARV50_ids.list
+hilo$ cat samples/ALL_byPop/parv_ids.list >> samples/HILO_MAIZE55_PARV50_ids.list
+
+
 
 # TO DO:
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
-- flowering time -- should I look for a difference in avg slope not just enrichment of outliers?
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
-# (2) Plot maize vs. mexicana with domestication loci highlighted a different color
-# Look quickly at results for zAnc -- anything interesting?
-# (3) Plot K matrices
-# (4) Anything on pi that you can salvage?
-# (5) Do I keep anything on zTz? What do I want to conclude, just that idiosyncratic selection is more common?
-
-# find flowering time GWAS hits and do permutations to calcuate overlap with big slopes w/ elevation
-(5) Make plot of freq in maize vs. freq in mexicana
+# (2) Plot freq in maize vs. freq in mexicana with domestication loci highlighted a different color

@@ -7,10 +7,10 @@ workdir: path_hilo
 ## and returns one concatenated GL file for input to PCAngsd and NGSadmix
 rule thin_GL_4PCA:
     input: # input all GL files, corresponding rpos files, and the master list of all regions
-        gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
+        gl = expand("variant_sites/results/{PREFIX}/{REGION}.beagle.gz",
         REGION=list(regions_dict.keys()))
     output: # thinned GL file for whole genome
-        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+        gl = "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz"
     params:
         p = "med2",
         N = 100, # keep every 100th SNP
@@ -25,44 +25,12 @@ rule thin_GL_4PCA:
     shell:
         "./global_ancestry/thin_GL_4PCA.sh {params.N} {params.first} {params.last} {params.prefix_all}"
 
-
-## test_thin_GL_4PCA: rule to test thinning of beagle GL files using just a small subset of genomic regions
-rule test_thin_GL_4PCA:
-    input: # input all GL files, corresponding rpos files, and the master list of all regions
-        gl = expand("variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz",
-        # REGION = ["region_0", "region_1", "region_300"]),
-        REGION = ["region_0", "region_1", "region_50", "region_51", "region_100", "region_101",
-        "region_150", "region_151", "region_200", "region_201", "region_250", "region_251",
-        "region_300", "region_301", "region_350", "region_351", "region_400", "region_401"]),
-        rpos = expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        # REGION = ["region_0", "region_1", "region_300"]),
-        REGION = ["region_0", "region_1", "region_50", "region_51", "region_100", "region_101",
-        "region_150", "region_151", "region_200", "region_201", "region_250", "region_251",
-        "region_300", "region_301", "region_350", "region_351", "region_400", "region_401"]),
-        # regions = "test/TEST2_regions.list"
-        regions = "test/TEST_18_regions.list"
-    output: # thinned GL file for whole genome
-        gl = "test/whole_genome.beagle.gz"
-    params:
-        p = "med2",
-        prefix_all = prefix_all,
-        min_cM = 0.01 # minimum spacing
-    shadow:
-        "minimal"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 4
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "thin_GL_4PCA.R"
-
 ## run_PCAngsd: calculate covariance matrix from genotype likelihood file using PCAngsd
 rule run_PCAngsd:
     input:
-        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+        gl = "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz"
     output:
-        cov = "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov"
+        cov = "global_ancestry/results/PCA/{PREFIX}/whole_genome.cov"
     params:
         p = "med2",
         prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
@@ -88,12 +56,12 @@ rule run_PCAngsd:
 ## run_NGSAdmix: estimates admixture proportions from genotype likelihood file using NGSAdmix
 rule run_NGSAdmix:
     input:
-        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz"
+        gl = "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz"
     output:
-        admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt"
+        admix = "global_ancestry/results/NGSAdmix/{PREFIX}/K{K}.qopt"
     params:
         p = "med2",
-        k = 2,
+        k = lambda wildcards: wildcards.K,
         prefix_out = lambda wildcards, output: os.path.splitext(output.admix)[0] # output file without .cov extension
     shadow:
         "minimal"
@@ -114,14 +82,14 @@ rule run_NGSAdmix:
 ## results_NGSAdmix: extracts results of NGSAdmix from output files, summarise by pop and individual
 rule results_NGSAdmix:
     input:
-        admix = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
-        meta = "samples/" + prefix_all + "_meta.RData"
+        admix = "global_ancestry/results/NGSAdmix/{PREFIX}/K{K}.qopt",
+        meta = "samples/{PREFIX}_meta.RData"
     output:
-        alphas = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_symp_pop.txt",
-        ind = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
+        alphas = "global_ancestry/results/NGSAdmix/{PREFIX}/K{K}_alphas_by_symp_pop.txt",
+        ind = "global_ancestry/results/NGSAdmix/{PREFIX}/K{K}_alphas_by_ind.RData"
     params:
         p = "med2",
-        k = 2
+        k = lambda wildcards: wildcards.K
     shadow:
          "minimal"
     conda:
@@ -158,13 +126,13 @@ rule plot_NGSAdmix:
 ## plot_PCAngsd: plots genomewide PCA from genetic covariance matrix estimated by PCAngsd
 rule plot_PCAngsd:
     input:
-        meta = "samples/" + prefix_all + "_meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
         colors = "colors.R",
-        cov = "global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov"
+        cov = "global_ancestry/results/PCA/{PREFIX}/whole_genome.cov"
     output:
-        png_pca = "global_ancestry/plots/pca.png",
-        png_pc34 = "global_ancestry/plots/pc34.png",
-        png_pc56 = "global_ancestry/plots/pc56.png"
+        png_pca = "global_ancestry/plots/{PREFIX}_pca.png",
+        png_pc34 = "global_ancestry/plots/{PREFIX}_pc34.png",
+        png_pc56 = "global_ancestry/plots/{PREFIX}_pc56.png"
         # add PCA that includes parviglumis?
     params:
         p = "med2"
@@ -178,56 +146,42 @@ rule plot_PCAngsd:
     script:
          "plot_PCAngsd.R"
 
-
-## test_PCAngsd: test using smaller file (subset of genomic regions) to calculate covariance matrix from genotype likelihood file using PCAngsd
-rule test_PCAngsd:
+## add_parv_2_meta: makes a new metadata file that includes PARV50 parviglumis metadata
+rule add_parv_2_meta:
     input:
-        gl = "test/whole_genome.beagle.gz"
-    output: # thinned GL file for whole genome
-        cov = "test/whole_genome.cov"
-    params:
-        p = "med2",
-        prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
-    shadow:
-        "minimal"
-    conda:
-        "../envs/environment.yaml"
-    threads:
-        4
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
-    shell:
-        """
-        pcangsd \
-        -beagle {input.gl} \
-        -threads {threads} -iter 100 \
-        -minMaf 0 -admix \
-        -o {params.prefix_out}
-        """
-
-## test_NGSAdmix: test using smaller file
-rule test_NGSAdmix:
-    input:
-        gl = "test/whole_genome.beagle.gz"
+        ids = "samples/HILO_MAIZE55_PARV50_ids.list",
+        meta = "samples/HILO_MAIZE55_meta.RData"
     output:
-        admix = "test/K2.qopt"
+        txt = "samples/HILO_MAIZE55_PARV50_meta.txt",
+        rdata = "samples/HILO_MAIZE55_PARV50_meta.RData"
     params:
-        p = "med2",
-        k = 2,
-        prefix_out = lambda wildcards, output: os.path.splitext(output.admix)[0] # output file without .cov extension
+        p = "med2"
     shadow:
-        "minimal"
+         "minimal"
     conda:
-        "../envs/environment.yaml"
-    threads:
-        2
+         "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 6 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
-    shell:
-        """
-        NGSadmix -likes {input.gl} \
-        -K {params.k} -P {threads} \
-        -o {params.prefix_out}
-        """
+         time_min = 15,
+         mem = 2
+    script:
+         "add_parv_2_meta.R"
+
+## plot_NGSAdmix_parv: plots results of NGSAdmix including parviglumis samples
+rule plot_NGSAdmix_parv:
+    input:
+        meta = "samples/HILO_MAIZE55_PARV50_meta.RData",
+        colors = "colors.R",
+        k3 = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData"
+    output:
+        png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
+    params:
+        p = "med2"
+    shadow:
+         "minimal"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 2
+    script:
+         "plot_NGSAdmix_parv.R"

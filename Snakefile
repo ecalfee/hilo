@@ -28,7 +28,9 @@ wildcard_constraints:
     COVERAGE = "ALL|Over0.5x", # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)
     WIN = "[0-9]+", # window size
     STEP = "[0-9]+", # window step size (non-overlapping windows if STEP = WIN)
-    n = "[0-9]+"
+    n = "[0-9]+",
+    PREFIX = "HILO_MAIZE55|HILO_MAIZE55_PARV50",
+    K = "[0-9]+"
 
 # reference genome and associated files
 #ref = "/home/ecalfee/hilo/data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
@@ -126,15 +128,15 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
 #include: "filtered_bams/Snakefile"
-#include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
+include: "variant_sites/Snakefile"
+include: "global_ancestry/Snakefile"
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "ZAnc/Snakefile"
 #include: "diversity/Snakefile"
 #include: "map/Snakefile"
 #include: "mhl1_inv/Snakefile"
-include: "domestication_scan/Snakefile"
+#include: "domestication_scan/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -151,22 +153,12 @@ rule all:
         #expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
         #        "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
         #        zip, ID=list(merge_dict.keys())),
-        # global ancestry analysis: thinned GL, PCA and NGSAdmix
-        "global_ancestry/plots/pca.png",
+        # global ancestry analysis: PCA and NGSAdmix
+        "global_ancestry/plots/HILO_MAIZE55_pca.png",
+        "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png",
+        "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData",
         "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
-        #"global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        #"global_ancestry/results/PCA/" + prefix_all + "/whole_genome.cov",
-        #"global_ancestry/results/NGSAdmix/" + prefix_all + "/K2.qopt",
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
-        #expand("ancestry_by_r/results/BED_1cM/{WINDOW}.bed", WINDOW = windows_1cM),
-        #expand("ancestry_by_r/esults/bootstrap_1cM/" + prefix_all + "/r5_{r}/boot{BOOT}.list",
-        #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
-        #expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM),
-        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_{r}/boot{BOOT}.beagle.gz",
-        #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
-        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/r5_{r}/K2/boot{BOOT}.anc",
-        #r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))),
-        #expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_K2.Rdata", FEATURE = ["r", "cd"]),
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
         "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png",
@@ -231,7 +223,8 @@ rule all:
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes")
+        expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes",
+        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png")
     params:
         p = "med2"
     resources:

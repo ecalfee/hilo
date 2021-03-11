@@ -52,13 +52,13 @@ rule calc_depth:
     input:
         bams = all_bams, # all input bams
         bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
-        bam_list = "samples/" + prefix_all + "_bams.list",
+        bam_list = "samples/{PREFIX}_bams.list",
         regions = "data/refMaize/random_regions/N1000.L100.regions"
     output:
-        "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal"
+        "variant_sites/results/depthCov/N1000.L100.regions/{PREFIX}.Q20.depthGlobal"
     params:
         p = "bigmemm",
-        out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20"
+        out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/{PREFIX}.Q20"
     shadow:
         "minimal"
     resources:
@@ -90,18 +90,30 @@ rule calc_depth:
 #    for line in f:
 #        row = line.split("\t")
 
+# define functions to get list of input bams and bais
+def get_all_bams(wildcards):
+    with open(path_hilo + expand("samples/{PREFIX}_bams.list", PREFIX = wildcards.PREFIX)) as f:
+        bams = f.read().splitlines()
+    return bams
+
+def get_all_bais(wildcards):
+    with open(path_hilo + expand("samples/{PREFIX}_bams.list", PREFIX = wildcards.PREFIX)) as f:
+        bais = f.read().splitlines() + ".bai"
+    return bais
+
+
 ## call_SNPs: identify variant sites in combined sampled across all autosomes
 rule call_SNPs:
     input:
-        bams = all_bams, # all input bams
-        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
-        bam_list = "samples/" + prefix_all + "_bams.list",
+        bams = get_all_bams, # all input bams
+        bais = get_all_bais, # all input bam indexes
+        bam_list = "samples/{PREFIX}_bams.list",
         ref = ref,
         fai = fai,
-        depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal"
+        depth = "variant_sites/results/depthCov/N1000.L100.regions/{PREFIX}.Q20.depthGlobal"
     output: # outputs minor allele freq. file and beagle GL file
-        mafs = "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz",
-        gl = "variant_sites/results/" + prefix_all + "/{REGION}.beagle.gz"
+        mafs = "variant_sites/results/{PREFIX}/{REGION}.mafs.gz",
+        gl = "variant_sites/results/{PREFIX}/{REGION}.beagle.gz"
     params:
         p = "med2",
         region = lambda wildcards: regions_dict[wildcards.REGION],
@@ -135,9 +147,9 @@ rule call_SNPs:
 ## make_sites_file: for every region of the genome, make a .var.sites file with variant sites information for each SNP
 rule make_sites_file:
     input:
-        "variant_sites/results/" + prefix_all + "/{REGION}.mafs.gz"
+        "variant_sites/results/{PREFIX}/{REGION}.mafs.gz"
     output:
-        "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
+        "variant_sites/results/{PREFIX}/{REGION}.var.sites"
     params:
         p = "med2"
     shadow:
@@ -153,10 +165,10 @@ rule make_sites_file:
 ## index_sites_file: index sites file (list of SNPs) for angsd
 rule index_sites_file:
     input:
-        "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
+        "variant_sites/results/{PREFIX}/{REGION}.var.sites"
     output: # outputs minor allele freq. file and beagle GL file
-        idx = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.idx",
-        bin = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites.bin"
+        idx = "variant_sites/results/{PREFIX}/{REGION}.var.sites.idx",
+        bin = "variant_sites/results/{PREFIX}/{REGION}.var.sites.bin"
     params:
         p = "med2"
     resources:
@@ -170,9 +182,9 @@ rule index_sites_file:
 rule calc_rmap_pos:
     input:
         rmap = rmap_ext,
-        sites = "variant_sites/results/" + prefix_all + "/{REGION}.var.sites"
+        sites = "variant_sites/results/{PREFIX}/{REGION}.var.sites"
     output:
-        rpos = "variant_sites/results/" + prefix_all + "/{REGION}.rpos"
+        rpos = "variant_sites/results/{PREFIX}/{REGION}.rpos"
     params:
         p = "med2"
     shadow:
