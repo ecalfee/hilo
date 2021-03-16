@@ -235,11 +235,13 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
+        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.{SIG}.png", ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"], SIG = ["fdr05", "perc05"])
     params:
         p = "med2"
     resources:
         time_min = 5,
         mem = 2
+
 
 
 ## fst: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)

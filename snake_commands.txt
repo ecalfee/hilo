@@ -2930,7 +2930,7 @@ Job counts:
         1       run_NGSAdmix
         1       run_PCAngsd
         1       thin_GL_4PCA
-        432 # RUNNING 3.15.2021
+        432 # RUNNING 3.15.2021. CANCELLED (not getting priority anyways)
 
 
 # TO DO:
