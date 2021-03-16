@@ -2900,6 +2900,7 @@ domestication_scan/results/RAiSD_Output2.raisd
 # now running through pipeline to test for enrichment.
 # deleted previous output files.
 hilo$ snakemake -n all --profile slurm
+
 hilo$ snakemake domestication_scan/plots/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc05.png domestication_scan/plots/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc05.png --quiet --profile slurm
 Job counts:
         count   jobs
@@ -2917,8 +2918,19 @@ Job counts:
                 1       get_fasta_hits
                 1       id_raisd_hits
                 2       plot_overlap_hits
-                7
-
+                7 # COMPLETED 3.15.2021
+# after raisd runs, re-start SNP calling for 3-way structure/PCA with HILO_MAIZE55_PARV50 dataset:
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     call_SNPs
+        1       plot_PCAngsd
+        1       results_NGSAdmix
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        432 # RUNNING 3.15.2021
 
 
 # TO DO:

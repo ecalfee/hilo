@@ -35,7 +35,7 @@ rdf <- data.frame(grRaisd)
 rdf$seqnames <- sapply(rdf$seqnames, substr, 4, 6) # chr2 -> 2
 
 # sum(rdf$width/10^9)/2.1 # top_x = 0.0005 covers about 3.6% of the ref genome before filtering out high N (missing data) windows
-print("percentage of 2.1Gb genome:")
+print("proportion of 2.1Gb genome:")
 print(sum(rdf$width/10^9)/2.1)
 
 write.table(rdf[ , c("seqnames", "start", "end")], file = bed_out,

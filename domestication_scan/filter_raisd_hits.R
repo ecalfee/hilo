@@ -41,7 +41,7 @@ hits_keep <- hits[which(percents < maxN), ]
 hits_excl <- hits[which(percents >= maxN), ]
 
 # sum(hits_keep$V3 - hits_keep$V2)/10^9/2.1 # covers about 2% of the ref genome
-print("percentage of 2.1Gb genome:")
+print("proportion of 2.1Gb genome:")
 print(sum(hits_keep$V3 - hits_keep$V2)/10^9/2.1)
 
 write.table(hits_keep, file = bed_keep,
