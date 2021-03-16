@@ -11,7 +11,7 @@ rule id_raisd_hits:
     output:
         bed = "domestication_scan/results/raisdHits.bed"
     params:
-        p = "med2",
+        p = "high2",
         top_x = .0005
     resources:
         time_min = 15,
@@ -29,7 +29,7 @@ rule get_fasta_hits:
     output:
         fa = "domestication_scan/results/raisdHits.fa"
     params:
-        p = "med2"
+        p = "high2"
     resources:
         time_min = 15,
         mem = 8
@@ -47,7 +47,7 @@ rule filter_raisd_hits:
         bed_keep = "domestication_scan/results/raisdHits_keep.bed",
         bed_excl = "domestication_scan/results/raisdHits_exclude.bed"
     params:
-        p = "med2",
+        p = "high2",
         maxN = .5
     resources:
         time_min = 15,
@@ -71,7 +71,7 @@ rule calc_overlap_hits:
         bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
         shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
     params:
-        p = "med2"
+        p = "high2"
     shadow:
         "minimal"
     conda:
@@ -100,7 +100,7 @@ rule plot_overlap_hits:
         png = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.png",
         summary = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.summary"
     params:
-        p = "med2"
+        p = "high2"
     shadow:
         "minimal"
     conda:

@@ -225,7 +225,7 @@ rule all:
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes"),
         "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
-        expand("domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_neg_meanAnc_outliers.perc05.png", Ne = 10000, YESNO = "yes", ZEA = zea)
+        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.png", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"])
     params:
         p = "med2"
     resources:
