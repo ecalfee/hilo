@@ -118,7 +118,7 @@ rule call_SNPs:
     params:
         p = "med2",
         region = lambda wildcards: regions_dict[wildcards.REGION],
-        out_prefix = lambda wildcards: "variant_sites/results/" + prefix_all + "/" + wildcards.REGION,
+        out_prefix = lambda wildcards: "variant_sites/results/" + wildcards.PREFIX + "/" + wildcards.REGION,
         min_ind = 150, # a little less than 40% of the total sample (including ind's < 0.5x coverage that won't get ancestry calls)
         # calculate 2.5x the mean depth
         max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))

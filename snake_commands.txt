@@ -2893,7 +2893,8 @@ Job counts:
         1       run_NGSAdmix
         1       run_PCAngsd
         1       thin_GL_4PCA
-        435
+        435 # oops an error with PREFIX wildcards vs prefix_all for HILO_MAIZE55.
+        # so I'm rerunning.
 # got new domestication scan results from Dan (fixing error with mop/raisd):
 domestication_scan/results/RAiSD_Output2.raisd
 # now running through pipeline to test for enrichment.
