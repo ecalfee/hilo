@@ -136,7 +136,7 @@ include: "global_ancestry/Snakefile"
 #include: "diversity/Snakefile"
 #include: "map/Snakefile"
 #include: "mhl1_inv/Snakefile"
-#include: "domestication_scan/Snakefile"
+include: "domestication_scan/Snakefile"
 
 ## all:  main rule to run all workflows
 rule all:
@@ -224,7 +224,8 @@ rule all:
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
         expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes"),
-        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png"
+        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
+        expand("domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_neg_meanAnc_outliers.perc05.png", Ne = 10000, YESNO = "yes", ZEA = zea)
     params:
         p = "med2"
     resources:
@@ -234,9 +235,6 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
-        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc05.png",
-        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc05.png",
     params:
         p = "med2"
     resources:

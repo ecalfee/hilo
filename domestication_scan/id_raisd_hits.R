@@ -7,27 +7,22 @@ library(dplyr)
 
 # input files
 raisd_input <- snakemake@input[["raisd"]]
-# raisd_input <- "domestication_scan/results/RAiSD_Output.Raisd"
+# raisd_input <- "domestication_scan/results/RAiSD_Output2.Raisd"
 # parameters
 top_x <- as.numeric(snakemake@params[["top_x"]])
-# top_x <- 0.002 # proportion to use as cutoff
+# top_x <- 0.0005 # proportion to use as cutoff
 # output files
 bed_out <- snakemake@output[["bed"]]
 # bed_out <- "domestication_scan/results/raisdHits.bed"
-  
+
 
 # load in raw Raisd results
 raisd <- data.table::fread(raisd_input, data.table = FALSE)
 colnames(raisd) <- c('seqnames','testsnp','start','end','a','b','c','score')
 raisd$seqnames <- paste('chr', raisd$seqnames, sep="")
 
-# do the actual subsetting here by score (raisd score)
-# This sort is memory intensive, doing it in two steps
-# First remove the 0 scores (we'll never select anyhow)
-raisd_no_zeros <- raisd[-which(raisd$score==0), ]
-
-# Then do the sort
-raisdSort <- raisd_no_zeros[order(raisd_no_zeros$score, decreasing=TRUE), ]
+# Sort
+raisdSort <- raisd[order(raisd$score, decreasing=TRUE), ]
 # Rough attempt to get top X%
 raisdHits <- raisdSort[1:round(nrow(raisd)*top_x), ] #testing because the final length will depend on how much overlap is here
 
@@ -39,7 +34,9 @@ grRaisd <- makeGRangesFromDataFrame(raisdHits, keep.extra.columns=TRUE) %>%
 rdf <- data.frame(grRaisd)
 rdf$seqnames <- sapply(rdf$seqnames, substr, 4, 6) # chr2 -> 2
 
-# sum(rdf$width/10^9)/2.1 # top_x = 0.002 covers about 5.5% of the ref genome before filtering out high N (missing data) windows
+# sum(rdf$width/10^9)/2.1 # top_x = 0.0005 covers about 3.6% of the ref genome before filtering out high N (missing data) windows
+print("percentage of 2.1Gb genome:")
+print(sum(rdf$width/10^9)/2.1)
 
 write.table(rdf[ , c("seqnames", "start", "end")], file = bed_out,
             quote = FALSE, sep = '\t',

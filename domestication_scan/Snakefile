@@ -7,12 +7,12 @@ workdir: path_hilo
 ## id_raisd_hits: creates bed file of top X% raisd hits (as contiguous regions) from raw raisd output
 rule id_raisd_hits:
     input:
-        raisd = "domestication_scan/results/RAiSD_Output.Raisd"
+        raisd = "domestication_scan/results/RAiSD_Output2.Raisd"
     output:
         bed = "domestication_scan/results/raisdHits.bed"
     params:
         p = "med2",
-        top_x = .001
+        top_x = .0005
     resources:
         time_min = 15,
         mem = 8
@@ -29,8 +29,7 @@ rule get_fasta_hits:
     output:
         fa = "domestication_scan/results/raisdHits.fa"
     params:
-        p = "med2",
-        top_x = .002
+        p = "med2"
     resources:
         time_min = 15,
         mem = 8

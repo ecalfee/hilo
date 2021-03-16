@@ -2881,6 +2881,23 @@ hilo$ cp samples/HILO_MAIZE55_bams.list samples/HILO_MAIZE55_PARV50_bams.list
 hilo$ cat samples/ALL_byPop/parv_bams.list >> samples/HILO_MAIZE55_PARV50_bams.list
 hilo$ cp samples/HILO_MAIZE55_ids.list samples/HILO_MAIZE55_PARV50_ids.list
 hilo$ cat samples/ALL_byPop/parv_ids.list >> samples/HILO_MAIZE55_PARV50_ids.list
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       add_parv_2_meta
+        1       all
+        1       calc_depth
+        426     call_SNPs
+        2       plot_PCAngsd
+        1       results_NGSAdmix
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        435
+# got new domestication scan results from Dan (fixing error with mop/raisd):
+domestication_scan/results/RAiSD_Output2.raisd
+# now running through pipeline to test for enrichment.
+# deleted previous output files:
 
 
 
