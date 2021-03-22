@@ -2930,7 +2930,54 @@ Job counts:
         1       run_NGSAdmix
         1       run_PCAngsd
         1       thin_GL_4PCA
-        432 # RUNNING 3.15.2021. CANCELLED (not getting priority anyways)
+        432 # RUNNING 3.15.2021. I CANCELLED to run domestication scan small job 'some' (not getting priority anyways)
+        hilo$ squeue -u ecalfee | grep 'call_SNP' | awk '{print $1}' | xargs -n 1 scancel
+        hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        6       calc_overlap_hits
+        6       plot_overlap_hits
+        1       some
+        13 # COMPLETED 3.15.2021
+        hilo$ snakemake -n all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        426     call_SNPs
+        1       plot_PCAngsd
+        1       results_NGSAdmix
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        432 # RUNNING AGAIN 3.16.2021 (12:47am) -- check on this tomorrow to see if it ever got priority.
+# I cancelled 2 jobs that have been stalled for a long time:
+ecalfee@farm:~$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      32158210      med2 call_SNP  ecalfee  S     4:30:28      1 4   16G    c6-89
+      32159545      med2 call_SNP  ecalfee  S     2:38:15      1 4   16G    c6-89
+ecalfee@farm:~$ scancel 32158210 32159545
+# rerunning snakemake to get the remaining jobs running:
+ecalfee@farm:~/hilo$ snakemake all --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       all
+        32      call_SNPs
+        1       plot_PCAngsd
+        1       results_NGSAdmix
+        1       run_NGSAdmix
+        1       run_PCAngsd
+        1       thin_GL_4PCA
+        38 # RUNNING 3.19.2021
+        # thin_GL_4PCA didn't run. fixed output file naming and rerunning:
+        
+
+# downloaded supporting file S3 from ogut 2015 (original 0.2cM rmap on v2) from https://www.panzea.org/publications
+# used excel (and copy paste into a regular text using nano) to convert marker positions into a bed file.
+chr, start (=original position - 1), end (= original position), marker name, marker cM position
+# send that bed file into Assembly Converter:
+https://plants.ensembl.org/Zea_mays/Tools/AssemblyConverter
+input file: hilo/data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3.bed
+Assembly Converter	R5sWAIAz2D1GNGtF	Assembly conversion of ogut supp S3 v2 -> v4 EC in Zea_maysRunning	20/03/2021, 17:56 (GMT)
 
 
 # TO DO:

@@ -16,14 +16,14 @@ rule thin_GL_4PCA:
         N = 100, # keep every 100th SNP
         first = 0, # first region
         last = len(regions_dict) - 1, # last region
-        prefix_all = prefix_all
+        prefix = lambda wildcards: wildcards.PREFIX
     resources:
         time_min = lambda wildcards, attempt: attempt * 6 * 60,
         mem = lambda wildcards, attempt: attempt * 4
     conda:
         "../envs/environment.yaml"
     shell:
-        "./global_ancestry/thin_GL_4PCA.sh {params.N} {params.first} {params.last} {params.prefix_all}"
+        "./global_ancestry/thin_GL_4PCA.sh {params.N} {params.first} {params.last} {params.prefix}"
 
 ## run_PCAngsd: calculate covariance matrix from genotype likelihood file using PCAngsd
 rule run_PCAngsd:
