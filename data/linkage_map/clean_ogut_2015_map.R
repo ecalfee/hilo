@@ -1,196 +1,113 @@
 #!/usr/bin/env Rscript
 # Author: Erin Calfee 2018
+# working directory: hilo/
 # this script drops 'bad' SNPs from the 0.2 cM Ogut 2015 maize 
 # recombination map where a few such SNPs appear to be out
-# of order, due to map or assembly error, e.g. @ 8.8 on chr2 below:
-#S_3403255    M1114    8.4    2    3432355
-#S_3432232    M1115    8.6    2    3461331
-#S_3461208    M1116    8.8    2    3284078
-#S_3490185    M1117    9    2    3492426
-#S_3519161    M1118    9.2    2    3521396
-# notably, this affects a few larger contiguos regions on chr 7
+# of order, due to map or assembly error
 library(dplyr)
 library(ggplot2)
 
-rmap = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4.txt", 
-                stringsAsFactors = F, header = F)
-colnames(rmap) = c("SNP", "marker", "pos_cM", "chr", "pos_bp")
-rmap = rmap[!is.na(rmap$SNP),]
+# Marker postions from Ogut 2015 Supporting file S3 (v2 coordinates)
+# were converted to reference genome v4 coordinates using 'Assembly Converter' 
+# https://plants.ensembl.org/Zea_mays/Tools/AssemblyConverter
+rmap_file = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3_onto_v4.bed"
+
+rmap_clean_out = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt"
+
+rmap = read.table(rmap_file, 
+                stringsAsFactors = F, header = F) %>%
+  data.table::setnames(c("chr", "bed_start", "pos_bp", "marker", "pos_cM")) %>%
+  dplyr::select(-bed_start) %>%
+  dplyr::filter(substr(chr, 1, 9) != "B73V4_ctg") %>% # remove markers that now mapped to unassembled contigs
+  dplyr::mutate(chr = as.integer(chr))
 
 # find positions that have a chromosome that matches neither the chrom in front nor behind them
 i_missChr = which(lead(rmap$chr) != rmap$chr & lag(rmap$chr) != rmap$chr)
+
+# visually inspect context for markers that map to the 'wrong' chromosome
+# lapply(i_missChr, function(i) rmap[(i-3):(i+3), ])
 # remove these SNPs
-rmap_1 = rmap[-i_missChr,]
+rmap_0 = rmap[-i_missChr, ]
 # confirmed no more
-length(which(lead(rmap_1$chr) != rmap_1$chr & lag(rmap_1$chr) != rmap_1$chr)) == 0
+# length(which(lead(rmap_0$chr) != rmap_0$chr & lag(rmap_0$chr) != rmap_0$chr)) == 0
 # difference in chromosome number between current and next mapped position
-table(lead(rmap_1$chr) - rmap_1$chr)
-i_missChr2 = which(!(lead(rmap_1$chr) - rmap_1$chr) %in% 0:1)
-# clearly a small segment of chr7 stuck within chr2 -- I'll remove by hand
-#lapply(i_missChr2, function(i) rmap_1[(i-3):(i+3), ])
-rmap_1 = filter(rmap_1, !(marker %in% c("M1786", "M1787", "M1788")))
-#table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
+# table(lead(rmap_0$chr) - rmap_0$chr)
+i_missChr2 = which(!((lead(rmap_0$chr) - rmap_0$chr) %in% c(0, 1, NA)))
+# lapply(i_missChr2, function(i) rmap_0[(i-10):(i+10), ])
+# clearly a small segment of chr7 stuck within chr2 
+# and a small segment of chr2 stuck within chr10 
+# that I'll remove by hand:
+rmap_1 = filter(rmap_0, !(marker %in% paste0("M", c(1786:1788, 7190:7196))))
+# table(lead(rmap_1$chr) - rmap_1$chr) # looks good! All markers out of order due to chromosome are now removed
 
-# now I look for SNPs embedded within chromosomes that appear to be out-of-order
-# afterwards I deal with the case of SNPs near the chromosome transition boundary
+# first find reversals
+rmap_2 = rmap_1 %>%
+  mutate(chr_end = c(diff(chr), 1) == 1,
+         length_bp = c(diff(pos_bp), NA),
+         length_cM = c(diff(pos_cM), NA),
+         length_bp = ifelse(chr_end, NA, length_bp),
+         length_cM = ifelse(chr_end, NA, length_cM),
+         marker_number = as.integer(substr(marker, 2, 100)),
+         reversed = length_bp < 0 & !is.na(length_bp),
+         reversed = marker != "M1" & (reversed | lag(reversed)))
+# then find smaller out-of-place scaffolds (may look like reversals?)
 
-# find SNPs that are on the same chromosome and greater than all the SNPs up to 
-#3 behind and 3 ahead of themselves on the map
-tooBig3 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lag(lag(map$chr)) &
-    map$chr == lag(lag(lag(map$chr))) &
-    map$chr == lead(map$chr) &
-    map$chr == lead(lead(map$chr)) &
-    map$chr == lead(lead(lead(map$chr))) &
-    map$pos_bp > lag(map$pos_bp) & 
-    map$pos_bp > lag(lag(map$pos_bp)) & 
-    map$pos_bp > lag(lag(lag(map$pos_bp))) &
-    map$pos_bp > lead(map$pos_bp) & 
-    map$pos_bp > lead(lead(map$pos_bp)) & 
-    map$pos_bp > lead(lead(lead(map$pos_bp)))
+plot_reversal = function(map, problem_marker, context = 10) {
+  map %>%
+  mutate(same_chr = chr == map$chr[map$marker_number == problem_marker]) %>%
+  filter(same_chr & marker_number > problem_marker - context & marker_number < problem_marker + context) %>%
+  ggplot(., aes(x = pos_cM, y = pos_bp, color = reversed)) +
+  geom_point(size = .1) +
+  theme_light() +
+  geom_text(aes(label = marker)) +
+  ggtitle(paste("M", problem_marker))
 }
+#plot_reversal(rmap_2, 37) # good 
+#plot_reversal(rmap_2, 5147) # good
+#plot_reversal(rmap_2, 770) # not really a reversal
 
-# find SNPs that are on the same chromosome and are less than all the SNPs up to 
-# 3 behind and 3 ahead of themselves on the map
-tooSmall3 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lag(lag(map$chr)) &
-    map$chr == lag(lag(lag(map$chr))) &
-    map$chr == lead(map$chr) &
-    map$chr == lead(lead(map$chr)) &
-    map$chr == lead(lead(lead(map$chr))) &
-  map$pos_bp < lag(map$pos_bp) & 
-    map$pos_bp < lag(lag(map$pos_bp)) & 
-    map$pos_bp < lag(lag(lag(map$pos_bp))) &
-    map$pos_bp < lead(map$pos_bp) & 
-    map$pos_bp < lead(lead(map$pos_bp)) & 
-    map$pos_bp < lead(lead(lead(map$pos_bp)))
-}
+rmap_2_rm_reversals = filter(rmap_2, !reversed)
+# which ones are still problems? how many?
+non_rev_markers = rmap_2_rm_reversals$marker_number[c(diff(rmap_2_rm_reversals$pos_bp), 1) < 0 & c(diff(rmap_2_rm_reversals$chr), NA) %in% c(0, NA)]
+# for this small set of non-reversed problem markers,
+# I visualize and select markers to drop by eye
+# for (x in non_rev_markers) plot(plot_reversal(map = rmap_2, problem_marker = x, context = 30))
+markers_2_remove = paste0("M", c(6465:6466, 4397:4404, 4237:4241, 3966:3967, 1855:1860, 767:769))
+rmap_3 = rmap_1 %>%
+  filter(!(marker %in% markers_2_remove)) %>%
+  mutate(chr_end = c(diff(chr), 1) == 1,
+         length_bp = c(diff(pos_bp), NA),
+         length_cM = c(diff(pos_cM), NA),
+         length_bp = ifelse(chr_end, NA, length_bp),
+         length_cM = ifelse(chr_end, NA, length_cM),
+         reversed = length_bp < 0 & !is.na(length_bp),
+         reversed = marker != "M1" & (reversed | lag(reversed)),
+         marker_status = ifelse(reversed, "remove - reversed", "keep")) %>%
+  bind_rows(filter(rmap_1, marker %in% markers_2_remove) %>%
+              mutate(marker_status = "remove - other")) %>%
+  mutate(marker_number = as.integer(substr(marker, 2, 100))) %>%
+  arrange(marker_number)
 
-# find SNPs that are on the same chromosome and greater than all the SNPs up to 
-#2 behind and 2 ahead of themselves on the map
-tooBig2 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lag(lag(map$chr)) &
-    map$chr == lead(map$chr) &
-    map$chr == lead(lead(map$chr)) &
-    map$pos_bp > lag(map$pos_bp) & 
-    map$pos_bp > lag(lag(map$pos_bp)) & 
-    map$pos_bp > lead(map$pos_bp) & 
-    map$pos_bp > lead(lead(map$pos_bp))
-}
+# add recombination rates to filtered map
+rmap_keep <- rmap_3 %>%
+  dplyr::filter(marker_status == "keep") %>%
+  mutate(
+    pos_cM = pos_cM, 
+    chr_end = c(diff(chr), 1) == 1,
+    length_bp = c(diff(pos_bp), NA),
+    length_cM = round(c(diff(pos_cM), NA), 1), # rounds off very small numerical erros (e.g. .199999999). Markers should be every 0.2cM
+    length_bp = ifelse(chr_end, NA, length_bp),
+    length_cM = ifelse(chr_end, NA, length_cM),
+    cM_Mbp = round(length_cM/(length_bp/10^6), 4))
+# summary(rmap_keep$cM_Mbp)
+# table(rmap_keep$length_cM) # biggest gap is from the long reversal on chr7
+# rmap_keep[rmap_keep$length_cM == max(rmap_keep$length_cM, na.rm = T), ]
+# View(rmap_keep %>% arrange(., -cM_Mbp))
 
-# find SNPs that are on the same chromosome and are less than all the SNPs up to 
-# 2 behind and 2 ahead of themselves on the map
-tooSmall2 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lag(lag(map$chr)) &
-    map$chr == lead(map$chr) &
-    map$chr == lead(lead(map$chr)) &
-    map$pos_bp < lag(map$pos_bp) & 
-    map$pos_bp < lag(lag(map$pos_bp)) & 
-    map$pos_bp < lead(map$pos_bp) & 
-    map$pos_bp < lead(lead(map$pos_bp))
-}
-
-# find SNPs that are on the same chromosome and greater than all the SNPs up to 
-#1 behind and 1 ahead of themselves on the map
-tooBig1 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lead(map$chr) &
-    map$pos_bp > lag(map$pos_bp) & 
-    map$pos_bp > lead(map$pos_bp)
-}
-
-# find SNPs that are on the same chromosome and are less than all the SNPs up to 
-# 1 behind and 1 ahead of themselves on the map
-tooSmall1 = function(map) {
-  map$chr == lag(map$chr) &
-    map$chr == lead(map$chr) &
-    map$pos_bp < lag(map$pos_bp) & 
-    map$pos_bp < lead(map$pos_bp)
-}
-
-
-# apply tooBig and tooSmall filter recursively
-# until no more SNPs are filtered out
-recursive_filter3 = function(map){
-  nSNP = nrow(map)
-  # do one step of filtering
-  map2 = map %>%
-  filter(., !tooBig3(.) | is.na(tooBig3(.))) %>%
-    filter(., !tooSmall3(.)| is.na(tooSmall3(.)))
-  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
-    return(recursive_filter3(map2))
-  } else{ # otherwise done filtering, return current map
-    return(map2)
-  }
-}
-recursive_filter2 = function(map){
-  nSNP = nrow(map)
-  # do one step of filtering
-  map2 = map %>%
-    filter(., !tooBig2(.) | is.na(tooBig2(.))) %>%
-    filter(., !tooSmall2(.)| is.na(tooSmall2(.)))
-  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
-    return(recursive_filter2(map2))
-  } else{ # otherwise done filtering, return current map
-    return(map2)
-  }
-}
-recursive_filter1 = function(map){
-  nSNP = nrow(map)
-  # do one step of filtering
-  map2 = map %>%
-    filter(., !tooBig1(.) | is.na(tooBig1(.))) %>%
-    filter(., !tooSmall1(.)| is.na(tooSmall1(.)))
-  if (nrow(map2) < nrow(map)){ # SNPs still being filtered out
-    return(recursive_filter1(map2))
-  } else{ # otherwise done filtering, return current map
-    return(map2)
-  }
-}
-
-recursive_filter_all = function(map){
-  # first filter out SNPs bigger/smaller than their 3 neighbors before/after
-  # then 2 neighbors
-  # then 1 neighbor
-  map2 = recursive_filter1(recursive_filter2(recursive_filter3(map)))
-}
-  
-rmap_2 = recursive_filter_all(rmap_1)
-#dim(rmap_2)
-
-# make an output file for included markers
-write.table(rmap_2,
-            "../data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt",
-            sep = "\t", col.names = F, row.names = F, quote = F)
-
-# run this function interactively to visualize recombination maps
-# this filtering doesn't change the general recombination map/pattern
-make_plots = function(rmap_1, rmap_2){
-  # zoom in on a pos_cM to pos_bp map. from the general shape of these maps it makes more sense
-  # to extend the tail recombination rate to markers beyond the map boundaries (on end of chroms)
-  # than it does to use a chromosome-average for these markers because rates are faster on the ends
-  # than near the centromere, so this should be a better proxy
-  plot_rmap2 = rmap_2 %>%
-    ggplot(., aes(pos_bp, pos_cM)) +
-    geom_point() +
-    facet_wrap(.~chr) +
-    ggtitle(paste0("rmap post-filtering n=", nrow(rmap_2)))
-  plot_rmap2
-  ggsave(filename = paste0("../plots/rmap_ogut_post-filtering.png"),
-         plot = plot_rmap2, 
-         device = "png", height = 12, width = 20, units = "in")
-  plot_rmap1 = rmap_1 %>%
-    ggplot(., aes(pos_bp, pos_cM)) +
-    geom_point(color = "blue") +
-    facet_wrap(.~chr) +
-    ggtitle(paste0("rmap pre-filtering n=", nrow(rmap_1)))
-  plot_rmap1
-  ggsave(filename = paste0("../plots/rmap_ogut_pre-filtering.png"),
-         plot = plot_rmap1, 
-         device = "png", height = 12, width = 20, units = "in")
-}
-
+# make a linkage map output file for included markers
+write.table(dplyr::select(rmap_keep, marker, chr, pos_bp, pos_cM, cM_Mbp, length_bp, length_cM, chr_end),
+            rmap_clean_out,
+            sep = "\t", 
+            col.names = T, 
+            row.names = F, 
+            quote = F)
