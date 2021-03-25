@@ -90,8 +90,6 @@ rule results_NGSAdmix:
     params:
         p = "med2",
         k = lambda wildcards: wildcards.K
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -111,11 +109,9 @@ rule plot_NGSAdmix:
         png_structure = "global_ancestry/plots/structure_K2.png",
         lm_tex = "global_ancestry/tables/lm_elevation.tex",
         png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png",
-        png_global_anc_multi_lzw = path_hilo + "../hilo_manuscript/figures_main/global_anc_multi.tif"
+        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -132,14 +128,12 @@ rule plot_PCAngsd:
         cov = "global_ancestry/results/PCA/{PREFIX}/whole_genome.cov"
     output:
         png_pca = "global_ancestry/plots/{PREFIX}_pca.png",
-        png_pca_lzw = path_hilo + "../hilo_manuscript/figures_supp/{PREFIX}_pca.tif",
+        png_pca_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_pca.tif",
         png_pc34 = "global_ancestry/plots/{PREFIX}_pc34.png",
         png_pc56 = "global_ancestry/plots/{PREFIX}_pc56.png"
         # add PCA that includes parviglumis?
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -158,8 +152,6 @@ rule add_parv_2_meta:
         rdata = "samples/HILO_MAIZE55_PARV50_meta.RData"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -176,13 +168,11 @@ rule plot_NGSAdmix_parv:
         k3 = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData"
     output:
         png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png",
-        png_structure_lzw = path_hilo + "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
+        png_structure_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
         allo_pops_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_allo_pop.txt",
         groups_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_group.txt"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
