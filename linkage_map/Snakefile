@@ -30,7 +30,7 @@ rule plot_ogut_2015_map:
         rmap_all = "linkage_map/results/ogut_2015_rmap_v2_to_v4_ALL.RData"
     output:
         png = "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
-        png_lzw = "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif"
+        png_lzw = path_hilo + "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif"
     params:
         p = "med2"
     conda:
