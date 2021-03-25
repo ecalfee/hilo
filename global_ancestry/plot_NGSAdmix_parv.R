@@ -13,9 +13,11 @@ library(cowplot)
 # get output plot and table filenames
 png_structure = snakemake@output[["png_structure"]]
 # png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
-txt_allo_pops_alphas = snakemake[["allo_pops_alphas"]]
+png_structure_lzw = snakemake@output[["png_structure_lzw"]]
+# png_structure_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif"
+txt_allo_pops_alphas = snakemake@input[["allo_pops_alphas"]]
 # txt_allo_pops_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_allo_pop.txt"
-txt_groups_alphas = snakemake[["groups_alphas"]]
+txt_groups_alphas = snakemake@input[["groups_alphas"]]
 # txt_groups_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_group.txt"
 
 
@@ -163,3 +165,14 @@ ggsave(png_structure,
        height = 5.5, 
        units = "in",
        dpi = 300)
+
+# save as compressed tiff
+ggsave(filename = png_structure_lzw,
+       plot = p_structure, 
+       device = "tiff", 
+       width = 7.5, 
+       height = 5.5, 
+       units = "in",
+       dpi = 300, 
+       compression = "lzw", 
+       type = "cairo")

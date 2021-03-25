@@ -23,6 +23,8 @@ lm_tex = snakemake@output[["lm_tex"]]
 # lm_tex = "global_ancestry/tables/lm_elevation.tex"
 png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
 # png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
+png_global_anc_multi_lwz = snakemake@output[["png_global_anc_multi_lzw"]]
+# png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.png"
 
 # some plot sizing constants
 smallPointSize = 0.25
@@ -179,3 +181,13 @@ ggsave(png_global_anc_multi,
        height = 7.5, 
        units = "in",
        dpi = 300)
+
+ggsave(filename = png_global_anc_multi_lzw,
+       plot = p_combined, 
+       device = "tiff", 
+       width = 7.5, 
+       height = 7.5, 
+       units = "in",
+       dpi = 300, 
+       compression = "lzw", 
+       type = "cairo")

@@ -2997,6 +2997,29 @@ Assembly Converter	R5sWAIAz2D1GNGtF	Assembly conversion of ogut supp S3 v2 -> v4
 # I want to first trigger just a rerun of PCA/NGSAdmix plotting
 # starting with results_NGSAdmix for both K = 2 and K = 3
 hilo$ snakemake -n global_ancestry/plots/HILO_MAIZE55_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png global_ancestry/plots/global_anc_multi.png --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       plot_NGSAdmix
+        1       plot_NGSAdmix_parv
+        2       plot_PCAngsd
+        4 # hmm. I want it to rerun results_NGSAdmix too
+touch global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3.qopt
+touch global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2.qopt
+hilo$ snakemake global_ancestry/plots/HILO_MAIZE55_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png global_ancestry/plots/global_anc_multi.png --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       plot_NGSAdmix
+        1       plot_NGSAdmix_parv
+        2       plot_PCAngsd
+        2       results_NGSAdmix
+        6 # RUNNING 3.25.2021
+
+# oops forgot to make lzw versions and there was a typo in plot_NGSAdmix_parv. rerunning:
+# also adding in supp plot for new rmap and EXTENDED rmap
+hilo$ snakemake -n linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.png ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif ../hilo_manuscript/figures_main/global_anc_multi.tif --quiet --profile slurm
+
+# need to make sure this gets rerun:
+
 
 # TO DO:
 - ADD lzw compression to all figures in .tif format:

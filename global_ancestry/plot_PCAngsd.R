@@ -13,6 +13,8 @@ cov_file = snakemake@input[["cov"]]
 # get output plot filenames
 png_pca = snakemake@output[["png_pca"]]
 # png_pca = "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png"
+png_pca_lzw = snakemake@input[["png_pca_lzw"]]
+# png_pca_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif"
 png_pc34 = snakemake@output[["png_pc34"]]
 # png_pc34 = "global_ancestry/plots/HILO_MAIZE55_PARV50_pc34.png"
 png_pc56 = snakemake@output[["png_pc56"]]
@@ -70,6 +72,18 @@ ggsave(png_pca,
        device = "png", 
        width = 5.4, height = 3.5, units = "in",
        dpi = 300)
+
+# save compressed tif
+ggsave(filename = png_pca_lzw,
+       plot = p12, 
+       device = "tiff", 
+       width = 5.4, 
+       height = 3.5, 
+       units = "in",
+       dpi = 300, 
+       compression = "lzw", 
+       type = "cairo")
+
 
 p34 = d %>%
   ggplot(., aes(PC3, PC4)) + 
