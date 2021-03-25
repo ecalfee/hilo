@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 # Author: Erin Calfee. Last updated 03/2021.
 
+library(dplyr)
+library(tidyr)
+
 # this script extends rmap_included genetic map to the first and last bp
 # of each chromosome, using furthest left/right map rate
 

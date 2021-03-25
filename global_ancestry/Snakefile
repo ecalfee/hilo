@@ -90,8 +90,6 @@ rule results_NGSAdmix:
     params:
         p = "med2",
         k = lambda wildcards: wildcards.K
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
