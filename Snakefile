@@ -258,8 +258,8 @@ rule figures_main:
         time_min = 15,
         mem = 2
 
-rule tables_supp:
-    input:
+#rule tables_supp:
+#    input:
         #population_metadata.csv,
         #parviglumis_50_SRA_IDs.csv,
         #spearmans_rho_ngsadmix.tex,
@@ -268,11 +268,11 @@ rule tables_supp:
         #spearmans_rho_f4_sympatric_mexicana_pop22.tex,
         #spearmans_rho_local_ancestry.tex,
         #domestication_genes.tex
-    params:
-        p = "med2"
-    resources:
-        time_min = 15,
-        mem = 2
+#    params:
+#        p = "med2"
+#    resources:
+#        time_min = 15,
+#        mem = 2
 
 rule figures_supp:
     input:
