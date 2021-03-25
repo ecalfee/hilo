@@ -8,7 +8,7 @@ print(paste("R working directory:", getwd()))
 
 # load variables from Snakefile
 rmap_file = snakemake@input[["rmap"]] # recombination map
-# rmap_file = "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+# rmap_file = "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 sites_file = snakemake@input[["sites"]]
 # sites_file = "variant_sites/results/TEST/region_1.var.sites"
 out_file = snakemake@output[["rpos"]]

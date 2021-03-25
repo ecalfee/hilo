@@ -1,0 +1,63 @@
+## linkage_map/Snakefile: pipeline to make clean v4 linkage map from original Ogut 2015 map (on reference genome v2 coordinates)
+
+workdir: path_hilo
+# note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
+
+## clean_ogut_2015_map: takes assembly converter v2 -> v4 output and drops markers that don't map, map to the wrong chr, are out of order, or have other coord. conversion errors.
+## returns monotonically increasing cleaned map on maize reference genome v4 coordinates
+rule clean_ogut_2015_map:
+    input:
+        rmap_v4 = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3_onto_v4.bed",
+        rmap_v2 = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3.bed"
+    output:
+        rmap_clean = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt",
+        rmap_all = "linkage_map/results/ogut_2015_rmap_v2_to_v4_ALL.RData"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "clean_ogut_2015_map.R"
+
+## plot_ogut_2015_map: plots ogut 2015 linkae map and markers that were dropped
+rule plot_ogut_2015_map:
+    input:
+        rmap_all = "linkage_map/results/ogut_2015_rmap_v2_to_v4_ALL.RData"
+    output:
+        png = "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
+        png_lzw = "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "plot_ogut_2015_map.R"
+
+## extend_ogut_2015_map: extends recombination rates from the last mapped window to the ends of the chromosomes
+rule extend_ogut_2015_map:
+    input:
+        rmap_clean = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt",
+        genome = ref_chr
+    output:
+        rmap_ext = "linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "extendOgutMap2fullCHR.R"

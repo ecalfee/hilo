@@ -1,11 +1,11 @@
-# this script creates the functions to calculate the 
+# this script creates the functions to calculate the
 # approximate cM or bp position for any site on a chromosome
 # using linear interpolation
 # e.g. bp2cM(chrom = 1, pos_bp = 1) and cM2bp(chrom = 5, pos_cM = 0.2)
 # These functions return NA if the position is out of bounds (as in, off the chromosome)
 
 # load extended recombination map (extended to full length of chromosomes)
-rmapEXT = read.table("../data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt",
+rmapEXT = read.table("../data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt",
                      sep = "\t", stringsAsFactors = F, header = T)
 
 
@@ -40,14 +40,14 @@ cM2bp = function(chrom, pos_cM, list_FUN = cM2bp_ALLChr){
 #bp2cM(chrom = 10, pos_bp = 160000000) # NA -- out of bounds
 #bp2cM(chrom = 10, pos_bp = -3) # NA -- out of bounds
 
-#cM2bp(chrom = 1, pos_cM = bp2cM(chrom = 1, pos_bp = 1)) # 1 
+#cM2bp(chrom = 1, pos_cM = bp2cM(chrom = 1, pos_bp = 1)) # 1
 #cM2bp(chrom = 7, pos_cM = 0) # some number
 #cM2bp(chrom = 1, pos_cM = -6) # NA -- out of bounds
 #cM2bp(chrom = 4, pos_cM = 300) # NA -- out of bounds
 
 # testing subfunctions:
 # pb2cM_chr1 = bp2cM_byChr(chrom = 1)
-# pb2cM_chr1(c(0, 1, 50000, 300000, 400000, 
+# pb2cM_chr1(c(0, 1, 50000, 300000, 400000,
 #             100000000, 8000000000)) # test cases
 # bp2cM_ALLChr[[1]](c(0, 1, 50000, 300000, 400000, 100000000, 8000000000))
 # cM2bp_chr8 = cM2bp_byChr(chrom = 8)
@@ -56,4 +56,3 @@ cM2bp = function(chrom, pos_cM, list_FUN = cM2bp_ALLChr){
 # cM2bp_chr8(seq(-1, 1, by = .01)) # does produce decimals
 # round output to nearest bp
 # round(cM2bp_ALLChr[[8]](seq(-1, 1, by = .01)))
-

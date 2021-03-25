@@ -7,7 +7,7 @@ library(bedr)
 file_out = snakemake@output[["windows"]]
 # file_out = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 rmap_file = snakemake@input[["rmap"]]
-# rmap_file = "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+# rmap_file = "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 cds_file = snakemake@input[["cds"]] # coding regions
 # cds_file = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed"
 genome_file = snakemake@input[["genome"]] # genome order
@@ -80,8 +80,8 @@ sorted_1cM_cds <- bedr(
          cM_Mb = as.numeric(cM_Mb),
          quintile_r5 = as.numeric(quintile_r5),
          pos_cM = as.numeric(pos_cM),
-         coding_bp = as.numeric(coding_bp), 
-         width_bp = as.numeric(width_bp), 
+         coding_bp = as.numeric(coding_bp),
+         width_bp = as.numeric(width_bp),
          frac_bp_coding = as.numeric(frac_bp_coding)) %>%
   arrange(coding_bp) %>% # arrange from lowest to highest coding base pairs in 1cM window
   # calculate cumulative bp position
@@ -89,7 +89,7 @@ sorted_1cM_cds <- bedr(
          cum_percentile_bp = cum_pos_bp/max(cum_pos_bp))
 
 # get quantile bin for coding bp/cM
-breaks_cd5_1cM <- sapply(seq(0, 1, by = .2), 
+breaks_cd5_1cM <- sapply(seq(0, 1, by = .2),
                          function(x) sorted_1cM_cds$coding_bp[first(which(sorted_1cM_cds$cum_percentile_bp >= x))])
 
 # label bins in data by their quintile
@@ -101,7 +101,7 @@ map_pos_1cM_cds <- sorted_1cM_cds %>%
                       include.lowest = T),
          quintile_cd5 = as.numeric(factor(bin_cd5))) %>% # label quintiles 1-5
   arrange(chr, start) %>%
-  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "quintile_r5", "pos_cM", 
+  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "quintile_r5", "pos_cM",
                      "coding_bp", "width_bp", "frac_bp_coding", "bin_cd5", "quintile_cd5"))
 
 # print out quintiles
@@ -116,7 +116,7 @@ sorted_1cM_frac <- map_pos_1cM_cds %>%
          cum_percentile_bp = cum_pos_bp/max(cum_pos_bp))
 
 # get quantile bin for coding bp/cM
-breaks_frac5_1cM <- sapply(seq(0, 1, by = .2), 
+breaks_frac5_1cM <- sapply(seq(0, 1, by = .2),
                          function(x) sorted_1cM_frac$frac_bp_coding[first(which(sorted_1cM_frac$cum_percentile_bp >= x))])
 
 # label bins in data by their quintile
@@ -127,8 +127,8 @@ map_pos_1cM_cds_frac <- sorted_1cM_frac %>%
                        include.lowest = T),
          quintile_frac5 = as.numeric(factor(bin_frac5))) %>% # label quintiles 1-5
   arrange(chr, start) %>%
-  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "quintile_r5", "pos_cM", 
-                     "coding_bp", "bin_cd5", "quintile_cd5", 
+  dplyr::select(., c("chr", "start", "end", "window", "cM_Mb", "bin_r5", "quintile_r5", "pos_cM",
+                     "coding_bp", "bin_cd5", "quintile_cd5",
                      "width_bp", "frac_bp_coding", "bin_frac5", "quintile_frac5")) %>%
   mutate(chr = as.character(chr))
 

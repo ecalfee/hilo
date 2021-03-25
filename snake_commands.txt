@@ -2968,8 +2968,21 @@ Job counts:
         1       run_PCAngsd
         1       thin_GL_4PCA
         38 # RUNNING 3.19.2021
-        # thin_GL_4PCA didn't run. fixed output file naming and rerunning:
-        
+        # thin_GL_4PCA didn't find output file. but did prefix_all = HILO_MAIZE55 instead, so wrote over the HILO_MAIZE55/whole_genome.beagle.gz so will be re-triggering PCAs/NGSAdmix from there..nbd
+        hilo$ ls -l global_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.beagle.gz
+        -rw-rw-r-- 1 ecalfee ecalfee 330450138 Mar 20 05:44 global_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.beagle.gz
+        fixed output file naming to use PREFIX wildcard and rerunning:
+        hilo$ snakemake all --quiet --profile slurm
+      Job counts:
+              count   jobs
+              1       all
+              1       plot_NGSAdmix
+              2       plot_PCAngsd
+              2       results_NGSAdmix
+              2       run_NGSAdmix
+              2       run_PCAngsd
+              1       thin_GL_4PCA
+              11 # RUNNING 3.22.2021
 
 # downloaded supporting file S3 from ogut 2015 (original 0.2cM rmap on v2) from https://www.panzea.org/publications
 # used excel (and copy paste into a regular text using nano) to convert marker positions into a bed file.
@@ -2978,9 +2991,18 @@ chr, start (=original position - 1), end (= original position), marker name, mar
 https://plants.ensembl.org/Zea_mays/Tools/AssemblyConverter
 input file: hilo/data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3.bed
 Assembly Converter	R5sWAIAz2D1GNGtF	Assembly conversion of ogut supp S3 v2 -> v4 EC in Zea_maysRunning	20/03/2021, 17:56 (GMT)
+# so made a new linkage_map/Snakefile and replaced rmap_ext with the new EXTENDED v2->v4 recombination map output file to be used in the rest of the pipeline
+# this is going to trigger a large rerun from everything that builds off of ancestry_by_r or local_ancestry
 
 
 # TO DO:
+- ADD lzw compression to all figures in .tif format:
+ggsave(filename = png_out_lzw,
+       plot = p_combined,
+       device = "tiff",
+       width = 7.5, height = 7.5,
+       dpi = 300, units = "in",
+       compression = "lzw", type = "cairo")
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
 

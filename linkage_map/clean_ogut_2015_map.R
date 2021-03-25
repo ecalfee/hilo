@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
-# Author: Erin Calfee 2018
+
+# Author: Erin Calfee 2018. Updated 03/2021
 # working directory: hilo/
 # this script drops 'bad' SNPs from the 0.2 cM Ogut 2015 maize 
 # recombination map where a few such SNPs appear to be out
@@ -7,14 +8,30 @@
 library(dplyr)
 library(ggplot2)
 
+# load input and output file names from snakemake 
+# (or alternatively use commented out lines below to load each file outside of a snakemake pipeline)
+
 # Marker postions from Ogut 2015 Supporting file S3 (v2 coordinates)
 # were converted to reference genome v4 coordinates using 'Assembly Converter' 
 # https://plants.ensembl.org/Zea_mays/Tools/AssemblyConverter
-rmap_file = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3_onto_v4.bed"
+rmap_v4 = snakemake@input[["rmap_v4"]]
+# rmap_v4 = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3_onto_v4.bed"
 
-rmap_clean_out = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt"
+# map file with all markers before conversion
+rmap_v2 = snakemake@input[["rmap_v2"]]
+# rmap_v2 = "data/linkage_map/ogut_2015_v2_coord_from_supp_file_S3.bed"
 
-rmap = read.table(rmap_file, 
+# output files
+# cleaned map
+rmap_clean_out = snakemake@output[["rmap_clean"]]
+# rmap_clean_out = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt"
+
+# all markers
+rmap_all_out = snakemake@output[["rmap_all"]]
+# rmap_all_out = "linkage_map/results/ogut_2015_rmap_v2_to_v4_ALL.RData"
+
+# get linkage map data
+rmap = read.table(rmap_v4, 
                 stringsAsFactors = F, header = F) %>%
   data.table::setnames(c("chr", "bed_start", "pos_bp", "marker", "pos_cM")) %>%
   dplyr::select(-bed_start) %>%
@@ -73,7 +90,16 @@ non_rev_markers = rmap_2_rm_reversals$marker_number[c(diff(rmap_2_rm_reversals$p
 # I visualize and select markers to drop by eye
 # for (x in non_rev_markers) plot(plot_reversal(map = rmap_2, problem_marker = x, context = 30))
 markers_2_remove = paste0("M", c(6465:6466, 4397:4404, 4237:4241, 3966:3967, 1855:1860, 767:769))
-rmap_3 = rmap_1 %>%
+
+original_markers_v2 = read.table(rmap_v2, header = T) %>%
+  rename(pos_cM = cM_pos) %>%
+  mutate(pos_bp = NA, # don't keep v2 positions
+         marker_status = ifelse(marker %in% rmap_1$marker, "mapped", "unmapped or wrong chr")) %>%
+  dplyr::select(chr, pos_bp, pos_cM, marker, marker_status)
+#table(original_markers_v2$marker_status)/nrow(original_markers_v2)*100
+  
+# label all markers by their status (keep, unmapped or wrong chr, removed - reversed etc.)  
+rmap_all = rmap_1 %>%
   filter(!(marker %in% markers_2_remove)) %>%
   mutate(chr_end = c(diff(chr), 1) == 1,
          length_bp = c(diff(pos_bp), NA),
@@ -83,16 +109,22 @@ rmap_3 = rmap_1 %>%
          reversed = length_bp < 0 & !is.na(length_bp),
          reversed = marker != "M1" & (reversed | lag(reversed)),
          marker_status = ifelse(reversed, "remove - reversed", "keep")) %>%
-  bind_rows(filter(rmap_1, marker %in% markers_2_remove) %>%
+  bind_rows(., filter(rmap_1, marker %in% markers_2_remove) %>%
               mutate(marker_status = "remove - other")) %>%
+  bind_rows(., filter(original_markers_v2, marker_status == "unmapped or wrong chr")) %>%
   mutate(marker_number = as.integer(substr(marker, 2, 100))) %>%
   arrange(marker_number)
 
-# add recombination rates to filtered map
-rmap_keep <- rmap_3 %>%
-  dplyr::filter(marker_status == "keep") %>%
+# save all the markers
+save(list = c("rmap_all", "markers_2_remove"), file = rmap_all_out)
+
+# filter map
+rmap_keep <- filter(rmap_all, 
+       marker_status == "keep")
+
+# calculate recombination rate stats for filtered map
+rmap_keep_stats <- rmap_keep %>%
   mutate(
-    pos_cM = pos_cM, 
     chr_end = c(diff(chr), 1) == 1,
     length_bp = c(diff(pos_bp), NA),
     length_cM = round(c(diff(pos_cM), NA), 1), # rounds off very small numerical erros (e.g. .199999999). Markers should be every 0.2cM
@@ -104,9 +136,9 @@ rmap_keep <- rmap_3 %>%
 # rmap_keep[rmap_keep$length_cM == max(rmap_keep$length_cM, na.rm = T), ]
 # View(rmap_keep %>% arrange(., -cM_Mbp))
 
-# make a linkage map output file for included markers
-write.table(dplyr::select(rmap_keep, marker, chr, pos_bp, pos_cM, cM_Mbp, length_bp, length_cM, chr_end),
-            rmap_clean_out,
+# make a linkage map output file for all included markers
+write.table(rmap_keep,
+            file = rmap_clean_out,
             sep = "\t", 
             col.names = T, 
             row.names = F, 

@@ -16,7 +16,7 @@ print(paste("R working directory:", getwd()))
 
 # load variables from Snakefile
 rmap_file = snakemake@input[["rmap"]] # recombination map
-# rmap_file = "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+# rmap_file = "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 bed_file = snakemake@output[["bed"]]
@@ -33,7 +33,7 @@ rmap_genome = read.table(rmap_file, header = T, sep = "\t", stringsAsFactors = F
 # divide into 10 maps -- 1 per chromosome
 rmap_by_chr = lapply(1:10, function(i) dplyr::filter(rmap_genome, chr == i))
 
-# find tract start and end bp positions, 
+# find tract start and end bp positions,
 # going chromosome by chromosome
 for (i in 1:10){
   if (nrow(sites_by_chr[[i]]) > 0){ # if there are any sites on that chr

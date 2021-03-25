@@ -6,20 +6,20 @@ library(tidyr)
 library(seqinr)
 
 # script to calculate bp overlap between raisd putative domestication regions
-# and 'introgression deserts' in sympatric maize and mexicana 
+# and 'introgression deserts' in sympatric maize and mexicana
 # working directory is hilo/
 
 # input files
 raisd_input <- "domestication_scan/results/RAiSD_Output.Raisd"
-rmap_file <- "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+rmap_file <- "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 maize_bed <- "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/maize.combined.anc.bed"
 mexicana_bed <- "local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/mexicana.combined.anc.bed"
 # output files
 ref_maize <- "data/refMaize/Zea_mays.B73_RefGen_v4.dna.toplevel.fa"
 fa_out <- "domestication_scan/results/out.fa"
-raisd_bed <- "domestication_scan/results/raisdHits.bed" 
+raisd_bed <- "domestication_scan/results/raisdHits.bed"
 
-  
+
 #load in Raisd results
 raisd<-fread(raisd_input,data.table = FALSE)
 colnames(raisd)<-c('seqnames','testsnp','start','end','a','b','c','score')
@@ -51,7 +51,7 @@ bin<-as.numeric(cut_number(raisdNew$pos_cm,10))
 raisdNew$bin<-bin
 
 # plot: these bins are cM position deciles across genome (not cM/bp recombination rates)
-test_bins <- data.frame(bin = bin[c(T, rep(F, 999))], 
+test_bins <- data.frame(bin = bin[c(T, rep(F, 999))],
                         bp_pos = raisdNew$testsnp[c(T, rep(F, 999))],
                         chr = raisdNew$seqnames[c(T, rep(F, 999))])
 ggplot(test_bins, aes(x = bp_pos, y = bin, color = chr)) +
@@ -87,7 +87,7 @@ write.table(rdf[,c(1:3)],file=raisd_bed,
 
 #now run bedtools:
 system(paste("bedtools getfasta -fi", ref_maize, "-fo", fa_out, "-bed", raisd_bed))
-       
+
 #now check to see which of the outliers are driven by N's
 
 #read in the bed file:
@@ -153,7 +153,7 @@ grMaiz <- makeGRangesFromDataFrame(MaizNew, keep.extra.columns=TRUE)
 
 
 #be aware that based on filtering you may not have hits on a chromosome and that will trip up things downstream
-MexNew <- do.call(rbind, 
+MexNew <- do.call(rbind,
                   lapply(c(1:10),function(cr){
   mex_subset<-subset(mex,seqnames==paste('chr',cr,sep=""))
   map_subset<-subset(map,chr==cr)
@@ -221,10 +221,10 @@ boots<-sapply(1:1000,function(x){
   #load in Raisd
   raisd<-raisdraw
   colnames(raisd)<-c('seqnames','testsnp','start','end','a','b','c','score')
-  
+
   #subset by score (raisd score)
   binvals<-sample(1:10,raisdlen,prob=proportions,replace=TRUE)
-  
+
   lists<-lapply(1:10,function(x) sample(which(raisdNew$bin==x),10000))
   #now randomly grab a line from the respective lists:
   grabs<-sapply(binvals,function(x) sample(lists[[x]],1))
@@ -235,10 +235,10 @@ boots<-sapply(1:1000,function(x){
   raisdgr$start<-raisdgr$testsnp-wid
   raisdgr$end<-raisdgr$testsnp+wid
   raisd<-raisdgr
-  
+
   grRaisd <- makeGRangesFromDataFrame(raisd, keep.extra.columns=TRUE)
   grRaisd<-reduce(grRaisd)
-  
+
   #maiz<-maizraw
   #colnames(maiz)<-c('seqnames','start','end','testsnp','score')
   #maiz$seqnames<-paste('chr',maiz$seqnames,sep="")
@@ -250,13 +250,13 @@ boots<-sapply(1:1000,function(x){
   #  maiz_subset$pos_cm <-spline(x=map_subset$pos_bp,y=map_subset$pos_cM,xout=maiz_subset$testsnp, method = "hyman")$y
   #  return(maiz_subset)
   #})
-  
+
   #MaizNew<-bind_rows(subsets)
-  
+
   #grMaiz <- makeGRangesFromDataFrame(MaizNew, keep.extra.columns=TRUE)
   #grMaiz <- reduce(grMaiz) #this contiguous windows
-  
-  
+
+
   #now compare overlaps
   hitsMex <- sum(data.frame( GenomicRanges::intersect(grRaisd, grMex,ignore.strand=TRUE))$width)
   hitsMaiz <- sum(data.frame( GenomicRanges::intersect(grRaisd, grMaiz,ignore.strand=TRUE))$width)
@@ -317,5 +317,3 @@ ggplot(data=bootdf,aes(x=MexPerc))+
   xlab('Number of Raisd and Hybrid Desert Overlaps')+
   ylab('Bootstrap Counts')
 dev.off()
-
-

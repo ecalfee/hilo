@@ -41,8 +41,7 @@ ref_anno = path_hilo + "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.
 trip_anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz"
 
 # recombination map
-rmap = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_INCLUDE.txt"
-rmap_ext = path_hilo + "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+rmap_ext = path_hilo + "linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 
 # 1cM genomic windows for whole genome (1520 windows)
 windows_1cM = []
@@ -127,15 +126,16 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-#include: "filtered_bams/Snakefile"
+include: "map/Snakefile"
+include: "filtered_bams/Snakefile"
 include: "variant_sites/Snakefile"
 include: "global_ancestry/Snakefile"
-#include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
-#include: "diversity/Snakefile"
-#include: "map/Snakefile"
-#include: "mhl1_inv/Snakefile"
+include: "linkage_map/Snakefile"
+include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
+include: "ZAnc/Snakefile"
+include: "diversity/Snakefile"
+include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
 
 ## all:  main rule to run all workflows

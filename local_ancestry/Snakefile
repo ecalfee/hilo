@@ -96,7 +96,7 @@ rule thin_sites_4HMM:
 rule get_tracts_from_sites:
     input:
         sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
-        rmap = "data/linkage_map/ogut_fifthcM_map_agpv4_EXTENDED.txt"
+        rmap = rmap_ext
     output:
         bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
     params:
@@ -447,7 +447,7 @@ rule get_admix_times:
     shell:
         "awk -v N=4 'NR % N == 0' {input.log} | cut -f3 > {output.times}"
 
-## plot_admix_times:
+## plot_admix_times: plots admixture timing estimates from the HMM
 rule plot_admix_times:
     input:
         expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
@@ -472,3 +472,5 @@ rule plot_admix_times:
         mem = 2
     script:
         "plot_admix_times.R"
+
+## plot_sensitivity_to_Ne: compares admixture timing estimates and correlation of local ancestry calls

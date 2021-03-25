@@ -1,17 +1,26 @@
 #!/usr/bin/env Rscript
+# Author: Erin Calfee. Last updated 03/2021.
 
-# this script extends rmapALL genetic map to the first and last bp
+# this script extends rmap_included genetic map to the first and last bp
 # of each chromosome, using furthest left/right map rate
+
+# load input and output file names with snakemake 
+# (or alternatively use commented out lines to run outside of a snakemake pipeline)
+rmap_clean = snakemake@input[["rmap_clean"]]
+# rmap_clean = "linkage_map/results/ogut_2015_rmap_v2_to_v4_INCLUDED.txt"
+genome = snakemake@input[["genome"]]
+# genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
+rmap_ext = snakemake@output[["rmap_ext"]]
+# rmap_ext = "linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 
 # load original recombination map
 # cleaned for positions out of order 
 # after lifting onto genome version 4 ("INCLUDED")
-rmapALL <- read.table("ogut_fifthcM_map_agpv4_INCLUDE.txt",
-                      sep = "\t", header = F, stringsAsFactors = F)
-colnames(rmapALL) <- c("SNP", "marker", "pos_cM", "chr", "pos_bp")
+rmap_included <- read.table(rmap_clean,
+                      sep = "\t", header = T, stringsAsFactors = F)
 
 # load chromosome ranges
-zea_chr <- read.table("../data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+zea_chr <- read.table(genome,
                       sep = "\t", header = F, stringsAsFactors = F)
 colnames(zea_chr) <- c("chr", "length") # chr = chromosomes 1-10, length = chromosome lengths
 
@@ -45,26 +54,30 @@ calcMapPosCM = function(chrom, pos_bp, rmap){
 # last position each chromosome:
 zea_chr$map_ends = apply(zea_chr, 1, function(i) 
   calcMapPosCM(chr = i["chr"], pos_bp = i["length"],
-               rmap = rmapALL))
+               rmap = rmap_included))
+
 # first position each chromosome:
 zea_chr$map_starts = apply(zea_chr, 1, function(i)
   calcMapPosCM(chr = i["chr"], pos_bp = 1,
-               rmap = rmapALL))
+               rmap = rmap_included))
+
 # add start and end of chr genetic map positions to rmap
-rmapEXT_unordered = rbind(rmapALL,
-                          data.frame(SNP = paste0("start_chr", 
-                                                  zea_chr$chr), 
-                                     marker = paste0("Start", zea_chr$chr),
+rmap_extended_unordered = bind_rows(rmap_included,
+                          data.frame(marker = paste0("Start", zea_chr$chr),
                                      chr = zea_chr$chr, 
                                      pos_cM = zea_chr$map_starts,
                                      pos_bp = 1),
-                          data.frame(SNP = paste0("end_chr", 
-                                                  zea_chr$chr), 
-                                     marker = paste0("End", zea_chr$chr),
+                          data.frame(marker = paste0("End", zea_chr$chr),
                                      chr = zea_chr$chr, 
                                      pos_cM = zea_chr$map_ends,
-                                     pos_bp = zea_chr$length))
+                                     pos_bp = zea_chr$length)) %>%
+  mutate(SNP = paste(chr, pos_bp, sep = "_")) %>%
+  dplyr::select(SNP, marker, chr, pos_cM, pos_bp)
+
 # order by chromosome, then by bp
-rmapEXT = rmapEXT_unordered[with(rmapEXT_unordered, order(chr, pos_bp)), ]
-write.table(rmapEXT, "ogut_fifthcM_map_agpv4_EXTENDED.txt",
+rmap_extended = rmap_extended_unordered %>%
+  arrange(chr, pos_bp)
+
+# write output to file
+write.table(rmap_extended, file = rmap_ext,
             sep = "\t", col.names = T, row.names = F, quote = F)
