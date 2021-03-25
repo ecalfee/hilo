@@ -111,7 +111,7 @@ rule plot_NGSAdmix:
         png_structure = "global_ancestry/plots/structure_K2.png",
         lm_tex = "global_ancestry/tables/lm_elevation.tex",
         png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png",
-        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.png"
+        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
     params:
         p = "med2"
     shadow:

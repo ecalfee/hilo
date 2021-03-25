@@ -24,7 +24,7 @@ lm_tex = snakemake@output[["lm_tex"]]
 png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
 # png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
 png_global_anc_multi_lwz = snakemake@output[["png_global_anc_multi_lzw"]]
-# png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.png"
+# png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
 
 # some plot sizing constants
 smallPointSize = 0.25
