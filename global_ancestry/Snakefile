@@ -173,7 +173,9 @@ rule plot_NGSAdmix_parv:
         colors = "colors.R",
         k3 = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData"
     output:
-        png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
+        png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png",
+        allo_pops_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_allo_pop.txt",
+        groups_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_group.txt"
     params:
         p = "med2"
     shadow:

@@ -11,14 +11,19 @@ library(broom)
 # load variables from Snakefile
 K = snakemake@params[["k"]]
 # K = 2
+# K = 3
 admix_file = snakemake@input[["admix"]]
 # admix_file = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2.qopt"
+# admix_file = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3.qopt"
 alphas_out = snakemake@output[["alphas"]]
 # alphas_out = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_symp_pop.txt"
+# alphas_out = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_symp_pop.txt"
 ind_out = snakemake@output[["ind"]]
 # ind_out = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_ind.RData"
+# ind_out = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData"
 load(snakemake@input[["meta"]]) # sample metadata, including estimated sequence coverage
 # load("samples/HILO_MAIZE55_meta.RData")
+# load("samples/HILO_MAIZE55_PARV50_meta.RData")
 # note: # metadata in same order as samples in admixture
 
 # NGSAdmix data
@@ -35,24 +40,44 @@ d <- bind_cols(meta, admix)  %>%
 
 # which unlabelled ancestry maps onto maize and which onto mexicana?
 anc <- d %>%
-  pivot_longer(., cols = colnames(admix), names_to = "K_anc", values_to = "p_anc") %>%
-  group_by(zea) %>%
-  summarise(anc_label = K_anc[which.max(p_anc)])
+  tidyr::pivot_longer(., cols = colnames(admix), names_to = "K_anc", values_to = "p_anc") %>%
+  dplyr::group_by(zea) %>%
+  dplyr::summarise(K_anc = K_anc[which.max(p_anc)], .groups = "drop") %>%
+  dplyr::rename(Zea_anc = zea)
 
-# label NGSAdmix ancestry proportions as alpha_mex and alpha_maize
-d_admix2 <- rename(d, mexicana = anc$anc_label[anc$zea == "mexicana"], 
-                  maize = anc$anc_label[anc$zea == "maize"])
-
+# label NGSAdmix ancestry proportions by Zea subspecies
+d_admix2 <- d %>%
+  pivot_longer(data = ., 
+               cols = colnames(admix), 
+               names_to = "K_anc", 
+               values_to = "p_anc") %>%
+  left_join(., anc, by = "K_anc") %>%
+  pivot_wider(data = ., 
+              id_cols = colnames(meta),
+              names_from = "Zea_anc",
+              values_from = "p_anc")
 
 # calculate mean proportion mexicana ancestry per sympatric population for ancestry_hmm input
-alphasByPop = d_admix2 %>%
-  #filter(., symp_allo == "sympatric" & est_coverage >= min_coverage) %>%
-  filter(., symp_allo == "sympatric") %>%
-  group_by(., popN) %>%
-  summarise(., alpha_maize = mean(maize), 
-            alpha_mex = mean(mexicana),
-            n_global_ancestry = n(),
-            n_local_ancestry = sum(est_coverage >= 0.5)) # number included individuals per group
+if (K == 3){
+  alphasByPop = d_admix2 %>%
+    filter(., symp_allo == "sympatric") %>%
+    group_by(., popN) %>%
+    summarise(., alpha_maize = mean(maize), 
+              alpha_mex = mean(mexicana),
+              alpha_parv = mean(parviglumis),
+              n_global_ancestry = n(),
+              n_local_ancestry = sum(est_coverage >= 0.5), # number included individuals per group
+              .groups = "drop") 
+}else{
+  alphasByPop = d_admix2 %>%
+    filter(., symp_allo == "sympatric") %>%
+    group_by(., popN) %>%
+    summarise(., alpha_maize = mean(maize), 
+              alpha_mex = mean(mexicana),
+              n_global_ancestry = n(),
+              n_local_ancestry = sum(est_coverage >= 0.5), # number included individuals per group
+              .groups = "drop")
+}
 
 options(scipen=999) # don't use scientific notation when printing alphas
 # write file with mean population ancestry (for prior in ancestry_hmm)

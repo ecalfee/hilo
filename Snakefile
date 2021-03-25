@@ -156,8 +156,8 @@ rule all:
         # global ancestry analysis: PCA and NGSAdmix
         "global_ancestry/plots/HILO_MAIZE55_pca.png",
         "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png",
-        "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData",
-        "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
+        "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
+        "global_ancestry/plots/global_anc_multi.png",
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",

@@ -2994,6 +2994,9 @@ Assembly Converter	R5sWAIAz2D1GNGtF	Assembly conversion of ogut supp S3 v2 -> v4
 # so made a new linkage_map/Snakefile and replaced rmap_ext with the new EXTENDED v2->v4 recombination map output file to be used in the rest of the pipeline
 # this is going to trigger a large rerun from everything that builds off of ancestry_by_r or local_ancestry
 
+# I want to first trigger just a rerun of PCA/NGSAdmix plotting
+# starting with results_NGSAdmix for both K = 2 and K = 3
+hilo$ snakemake -n global_ancestry/plots/HILO_MAIZE55_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png global_ancestry/plots/global_anc_multi.png --quiet --profile slurm
 
 # TO DO:
 - ADD lzw compression to all figures in .tif format:

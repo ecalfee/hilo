@@ -23,31 +23,22 @@ names(col_pos_neg) <- c("+", "-")
 #dichromat(colours = col_pos_neg, "deutan") #type = c("deutan", "protan", "tritan")
 
 # color and shapes for groups
-#col_group_zea = c("#DDCC77", "#AA4499", "#DDCC77", "#AA4499") # colors from above
-#col_group_zea = c("gold", "deeppink", "#DDCC77", "#AA4499") # colors from above
-#col_group_zea = c("lightgoldenrod", "maroon", "#DDCC77", "#AA4499") # colors from above
-col_group_zea = c("darkgoldenrod", "maroon", "#DDCC77", "#AA4499") # colors from above
-#col_group_zea = c("darkgoldenrod", "deeppink", "lightgoldenrod", "#AA4499") # colors from above
+col_group_zea = c("darkgoldenrod", "#DDCC77", "maroon", "#AA4499", "#117733") # colors from above
 
-
-shape_group_zea = c(1, 2, 19, 17)
-#shape_group_zea = c(19, 17, 1, 2)
-alphas_group_zea = c(1, 1, .45, .45)
-names(col_group_zea) <- c("allopatric_maize", "allopatric_mexicana",
-                              "sympatric_maize", "sympatric_mexicana")
-names(shape_group_zea) <- c("allopatric_maize", "allopatric_mexicana",
-                              "sympatric_maize", "sympatric_mexicana")
-names(alphas_group_zea) <- c("allopatric_maize", "allopatric_mexicana",
-                            "sympatric_maize", "sympatric_mexicana")
-zea_group_labels <- c("Allopatric maize", "Allopatric mexicana",
-                      "Sympatric maize", "Sympatric mexicana")
-
-
-
-# alternative color options:
-# color blind palette:
-#cbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-# maize vs. mexicana (sympatric) vs. parviglumis
-#scale_color_manual(values = cbPalette[c(2,4,8)])
-# maize vs. mexicana (allopatric)
-#scale_color_manual(values = cbPalette[c(7,6)])
+shape_group_zea = c(1, 19, 2, 17, 0)
+alphas_group_zea = c(1, .45, 1, .45, 1)
+names(col_group_zea) <- c("allopatric_maize", "sympatric_maize",
+                          "allopatric_mexicana", "sympatric_mexicana",
+                          "parviglumis")
+names(shape_group_zea) <- c("allopatric_maize", "sympatric_maize",
+                            "allopatric_mexicana", "sympatric_mexicana",
+                            "parviglumis")
+names(alphas_group_zea) <- c("allopatric_maize", "sympatric_maize",
+                             "allopatric_mexicana", "sympatric_mexicana",
+                             "parviglumis")
+zea_group_labels <- c("Allopatric maize", "Sympatric maize",
+                      "Allopatric mexicana", "Sympatric mexicana",
+                      "Parviglumis")
+names(zea_group_labels) <- c("allopatric_maize", "sympatric_maize",
+                             "allopatric_mexicana", "sympatric_mexicana",
+                             "parviglumis")
