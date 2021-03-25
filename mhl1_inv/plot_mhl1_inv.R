@@ -22,6 +22,8 @@ sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 png_out = snakemake@output[["png"]]
 # png_out = paste0("mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_ancestry.png")
+png_out_lzw = snakemake@output[["png_lzw"]]
+# png_out_lzw = paste0("../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_ancestry.tif")
 mhl1_QTL_bed = snakemake@input[["mhl1_QTL_bed"]]
 # mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed"
 mhl1_inv_bed = snakemake@input[["mhl1_inv_bed"]]
@@ -105,4 +107,12 @@ ggsave(png_out,
        units = "in",
        dpi = 300)
 
+ggsave(png_out_lzw, 
+       plot = p, 
+       device = "tiff", 
+       width = 7.5, 
+       height = 4, 
+       units = "in",
+       dpi = 300,
+       compression = "lzw", type = "cairo")
 

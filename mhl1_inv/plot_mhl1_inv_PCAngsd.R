@@ -13,6 +13,8 @@ cov_file = snakemake@input[["cov"]]
 # get output plot filenames
 png_pca = snakemake@output[["png_pca"]]
 # png_pca = "mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_pca.png"
+png_pca_lzw = snakemake@output[["png_pca_lzw"]]
+# png_pca_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_pca.tif"
 
 # get colors for plot
 # source("colors.R")
@@ -62,3 +64,10 @@ ggsave(png_pca,
        device = "png", 
        width = 6, height = 3.5, units = "in",
        dpi = 300)
+
+ggsave(png_pca_lzw, 
+       plot = p12, 
+       device = "tiff", 
+       width = 6, height = 3.5, units = "in",
+       dpi = 300, 
+       compression = "lzw", type = "cairo")

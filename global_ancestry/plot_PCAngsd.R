@@ -13,7 +13,7 @@ cov_file = snakemake@input[["cov"]]
 # get output plot filenames
 png_pca = snakemake@output[["png_pca"]]
 # png_pca = "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png"
-png_pca_lzw = snakemake@input[["png_pca_lzw"]]
+png_pca_lzw = snakemake@output[["png_pca_lzw"]]
 # png_pca_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif"
 png_pc34 = snakemake@output[["png_pc34"]]
 # png_pc34 = "global_ancestry/plots/HILO_MAIZE55_PARV50_pc34.png"

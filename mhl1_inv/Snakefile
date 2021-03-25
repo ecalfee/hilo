@@ -113,11 +113,10 @@ rule plot_mhl1_inv:
         mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
         mhl1_inv_bed = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed"
     output:
-        png = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png"
+        png = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
+        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif"
     params:
         p = "med2"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -135,11 +134,10 @@ rule plot_mhl1_inv_PCAngsd:
         colors = "colors.R",
         cov = "mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
     output:
-        png_pca = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png"
+        png_pca = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
+        png_pca_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:

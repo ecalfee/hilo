@@ -22,12 +22,21 @@ pi_genomewide_file = snakemake@input[["pi_genomewide"]]
 # pi_genomewide_file = "diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.allChr.txt"
 load(snakemake@input[["meta"]])
 # load("samples/HILO_MAIZE55_meta.RData")
+
 png_pi_mexicana_anc = snakemake@output[["png_pi_mex"]]
 # png_pi_mexicana_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png"
+png_pi_mexicana_anc_lzw = snakemake@output[["png_pi_mex_lzw"]]
+# png_pi_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif"
+
 png_pi_maize_anc = snakemake@output[["png_pi_maize"]]
 # png_pi_maize_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_maize_ancestry.png"
+png_pi_maize_anc_lzw = snakemake@output[["png_pi_maize_lzw"]]
+# png_pi_maize_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif"
+
 png_fst_mexicana_anc = snakemake@output[["png_fst_mex"]]
 # png_fst_mexicana_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png"
+png_fst_mexicana_anc_lzw = snakemake@output[["png_fst_mex_lzw"]]
+# png_fst_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif"
 
 
 meta_pops = meta %>%
@@ -153,6 +162,11 @@ ggsave(filename = png_fst_mexicana_anc,
        height = 3, width = 5.5, units = "in", 
        device = "png", dpi = 300)
 
+ggsave(filename = png_fst_mexicana_anc_lzw,
+       plot = p_fst_mex,
+       height = 3, width = 5.5, units = "in", 
+       device = "tiff", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 p_pi_mex <- pi %>%
   filter(ancestry == "mexicana") %>%
@@ -176,6 +190,11 @@ ggsave(filename = png_pi_mexicana_anc,
        height = 3, width = 5.5, units = "in", 
        device = "png", dpi = 300)
 
+ggsave(filename = png_pi_mexicana_anc_lzw,
+       plot = p_pi_mex,
+       height = 3, width = 5.5, units = "in", 
+       device = "tiff", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 p_pi_maize <- pi %>%
   filter(ancestry == "maize") %>%
@@ -198,3 +217,9 @@ ggsave(filename = png_pi_maize_anc,
        plot = p_pi_maize,
        height = 3, width = 5.5, units = "in", 
        device = "png", dpi = 300)
+
+ggsave(filename = png_pi_maize_anc_lzw,
+       plot = p_pi_maize,
+       height = 3, width = 5.5, units = "in", 
+       device = "tiff", dpi = 300,
+       compression = "lzw", type = "cairo")

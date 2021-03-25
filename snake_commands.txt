@@ -3016,9 +3016,16 @@ Job counts:
 
 # oops forgot to make lzw versions and there was a typo in plot_NGSAdmix_parv. rerunning:
 # also adding in supp plot for new rmap and EXTENDED rmap
-hilo$ snakemake -n linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.png ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif ../hilo_manuscript/figures_main/global_anc_multi.tif --quiet --profile slurm
-
-# need to make sure this gets rerun:
+hilo$ snakemake -n linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif ../hilo_manuscript/figures_main/global_anc_multi.tif --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       clean_ogut_2015_map
+        1       extend_ogut_2015_map
+        1       plot_NGSAdmix
+        1       plot_NGSAdmix_parv
+        2       plot_PCAngsd
+        1       plot_ogut_2015_map
+        7 # RUNNING 3.25.2021
 
 
 # TO DO:

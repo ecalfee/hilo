@@ -159,55 +159,53 @@ rule calc_pi_all_chr:
     shell:
         "thetaStat do_stat {input.idx} -outnames {params.out_prefix}"
 
-## calc_mean_pi_in_outliers_vs_not: script to summarise diversity (pi) for homozygous ancestry windows within high introgression outliers vs outside
-rule calc_mean_pi_in_outliers_vs_not:
-    input:
-        genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
-        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
-        meta = "samples/" + prefix_all + "_meta.RData",
-        pi_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG",
-        pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq"
-    output:
-        txt = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt"
-    params:
-        p = "low2",
-        pop = lambda wildcards: wildcards.POP,
-        zea = lambda wildcards: wildcards.ZEA
-    shadow:
-        "minimal"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 15,
-        mem = lambda wildcards, attempt: attempt * 4
-    script:
-        "calc_mean_pi_in_outliers_vs_not.R"
+# ## calc_mean_pi_in_outliers_vs_not: script to summarise diversity (pi) for homozygous ancestry windows within high introgression outliers vs outside
+# rule calc_mean_pi_in_outliers_vs_not:
+#     input:
+#         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
+#         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
+#         meta = "samples/" + prefix_all + "_meta.RData",
+#         pi_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG",
+#         pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq"
+#     output:
+#         txt = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt"
+#     params:
+#         p = "low2",
+#         pop = lambda wildcards: wildcards.POP,
+#         zea = lambda wildcards: wildcards.ZEA
+#     shadow:
+#         "minimal"
+#     conda:
+#         "../envs/environment.yaml"
+#     resources:
+#         time_min = 15,
+#         mem = lambda wildcards, attempt: attempt * 4
+#     script:
+#         "calc_mean_pi_in_outliers_vs_not.R"
 
-## plot_mean_pi_in_outliers_vs_not: script to plot diversity (pi) by population and ancestry for homozygous ancestry windows within high introgression outliers vs outside
-rule plot_mean_pi_in_outliers_vs_not:
-    input:
-        meta = "samples/" + prefix_all + "_meta.RData",
-        colors = "colors.R",
-        txt = expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{{WIN}}.{{STEP}}.txt", ZEA = zea, POP = symp_pops)
-    output:
-        png_out = "diversity/plots/Ne{Ne}_{YESNO}Boot/pi.outliers_vs_not.{WIN}.{STEP}.png"
-    params:
-        p = "low2",
-        pop = lambda wildcards: wildcards.POP,
-        Ne = lambda wildcards: wildcards.Ne,
-        yesno = lambda wildcards: wildcards.YESNO,
-        win = lambda wildcards: wildcards.WIN,
-        step = lambda wildcards: wildcards.STEP,
-        prefix_all = prefix_all
-    shadow:
-        "minimal"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 15,
-        mem = lambda wildcards, attempt: attempt * 4
-    script:
-        "plot_mean_pi_in_outliers_vs_not.R"
+# ## plot_mean_pi_in_outliers_vs_not: script to plot diversity (pi) by population and ancestry for homozygous ancestry windows within high introgression outliers vs outside
+# rule plot_mean_pi_in_outliers_vs_not:
+#     input:
+#         meta = "samples/" + prefix_all + "_meta.RData",
+#         colors = "colors.R",
+#         txt = expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{{WIN}}.{{STEP}}.txt", ZEA = zea, POP = symp_pops)
+#     output:
+#         png_out = "diversity/plots/Ne{Ne}_{YESNO}Boot/pi.outliers_vs_not.{WIN}.{STEP}.png"
+#     params:
+#         p = "low2",
+#         pop = lambda wildcards: wildcards.POP,
+#         Ne = lambda wildcards: wildcards.Ne,
+#         yesno = lambda wildcards: wildcards.YESNO,
+#         win = lambda wildcards: wildcards.WIN,
+#         step = lambda wildcards: wildcards.STEP,
+#         prefix_all = prefix_all
+#     conda:
+#         "../envs/environment.yaml"
+#     resources:
+#         time_min = 15,
+#         mem = lambda wildcards, attempt: attempt * 4
+#     script:
+#         "plot_mean_pi_in_outliers_vs_not.R"
 
 
 ## estimate_2D_sfs: estimates 2D site frequency spectrum (sfs) for 2 populations jointly by maximum likelihood in ANGSD
@@ -316,7 +314,8 @@ rule plot_within_ancestry_fst:
         png_points_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_points.png",
         png_heatmap_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_heatmap.png",
         png_heatmap_mexicana = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_heatmap.png",
-        png_heatmap_both = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
+        png_heatmap_both = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+        png_heatmap_both_lzw = "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
     params:
         p = "med2"
     conda:
@@ -503,8 +502,11 @@ rule plot_within_ancestry_fst_pi_peaks:
         meta = "samples/" + prefix_all + "_meta.RData"
     output:
         png_pi_mex = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png",
+        png_pi_mex_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif",
         png_pi_maize = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png",
-        png_fst_mex = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png"
+        png_pi_maize_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif",
+        png_fst_mex = "diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png",
+        png_fst_mex_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif"
     params:
         p = "med2"
     conda:

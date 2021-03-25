@@ -407,7 +407,7 @@ rule list_homozygous_ancestry_bams:
         done) > {output.list}
         """
 
-## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample allele frequency file, and pop-level metadata for all included inds
+## rule combine_pop_ancestry_data: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample ancestry frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data:
     input:
         "samples/" + prefix_all + "_meta.RData",
@@ -456,6 +456,7 @@ rule plot_admix_times:
         "colors.R"
     output:
         png_times = "local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png",
+        png_times_lzw = "../hilo_manuscript/figures_supp/admix_times_Ne{Ne}_{YESNO}Boot.tif",
         txt_times = "local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.txt",
         rds_times = "local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.RDS"
     params:

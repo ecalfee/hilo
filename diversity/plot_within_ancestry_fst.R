@@ -22,6 +22,8 @@ png_heatmap_mexicana = snakemake@output[["png_heatmap_mexicana"]]
 # png_heatmap_mexicana = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_mexicana_ancestry_genomewide_heatmap.png"
 png_heatmap_both = snakemake@output[["png_heatmap_both"]]
 # png_heatmap_both = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
+png_heatmap_both_lzw = snakemake@output[["png_heatmap_both_lzw"]]
+# png_heatmap_both_lzw = "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
 
 
 meta_pops = meta %>%
@@ -89,7 +91,7 @@ p_points_mexicana <- fst %>%
   scale_color_viridis_d(direction = 1, option = "viridis")# +
   #ggtitle("Fst within mexicana ancestry tracts (genomewide)")
 
-ggsave(file = png_points_mexicana,
+ggsave(filename = png_points_mexicana,
        plot = p_points_mexicana,
        height = 7, width = 7.5, 
        units = "in", device = "png", dpi = 300)
@@ -119,7 +121,7 @@ p_points_maize <- fst %>%
   scale_color_viridis_d(direction = 1, option = "viridis")# +
   #ggtitle("Fst within maize ancestry tracts (genomewide)")
 
-ggsave(file = png_points_maize,
+ggsave(filename = png_points_maize,
        plot = p_points_maize,
        height = 7, width = 7.5, 
        units = "in", device = "png", dpi = 300)
@@ -150,7 +152,7 @@ p_heatmap_mexicana <- fst_mexicana %>%
   #ggtitle("fst within mexicana ancestry") +
   coord_fixed()
 
-ggsave(file = png_heatmap_mexicana,
+ggsave(filename = png_heatmap_mexicana,
        plot = p_heatmap_mexicana,
        height = 6, width = 6, 
        units = "in", device = "png", dpi = 300)
@@ -178,7 +180,7 @@ p_heatmap_maize <- fst_maize %>%
   coord_fixed()
 # note: one fst value is very small but negative
 
-ggsave(file = png_heatmap_maize,
+ggsave(filename = png_heatmap_maize,
        plot = p_heatmap_maize,
        height = 6, width = 6, 
        units = "in", device = "png", dpi = 300)
@@ -239,7 +241,13 @@ p_heatmap_both <- fst_maize %>%
 # note: one fst value is very small but negative
 #p_heatmap_both
 
-ggsave(file = png_heatmap_both,
+ggsave(filename = png_heatmap_both,
        plot = p_heatmap_both,
        height = 4.75, width = 6, 
        units = "in", device = "png", dpi = 300)
+
+ggsave(filename = png_heatmap_both_lzw,
+       plot = p_heatmap_both,
+       height = 4.75, width = 6, 
+       units = "in", device = "tiff", dpi = 300,
+       compression = "lzw", type = "cairo")

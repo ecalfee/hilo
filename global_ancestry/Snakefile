@@ -114,8 +114,6 @@ rule plot_NGSAdmix:
         png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -138,8 +136,6 @@ rule plot_PCAngsd:
         # add PCA that includes parviglumis?
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -158,8 +154,6 @@ rule add_parv_2_meta:
         rdata = "samples/HILO_MAIZE55_PARV50_meta.RData"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -181,8 +175,6 @@ rule plot_NGSAdmix_parv:
         groups_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_group.txt"
     params:
         p = "med2"
-    shadow:
-         "minimal"
     conda:
          "../envs/environment.yaml"
     resources:
