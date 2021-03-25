@@ -238,25 +238,25 @@ rule some:
         time_min = 5,
         mem = 2
 
-rule figures_main:
-    input:
+#rule figures_main:
+#    input:
         #mexico_lines_elev_teo_color.png,
 
-        "global_ancestry/plots/global_anc_multi.png",
-        "../hilo_manuscript/figures_main/global_anc_multi.tif",
+#        "global_ancestry/plots/global_anc_multi.png",
+#        "../hilo_manuscript/figures_main/global_anc_multi.tif",
 
-        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
+#        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+#        "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
 
         #K2_by_r_multi_panel.png,
         #maize_shared_outliers_chr_4.png,
         #network_peak_sharing_data_only.png,
         #multi_maize_mexicana_genome_scan.png
-    params:
-        p = "med2"
-    resources:
-        time_min = 15,
-        mem = 2
+#    params:
+#        p = "med2"
+#    resources:
+#        time_min = 15,
+#        mem = 2
 
 #rule tables_supp:
 #    input:
