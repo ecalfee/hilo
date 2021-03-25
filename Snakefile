@@ -153,8 +153,7 @@ rule all:
         #expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
         #        "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
         #        zip, ID=list(merge_dict.keys())),
-        # global ancestry analysis: PCA and NGSAdmix
-        global_ancestry,
+
         # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
@@ -241,7 +240,7 @@ rule some:
 
 rule figures_main:
     input:
-        mexico_lines_elev_teo_color.png,
+        #mexico_lines_elev_teo_color.png,
 
         "global_ancestry/plots/global_anc_multi.png",
         "../hilo_manuscript/figures_main/global_anc_multi.tif"
@@ -249,10 +248,10 @@ rule figures_main:
         "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
         "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
 
-        K2_by_r_multi_panel.png,
-        maize_shared_outliers_chr_4.png,
-        network_peak_sharing_data_only.png,
-        multi_maize_mexicana_genome_scan.png
+        #K2_by_r_multi_panel.png,
+        #maize_shared_outliers_chr_4.png,
+        #network_peak_sharing_data_only.png,
+        #multi_maize_mexicana_genome_scan.png
     params:
         p = "med2"
     resources:
@@ -261,14 +260,14 @@ rule figures_main:
 
 rule tables_supp:
     input:
-        population_metadata.csv,
-        parviglumis_50_SRA_IDs.csv,
-        spearmans_rho_ngsadmix.tex,
-        spearmans_rho_f4_sympatric_maize_pop22.tex,
-        elev_r_interaction_5.tex,
-        spearmans_rho_f4_sympatric_mexicana_pop22.tex,
-        spearmans_rho_local_ancestry.tex,
-        domestication_genes.tex
+        #population_metadata.csv,
+        #parviglumis_50_SRA_IDs.csv,
+        #spearmans_rho_ngsadmix.tex,
+        #spearmans_rho_f4_sympatric_maize_pop22.tex,
+        #elev_r_interaction_5.tex,
+        #spearmans_rho_f4_sympatric_mexicana_pop22.tex,
+        #spearmans_rho_local_ancestry.tex,
+        #domestication_genes.tex
     params:
         p = "med2"
     resources:
@@ -297,60 +296,41 @@ rule figures_supp:
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
-        f4_sympatric_maize_pop22_byr5.png,
-        f4_sympatric_maize_pop22_bycd5.png,
-        K2_by_r_bootstrap_lm_elevation_color_elev.png,
-        K2_by_cd_bootstrap_sympatric_and_allopatric.png,
-        f4_sympatric_mexicana_pop22_byr5.png,
-        f4_sympatric_mexicana_pop22_bycd5.png,
-        local_anc_by_r_continuous.png,
-        combmatrix_peak_sharing_maize.png,
-        combmatrix_peak_sharing_mexicana.png,
+        #f4_sympatric_maize_pop22_byr5.png,
+        #f4_sympatric_maize_pop22_bycd5.png,
+        #K2_by_r_bootstrap_lm_elevation_color_elev.png,
+        #K2_by_cd_bootstrap_sympatric_and_allopatric.png,
+        #f4_sympatric_mexicana_pop22_byr5.png,
+        #f4_sympatric_mexicana_pop22_bycd5.png,
+        #local_anc_by_r_continuous.png,
+        #combmatrix_peak_sharing_maize.png,
+        #combmatrix_peak_sharing_mexicana.png,
         # all the individual chromosomes for maize and mexicana (just put 1 here from each subspecies as a placeholder)
-        maize_shared_outliers_chr_10.png,
-        mexicana_shared_outliers_chr_10.png,
+        #maize_shared_outliers_chr_10.png,
+        #mexicana_shared_outliers_chr_10.png,
 
         "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
         "../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
 
-        QQ.png,
+        #QQ.png,
 
         "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif"
+        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif",
 
         "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
         "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif"
 
-        p_seq_counts,
+        #p_seq_counts,
 
         "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png", # NEED 2 ADD 2 MANUSCRIPT
         "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif"
         # ADD SENSITIVITY TO NE FIGURE.
 
-
-
-
     params:
         p = "med2"
     resources:
         time_min = 15,
         mem = 2
-
-
-## global_ancestry outputs
-rule global_ancestry:
-    input:
-        "global_ancestry/plots/HILO_MAIZE55_pca.png",
-        "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png",
-        "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
-        "global_ancestry/plots/global_anc_multi.png",
-    params:
-        p = "med2"
-    resources:
-        time_min = 15,
-        mem = 2
-
-
 
 
 ## fst: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
