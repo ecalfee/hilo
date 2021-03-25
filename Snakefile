@@ -243,7 +243,7 @@ rule figures_main:
         #mexico_lines_elev_teo_color.png,
 
         "global_ancestry/plots/global_anc_multi.png",
-        "../hilo_manuscript/figures_main/global_anc_multi.tif"
+        "../hilo_manuscript/figures_main/global_anc_multi.tif",
 
         "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
         "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
@@ -318,7 +318,7 @@ rule figures_supp:
         "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif",
 
         "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif"
+        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif",
 
         #p_seq_counts,
 
