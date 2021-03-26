@@ -14,8 +14,13 @@ overlap_file <- snakemake@input[["overlap"]]
 genome_file <- snakemake@input[["genome"]]
 # genome_file <- "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 # output files
+
 png_out <- snakemake@output[["png"]]
-# bed_out <- "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.png"
+# png_out <- "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.png"
+png_out_lzw <- snakemake@output[["png_lzw"]]
+# png_out_lzw <- "../hilo_manuscript/figures_supp/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.png"
+
+
 summary_out <- snakemake@output[["summary"]]
 # summary_out <- "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.summary" 
 
@@ -45,6 +50,12 @@ ggsave(png_out,
        device = "png", 
        width = 5.4, height = 3.5, units = "in",
        dpi = 300)
+ggsave(png_out_lzw, 
+       plot = p, 
+       device = "tiff", 
+       width = 5.4, height = 3.5, units = "in",
+       dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # summarise results in a table
 genome_length_kb <- read.table(genome_file, header = F)$V2 %>%

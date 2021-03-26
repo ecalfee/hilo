@@ -386,8 +386,8 @@ rule plot_total_samples:
         meta = "samples/HILO_MAIZE55_meta.RData",
         colors = "colors.R"
     output:
-        png_local = "filtered_bams/plots/p_seq_counts.png",
-        png_manuscript = "../hilo_manuscript/figures/p_seq_counts.png" # note: no shadow
+        png = "filtered_bams/plots/p_seq_counts.png",
+        png_lzw = "../hilo_manuscript/figures_supp/p_seq_counts.tif" # note: no shadow
     params:
         p = "med2"
     resources:

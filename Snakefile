@@ -141,87 +141,10 @@ include: "domestication_scan/Snakefile"
 ## all:  main rule to run all workflows
 rule all:
     input:
-        # SNP set
-        #expand("variant_sites/results/" + prefix_all + "/{REGION}.rpos",
-        #        REGION=list(regions_dict.keys())),
-        # bam metrics files
-        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
-        "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
-        "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
-        "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
-        # all bams
-        #expand(["filtered_bams/merged_bams/{ID}.sort.dedup.bam",
-        #        "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"],
-        #        zip, ID=list(merge_dict.keys())),
-
-        # block bootstrap of ancestry (NGSAdmix) ~ recombination rate quintile
-        "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
-        "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
-        "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png",
-        "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
-        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
-        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
-        "ancestry_by_r/tables/elev_r_interaction.tex",
-        "ancestry_by_r/tables/elev_r_interaction_5.tex",
-        "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
-        "ancestry_by_r/plots/local_anc_by_r_quintiles.png",
-        "ancestry_by_r/plots/local_anc_by_cd_quintiles.png",
-        "ancestry_by_r/plots/local_anc_by_r_continuous.png",
-        "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex",
-        expand("ancestry_by_r/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex", POP = ["sympatric_maize", "sympatric_mexicana"], ALLO_MEX = "pop22"),
-        # local ancestry inference
-        #expand("local_ancestry/results/alloFreqs/" + prefix_all + "/{GROUP}/{REGION}.mafs.gz", GROUP=allo_groups, REGION=list(regions_dict.keys())),
-        #"local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
-        "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
-        #expand("local_ancestry/results/countsMajMin/" + prefix_all + "/{ID}.counts.txt", ID = all_ids),
-        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.anc.ind",
-        Ne = 10000, YESNO = "yes", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes),
-        #expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot/{POP}.bed", POP = symp_pops),
-        expand("ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.anc.wind", POP = symp_pops, Ne = Nes),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/{POP}.times", POP = symp_pops, Ne = Nes),
-        expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
-        expand("local_ancestry/plots/admix_times_Ne{Ne}_{YESNO}Boot.png", Ne = Nes, YESNO = "yes"),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png", Ne = 10000, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png", Ne = 10000, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_data_only.png", Ne = 10000, YESNO = "yes"),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png", Ne = 10000, YESNO = "yes"),
-        expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_{ZEA}.png", Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        trip_anc,
-        expand("ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
-        expand("ancestry_by_r/results/f4/{POP}.f4", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
-        expand("ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana"]),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}", ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"], SUFFIX = ["bed", "counts"]),
-        expand("ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        "map/plots/mexico_lines_elev_teo_color.png",
-        "map/plots/mexico_lines_elev_teo_black.png",
-        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex",
-        "global_ancestry/plots/global_anc_multi.png",
-        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png", Ne = 10000, YESNO = "yes"),
-        expand("mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed", Ne = 10000, YESNO = "yes"),
-        expand("domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex", Ne = 10000, YESNO = "yes"),
-        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
-        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.png", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"])
+        figures_main,
+        tables_supp,
+        figurs_supp,
+        other_results
     params:
         p = "med2"
     resources:
@@ -231,48 +154,68 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.{SIG}.png", ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"], SIG = ["fdr05", "perc05"])
     params:
         p = "med2"
     resources:
         time_min = 5,
         mem = 2
 
-#rule figures_main:
-#    input:
-        #mexico_lines_elev_teo_color.png,
+rule figures_main:
+    input:
+        "map/plots/mexico_lines_elev_teo_color.png",
+        "../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
 
-#        "global_ancestry/plots/global_anc_multi.png",
-#        "../hilo_manuscript/figures_main/global_anc_multi.tif",
+        "global_ancestry/plots/global_anc_multi.png",
+        "../hilo_manuscript/figures_main/global_anc_multi.tif",
 
-#        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
-#        "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
+        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+        "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
 
-        #K2_by_r_multi_panel.png,
-        #maize_shared_outliers_chr_4.png,
-        #network_peak_sharing_data_only.png,
-        #multi_maize_mexicana_genome_scan.png
-#    params:
-#        p = "med2"
-#    resources:
-#        time_min = 15,
-#        mem = 2
+        "ancestry_by_r/plots/K2_by_r_multi_panel.png",
+        "../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif",
 
-#rule tables_supp:
-#    input:
-        #population_metadata.csv,
-        #parviglumis_50_SRA_IDs.csv,
-        #spearmans_rho_ngsadmix.tex,
-        #spearmans_rho_f4_sympatric_maize_pop22.tex,
-        #elev_r_interaction_5.tex,
-        #spearmans_rho_f4_sympatric_mexicana_pop22.tex,
-        #spearmans_rho_local_ancestry.tex,
-        #domestication_genes.tex
-#    params:
-#        p = "med2"
-#    resources:
-#        time_min = 15,
-#        mem = 2
+        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
+        "../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
+
+        "ZAnc/plots/Ne10000_yesBoot/network_peak_sharing_data_only.png",
+        "../hilo_manuscript/figures_main/Ne10000_yesBoot_network_peak_sharing_data_only.tif",
+
+        "ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
+        "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif"
+
+    params:
+        p = "med2"
+    resources:
+        time_min = 30,
+        mem = 2
+
+rule tables_supp:
+    input:
+        #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
+        #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
+
+        "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
+        "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex",
+
+        "ancestry_by_r/tables/spearmans_rho_f4_sympatric_maize_pop22.tex",
+        "../hilo_manuscript/tables/spearmans_rho_f4_sympatric_maize_pop22.tex",
+
+        "ancestry_by_r/tables/elev_r_interaction_5.tex",
+        "../hilo_manuscript/tables/elev_r_interaction_5.tex",
+
+        "ancestry_by_r/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex",
+        "../hilo_manuscript/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex",
+
+        "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex",
+        "../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex",
+
+        "domestication_scan/tables/" + prefix_all + "/Ne10000_yesBoot/domestication_genes.tex",
+        "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex"
+    params:
+        p = "med2"
+    resources:
+        time_min = 30,
+        mem = 2
 
 rule figures_supp:
     input:
@@ -286,7 +229,7 @@ rule figures_supp:
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
 
         "local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
-        path_hilo + "../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
+        "../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
 
         "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png",
         "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
@@ -296,23 +239,43 @@ rule figures_supp:
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
-        #f4_sympatric_maize_pop22_byr5.png,
-        #f4_sympatric_maize_pop22_bycd5.png,
-        #K2_by_r_bootstrap_lm_elevation_color_elev.png,
-        #K2_by_cd_bootstrap_sympatric_and_allopatric.png,
-        #f4_sympatric_mexicana_pop22_byr5.png,
-        #f4_sympatric_mexicana_pop22_bycd5.png,
-        #local_anc_by_r_continuous.png,
-        #combmatrix_peak_sharing_maize.png,
-        #combmatrix_peak_sharing_mexicana.png,
+        "ancestry_by_r/plots/f4_sympatric_maize_pop22_byr5.png",
+        "../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_byr5.tif",
+
+        "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.png",
+        "../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_bycd5.tif",
+
+        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        "../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
+
+        "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
+        "../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
+
+        "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_byr5.png",
+        "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_byr5.tif",
+
+        "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.png",
+        "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_bycd5.tif",
+
+        "ancestry_by_r/plots/local_anc_by_r_continuous.png",
+        "../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif",
+
+        "ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_maize.png",
+        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
+
+        "ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_mexicana.png",
+        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
+
         # all the individual chromosomes for maize and mexicana (just put 1 here from each subspecies as a placeholder)
-        #maize_shared_outliers_chr_10.png,
-        #mexicana_shared_outliers_chr_10.png,
+        expand("ZAnc/plots/Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
+        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"), # skips chr4 (that's a main figure)
+        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
 
         "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
         "../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
 
-        #QQ.png,
+        "ZAnc/plots/Ne10000_yesBoot/QQ.png",
+        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
 
         "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
         "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif",
@@ -320,89 +283,57 @@ rule figures_supp:
         "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
         "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif",
 
-        #p_seq_counts,
+        "filtered_bams/plots/p_seq_counts.png",
+        "../hilo_manuscript/figures_supp/p_seq_counts.tif",
 
         "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png", # NEED 2 ADD 2 MANUSCRIPT
-        "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif"
-        # ADD SENSITIVITY TO NE FIGURE.
+        "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
 
-    params:
-        p = "med2"
-    resources:
-        time_min = 15,
-        mem = 2
+        # ADD PLOTS to SUPP for domestication scan raisd results
+        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.png", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"]),
+        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.tif", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"]),
 
-
-## fst: alternative to all for running part of the pipeline (e.g. testing or pipeline incomplete)
-rule fst:
-    input:
-        # get fst between sympatric maize and mexicana pairs for both high confidence maize and mexicana ancestry.
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # fst between subspecies
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs), # within subspecies, fst for introgressed ancestry
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within subspecies, fst for native ancestry
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
-        "diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", Ne = 10000, YESNO = "yes")
+        # ADD SENSITIVITY TO NE FIGURE, for now as a placeholder use input files
+        expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes)
     params:
         p = "med2"
     resources:
         time_min = 30,
         mem = 2
 
-rule pi_fst:
+rule other_results:
     input:
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt", Ne = 10000, YESNO = "yes"),
-        expand("diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt", Ne = 10000, YESNO = "yes"),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt", Ne = 10000, YESNO = "yes"),
-        expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png", Ne = 10000, YESNO = "yes"),
-        expand("diversity/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png", Ne = 10000, YESNO = "yes")
+        # bam metrics files
+        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
+
+        # other output files/results that go into the manuscript text:
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
+        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc05.summary",
+        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc05.summary",
+        "ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt",
+        expand("ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}",
+        ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"], SUFFIX = ["bed", "counts"]),
+        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex" #,
+
+        # old (not used in final manuscript)
+        #"ancestry_by_r/plots/local_anc_by_r_quintiles.png",
+        #"ancestry_by_r/plots/local_anc_by_cd_quintiles.png",
+        #expand("ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
+        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.anc.ind", Ne = 10000, YESNO = "yes", POP = symp_pops),
+        #expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png", Ne = 10000, YESNO = "yes"),
+        #expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
+        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
+        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
+        #trip_anc
+
     params:
         p = "med2"
     resources:
         time_min = 30,
-        mem = 2
-
-rule fst_mexicana_anc_outliers:
-    input:
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_maize_pops, n = [1, 4]), # introgressed mexicana tracts within sympatric maize
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # mexicana ancestry within mexicana (outliers defined by local maize)
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
-
-rule fst_maize_anc_outliers:
-    input:
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP}.{n}pop.outliers{POP}.pi.allChr.pestPG", POP = symp_mexicana_pops, n = [1, 4]), # introgressed maize tracts within sympatric mexicana
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.1pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops), # maize ancestry within maize (outliers defined by local maize)
-        expand("diversity/results/pi/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP2}.4pop.outliers{POP1}.pi.allChr.pestPG", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        # fst between maize ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local mexicana)
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/" + prefix_all + "/Ne10000_yesBoot/HOMOZYG/maize/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_mexicana_pops, POP2 = symp_maize_pops)
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
-
-
-## test: for running test files
-rule test:
-    input:
-        "test/whole_genome.beagle.gz",
-        #"test/whole_genome.cov"
-        "test/K2.qopt"
-    params:
-        p = "med2"
-    resources:
-        time_min = 5,
         mem = 2

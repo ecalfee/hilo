@@ -25,22 +25,34 @@ windows_file = snakemake@input[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
+
 png_r5 = snakemake@output[["png_r5"]]
 # png_r5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5.png")
+png_r5_lzw = snakemake@output[["png_r5_lzw"]]
+# png_r5_lzw = paste0("../hilo_manuscript/figures_supp/f4_pop22_symp_", sympatric_pop, "_byr5.tif")
+
 png_cd5 = snakemake@output[["png_cd5"]]
 # png_cd5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5.png")
+png_cd5_lzw = snakemake@output[["png_cd5_lzw"]]
+# png_cd5_lzw = paste0("../hilo_manuscript/figures_supp/f4_pop22_symp_", sympatric_pop, "_bycd5.tif")
+
 png_r5_no_inv4m = snakemake@output[["png_r5_no_inv4m"]]
 # png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5_noinv4m.png")
+
 png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
 # png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5_noinv4m.png")
+
 png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
 # png_f4_num_denom = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_num_denom.png")
+
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 10000
 inv_file = snakemake@input[["inv"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 file_spearmans_rho_f4 = snakemake@output[["file_spearmans_rho_f4"]]
 # file_spearmans_rho_f4 = paste0("ancestry_by_r/tables/spearmans_rho_f4_", zea, ".tex")
+file_spearmans_rho_f4_tex = snakemake@output[["file_spearmans_rho_f4_tex"]]
+# file_spearmans_rho_f4_tex = paste0("../hilo_manuscript/tables/spearmans_rho_f4_", zea, ".tex")
 
 source(colors_file)
 
@@ -211,6 +223,7 @@ boot_cd5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m),
 
 # make 4 plots for 4 different bootstrap analyses (cd/r * with/without inv4m):
 plots = c(png_r5, png_r5_no_inv4m, png_cd5, png_cd5_no_inv4m)
+ggs = rep(NULL, 4) # to save the ggplot output
 boots = list(boot_r5, boot_r5_no_inv4m, boot_cd5, boot_cd5_no_inv4m)
 feature = c("r", "r", "cd", "cd")
 x_axis_labels_r = filter(winds, !duplicated(paste(bin_r5))) %>%
@@ -264,7 +277,22 @@ for (i in 1:4){
          device = "png",
          width = 5.5, height = 4.5,
          units = "in", dpi = 300)
+  ggs[i] <- p # also save the ggplot
 }
+
+# also save compressed versions of 2 of the plots
+ggsave(file = png_r5_lzw,
+       plot = ggs[which(plots == png_r5)],
+       device = "tiff",
+       width = 5.5, height = 4.5,
+       units = "in", dpi = 300,
+       compression = "lzw", type = "cairo")
+ggsave(file = png_cd5_lzw,
+       plot = ggs[which(plots == png_cd5)],
+       device = "tiff",
+       width = 5.5, height = 4.5,
+       units = "in", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # plot separately f4's for numerator and denominator
 p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
@@ -318,5 +346,10 @@ print(xtable(rho,
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_f4)
-
+print(xtable(rho, 
+             digits = c(1, 1, 1, 2, 2, 2),
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_spearmans_rho_f4_tex)
 

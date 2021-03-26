@@ -163,11 +163,10 @@ rule combine_genome_scan_plots:
         inv =  "data/refMaize/inversions/knownInv_v4_coord.txt",
         genes = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt"
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png"
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png",
+        png_lzw = "../hilo_manuscript/figures_main/Ne{Ne}_{YESNO}Boot_multi_maize_mexicana_genome_scan.tif"
     params:
         p = "med2"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -186,13 +185,12 @@ rule plotQQ:
         expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.fit.RData", zea = zea),
         expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.sim.RData", zea = zea)
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png"
+        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png",
+        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_QQ.tif"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -386,8 +384,6 @@ rule test_key_genes:
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
         prefix = prefix_all
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -463,19 +459,29 @@ rule plot_shared_peaks:
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing.png",
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m.png",
+
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_data_only.png",
+        "../hilo_manuscript/figures_main/Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.tif",
+
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_sims_only.png",
+
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_maize.png",
+        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.tif",
+
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_mexicana.png",
+        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.tif",
+
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/shared_peaks_on_genome.png",
+
         expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea)
+        "../hilo_manuscript/figures_main/Ne{{Ne}}_{{YESNO}}Boot_maize_shared_outliers_chr_4.tif"
+        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize")
+        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana")
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
         prefix_all = prefix_all
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     threads:

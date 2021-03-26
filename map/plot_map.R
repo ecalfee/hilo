@@ -18,6 +18,8 @@ png_teo_hist = snakemake@output[["png_teo_hist"]]
 # png_teo_hist = "map/plots/teosinte_hist.png"
 png_map_teo_color = snakemake@output[["png_map_teo_color"]]
 # png_map_teo_color = "map/plots/mexico_lines_elev_teo_color.png"
+png_map_teo_color_lzw = snakemake@output[["png_map_teo_color_lzw"]]
+# png_map_teo_color_lzw = "../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
 png_map_teo_black = snakemake@output[["png_map_teo_black"]]
 # png_map_teo_black = "map/plots/mexico_lines_elev_teo_black.png"
 
@@ -180,6 +182,15 @@ ggsave(png_map_teo_color,
        height = 5,
        units = "in",
        dpi = 300)
+
+ggsave(png_map_teo_color_lzw, 
+       plot = p_combined_color, 
+       device = "tiff", 
+       width = 7.2, 
+       height = 5,
+       units = "in",
+       dpi = 300,
+       compression = "lzw", type = "cairo")
 
 p_combined_black <- grid.arrange(grobs = list(
   ggplotGrob(p_teo_hist + 

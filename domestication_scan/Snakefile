@@ -98,11 +98,10 @@ rule plot_overlap_hits:
         genome = ref_chr
     output:
         png = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.png",
+        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.tif",
         summary = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.summary"
     params:
         p = "high2"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -190,8 +189,6 @@ rule summarise_overlap_domestication_genes:
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
         prefix = prefix_all
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -232,11 +229,10 @@ rule make_table_domestication_genes:
         mexicana_bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
         mexicana_overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc05.bed"
     output:
-        tbl = "domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex"
+        tbl = "domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex",
+        tbl_tex = "../hilo_manuscript/tables/Ne{Ne}_{YESNO}Boot_domestication_genes.tex"
     params:
         p = "med2"
-    shadow:
-        "minimal"
     conda:
         "../envs/environment.yaml"
     resources:

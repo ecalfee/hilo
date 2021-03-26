@@ -13,10 +13,10 @@ source(snakemake@input[["colors"]])
 # load("samples/HILO_MAIZE55_meta.RData")
 load(snakemake@input[["meta"]])
 # plots out
-# png_local = "filtered_bams/plots/p_seq_counts.png"
-# png_manuscript = "../hilo_manuscript/figures/p_seq_counts.png"
-png_local = snakemake@output[["png_local"]]
-png_manuscript = snakemake@output[["png_manuscript"]]
+png = snakemake@output[["png"]]
+# png = "filtered_bams/plots/p_seq_counts.png"
+png_lzw = snakemake@output[["png_lzw"]]
+# png_lzw = "../hilo_manuscript/figures_supp/p_seq_counts.tif"
 
 # plot total included samples per population
 p_seq_counts <- meta %>%
@@ -35,11 +35,15 @@ p_seq_counts <- meta %>%
   scale_fill_manual(values = col_maize_mex_parv) +
   facet_grid(zea~.) +
   theme_light() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))#
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 #p_seq_counts
-for (png_file in c(png_local, png_manuscript)){
-  ggsave(png_file,
-         plot = p_seq_counts,
-         height = 4, width = 5.4, units = "in",
-         device = "png")
-}
+# save plots
+ggsave(filename = png,
+       plot = p_seq_counts,
+       height = 4, width = 5.4, 
+       units = "in", device = "png")
+ggsave(filename = png_lzw,
+       plot = p_seq_counts,
+       height = 4, width = 5.4, 
+       units = "in", device = "tiff",
+       compression = "lzw", type = "cairo")

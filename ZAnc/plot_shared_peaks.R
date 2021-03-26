@@ -36,9 +36,16 @@ png_hist = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_
 png_net_multi = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
 png_net_multi_no_inv4m = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
 png_net_multi_sims = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
+
 png_net_multi_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
+png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
+
 png_combmatrix_maize = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
+png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
+
 png_combmatrix_mexicana = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_mexicana.png")
+png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
+
 png_peaks_on_genome = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/shared_peaks_on_genome.png")
 
 # load data
@@ -139,6 +146,9 @@ for (zea in mex_maize){
 for (zea in mex_maize){
   # make a plot of outliers on each chromosome
   png_chr_i_prefix = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_main_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_supp_lzw = paste0("../hilo_manuscript/figures_supp/Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  
   for (i in 1:10){
     p_chr_i = anc_outliers_list[[zea]] %>%
       filter(chr == i) %>%
@@ -191,13 +201,44 @@ for (zea in mex_maize){
                    alpha = 1,
                    mapping = aes(xintercept = inv_pos/10^6))
     }
+
+    p_chr_i_arrow = grid.arrange(grobs = list(ggplotGrob(p_chr_i),
+                                       textGrob(label = expression("Low to high elevation " %->% ""), 
+                                                rot = 90,
+                                                just = "left",
+                                                gp = gpar(col = "darkgrey", fontsize = 10),
+                                                x = unit(.2, "lines"), 
+                                                y = unit(5, "lines"))),
+                              layout_matrix = rbind(
+                                c(1,2)),
+                              widths = c(40,1))
     
     ggsave(file = paste0(png_chr_i_prefix, i, ".png"),
-           plot = p_chr_i,
+           plot = p_chr_i_arrow,
            height = 5, 
            width = 7.5, 
            units = "in",
            device = "png")
+    
+    if (i == 4 & zea == "maize") { #only chr 4 maize is a main figure, the others are supplemental
+      ggsave(file = paste0(png_chr_i_prefix_main_lzw, i, ".tif"),
+           plot = p_chr_i_arrow,
+           height = 5, 
+           width = 7.5, 
+           units = "in",
+           device = "tiff",
+           dpi = 300, 
+           compression = "lzw", type = "cairo")
+    }else{
+      ggsave(file = paste0(png_chr_i_prefix_supp_lzw, i, ".tif"),
+             plot = p_chr_i_arrow,
+             height = 5, 
+             width = 7.5, 
+             units = "in",
+             device = "tiff",
+             dpi = 300, 
+             compression = "lzw", type = "cairo")
+    }
   }
 }
 
@@ -642,7 +683,12 @@ ggsave(file = png_net_multi_data,
        height = 6.5, width = 6.2, 
        units = "in",
        device = "png") 
-
+ggsave(file = png_net_multi_data_lzw,
+       plot = p_net_multi_data,
+       height = 6.5, width = 6.2, 
+       dpi = 300, units = "in",
+       device = "tiff",
+       compression = "lzw", type = "cairo")
 
 
 # ----------which pops commonly share peaks? plot ggupset or other combination matrix ---------
@@ -694,7 +740,12 @@ ggsave(file = png_combmatrix_maize,
        height = 5, width = 7.5, 
        units = "in",
        device = "png") 
-
+ggsave(file = png_combmatrix_maize_lzw,
+       plot = p_combmatrix_maize,
+       height = 5, width = 7.5, 
+       device = "tiff",
+       dpi = 300, units = "in",
+       compression = "lzw", type = "cairo")
 
 # now mexicana
 mexicana_pops_shared <- anc_outliers_list[["mexicana"]] %>% 
@@ -745,6 +796,14 @@ ggsave(file = png_combmatrix_mexicana,
        height = 5, width = 7.5, 
        units = "in",
        device = "png") 
+ggsave(file = png_combmatrix_mexicana,
+       plot = p_combmatrix_mexicana,
+       height = 5, width = 7.5, 
+       units = "in",
+       device = "tiff",
+       dpi = 300,
+       compression = "lzw", type = "cairo") 
+
 
 # ----------plot where shared peaks are across the genome-------
 # introgression peaks defined by 2 sd > mean 

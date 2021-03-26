@@ -28,12 +28,19 @@ alpha = 0.05 # use 95% confidence level for bootstraps
 # png and table filenames out:
 png_r5_local_anc = snakemake@output[["png_r5_local_anc"]]
 # png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_quintiles.png"
+
 png_r_cont_local_anc = snakemake@output[["png_r_cont_local_anc"]]
 # png_r_cont_local_anc = "ancestry_by_r/plots/local_anc_by_r_continuous.png"
+png_r_cont_local_anc_lzw = snakemake@output[["png_r_cont_local_anc_lzw"]]
+# png_r_cont_local_anc_lzw = "../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif"
+
 png_cd5_local_anc = snakemake@output[["png_cd5_local_anc"]]
 # png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_quintiles.png"
+
 file_spearmans_rho = snakemake@output[["file_spearmans_rho_local_anc"]]
 # file_spearmans_rho = "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex"
+file_spearmans_rho_tex = snakemake@output[["file_spearmans_rho_local_anc_tex"]]
+# file_spearmans_rho_tex = "../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex"
 
 random_seed = 7135891 # for reproducing bootstrap results
 
@@ -228,7 +235,12 @@ ggsave(file = png_r_cont_local_anc,
        device = "png",
        width = 7.5, height = 4, 
        units = "in", dpi = 300)
-
+ggsave(file = png_r_cont_local_anc_lzw,
+       plot = p_r_cont_local_anc,
+       device = "tiff",
+       width = 7.5, height = 4, 
+       units = "in", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # coding bp/cM
 p_cd5_local_anc <- anc_by_wind_and_zea %>%
@@ -284,5 +296,10 @@ print(xtable(rho,
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho)
-
+print(xtable(rho, 
+             digits = c(1, 0, 0, 3, 3, 3),
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_spearmans_rho_tex)
 

@@ -376,11 +376,17 @@ rule calc_and_plot_f4:
         colors = "colors.R"
     output:
         png_r5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png",
+        png_r5_lzw = "../hilo_manuscript/figures_supp/f4_{POP}_{ALLO_MEX}_byr5.tif",
+
         png_cd5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5.png",
+        png_cd5_lzw = "../hilo_manuscript/figures_supp/f4_{POP}_{ALLO_MEX}_bycd5.tif",
+
         png_r5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5_noinv4m.png",
         png_cd5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5_noinv4m.png",
         png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png",
-        file_spearmans_rho_f4 = "ancestry_by_r/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex"
+
+        file_spearmans_rho_f4 = "ancestry_by_r/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex",
+        file_spearmans_rho_f4_tex = "../hilo_manuscript/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex"
     params:
         p = "med2",
         sympatric_pop = "{POP}",
@@ -453,17 +459,29 @@ rule plot_bootstrap_NGSadmix_by_r:
         cd5 = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/cd5_K2.Rdata"
     output:
         png_multi = "ancestry_by_r/plots/K2_by_r_multi_panel.png",
+        png_multi_lzw = "../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif",
+
         png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png",
         png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png",
         png_cd5_symp = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png",
+
         png_cd5_symp_allo = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
+        png_cd5_symp_allo_lzw = "../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
+
         png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png",
         png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png",
         png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png",
+
         png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        png_color_elev_r5_lzw = "../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
+
         file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex",
+
         file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex",
-        file_spearmans_rho_ngsadmix = "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex"
+        file_elev_r_interaction_5_tex = "../hilo_manuscript/tables/elev_r_interaction_5.tex",
+
+        file_spearmans_rho_ngsadmix = "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
+        file_spearmans_rho_ngsadmix_tex = "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex"
     params:
         p = "med2"
     conda:
@@ -485,8 +503,12 @@ rule plot_bootstrap_local_ancestry_by_r:
     output:
         png_r5_local_anc = "ancestry_by_r/plots/local_anc_by_r_quintiles.png",
         png_cd5_local_anc = "ancestry_by_r/plots/local_anc_by_cd_quintiles.png",
+
         png_r_cont_local_anc = "ancestry_by_r/plots/local_anc_by_r_continuous.png",
-        file_spearmans_rho_local_anc = "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex"
+        png_r_cont_local_anc_lzw = "../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif",
+
+        file_spearmans_rho_local_anc = "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex",
+        file_spearmans_rho_local_anc_tex = "../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex"
     params:
         p = "med2",
         dir_anc = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne10000_yesBoot",

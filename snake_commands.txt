@@ -3025,7 +3025,20 @@ Job counts:
         1       plot_NGSAdmix_parv
         2       plot_PCAngsd
         1       plot_ogut_2015_map
-        7 # RUNNING 3.25.2021
+        7 # RUNNING 3.25.2021. fixed some typos:
+        hilo$ snakemake linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif ../hilo_manuscript/figures_main/global_anc_multi.tif --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       plot_NGSAdmix
+                1       plot_NGSAdmix_parv
+                2       plot_PCAngsd
+                4 fixed some more typos for last rule to run:
+                hilo$ snakemake linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif ../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif ../hilo_manuscript/figures_main/global_anc_multi.tif --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       plot_NGSAdmix_parv
+                        1 # COMPLETED.
+# cleaned up rule all 3.26.2021 to make sure I'm re-doing all main and supp figures/tables. now will try to rerun rule all (will trigger b/c of new map)
 
 
 # TO DO:
@@ -3038,6 +3051,9 @@ ggsave(filename = png_out_lzw,
        compression = "lzw", type = "cairo")
 - Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
 - set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
+
+
+
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:

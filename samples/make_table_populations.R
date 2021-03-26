@@ -20,3 +20,5 @@ pops <- meta %>%
 
 write.table(pops, file = "samples/population_metadata.csv",
             sep = ",", col.names = T, row.names = F, quote = F)
+write.table(pops, file = "../hilo_manuscript/files/population_metadata.csv",
+            sep = ",", col.names = T, row.names = F, quote = F)

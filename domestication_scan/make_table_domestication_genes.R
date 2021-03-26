@@ -17,6 +17,9 @@ mexicana_overlap = snakemake@input[["mexicana_overlap"]]
 
 tbl_out = snakemake@output[["tbl"]]
 # tbl_out = "domestication_scan/tables/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes.tex"
+tbl_out_tex = snakemake@output[["tbl_tex"]]
+# tbl_out_tex = "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex"
+
 
 maize_hits <- read.table(maize_overlap, stringsAsFactors = F, sep = "\t", header = F)$V4
 maize <- read.table(maize_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
@@ -63,3 +66,10 @@ print(xtable(x = left_join(meta, combined, by = "gene"),
       include.rownames = F,
       digits = NULL,
       file = tbl_out)
+
+print(xtable(x = left_join(meta, combined, by = "gene"),
+             type = "latex",
+             latex.environments = NULL),
+      include.rownames = F,
+      digits = NULL,
+      file = tbl_out_tex)

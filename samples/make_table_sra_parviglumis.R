@@ -14,5 +14,7 @@ sra <- read.table("data/parviglumis/SraRunTable.txt", sep = ",",
   dplyr::select(Run, Isolate) %>%
   dplyr::filter(Isolate %in% parv50)
 
+write.table(sra, file = "samples/parviglumis_50_SRA_IDs.csv",
+            sep = ",", col.names = T, row.names = F, quote = F)
 write.table(sra, file = "../hilo_manuscript/files/parviglumis_50_SRA_IDs.csv",
             sep = ",", col.names = T, row.names = F, quote = F)

@@ -14,6 +14,9 @@ library(cowplot)
 # mulipanel plot output
 png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png")
+png_out_lzw = snakemake@output[["png_lzw"]]
+# png_out_lzw = "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif")
+
 
 # individual plots input
 rds_maize_mean = snakemake@input[["rds_maize_mean"]]
@@ -166,4 +169,11 @@ ggsave(png_out,
        height = 7.5, 
        units = "in",
        dpi = 300)
-
+ggsave(png_out_lzw, 
+       plot = p_multi, 
+       device = "tiff", 
+       width = 7.5, 
+       height = 7.5, 
+       units = "in",
+       compression = "lzw", type = "cairo",
+       dpi = 300)

@@ -13,7 +13,9 @@ yesno = snakemake@params[["yesno"]]
 # yesno = "yes"
 
 png_qq = snakemake@output[["png"]]
-#png_qq = "ZAnc/plots/Ne10000_yesBoot/QQ.png"
+# png_qq = "ZAnc/plots/Ne10000_yesBoot/QQ.png"
+png_qq_lzw = snakemake@output[["png_lzw"]]
+# png_qq_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif"
 
 # mean ancestry
 # make dataframe with quantiles to plot
@@ -93,3 +95,11 @@ ggsave(png_qq,
        height = 6, 
        units = "in",
        dpi = 300)
+ggsave(png_qq_lzw, 
+       plot = p_combined, 
+       device = "tiff", 
+       width = 6, 
+       height = 6, 
+       units = "in",
+       dpi = 300,
+       compression = "lzw", type = "cairo")

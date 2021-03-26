@@ -33,28 +33,45 @@ load(snakemake@input[["meta"]]) # meta
 # png filenames out:
 png_multi = snakemake@output[["png_multi"]]
 # png_multi = "ancestry_by_r/plots/K2_by_r_multi_panel.png"
+png_multi_lzw = snakemake@output[["png_multi_lzw"]]
+# png_multi_lzw = "../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif"
+
 png_r5_symp = snakemake@output[["png_r5_symp"]]
 # png_r5_symp = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_only.png"
 png_r5_symp_allo = snakemake@output[["png_r5_symp_allo"]]
 # png_r5_symp_allo = "ancestry_by_r/plots/K2_by_r_bootstrap_sympatric_and_allopatric.png"
 png_cd5_symp = snakemake@output[["png_cd5_symp"]]
 # png_cd5_symp = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_only.png"
+
 png_cd5_symp_allo = snakemake@output[["png_cd5_symp_allo"]]
 # png_cd5_symp_allo = "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png"
+png_cd5_symp_allo_lzw = snakemake@output[["png_cd5_symp_allo_lzw"]]
+# png_cd5_symp_allo_lzw = "../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif"
+
 png_cor_r_cd = snakemake@output[["png_cor_r_cd"]]
 # png_cor_r_cd = "ancestry_by_r/plots/corr_r_cd_1cM.png"
 png_cor_r_frac = snakemake@output[["png_cor_r_frac"]]
 # png_cor_r_frac = "ancestry_by_r/plots/corr_r_frac_1cM.png"
 png_facet_r5 = snakemake@output[["png_facet_r5"]]
 # png_facet_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_facet_r.png"
+
 png_color_elev_r5 = snakemake@output[["png_color_elev_r5"]]
 # png_color_elev_r5 = "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png"
+png_color_elev_r5_lzw = snakemake@output[["png_color_elev_r5_lzw"]]
+# png_color_elev_r5_lzw = "../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif"
+
 file_elev_r_interaction = snakemake@output[["file_elev_r_interaction"]] # high vs. low
 # file_elev_r_interaction = "ancestry_by_r/tables/elev_r_interaction.tex"
+
 file_elev_r_interaction_5 = snakemake@output[["file_elev_r_interaction_5"]] # all 5 r bins (for supplement)
 # file_elev_r_interaction_5 = "ancestry_by_r/tables/elev_r_interaction_5.tex"
+file_elev_r_interaction_5_tex = snakemake@output[["file_elev_r_interaction_5_tex"]] # all 5 r bins (for supplement)
+# file_elev_r_interaction_5_tex = "../hilo_manuscript/tables/elev_r_interaction_5.tex"
+
 file_spearmans_rho_ngsadmix = snakemake@output[["file_spearmans_rho_ngsadmix"]]
 # file_spearmans_rho_ngsadmix = "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex"
+file_spearmans_rho_ngsadmix_tex = snakemake@output[["file_spearmans_rho_ngsadmix_tex"]]
+# file_spearmans_rho_ngsadmix_tex = "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex"
 
 # load inversion coordinates
 inv = read.table(inv_file, stringsAsFactors = F, header = F) %>%
@@ -227,7 +244,12 @@ ggsave(file = png_cd5_symp_allo,
        device = "png",
        width = 7, height = 7, 
        units = "in", dpi = 300)
-
+ggsave(file = png_cd5_symp_allo_lzw,
+       plot = p_cd5_symp_allo,
+       device = "tiff",
+       width = 7, height = 7, 
+       units = "in", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # plot feature correlations for genomic windows
 p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding, 
@@ -317,6 +339,12 @@ ggsave(file = png_color_elev_r5,
        device = "png",
        width = 7, height = 6, 
        units = "in", dpi = 300)
+ggsave(file = png_color_elev_r5_lzw,
+       plot = p_color_elev_r5,
+       device = "tiff",
+       width = 7, height = 6, 
+       units = "in", dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # multipanel plot:
 # facet label names
@@ -357,6 +385,14 @@ ggsave(png_multi,
        height = 7, 
        units = "in",
        dpi = 300)
+ggsave(png_multi_lzw, 
+       plot = p_multi, 
+       device = "tiff", 
+       width = 7.5, 
+       height = 7, 
+       units = "in",
+       dpi = 300,
+       compression = "lzw", type = "cairo")
 
 # test for significant difference in slope ancestry ~ elev
 # between highest and lowest r bins
@@ -428,7 +464,14 @@ print(xtable(tbl_elev_r_interaction_5,
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
-      file = file_elev_r_interaction_5)      
+      file = file_elev_r_interaction_5)  
+print(xtable(tbl_elev_r_interaction_5, 
+             digits = c(1, 0, 0, 3, 3, 3, -2),
+             label = "tbl_elev_r_interaction_5",
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_elev_r_interaction_5_tex) 
 
 # make tidy table of rho spearman's rank correlations across quintiles
 rho = bind_rows(mutate(r5$spearman, 
@@ -449,3 +492,9 @@ print(xtable(rho,
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_ngsadmix)
+print(xtable(rho, 
+             digits = c(1, 1, 1, 2, 2, 2),
+             type = "latex", 
+             latex.environments = NULL),
+      include.rownames = F,
+      file = file_spearmans_rho_ngsadmix_tex)
