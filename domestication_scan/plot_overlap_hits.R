@@ -14,11 +14,10 @@ overlap_file <- snakemake@input[["overlap"]]
 genome_file <- snakemake@input[["genome"]]
 # genome_file <- "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 # output files
-
 png_out <- snakemake@output[["png"]]
 # png_out <- "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.png"
 png_out_lzw <- snakemake@output[["png_lzw"]]
-# png_out_lzw <- "../hilo_manuscript/figures_supp/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.png"
+# png_out_lzw <- "../hilo_manuscript/figures_supp/Ne10000_yesBoot/raisdOverlap.maize_pos_meanAnc_outliers.perc02.tif"
 
 
 summary_out <- snakemake@output[["summary"]]
