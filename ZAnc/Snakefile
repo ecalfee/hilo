@@ -473,9 +473,9 @@ rule plot_shared_peaks:
 
         "ZAnc/plots/Ne{Ne}_{YESNO}Boot/shared_peaks_on_genome.png",
 
-        expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea)
-        "../hilo_manuscript/figures_main/Ne{{Ne}}_{{YESNO}}Boot_maize_shared_outliers_chr_4.tif"
-        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize")
+        expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
+        "../hilo_manuscript/figures_main/Ne{{Ne}}_{{YESNO}}Boot_maize_shared_outliers_chr_4.tif",
+        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
         expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana")
     params:
         p = "med2",
