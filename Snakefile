@@ -242,11 +242,11 @@ rule all:
         "ZAnc/plots/Ne10000_yesBoot/QQ.png",
         "../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
 
-        "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif",
+        "mhl1_inv/plots/" + prefix_all + "/Ne10000_yesBoot/mhl1_inv_ancestry.png",
+        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_ancestry.tif",
 
-        "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif",
+        "mhl1_inv/plots/" + prefix_all + "/Ne10000_yesBoot/mhl1_inv_pca.png",
+        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_pca.tif",
 
         "filtered_bams/plots/p_seq_counts.png",
         "../hilo_manuscript/figures_supp/p_seq_counts.tif",
@@ -276,7 +276,7 @@ rule all:
         "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc05.summary",
         "ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt",
         expand("ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}",
-        ZEA = zea, Ne = 10000, YESNO = "yes", POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"], SUFFIX = ["bed", "counts"]),
+        ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"], SUFFIX = ["bed", "counts"]),
         "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex" #,
 
         # old (not used in final manuscript)
