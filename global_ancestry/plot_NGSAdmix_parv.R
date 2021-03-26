@@ -15,9 +15,9 @@ png_structure = snakemake@output[["png_structure"]]
 # png_structure = "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png"
 png_structure_lzw = snakemake@output[["png_structure_lzw"]]
 # png_structure_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif"
-txt_allo_pops_alphas = snakemake@input[["allo_pops_alphas"]]
+txt_allo_pops_alphas = snakemake@output[["allo_pops_alphas"]]
 # txt_allo_pops_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_allo_pop.txt"
-txt_groups_alphas = snakemake@input[["groups_alphas"]]
+txt_groups_alphas = snakemake@output[["groups_alphas"]]
 # txt_groups_alphas = "global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_group.txt"
 
 
