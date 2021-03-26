@@ -148,12 +148,13 @@ rule all:
     params:
         p = "med2"
     resources:
-        time_min = 30,
+        time_min = 60,
         mem = 2
 
 ## some: for running a subset of analyses
 rule some:
     input:
+        "map/plots/mexico_lines_elev_teo_color.png"
     params:
         p = "med2"
     resources:
@@ -182,7 +183,6 @@ rule figures_main:
 
         "ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
         "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif"
-
     params:
         p = "med2"
     resources:
@@ -311,7 +311,7 @@ rule other_results:
         "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
 
         # other output files/results that go into the manuscript text:
-        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
+        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt",
         "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
         "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
         "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc05.summary",
