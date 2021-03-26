@@ -138,7 +138,8 @@ include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
 
-rule figures_main:
+## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
+rule all:
     input:
         "map/plots/mexico_lines_elev_teo_color.png",
         "../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
@@ -159,15 +160,11 @@ rule figures_main:
         "../hilo_manuscript/figures_main/Ne10000_yesBoot_network_peak_sharing_data_only.tif",
 
         "ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif"
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
+        "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
 
-rule tables_supp:
-    input:
+        # tables supplement
+        #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
+        #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
         "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
         "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex",
 
@@ -184,18 +181,9 @@ rule tables_supp:
         "../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex",
 
         "domestication_scan/tables/" + prefix_all + "/Ne10000_yesBoot/domestication_genes.tex",
-        "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex"
+        "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex",
 
-        #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
-        #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
-
-rule figures_supp:
-    input:
+        #figures_supp
         "global_ancestry/plots/HILO_MAIZE55_pca.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif",
 
@@ -272,15 +260,9 @@ rule figures_supp:
 
         # ADD SENSITIVITY TO NE FIGURE, for now as a placeholder use input files
         expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes)
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
+        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes),
 
-rule other_results:
-    input:
+        #other_results
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
@@ -308,19 +290,6 @@ rule other_results:
         #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
         #trip_anc
 
-    params:
-        p = "med2"
-    resources:
-        time_min = 30,
-        mem = 2
-
-## all:  main rule to run all workflows
-rule all:
-    input:
-        figures_main,
-        tables_supp,
-        figures_supp,
-        other_results
     params:
         p = "med2"
     resources:
