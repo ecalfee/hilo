@@ -3042,7 +3042,15 @@ Job counts:
 hilo$ snakemake -n all --quiet --profile slurm
 SyntaxError in line 197 of /home/ecalfee/hilo/Snakefile:
 Expecting rule keyword, comment or docstrings inside a rule definition. (Snakefile, line 197)
-# hmm... not sure of error.
+# hmm... not sure of error. It was having a comment as first line of input (not allowed). now fixed:
+# now saving what it's going to run so I can check it over first:
+hilo$ snakemake -n all --quiet --profile slurm > to_run.txt
+# make and inspect 1cM recombination map before proceeding with full pipeline.
+MissingInputException in line 142 of /home/ecalfee/hilo/Snakefile:
+Missing input files for rule all:
+../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif # brackets issue (now fixed)
+
+
 
 # TO DO:
 - ADD lzw compression to all figures in .tif format:
