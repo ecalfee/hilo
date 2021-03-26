@@ -138,29 +138,6 @@ include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
 
-## all:  main rule to run all workflows
-rule all:
-    input:
-        figures_main,
-        tables_supp,
-        figures_supp,
-        other_results
-    params:
-        p = "med2"
-    resources:
-        time_min = 60,
-        mem = 2
-
-## some: for running a subset of analyses
-rule some:
-    input:
-        "map/plots/mexico_lines_elev_teo_color.png"
-    params:
-        p = "med2"
-    resources:
-        time_min = 5,
-        mem = 2
-
 rule figures_main:
     input:
         "map/plots/mexico_lines_elev_teo_color.png",
@@ -335,4 +312,27 @@ rule other_results:
         p = "med2"
     resources:
         time_min = 30,
+        mem = 2
+
+## all:  main rule to run all workflows
+rule all:
+    input:
+        figures_main,
+        tables_supp,
+        figures_supp,
+        other_results
+    params:
+        p = "med2"
+    resources:
+        time_min = 60,
+        mem = 2
+
+## some: for running a subset of analyses
+rule some:
+    input:
+        "map/plots/mexico_lines_elev_teo_color.png"
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
         mem = 2
