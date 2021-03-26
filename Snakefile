@@ -191,9 +191,6 @@ rule figures_main:
 
 rule tables_supp:
     input:
-        #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
-        #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
-
         "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
         "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex",
 
@@ -211,6 +208,9 @@ rule tables_supp:
 
         "domestication_scan/tables/" + prefix_all + "/Ne10000_yesBoot/domestication_genes.tex",
         "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex"
+
+        #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
+        #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
     params:
         p = "med2"
     resources:
@@ -304,8 +304,7 @@ rule figures_supp:
 
 rule other_results:
     input:
-        # bam metrics files
-        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html",
+        "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
         "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
