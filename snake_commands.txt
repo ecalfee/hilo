@@ -3039,7 +3039,10 @@ Job counts:
                         1       plot_NGSAdmix_parv
                         1 # COMPLETED.
 # cleaned up rule all 3.26.2021 to make sure I'm re-doing all main and supp figures/tables. now will try to rerun rule all (will trigger b/c of new map)
-
+hilo$ snakemake -n all --quiet --profile slurm
+SyntaxError in line 197 of /home/ecalfee/hilo/Snakefile:
+Expecting rule keyword, comment or docstrings inside a rule definition. (Snakefile, line 197)
+# hmm... not sure of error.
 
 # TO DO:
 - ADD lzw compression to all figures in .tif format:

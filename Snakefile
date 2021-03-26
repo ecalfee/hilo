@@ -143,7 +143,7 @@ rule all:
     input:
         figures_main,
         tables_supp,
-        figurs_supp,
+        figures_supp,
         other_results
     params:
         p = "med2"
