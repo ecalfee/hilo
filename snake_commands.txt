@@ -3048,7 +3048,100 @@ hilo$ snakemake -n all --quiet --profile slurm > to_run.txt
 # make and inspect 1cM recombination map before proceeding with full pipeline.
 MissingInputException in line 142 of /home/ecalfee/hilo/Snakefile:
 Missing input files for rule all:
-../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif # brackets issue (now fixed)
+../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif # brackets issue (now fixed) and will list files:
+hilo$ snakemake -n ../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif --quiet --profile slurm
+
+# also saved old map, including 1cM windows, to hilo/data/linkage_map/old/
+# hilo$ cp ancestry_by_r/results/map_pos_1cM_windows.txt data/linkage_map/old/.
+hilo$ snakemake ancestry_by_r/results/map_pos_1cM_windows.txt --quiet --profile slurm
+Job counts:
+        count   jobs
+        1       define_1cM_windows
+        1 # COMPLETED 3.26.2021 to check on this first.
+        # what jobs will run for rule 'all'. let's see:
+        hilo$ snakemake -n all --quiet --profile slurm > to_run.txt
+        Job counts:
+        	count	jobs
+        	1	all
+        	84	boot_ancestry_hmm
+        	2	calc_K_matrix_zea
+        	2	calc_and_plot_f4
+        	2	calc_fdr_mean_anc
+        	756	calc_fst_all_chr # lots of runs b/c all possible pairs.
+        	28	calc_fst_all_outliers
+        	756	calc_fst_idx
+        	28	calc_fst_idx_outliers
+        	24	calc_overlap
+        	2	calc_overlap_domestication_genes
+        	2	calc_overlap_hits
+        	56	calc_pi_all_chr
+        	56	calc_pi_all_outliers
+        	426	calc_rmap_pos
+        	56	calc_thetas
+        	56	calc_thetas_outliers
+        	1	combine_genome_scan_plots
+        	6	combine_pop_ancestry_data
+        	403	count_ACGT
+        	403	count_maj_min
+        	4560	do_abba_baba
+        	756	estimate_2D_sfs
+        	56	estimate_saf_pop
+        	56	estimate_saf_pop_outliers
+        	56	estimate_sfs
+        	3	f4_from_abba_baba
+        	1520	find_SNPs_in_window # this is too many windows. will fix. with new map should now be 1477 windows/runs
+        	2	fit_lm_elev
+        	1	get_GL_mhl1_inv
+        	2	get_ancestry_domestication_genes
+        	56	get_homozygous_ancestry_bams
+        	56	get_homozygous_ancestry_tracts
+        	1	get_mhl1_inv_coord
+        	1	get_tracts_from_sites
+        	1	index_sites_4HMM
+        	1010	label_k_anc # because it's 100 bootstraps X 10 categories (r/cd/5 bins) + the 10 runs for the nonbootstrap originals
+        	56	list_homozygous_ancestry_bams
+        	1	make_allo_counts
+        	2	make_bed_anc_outliers
+        	1	make_bed_file_for_windows
+        	2	make_bed_slope_elev
+        	1010	make_bootstrap_GL_file
+        	28	make_input_hmm
+        	14	make_rf_outliers_by_pop
+        	1	make_table_domestication_genes
+        	28	map_local_anc_onto_1cM_windows
+        	24	merge_bed_outliers
+        	1	plotQQ
+        	3	plot_admix_times
+        	1	plot_bootstrap_NGSadmix_by_r
+        	1	plot_bootstrap_local_ancestry_by_r
+        	1	plot_map
+        	2	plot_mean_anc
+        	1	plot_mhl1_inv
+        	1	plot_mhl1_inv_PCAngsd
+        	2	plot_overlap_hits
+        	1	plot_shared_peaks
+        	2	plot_slope_elev
+        	1	plot_total_samples
+        	1	plot_within_ancestry_fst
+        	1	plot_within_ancestry_fst_pi_peaks
+        	1	print_fst_mexicana_peaks_one_file
+        	1	print_fst_one_file
+        	1	print_pi_mexicana_peaks_one_file
+        	1	print_pi_one_file
+        	1	run_PCAngsd_mhl1_inv
+        	1010	run_bootstrap_NGSAdmix
+        	2	sample_bootstrap_1cM
+        	2	simulate_MVN
+        	2	summarise_bootstrap_anc_by_r
+        	28	summarise_local_anc_by_1cM
+        	1	summarise_overlap_domestication_genes
+        	1	summarise_overlap_flowering_time
+        	84	summarise_posterior
+        	1	test_key_genes
+        	1	thin_sites_4HMM
+        	13610
+
+
 
 
 

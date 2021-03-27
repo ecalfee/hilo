@@ -43,13 +43,13 @@ trip_anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz"
 # recombination map
 rmap_ext = path_hilo + "linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 
-# 1cM genomic windows for whole genome (1520 windows)
+# 1cM genomic windows for whole genome (1477 windows)
 windows_1cM = []
 #with open("ancestry_by_r/results/map_pos_1cM_windows.txt", "r") as read_obj:
 #    csv_dict_reader = DictReader(read_obj, delimiter = "\t")
 #    for row in csv_dict_reader:
 #        windows_1cM.append(row["window"])
-for i in range(1, 1521):
+for i in range(1, 1478):
     windows_1cM.append("W" + str(i))
 
 
