@@ -117,14 +117,15 @@ rule make_bootstrap_GL_file:
     params:
         p = "med2",
         gl = lambda wildcards, input: input[0],
-        sample = lambda wildcards, input: input[1]
+        sample = lambda wildcards, input: input[1],
+        prefix = lambda wildcards: wildcards.PREFIX
     conda:
          "../envs/environment.yaml"
     resources:
         time_min = lambda wildcards, attempt: attempt * 20,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
-        "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {wildcards.PREFIX} {output}"
+        "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {params.prefix} {output}"
 
 ## run_bootstrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
 rule run_bootstrap_NGSAdmix:
