@@ -52,12 +52,13 @@ rule sample_bootstrap_1cM:
     input:
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt"
     output: # FEATURE is recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{{FEATURE}}5_{r}/boot{BOOT}.list",
+        expand("ancestry_by_r/results/bootstrap_1cM/{{PREFIX}}/{{FEATURE}}5_{r}/boot{BOOT}.list",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0,101))) # 5 recombination rate quintiles, '0' for original sample and 1-100 bootstrap samples
     params:
         p = "med2",
         n = 100, # 100 bootstraps
-        prefix_all = prefix_all,
+        seed = 100, # random seed means same windows are chosen for bootstrap when re-run, e.g. for HILO_MAIZE55 and HILO_MAIZE55_PARV50
+        prefix = lambda wildcards: wildcards.PREFIX,
         feature = lambda wildcards: wildcards.FEATURE
     conda:
          "../envs/environment.yaml"
@@ -89,14 +90,13 @@ rule make_bed_file_for_windows:
 # then sending lines into each window-named file based on their 1cM window label
 rule find_SNPs_in_window:
     input:
-        gl = "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
+        gl = "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz",
         bed = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
         genome = ref_chr
     output:
-        "ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz"
+        "ancestry_by_r/results/GL_1cM/{PREFIX}/{WINDOW}.beagle.gz"
     params:
-        p = "med2",
-        prefix_all = prefix_all
+        p = "med2"
     conda:
          "../envs/environment.yaml"
     resources:
@@ -109,14 +109,13 @@ rule find_SNPs_in_window:
 ## make_bootstrap_GL_file: creates a new beagle GL file for a bootstrap sample by including SNPs within the sampled windows (with replacement)
 rule make_bootstrap_GL_file:
     input:
-        "global_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.beagle.gz",
-        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.list",
-        expand("ancestry_by_r/results/GL_1cM/" + prefix_all + "/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
+        "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz",
+        "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/boot{BOOT}.list",
+        expand("ancestry_by_r/results/GL_1cM/{PREFIX}/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
     output:
-        "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
+        "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
     params:
         p = "med2",
-        prefix_all = prefix_all,
         gl = lambda wildcards, input: input[0],
         sample = lambda wildcards, input: input[1]
     conda:
@@ -125,7 +124,7 @@ rule make_bootstrap_GL_file:
         time_min = lambda wildcards, attempt: attempt * 20,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
-        "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {params.prefix_all} {output}"
+        "./ancestry_by_r/make_bootstrap_GL_file.sh {params.gl} {params.sample} {wildcards.PREFIX} {output}"
 
 ## run_bootstrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
 rule run_bootstrap_NGSAdmix:

@@ -3239,7 +3239,7 @@ I did crtl+c to cancel snakemake pipeline and restart because it wasn't running 
 - local ancestry by R scripts need to be updated.
 - re-running global ancestry by R scripts. Need to update plotting script only:
 hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3.Rdata --quiet --profile slurm
-
+# oops needed to make some generalizations/changes upstream (e.g. for gl files that get bootstrapped)
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
