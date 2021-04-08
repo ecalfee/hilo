@@ -3140,23 +3140,105 @@ Job counts:
         	1	test_key_genes
         	1	thin_sites_4HMM
         	13610
-
-
-
-
+hilo$ snakemake -n all --quiet --profile slurm > to_run.txt # checked one more time. now running:
+hilo$ snakemake all --quiet --profile slurm
+Job counts:
+	count	jobs
+	1	all
+	84	boot_ancestry_hmm
+	2	calc_K_matrix_zea
+	2	calc_and_plot_f4
+	2	calc_fdr_mean_anc
+	756	calc_fst_all_chr
+	28	calc_fst_all_outliers
+	756	calc_fst_idx
+	28	calc_fst_idx_outliers
+	24	calc_overlap
+	2	calc_overlap_domestication_genes
+	2	calc_overlap_hits
+	56	calc_pi_all_chr
+	56	calc_pi_all_outliers
+	426	calc_rmap_pos
+	56	calc_thetas
+	56	calc_thetas_outliers
+	1	combine_genome_scan_plots
+	6	combine_pop_ancestry_data
+	403	count_ACGT
+	403	count_maj_min
+	4431	do_abba_baba
+	756	estimate_2D_sfs
+	56	estimate_saf_pop
+	56	estimate_saf_pop_outliers
+	56	estimate_sfs
+	3	f4_from_abba_baba
+	1477	find_SNPs_in_window
+	2	fit_lm_elev
+	1	get_GL_mhl1_inv
+	2	get_ancestry_domestication_genes
+	56	get_homozygous_ancestry_bams
+	56	get_homozygous_ancestry_tracts
+	1	get_mhl1_inv_coord
+	1	get_tracts_from_sites
+	1	index_sites_4HMM
+	1010	label_k_anc
+	56	list_homozygous_ancestry_bams
+	1	make_allo_counts
+	2	make_bed_anc_outliers
+	1	make_bed_file_for_windows
+	2	make_bed_slope_elev
+	1010	make_bootstrap_GL_file
+	28	make_input_hmm
+	14	make_rf_outliers_by_pop
+	1	make_table_domestication_genes
+	28	map_local_anc_onto_1cM_windows
+	24	merge_bed_outliers
+	1	plotQQ
+	3	plot_admix_times
+	1	plot_bootstrap_NGSadmix_by_r
+	1	plot_bootstrap_local_ancestry_by_r
+	1	plot_map
+	2	plot_mean_anc
+	1	plot_mhl1_inv
+	1	plot_mhl1_inv_PCAngsd
+	2	plot_overlap_hits
+	1	plot_shared_peaks
+	2	plot_slope_elev
+	1	plot_total_samples
+	1	plot_within_ancestry_fst
+	1	plot_within_ancestry_fst_pi_peaks
+	1	print_fst_mexicana_peaks_one_file
+	1	print_fst_one_file
+	1	print_pi_mexicana_peaks_one_file
+	1	print_pi_one_file
+	1	run_PCAngsd_mhl1_inv
+	1010	run_bootstrap_NGSAdmix
+	2	sample_bootstrap_1cM
+	2	simulate_MVN
+	2	summarise_bootstrap_anc_by_r
+	28	summarise_local_anc_by_1cM
+	1	summarise_overlap_domestication_genes
+	1	summarise_overlap_flowering_time
+	84	summarise_posterior
+	1	test_key_genes
+	1	thin_sites_4HMM
+	13438 # RUNNING 3.26.2021 5:26pm
+hmm.. not sure why calculating and plotting f4s would fail: nano snake_logs/*32568936.err
+I did crtl+c to cancel snakemake pipeline and restart because it wasn't running any jobs in squeue
+# what is left to run?
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n all --quiet --profile slurm > to_run.txt
 
 # TO DO:
-- ADD lzw compression to all figures in .tif format:
-ggsave(filename = png_out_lzw,
-       plot = p_combined,
-       device = "tiff",
-       width = 7.5, height = 7.5,
-       dpi = 300, units = "in",
-       compression = "lzw", type = "cairo")
-- Figure out how you want to plot/analyze pi across the genome (re: outliers vs. background)
-- set up FST calculations. Do FST between sympatric pairs, then estimate time/resources to do e.g. all 14*14 comparisons or sympatric * (all BUT sympatric)
+- check on snakemake pipeline -- still running smoothly?
+- add supp. plot for raisd output.
+- check on the regions you dropped markers from the map by hand -- did you plot all of them?
+- ask Graham about that one sentence you re-worded
+- get feedback on Graham and Jeff about 4 updates
+- try the rainbow map of mexico plot
 
-
+### TO DO FOR K=3 GENERALIZATION:
+- local ancestry by R scripts need to be updated.
+- re-running global ancestry by R scripts. Need to update plotting script only:
+hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3.Rdata --quiet --profile slurm
 
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR

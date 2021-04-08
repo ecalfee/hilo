@@ -10,7 +10,7 @@ load(snakemake@params[["meta"]])
 # load("samples/HILO_MAIZE55_meta.RData")
 FEATURE = snakemake@params[["feature"]]
 # FEATURE = "r" # vs. "cd"
-PREFIX = snakemake@params[["prefix_all"]]
+PREFIX = snakemake@params[["prefix"]]
 # PREFIX = "HILO_MAIZE55"
 K = snakemake@params[["k"]]
 # K = 2
@@ -28,12 +28,11 @@ quintile_col <- paste0("quintile_", FEATURE, "5")
 
 # get the genomic quintile ranges
 q <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-  dplyr::select(., quintile_col, bin_col) %>%
+  dplyr::select(., all_of(c(quintile_col, bin_col))) %>%
   rename(quintile = quintile_col, bin = bin_col) %>%
   filter(., !duplicated(bin)) %>%
   arrange(., quintile) %>% # order 1-5
   mutate(bin = factor(bin, ordered = T, levels = bin))
-
 
 # get bootstrap estimates for proportion ancestry K=2
 anc_boot <- do.call(rbind,
@@ -56,10 +55,8 @@ anc_ind <- anc_boot %>%
 # mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
 anc_boot_mean <- anc_boot %>%
   group_by(group, zea, symp_allo, bootstrap, bin, quintile, feature) %>%
-  summarise(mexicana_ancestry = mean(mexicana),
-            maize_ancestry = mean(maize)) %>%
-  ungroup()
-
+  summarise(., across(ancestries[1:K], mean), .groups = "drop") %>%
+  rename_at(vars(ancestries[1:K]), ~ paste(ancestries[1:K], "ancestry", sep = "_")) # label maize ancestry columns as maize_ancestry not just maize
 
 # group means (by symp/allo and zea subspecies, bootstrap = 0 is all the original data)
 anc_group_estimate <- anc_boot_mean %>%
@@ -86,19 +83,18 @@ anc_boot_perc <- anc_boot_mean %>%
 # first calculate mean across individuals in each group (sympatric maize, allopatric mexicana..)..
 # (so it's just 5 points in the rank correlation; like f4s)
 spearman = anc_boot_mean %>%
-  group_by(group, bootstrap) %>%
-  summarise(rho = cor(x = mexicana_ancestry, 
-                      y = quintile, 
-                      method = "spearman")) %>%
-  ungroup() %>%
-  group_by(group) %>%
-  summarise(rho_estimate = rho[bootstrap == 0], # original sample
-            boot_low = quantile(rho[bootstrap != 0], alpha/2, na.rm = T), # percentiles from bootstrap (excl. original sample)
-            boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2, na.rm = T)) # must remove NAs because one bootstrap sample for allopatric maize in cd's has no variance (therefore correlation is NA)
-  #ggplot(., aes(fill = group, x = group, y = rho)) +
-  #geom_violin()
-
-# calculate significance of change in slope across elevation (elevation*feature interaction)
+  tidyr::pivot_longer(data = ., cols = paste(ancestries[1:K], "ancestry", sep = "_"),
+                      names_to = "ancestry", values_to = "p") %>%
+                      group_by(group, bootstrap, ancestry) %>%
+                      summarise(rho = cor(x = p, 
+                                          y = quintile, 
+                                          method = "spearman"), .groups = "drop") %>%
+                      group_by(group, ancestry) %>%
+                      dplyr::summarise(rho_estimate = rho[bootstrap == 0], # original sample
+                                       boot_low = quantile(rho[bootstrap != 0], alpha/2, na.rm = T), # percentiles from bootstrap (excl. original sample)
+                                       boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2, na.rm = T), # must remove NAs because one bootstrap sample for allopatric maize in cd's has no variance (therefore correlation is NA)
+                                       .groups = "drop") %>%
+  dply::arrange(ancestry, group)
 
 # save
 feature_name = paste0(FEATURE, "5")

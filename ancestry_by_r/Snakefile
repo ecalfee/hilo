@@ -130,13 +130,12 @@ rule make_bootstrap_GL_file:
 ## run_bootstrap_NGSAdmix: runs NGSAdmix for a bootstrap sample
 rule run_bootstrap_NGSAdmix:
     input:
-        gl = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
+        gl = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
     output:
-        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.qopt"
+        admix = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/K{K}/boot{BOOT}.qopt"
     params:
         p = "med2",
-        prefix_all = prefix_all,
-        k = 2
+        prefix_out = lambda wildcards, output: os.path.splitext(output.admix)[0] # output file without .qopt extension
     shadow:
          "minimal"
     conda:
@@ -149,20 +148,20 @@ rule run_bootstrap_NGSAdmix:
     shell:
         """
         NGSadmix -likes {input.gl} \
-        -K {params.k} -P {threads} \
-        -o "ancestry_by_r/results/bootstrap_1cM/{params.prefix_all}/{wildcards.FEATURE}5_{wildcards.r}/K{params.k}/boot{wildcards.BOOT}"
+        -K {wildcards.K} -P {threads} \
+        -o {params.prefix_out}
         """
 
 ## label_k_anc: defines which of K ancestries is 'mexicana' based on allopatric reference panels
 rule label_k_anc:
     input:
-        admix = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.qopt",
-        meta = "samples/HILO_MAIZE55_meta.RData"
+        admix = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/K{K}/boot{BOOT}.qopt",
+        meta = "samples/{PREFIX}_meta.RData"
     output:
-        anc = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_{r}/K2/boot{BOOT}.anc"
+        anc = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/K{K}/boot{BOOT}.anc"
     params:
         p = "med2",
-        k = 2
+        k = lambda wildcards: wildcards.K
     conda:
          "../envs/environment.yaml"
     resources:
@@ -174,18 +173,18 @@ rule label_k_anc:
 ## summarise_bootstrap_anc_by_r: summarises bootstrap results for global ancestry by genomic quintiles
 rule summarise_bootstrap_anc_by_r:
     input:
-        "samples/HILO_MAIZE55_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
+        "samples/{PREFIX}_meta.RData", # can't have only some named inputs; can use [[1]] to access in R
         "ancestry_by_r/results/map_pos_1cM_windows.txt",
-        expand("ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{{FEATURE}}5_{r}/K2/boot{BOOT}.anc",
+        expand("ancestry_by_r/results/bootstrap_1cM/{{PREFIX}}/{{FEATURE}}5_{r}/K{{K}}/boot{BOOT}.anc",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
     output:
-        rdata = "ancestry_by_r/results/bootstrap_1cM/" + prefix_all + "/{FEATURE}5_K2.Rdata"
+        rdata = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata"
     params:
         p = "med2",
-        k = 2,
-        prefix_all = prefix_all,
+        k = lambda wildcards: wildcards.K,
+        prefix = lambda wildcards: wildcards.PREFIX,
         feature = lambda wildcards: wildcards.FEATURE,
-        meta = "samples/HILO_MAIZE55_meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
         alpha = 0.05 # use 95% confidence intervals for bootstrap
     conda:
