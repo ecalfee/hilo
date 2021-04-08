@@ -111,7 +111,7 @@ rule make_bootstrap_GL_file:
     input:
         "global_ancestry/results/thinnedSNPs/{PREFIX}/whole_genome.beagle.gz",
         "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/boot{BOOT}.list",
-        expand("ancestry_by_r/results/GL_1cM/{PREFIX}/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
+        expand("ancestry_by_r/results/GL_1cM/{{PREFIX}}/{WINDOW}.beagle.gz", WINDOW = windows_1cM)
     output:
         "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_{r}/boot{BOOT}.beagle.gz"
     params:
