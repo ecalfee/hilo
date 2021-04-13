@@ -101,9 +101,9 @@ rule results_NGSAdmix:
 ## plot_NGSAdmix: plots results of NGSAdmix and produces table with linear model output for cline in mexicana ancestry with elevation
 rule plot_NGSAdmix:
     input:
-        meta = "samples/" + prefix_all + "_meta.RData",
+        meta = "samples/HILO_MAIZE55_meta.RData",
         colors = "colors.R",
-        k2 = "global_ancestry/results/NGSAdmix/" + prefix_all + "/K2_alphas_by_ind.RData"
+        k2 = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_ind.RData"
     output:
         png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
         png_structure = "global_ancestry/plots/structure_K2.png",
