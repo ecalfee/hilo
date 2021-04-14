@@ -241,7 +241,7 @@ rule make_allo_counts_K2:
         mex = "samples/ALL_byPop/allopatric_mexicana_ids.list",
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.var.sites",
         rdiff = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.rdiff",
-        counts = ["local_ancestry/results/countsMajMin/{PREFIX}/K2/" + id + ".counts.txt" for id in all_ids]
+        counts = lambda wildcards: ["local_ancestry/results/countsMajMin/{PREFIX}/K2/" + id + ".counts.txt" for id in get_all_ids(wildcards.PREFIX)]
     output:
         allo_counts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.allo.counts"
     params:
@@ -263,7 +263,7 @@ rule make_allo_counts_K3:
         maize = "samples/ALL_byPop/allopatric_maize_ids.list",
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.var.sites",
         rdiff = "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.rdiff",
-        counts = ["local_ancestry/results/countsMajMin/{PREFIX}/K3/" + id + ".counts.txt" for id in all_ids]
+        counts = lambda wildcards: ["local_ancestry/results/countsMajMin/{PREFIX}/K3/" + id + ".counts.txt" for id in get_all_ids(wildcards.PREFIX)]
     output:
         allo_counts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.allo.counts"
     params:
@@ -283,7 +283,7 @@ rule make_input_hmm:
     input:
         allo = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.allo.counts", # SNP info and counts from allopatric pops
         pop_ids = "samples/Over0.5x_byPop/{POP}_ids.list",
-        counts = ["local_ancestry/results/countsMajMin/{PREFIX}/K{K}/" + id + ".counts.txt" for id in all_ids]
+        counts = lambda wildcards: ["local_ancestry/results/countsMajMin/{PREFIX}/K{K}/" + id + ".counts.txt" for id in get_all_ids(wildcards.PREFIX)]
     output:
         counts = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/input/{POP}.counts",
         ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/input/{POP}.ploidy"

@@ -86,6 +86,11 @@ def get_all_bais(prefix):
         bais = [bam + ".bai" for bam in bams]
     return bais
 
+def get_all_ids(prefix):
+    with open(path_hilo + "samples/" + prefix + "_ids.list") as f:
+        ids = f.read().splitlines()
+    return ids
+
 # samples with local ancesty calls (sympatric and over 0.5x coverage)
 #with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
 #        symp_maize_ids = f.read().splitlines()
