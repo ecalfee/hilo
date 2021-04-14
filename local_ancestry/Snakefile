@@ -63,15 +63,15 @@ rule allo_freqs:
 rule thin_sites_4HMM_K2:
     input:
         # input minor allele freq files for allopatric maize and mexicana
-        maize_maf = expand("local_ancestry/results/alloFreqs/{PREFIX}/allopatric_maize/{REGION}.mafs.gz",
+        maize_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_maize/{REGION}.mafs.gz",
         REGION=list(regions_dict.keys())),
-        mex_maf = expand("local_ancestry/results/alloFreqs/{PREFIX}/allopatric_mexicana/{REGION}.mafs.gz",
+        mex_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_mexicana/{REGION}.mafs.gz",
         REGION=list(regions_dict.keys())),
         # variant sites too
-        sites = expand("variant_sites/results/{PREFIX}/{REGION}.var.sites",
+        sites = expand("variant_sites/results/{{PREFIX}}/{REGION}.var.sites",
         REGION=list(regions_dict.keys())),
         # and recombination positions (in cM)
-        rpos = expand("variant_sites/results/{PREFIX}/{REGION}.rpos",
+        rpos = expand("variant_sites/results/{{PREFIX}}/{REGION}.rpos",
         REGION=list(regions_dict.keys())),
         # master list of all regions
         regions = "data/refMaize/divide_5Mb/ALL_regions.list"
@@ -103,15 +103,15 @@ rule thin_sites_4HMM_K2:
 rule thin_sites_4HMM_K3:
     input:
         # input minor allele freq files for allopatric maize and mexicana
-        maize_maf = expand("local_ancestry/results/alloFreqs/{PREFIX}/allopatric_maize/{REGION}.mafs.gz",
+        maize_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_maize/{REGION}.mafs.gz",
         REGION=list(regions_dict.keys())),
-        mex_maf = expand("local_ancestry/results/alloFreqs/{PREFIX}/allopatric_mexicana/{REGION}.mafs.gz",
+        mex_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_mexicana/{REGION}.mafs.gz",
         REGION=list(regions_dict.keys())),
         # variant sites too
-        sites = expand("variant_sites/results/{PREFIX}/{REGION}.var.sites",
+        sites = expand("variant_sites/results/{{PREFIX}}/{REGION}.var.sites",
         REGION=list(regions_dict.keys())),
         # and recombination positions (in cM)
-        rpos = expand("variant_sites/results/{PREFIX}/{REGION}.rpos",
+        rpos = expand("variant_sites/results/{{PREFIX}}/{REGION}.rpos",
         REGION=list(regions_dict.keys())),
         # master list of all regions
         regions = "data/refMaize/divide_5Mb/ALL_regions.list",
