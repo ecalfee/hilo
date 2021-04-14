@@ -18,9 +18,9 @@ print(paste("R working directory:", getwd()))
 rmap_file = snakemake@input[["rmap"]] # recombination map
 # rmap_file = "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 sites_file = snakemake@input[["sites"]]
-# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
+# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites"
 bed_file = snakemake@output[["bed"]]
-# bed_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
+# bed_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.bed"
 
 # load sites file
 sites = read.table(sites_file, header = F, sep = "\t") %>%

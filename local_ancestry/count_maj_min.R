@@ -19,7 +19,7 @@ output_file = snakemake@output[["majmin"]]
 
 # to test:
 #ID = "HILO9"
-#prefix_all = "HILO_MAIZE55"
+#prefix_all = "HILO_MAIZE55/K2"
 #sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.var.sites")
 #acgt_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".counts.gz")
 #pos_file = paste0("local_ancestry/results/countsACGT/", prefix_all, "/", ID, ".pos.gz")

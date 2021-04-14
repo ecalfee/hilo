@@ -6,7 +6,7 @@ library(data.table)
 
 # load variables from Snakefile
 regions_file = snakemake@input[["regions"]]
-prefix_all = snakemake@params[["prefix_all"]]
+prefix = snakemake@params[["prefix"]]
 min_cM = as.numeric(snakemake@params[["min_cM"]])
 min_n_maize = as.numeric(snakemake@params[["min_n_maize"]])
 min_n_mex = as.numeric(snakemake@params[["min_n_mex"]])
@@ -19,7 +19,7 @@ counts_out = snakemake@output[["counts"]]
 # # to test:
 # setwd("~/Documents/gitErin/hilo")
 #print(getwd())
-#prefix_all = "HILO_MAIZE55"
+#prefix = "HILO_MAIZE55"
 #min_cM = 0.001
 #min_n_maize = 44
 #min_n_mex = 12
@@ -57,16 +57,16 @@ for (j in 1:nrow(regions)){
   is_first_region_on_chr = (chr != last_chr)
   previous_region_last_cM = last_cM
 
-  rpos0 = read.table(paste0("variant_sites/results/", prefix_all, "/region_", n, ".rpos"),
+  rpos0 = read.table(paste0("variant_sites/results/", prefix, "/region_", n, ".rpos"),
                     header = F, sep = "\t", stringsAsFactors = F)$V1
   # load variant sites and reference pop minor allele freqs (maf)
-  sites0 = read.table(paste0("variant_sites/results/", prefix_all, "/region_", n, ".var.sites"),
+  sites0 = read.table(paste0("variant_sites/results/", prefix, "/region_", n, ".var.sites"),
                      header = F, sep = "\t", stringsAsFactors = F) %>%
     data.table::setnames(c("chr", "pos", "major", "minor"))
-  maize_maf = read.table(paste0("local_ancestry/results/alloFreqs/", prefix_all, "/allopatric_maize/region_", n, ".mafs.gz"),
+  maize_maf = read.table(paste0("local_ancestry/results/alloFreqs/", prefix, "/allopatric_maize/region_", n, ".mafs.gz"),
                          header = T, sep = "\t", stringsAsFactors = F) %>%
     left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor"))
-  mex_maf = read.table(paste0("local_ancestry/results/alloFreqs/", prefix_all, "/allopatric_mexicana/region_", n, ".mafs.gz"),
+  mex_maf = read.table(paste0("local_ancestry/results/alloFreqs/", prefix, "/allopatric_mexicana/region_", n, ".mafs.gz"),
                          header = T, sep = "\t", stringsAsFactors = F) %>%
     left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor"))
 

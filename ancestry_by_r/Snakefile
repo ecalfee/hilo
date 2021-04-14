@@ -302,8 +302,8 @@ def get_size_region_from_bed(window):
 # output file has all possible population orders .. will later extract f4(trip, parv; x, maize)
 rule do_abba_baba:
     input:
-        bams = all_bams_parv_trip, # all input bams
-        bais = [bam + ".bai" for bam in all_bams_parv_trip], # all input bam indexes
+        bams = all_bams_mex_maize_parv_trip, # all input bams
+        bais = [bam + ".bai" for bam in all_bams_mex_maize_parv_trip], # all input bam indexes
         bam_list = "ancestry_by_r/results/f4/{POP}_bams.list",
         bed_window = "ancestry_by_r/results/BED_1cM/{WINDOW}.bed",
         pops_size = "ancestry_by_r/results/f4/{POP}.size"

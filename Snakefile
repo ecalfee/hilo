@@ -58,17 +58,33 @@ prefix_all = "HILO_MAIZE55"
 #prefix_all = "TEST"
 
 # list of all included bams and ids (over minimum 0.05x coverage)
-with open("samples/" + prefix_all + "_bams.list") as f:
-    all_bams = f.read().splitlines()
-with open("samples/" + prefix_all + "_ids.list") as f:
-    all_ids = f.read().splitlines()
+with open("samples/HILO_MAIZE55_bams.list") as f:
+    mex_maize_bams = f.read().splitlines()
+with open("samples/HILO_MAIZE55_PARV50_bams.list") as f:
+    mex_maize_parv_bams = f.read().splitlines()
+with open("samples/HILO_MAIZE55_ids.list") as f:
+    mex_maize_ids = f.read().splitlines()
+with open("samples/HILO_MAIZE55_PARV50_ids.list") as f:
+    mex_maize_parv_ids = f.read().splitlines()
 # add bams for outgroup tripsacum
 with open("samples/ALL_byPop/trip_bams.list") as f:
     trip_bams = f.read().splitlines()
 # add bams for parviglumis
 with open("samples/ALL_byPop/parv_bams.list") as f:
     parv_bams = f.read().splitlines()
-all_bams_parv_trip = all_bams + parv_bams + trip_bams
+all_bams_mex_maize_parv_trip = mex_maize_parv_bams + trip_bams
+
+# define functions to get list of input bams and bais
+def get_all_bams(prefix):
+    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
+        bams = f.read().splitlines()
+    return bams
+
+def get_all_bais(prefix):
+    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
+        bams = f.read().splitlines()
+        bais = [bam + ".bai" for bam in bams]
+    return bais
 
 # samples with local ancesty calls (sympatric and over 0.5x coverage)
 #with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
@@ -242,11 +258,11 @@ rule all:
         "ZAnc/plots/Ne10000_yesBoot/QQ.png",
         "../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
 
-        "mhl1_inv/plots/" + prefix_all + "/Ne10000_yesBoot/mhl1_inv_ancestry.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_ancestry.tif",
+        "mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
 
-        "mhl1_inv/plots/" + prefix_all + "/Ne10000_yesBoot/mhl1_inv_pca.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_pca.tif",
+        "mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_pca.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_pca.tif",
 
         "filtered_bams/plots/p_seq_counts.png",
         "../hilo_manuscript/figures_supp/p_seq_counts.tif",
@@ -299,7 +315,7 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        "map/plots/mexico_lines_elev_teo_color.png"
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys())))
     params:
         p = "med2"
     resources:

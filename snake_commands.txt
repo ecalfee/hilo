@@ -3240,6 +3240,36 @@ I did crtl+c to cancel snakemake pipeline and restart because it wasn't running 
 - re-running global ancestry by R scripts. Need to update plotting script only:
 hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3.Rdata --quiet --profile slurm
 # oops needed to make some generalizations/changes upstream (e.g. for gl files that get bootstrapped)
+# now running:
+hilo$ snakemake -n ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/cd5_K2.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3.Rdata ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3.Rdata --quiet --profile slurm
+Job counts:
+        count   jobs
+        1477    find_SNPs_in_window
+        1010    label_k_anc
+        1010    make_bootstrap_GL_file
+        1010    run_bootstrap_NGSAdmix
+        2       sample_bootstrap_1cM
+        2       summarise_bootstrap_anc_by_r
+        4511 # label_k_anc had errors - CHECK ON THESE! e.g. cluster_jobid: 32772540
+# I've removed all hard coded references to all_bams and all_ids b/c that's not compatible with alt. prefix HILO_MAIZE55_PARV50
+# now instead input files call the rules get_all_bams() and get_all_bais() that takes in a prefix
+# -all_bams, all_ids # all input bams needs to include parviglumis bams too (rule allo_freqs)
+
+# use rule some to get allopatric allele freqs at all sites:
+rule some:
+    input:
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys())))
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+hilo$ 
+
+
+# TO DO:
+# what do I need to rerun ancestry_hmm?
+- snps in tail of fst/pbs
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:

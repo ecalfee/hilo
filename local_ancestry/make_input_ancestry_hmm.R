@@ -8,23 +8,23 @@ library(dplyr)
 # also outputs a simple list, in order, of the admix individuals in the input files
 
 # load variables from Snakefile
-prefix_all = snakemake@params[["prefix_all"]]
 allo_file = snakemake@input[["allo"]]
 pop_ids_file = snakemake@input[["pop_ids"]]
 output_file_counts = snakemake@output[["counts"]]
 output_file_ploidy = snakemake@output[["ploidy"]]
+DIR_COUNTS = snakemake@params[["dir_counts"]]
 
 # to test:
 # setwd(~/Documents/gitErin/hilo)
-# prefix_all = "HILO_MAIZE55"
+# prefix_all = "HILO_MAIZE55/K2"
 # allo_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.allo.counts")
 # POP = "pop360" # just an example
 # pop_ids_file = paste0("samples/Over0.5x_byPop/", POP, "_ids.list")
 # output_file_counts = paste0("local_ancestry/results/ancestry_hmm/", prefix_all + "/input/", POP, ".counts")
 # output_file_ploidy = paste0("local_ancestry/results/ancestry_hmm/", prefix_all + "/input/", POP, ".ploidy")
+# DIR_COUNTS = paste0("local_ancestry/results/countsMajMin/" + prefix_all)
 
 POP_IDs = read.table(pop_ids_file, stringsAsFactors = F, header = F)$V1
-DIR_COUNTS = paste0("local_ancestry/results/countsMajMin/", prefix_all)
 ALLO_COLS = read.table(allo_file, header = T, stringsAsFactors = F, sep = " ") # space separated file
 
 # get counts for each sample id in the population

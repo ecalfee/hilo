@@ -8,12 +8,12 @@ workdir: path_hilo
 # note: merges regions within 10kb into 1 contiguous region
 rule get_mhl1_inv_coord:
     input:
-        outliers_bed = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_pos_lmElev_outliers.fdr05.bed",
+        outliers_bed = "ZAnc/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/maize_pos_lmElev_outliers.fdr05.bed",
         mhl1_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
         genome = ref_chr
     output:
-        bed = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed",
-        regions_file = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
+        bed = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed",
+        regions_file = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
     params:
         p = "med2"
     conda:
@@ -34,19 +34,19 @@ rule get_mhl1_inv_coord:
 ## get_GL_mhl1_inv: get genotype likelihoods for all SNPs maf > .05 (maize + mexicana) for mhl1 putative inversion region
 rule get_GL_mhl1_inv:
     input:
-        bams = all_bams, # all input bams
-        bais = [bam + ".bai" for bam in all_bams], # all input bam indexes
-        bam_list = "samples/" + prefix_all + "_bams.list",
+        bams = lambda wildcards: get_all_bams(wildcards.PREFIX), # all input bams
+        bais = lambda wildcards: get_all_bais(wildcards.PREFIX), # all input bam indexes
+        bam_list = "samples/{PREFIX}_bams.list",
         ref = ref,
         fai = fai,
-        depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal",
-        regions_file = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
+        depth = "variant_sites/results/depthCov/N1000.L100.regions/{PREFIX}.Q20.depthGlobal",
+        regions_file = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
     output: # outputs minor allele freq. file and beagle GL file
-        mafs = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.mafs.gz",
-        gl = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
+        mafs = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.mafs.gz",
+        gl = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
     params:
         p = "med2",
-        out_prefix = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv",
+        out_prefix = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv",
         min_ind = 150, # a little less than 40% of the total sample (including ind's < 0.5x coverage that won't get ancestry calls)
         # calculate 2.5x the mean depth
         max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
@@ -77,9 +77,9 @@ rule get_GL_mhl1_inv:
 ## run_PCAngsd_mhl1_inv: run pcangsd on maize + mexicana individuals for mhl1 putative inversion region
 rule run_PCAngsd_mhl1_inv:
     input:
-        gl = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
+        gl = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.beagle.gz"
     output:
-        cov = "mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
+        cov = "mhl1_inv/results/PCA/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
     params:
         p = "med2",
         prefix_out = lambda wildcards, output: os.path.splitext(output.cov)[0] # output file without .cov extension
@@ -105,16 +105,16 @@ rule run_PCAngsd_mhl1_inv:
 rule plot_mhl1_inv:
     input:
         colors = "colors.R",
-        fdr_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
-        meta_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-        meta_ind = "samples/" + prefix_all + "_meta.RData",
-        fit_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        fdr_maize = "ZAnc/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
+        meta_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        meta_ind = "samples/{PREFIX}_meta.RData",
+        fit_maize = "ZAnc/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.var.sites",
         mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
-        mhl1_inv_bed = "mhl1_inv/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed"
+        mhl1_inv_bed = "mhl1_inv/results/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.bed"
     output:
-        png = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
-        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif"
+        png = "mhl1_inv/plots/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv_ancestry.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K2_Ne{Ne}_{YESNO}Boot_mhl1_inv_ancestry.tif"
     params:
         p = "med2"
     conda:
@@ -130,12 +130,12 @@ rule plot_mhl1_inv:
 ## plot_mhl1_inv_PCAngsd: plot PCA for putative mhl1 inversion
 rule plot_mhl1_inv_PCAngsd:
     input:
-        meta = "samples/" + prefix_all + "_meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
         colors = "colors.R",
-        cov = "mhl1_inv/results/PCA/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
+        cov = "mhl1_inv/results/PCA/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
     output:
-        png_pca = "mhl1_inv/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
-        png_pca_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif"
+        png_pca = "mhl1_inv/plots/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/mhl1_inv_pca.png",
+        png_pca_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K2_Ne{Ne}_{YESNO}Boot_mhl1_inv_pca.tif"
     params:
         p = "med2"
     conda:

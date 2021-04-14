@@ -15,11 +15,11 @@ rdiff_file = snakemake@input[["rdiff"]]
 maize_file = snakemake@input[["maize"]]
 mex_file = snakemake@input[["mex"]]
 output_file = snakemake@output[["allo_counts"]]
-prefix_all = snakemake@params[["prefix_all"]]
+DIR_COUNTS = snakemake@params[["dir_counts"]]
 
 # to test:
 # setwd(~/Documents/gitErin/hilo)
-# prefix_all = "HILO_MAIZE55"
+# prefix_all = "HILO_MAIZE55/K2"
 # sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.var.sites")
 # rdiff_file = paste0("local_ancestry/results/thinnedSNPs/", prefix_all, "/whole_genome.rdiff")
 # maize_file = "samples/ALL_byPop/allopatric_maize_ids.list"
@@ -36,7 +36,6 @@ map_pos = read.table(rdiff_file,
 colnames(map_pos) = c("distM")
 MEX_IDs = read.table(mex_file, stringsAsFactors = F, header = F)$V1
 MAIZE_IDs = read.table(maize_file, stringsAsFactors = F, header = F)$V1
-DIR_COUNTS = paste0("local_ancestry/results/countsMajMin/", prefix_all)
 
 # helper function
 # takes in individual counts file and samples 1 read per individual

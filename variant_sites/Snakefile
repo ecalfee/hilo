@@ -74,35 +74,6 @@ rule calc_depth:
 # note: maize55 have different order of bams, but only after all the autosomes, so we ignore bam header differences in all angsd calls
 # calculate total depth from the .Q20.depthGlobal file to use as input for 2x depth
 
-# # divide genome into 5Mb regions
-# rule print_depth:
-#     input:
-#         depth = "variant_sites/results/depthCov/N1000.L100.regions/" + prefix_all + ".Q20.depthGlobal"
-#     params:
-#         #min_ind = lambda wildcards, input: input.depth + "------hi!"
-#         #min_ind = lambda wildcards, input: len(open(input.depth).readline().strip().split("\t")),
-#         # calculate 2.5x the mean depth
-#         max_depth = lambda wildcards, input: int(np.average(np.array(open(input.depth).readline().strip().split("\t")).astype(np.int)*range(10001)*2.5))
-#     shell:
-#         "echo maximum depth: {params.max_depth}"
-
-#with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
-#    for line in f:
-#        row = line.split("\t")
-
-# define functions to get list of input bams and bais
-def get_all_bams(prefix):
-    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
-        bams = f.read().splitlines()
-    return bams
-
-def get_all_bais(prefix):
-    with open(path_hilo + "samples/" + prefix + "_bams.list") as f:
-        bams = f.read().splitlines()
-        bais = [bam + ".bai" for bam in bams]
-    return bais
-
-
 ## call_SNPs: identify variant sites in combined sampled across all autosomes
 rule call_SNPs:
     input:
@@ -197,38 +168,3 @@ rule calc_rmap_pos:
         "../envs/environment.yaml"
     script:
         "approx_rpos.R"
-
-# # to uncomment code below: cmd + /
-# # define function to get list of input bams
-# def get_all_bams(wildcards):
-#     with open(path_hilo + expand("samples/{ALL}_bams.list", ALL = wildcards.ALL)) as f:
-#         bams = f.read().splitlines()
-#     return bams
-
-# rule calc_depth2:
-#     input:
-#         bams = get_all_bams,
-#         bam_list = path_hilo + "samples/{ALL}_bams.list",
-#         regions = path_hilo + "data/refMaize/random_regions/N1000.L100.regions"
-#     output:
-#         "variant_sites/results/depthCov/N1000.L100.regions/{ALL}.Q20.depthGlobal"
-#     params:
-#         p = "bigmemm",
-#         out_prefix = "variant_sites/results/depthCov/N1000.L100.regions/{wildcards.ALL}.Q20"
-# #    conda:
-# #        "../envs/environment.yaml"
-#     shadow:
-#         "shallow"
-#     threads:
-#         4
-#     resources:
-#         time_min = lambda wildcards, attempt: attempt * 12 * 60,
-#         mem = 32
-#     shell:
-#         "echo $PWD && "
-#         "angsd -out {params.out_prefix} "
-#         "-rf {input.regions} "
-#         "-bam {input.bam_list} "
-#         "-remove_bads 1 -minMapQ 30 -minQ 20 "
-#         "-doCounts 1 -doDepth 1 -maxDepth 10000 "
-#         "-checkBamHeaders 0"
