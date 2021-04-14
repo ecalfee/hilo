@@ -190,7 +190,7 @@ rule count_ACGT:
     output:
         acgt = "local_ancestry/results/countsACGT/{PREFIX}/K{K}/{ID}.counts.gz",
         pos = "local_ancestry/results/countsACGT/{PREFIX}/K{K}/{ID}.pos.gz",
-        bam_list = "samples/{PREFIX}_byInd/{ID}_bams.list"
+        bam_list = "samples/{PREFIX}_K{K}_byInd/{ID}_bams.list"
     params:
         p = "med2",
         out_prefix = lambda wildcards: "local_ancestry/results/countsACGT/" + wildcards.PREFIX + "/K" + wildcards.K + "/" + wildcards.ID
