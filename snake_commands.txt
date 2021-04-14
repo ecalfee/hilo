@@ -3264,7 +3264,15 @@ rule some:
     resources:
         time_min = 5,
         mem = 2
-hilo$ 
+        hilo$ snakemake some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1704    allo_freqs
+                426     index_sites_file
+                426     make_sites_file
+                1       some
+                2557 # RUNNING 4.14.2021. Problem in allo_freqs lookign for folder with {PREFIX} in it. Trying again with wildcards.PREFIX there:
+                
 
 
 # TO DO:

@@ -35,7 +35,7 @@ rule allo_freqs:
     params:
         p = "med2",
         region = lambda wildcards: regions_dict[wildcards.REGION],
-        out_prefix = lambda wildcards: "local_ancestry/results/alloFreqs/{PREFIX}/" + wildcards.GROUP + "/" + wildcards.REGION
+        out_prefix = lambda wildcards: "local_ancestry/results/alloFreqs/" + wildcards.PREFIX + "/" + wildcards.GROUP + "/" + wildcards.REGION
     shadow:
         "minimal"
     conda:
