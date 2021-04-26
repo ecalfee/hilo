@@ -3350,8 +3350,28 @@ hilo$ for g in allopatric_maize allopatric_mexicana parv; do (for i in {0..425};
 # CANCELLED THIS SCREEN SESSION TO STOP IT. TRYING NEW APPROACH:
 hilo$ (for g in allopatric_maize allopatric_mexicana parv; do for i in {0..425}; do echo "group " $g "  region " $i; snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/$g/region_$i.mafs.gz --quiet --profile slurm; done; done) > test_list_files.txt
 
-
-
+# problem files:
+# output file does not exist (!) for these 3 files
+hilo$ snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/allopatric_maize/region_224.mafs.gz --quiet --profile slurm
+hilo$ snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/allopatric_mexicana/region_224.mafs.gz --quiet --profile slurm
+hilo$ snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/parv/region_224.mafs.gz --quiet --profile slurm
+TROUBLESHOOTING (for parv file region 224):
+--unlock # didn't do anything
+--cleanup-metadata # didn't change error
+--ignore-incomplete # WORKS! But where is the incomplete file? digging deeper...
+hilo$ snakemake -n variant_sites/results/HILO_MAIZE55_PARV50/region_224.var.sites.idx --profile slurm --quiet
+# problem!
+hilo$ snakemake -n variant_sites/results/HILO_MAIZE55_PARV50/region_224.var.sites --profile slurm --quiet
+# no problem.
+# so I delete the .idx and .bin files:
+hilo$ rm variant_sites/results/HILO_MAIZE55_PARV50/region_224.var.sites.*
+# testing:
+hilo$ snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/parv/region_224.mafs.gz local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/allopatric_maize/region_224.mafs.gz local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/allopatric_mexicana/region_224.mafs.gz --profile slurm --quiet
+Job counts:
+        count   jobs
+        3       allo_freqs
+        1       index_sites_file
+        4 # YAY! I don't need to ignore incomplete files anymore..the var.sites.idx or .bin must've been incomplete
 
 # TO DO:
 # what do I need to rerun ancestry_hmm?
