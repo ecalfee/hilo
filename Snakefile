@@ -320,7 +320,7 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys())),
         expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
     params:
         p = "med2"
@@ -330,7 +330,7 @@ rule some:
 
 rule maize:
     input:
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize"], REGION = list(regions_dict.keys())),
         expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize"], REGION = list(regions_dict.keys()))
     params:
         p = "med2"
@@ -340,7 +340,7 @@ rule maize:
 
 rule mex:
     input:
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_mexicana"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_mexicana"], REGION = list(regions_dict.keys())),
         expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_mexicana"], REGION = list(regions_dict.keys()))
     params:
         p = "med2"
