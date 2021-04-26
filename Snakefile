@@ -320,7 +320,37 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+
+rule maize:
+    input:
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize"], REGION = list(regions_dict.keys()))
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+
+rule mex:
+    input:
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_mexicana"], REGION = list(regions_dict.keys()))
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_mexicana"], REGION = list(regions_dict.keys()))
+    params:
+        p = "med2"
+    resources:
+        time_min = 5,
+        mem = 2
+
+rule parv:
+    input:
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["parv"], REGION = list(regions_dict.keys()))
     params:
         p = "med2"
     resources:

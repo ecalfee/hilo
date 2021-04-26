@@ -3250,7 +3250,17 @@ Job counts:
         1010    run_bootstrap_NGSAdmix
         2       sample_bootstrap_1cM
         2       summarise_bootstrap_anc_by_r
-        4511 # label_k_anc had errors - CHECK ON THESE! e.g. cluster_jobid: 32772540
+        4511 # label_k_anc had errors - CHECK ON THESE! e.g. cluster_jobid: 32772540.
+        problem:
+        `summarise()` has grouped output by 'zea'. You can override using the `.groups` argument.
+          Error: Each row of output must be identified by a unique combination of keys.
+          Keys are shared for 906 rows:
+          * 1, 2
+          * 4, 5
+          * 7, 8
+          * 10, 11
+          * 13, 14
+          * 16, 17 ... etc. error message goes on
 # I've removed all hard coded references to all_bams and all_ids b/c that's not compatible with alt. prefix HILO_MAIZE55_PARV50
 # now instead input files call the rules get_all_bams() and get_all_bais() that takes in a prefix
 # -all_bams, all_ids # all input bams needs to include parviglumis bams too (rule allo_freqs)
@@ -3272,7 +3282,75 @@ rule some:
                 426     make_sites_file
                 1       some
                 2557 # RUNNING 4.14.2021. Problem in allo_freqs lookign for folder with {PREFIX} in it. Trying again with wildcards.PREFIX there:
-                
+# errorno 12 Cannot allocate memory. Looking now at one failed job:
+32963112
+hilo$ nano snake_logs/*32963112.err
+Failed to open file "filtered_bams/results/PalmarChico/PARV1.sort.dedup.baq.bam" : No such file or directory
+# ORIGINAL ERRORS (in addition to individual jobs failing):
+ecalfee@farm:~$ screen -r 1161.snake
+
+    keepincomplete=keep_incomplete,
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/workflow.py", line 908, in execute
+    success = scheduler.schedule()
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/scheduler.py", line 378, in schedule
+    self.run(job)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/scheduler.py", line 397, in run
+    error_callback=self._error,
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/executors.py", line 915, in run
+    shell=True,
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 356, in check_output
+    **kwargs).stdout
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 423, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 729, in __init__
+    restore_signals, start_new_session)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/subprocess.py", line 1295, in _execute_child
+    restore_signals, start_new_session, preexec_fn)
+OSError: [Errno 12] Cannot allocate memory
+
+# NOW STOPS WITH ERRORS:
+(hilo-env) ecalfee@farm:~/hilo$ snakemake -n some --quiet --profile slurm
+Traceback (most recent call last):
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/__init__.py", line 665, in snakemake
+    keepincomplete=keep_incomplete,
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/workflow.py", line 619, in execute
+    dag.check_incomplete()
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 286, in check_incomplete
+    incomplete = self.incomplete_files
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 410, in incomplete_files
+    filterfalse(self.needrun, self.jobs),
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/dag.py", line 407, in <genexpr>
+    job.output
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 205, in incomplete
+    return any(map(lambda f: f.exists and marked_incomplete(f), job.output))
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 205, in <lambda>
+    return any(map(lambda f: f.exists and marked_incomplete(f), job.output))
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 203, in marked_incomplete
+    return self._read_record(self._metadata_path, f).get("incomplete", False)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 322, in _read_record_cached
+    return self._read_record_uncached(subject, id)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/site-packages/snakemake/persistence.py", line 328, in _read_record_uncached
+    return json.load(f)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/__init__.py", line 299, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/__init__.py", line 354, in loads
+    return _default_decoder.decode(s)
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/home/ecalfee/.conda/envs/hilo-env/lib/python3.6/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+# SAME ERRORS WHEN I USE 'UNLOCK'
+hilo$ snakemake -n some --unlock --quiet --profile slurm
+# but some individual files run without errors:
+hilo$ snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/allopatric_maize/region_82.mafs.gz --quiet --profile slurm
+# TESTING WHICH FILES ARE A PROBLEM SO I CAN SELECTIVELY DELETE THEM:
+hilo$ for g in allopatric_maize allopatric_mexicana parv; do (for i in {0..425}; do echo "region " $i; snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/$g/region_$i.mafs.gz --quiet --profile slurm; done) > test_list_$g_files.txt; done
+# CANCELLED THIS SCREEN SESSION TO STOP IT. TRYING NEW APPROACH:
+hilo$ (for g in allopatric_maize allopatric_mexicana parv; do for i in {0..425}; do echo "group " $g "  region " $i; snakemake -n local_ancestry/results/alloFreqs/HILO_MAIZE55_PARV50/$g/region_$i.mafs.gz --quiet --profile slurm; done; done) > test_list_files.txt
+
+
 
 
 # TO DO:
