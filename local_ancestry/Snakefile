@@ -59,7 +59,7 @@ rule allo_freqs:
         "-GL 1 -doMaf 1"
 
 
-## thin_sites_4HMM_K2: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high freq difference between them
+## thin_sites_4HMM_K2: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high differentiation (Fst) between them
 rule thin_sites_4HMM_K2:
     input:
         # input minor allele freq files for allopatric maize and mexicana
@@ -87,13 +87,13 @@ rule thin_sites_4HMM_K2:
     params:
         p = "med2",
         prefix = lambda wildcards: wildcards.PREFIX,
-        min_maf_diff = 0.3, # minimum difference in minor allele frequency between maize and mexicana reference panels
+        top_fst = 0.20, # keep only top X proportion of SNPs based on FST
         min_cM = 0.001, # minimum spacing
         min_n_maize = 44, # i.e. 80% of individuals have data (44/55). 95% of SNPs have this much data for maize.
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = lambda wildcards, attempt: attempt * 60,
+        mem = 24
     conda:
         "../envs/environment.yaml"
     script:
@@ -128,14 +128,14 @@ rule thin_sites_4HMM_K3:
     params:
         p = "med2",
         prefix = lambda wildcards: wildcards.PREFIX,
-        top_pbs = 0.15, # keep only top X proportion of PBS for any of the 3 populations
+        top_pbs = 0.10, # keep only top X proportion of PBS for any of the 3 populations
         min_cM = 0.001, # minimum spacing
         min_n_maize = 44, # i.e. 80% of individuals have data (44/55)
         min_n_parv = 40, # i.e. 80% of individuals have data (40/50)
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). ~86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = lambda wildcards, attempt: attempt * 60,
+        mem = 24
     conda:
         "../envs/environment.yaml"
     script:

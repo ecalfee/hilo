@@ -3,7 +3,6 @@ library(dplyr)
 library(tidyr)
 library(data.table)
 
-
 # load variables from Snakefile
 source(snakemake@input[["equations"]])
 regions_file = snakemake@input[["regions"]]
@@ -11,7 +10,8 @@ prefix = snakemake@params[["prefix"]]
 min_cM = as.numeric(snakemake@params[["min_cM"]])
 min_n_maize = as.numeric(snakemake@params[["min_n_maize"]])
 min_n_mex = as.numeric(snakemake@params[["min_n_mex"]])
-top_fst = as.numeric(snakemake@params[["top_fst"]])
+min_n_parv = as.numeric(snakemake@params[["min_n_parv"]])
+top_pbs = as.numeric(snakemake@params[["top_pbs"]])
 rdiff_out = snakemake@output[["rdiff"]]
 sites_out = snakemake@output[["sites"]]
 rpos_out = snakemake@output[["rpos"]]
@@ -20,17 +20,18 @@ counts_out = snakemake@output[["counts"]]
 # # to test:
 # setwd("~/Documents/gitErin/hilo")
 #print(getwd())
-#source("local_ancestry/FST_PBS_equations.R")
-#prefix = "HILO_MAIZE55"
+# source("local_ancestry/FST_PBS_equations.R")
+#prefix = "HILO_MAIZE55_PARV50"
 #min_cM = 0.001
 #min_n_maize = 44
 #min_n_mex = 12
-#top_fst = 0.20
-#rpos_out = "test/TEST2_regions.rpos"
-#rdiff_out = "test/TEST2_regions.rdiff"
-#sites_out = "test/TEST2_regions.var.sites"
-#counts_out = "test/counts_thinned_AIMs.txt"
-#regions_file = "test/TEST2_regions.list"
+#min_n_parv = 40
+#top_pbs = 0.10
+#rpos_out = "test/TEST3_regions.rpos"
+#rdiff_out = "test/TEST3_regions.rdiff"
+#sites_out = "test/TEST3_regions.var.sites"
+#counts_out = "test/TEST3_counts_thinned_AIMs_pbs.txt"
+#regions_file = "test/TEST3_regions.list" # regions 33, 82 and 412
 
 regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
@@ -63,30 +64,49 @@ d <- do.call(rbind, lapply(regions$region_n, function(n) {
     dplyr::rename(mex_freq = knownEM,
                   mex_nInd = nInd) %>%
     dplyr::mutate(mex_nHap = mex_nInd) # low coverage, assume 1 allele sampled per ind
+  parv_maf = read.table(paste0("local_ancestry/results/alloFreqs/", prefix, "/parv/region_", n, ".mafs.gz"),
+                       header = T, sep = "\t", stringsAsFactors = F) %>%
+    left_join(sites0, ., by = c("chr"="chromo", "pos"="position", "major", "minor")) %>%
+    dplyr::mutate(knownEM = ifelse(knownEM == 0, knownEM + 10^-10, knownEM)) %>%
+    dplyr::rename(parv_freq = knownEM,
+                  parv_nInd = nInd) %>%
+    dplyr::mutate(parv_nHap = parv_nInd*2) # high coverage, assume 2 alleles sampled per ind
+
   all_maf = bind_cols(mex_maf, 
+                      parv_maf[ , c("parv_freq", "parv_nInd", "parv_nHap")], 
                       maize_maf[ , c("maize_freq", "maize_nInd", "maize_nHap")]) %>%
     dplyr::mutate(rpos = rpos0) %>% # position on genetic scale
     # First find SNPs that meet minimum n samples with data to be ancestry informative markers (AIMs)
     dplyr::filter(., !is.na(maize_freq) &
                     !is.na(mex_freq) &
+                    !is.na(parv_freq) &
                     maize_nInd >= min_n_maize &
-                    mex_nInd >= min_n_mex) %>%
+                    mex_nInd >= min_n_mex &
+                    parv_nInd >= min_n_parv) %>%
     # calculate differentiation between populations at all SNPs
     dplyr::mutate(
-      fst = sapply(1:nrow(.), function(i)
-        hudson_Fst(p1 = .$maize_freq[i], p2 = .$mex_freq[i], 
-                   n_hap1 = .$maize_nHap[i], n_hap2 = .$mex_nHap[i])), # calculate fst
-      fst = ifelse(is.na(fst), 0, fst)) # fst is undefined in cases where both pops are fixed for the same allele -- we set these to zero differentiation (they'll be excluded from AIMs)
-}
-))
+      pbs_maize = sapply(1:nrow(.), function(i)
+        pop_branch_stat(p1 = .$maize_freq[i], p2 = .$mex_freq[i], p3 = .$parv_freq[i], 
+                        n_hap1 = .$maize_nHap[i], n_hap2 = .$mex_nHap[i], n_hap3 = .$parv_nHap[i])),
+      pbs_mex = sapply(1:nrow(.), function(i)
+        pop_branch_stat(p1 = .$mex_freq[i], p2 = .$maize_freq[i], p3 = .$parv_freq[i], 
+                                              n_hap1 = .$mex_nHap[i], n_hap2 = .$maize_nHap[i], n_hap3 = .$parv_nHap[i])),
+      pbs_parv = sapply(1:nrow(.), function(i)
+        pop_branch_stat(p1 = .$parv_freq[i], p2 = .$maize_freq[i], p3 = .$mex_freq[i], 
+                        n_hap1 = .$parv_nHap[i], n_hap2 = .$maize_nHap[i], n_hap3 = .$mex_nHap[i]))
+      )
+  }
+  ))
 
 # Find SNPs that meet threshold differentiation to be ancestry informative markers (AIMs)
 
 # cutoffs for thinning:
-cutoff_fst = quantile(d$fst, 1 - top_fst)
+cutoff_maize = quantile(d$pbs_maize, 1 - top_pbs)
+cutoff_mex = quantile(d$pbs_mex, 1 - top_pbs)
+cutoff_parv = quantile(d$pbs_parv, 1 - top_pbs)
 
 # find AIMs that meet at least one cutoff for thinning
-aims = filter(d, fst >= cutoff_fst)
+aims = filter(d, pbs_maize >= cutoff_maize | pbs_mex >= cutoff_mex | pbs_parv >= cutoff_parv)
 
 # counts
 tot_min_ind = nrow(d)
@@ -119,12 +139,12 @@ aims_keep <- aims[keep, ] %>%
   # and set first rdiff of any new chromosome to 1 (only case where current chr will not equal previous chr)
   dplyr::mutate(rdiff = ifelse(chr == lag(chr, default = 0), (rpos - lag(rpos, default = 0))/100, 1)) 
 
-aims_keep %>%
-  filter(rdiff != 1) %>%
-  summarise(median = median(rdiff)*100,
-            mean = mean(rdiff)*100,
-            min = min(rdiff)*100,
-            max = max(rdiff)*100)
+#aims_keep %>%
+#  filter(rdiff != 1) %>%
+#  summarise(median = median(rdiff)*100,
+#            mean = mean(rdiff)*100,
+#            min = min(rdiff)*100,
+#            max = max(rdiff)*100)
 
 # write output files (append to file if it's not the first region)
 options(scipen = 999) # do not print scientific notation
@@ -134,8 +154,9 @@ write.table(aims_keep$rdiff, file = rdiff_out, append = F, col.names = F, row.na
 
 # write summary of total counts:
 tot_keep = sum(keep)
-data.frame(variable = c("min_ind", "is_aim", "keep", "top_fst", "min_fst", "mean_fst"),
-           value = c(tot_min_ind, tot_is_aim, tot_keep, top_fst, cutoff_fst, mean(aims_keep$fst)),
+data.frame(variable = c("min_ind", "is_aim", "keep", "top_pbs", "min_pbs_maize", "min_pbs_mex", "min_pbs_parv", "perc_pbs_maize", "perc_pbs_mex", "perc_pbs_parv"),
+           value = c(tot_min_ind, tot_is_aim, tot_keep, top_pbs, cutoff_maize, cutoff_mex, cutoff_parv, 
+                      sum(aims_keep$pbs_maize >= cutoff_maize)/nrow(aims_keep)*100, sum(aims_keep$pbs_mex >= cutoff_mex)/nrow(aims_keep)*100, sum(aims_keep$pbs_parv >= cutoff_parv)/nrow(aims_keep)*100),
            stringsAsFactors = F) %>%
   format(., digits = 2, scientific = F) %>%
   write.table(., file = counts_out, col.names = T, row.names = F, quote = F, sep = "\t")

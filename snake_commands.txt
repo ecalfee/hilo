@@ -3372,6 +3372,26 @@ Job counts:
         3       allo_freqs
         1       index_sites_file
         4 # YAY! I don't need to ignore incomplete files anymore..the var.sites.idx or .bin must've been incomplete
+        hilo$ snakemake some --profile slurm --quiet
+        Job counts:
+                count   jobs
+                941     allo_freqs
+                303     index_sites_file
+                266     make_sites_file
+                1       some
+                1511 # RUNNING 4.26.2021. Did ^C 4.27.2021 at 10:24am b/c no jobs were running on squeue.
+# make a small regions file for 3 regions that are done for mex/maize/parv to test the new thinning script:
+(base) Erins-Air:hilo Erin$ awk '$4==33' data/refMaize/divide_5Mb/ALL_regions.list > test/TEST3_regions.list
+(base) Erins-Air:hilo Erin$ awk '$4==82' data/refMaize/divide_5Mb/ALL_regions.list >> test/TEST3_regions.list
+(base) Erins-Air:hilo Erin$ awk '$4==412' data/refMaize/divide_5Mb/ALL_regions.list >> test/TEST3_regions.list
+hilo Erin$ for i in 33 82 412; do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/variant_sites/results/HILO_MAIZE55_PARV50/region_$i.var.sites variant_sites/results/HILO_MAIZE55_PARV50/.; done
+hilo Erin$ for i in 33 82 412; do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/variant_sites/results/HILO_MAIZE55_PARV50/region_$i.rpos variant_sites/results/HILO_MAIZE55_PARV50/.; done
+# also copied over var.sites files for HILO_MAIZE55 and HILO_MAIZE55_PARV50 and used variant_sites/approx_rpos.R to get rpos files to test thinning SNPs for K2 and K3 cases with just a few files
+hilo$ snakemake -n local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites --quiet --prefile slurm
+
+snakemake -n maize --quiet --profile slurm
+# UGH getting same error as earlier about incomplete files missing. json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
 
 # TO DO:
 # what do I need to rerun ancestry_hmm?

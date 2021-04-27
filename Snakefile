@@ -320,10 +320,21 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys())),
-        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
+        #expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys())),
+        #expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
+        #"local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites",
+        #"local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites"
     params:
         p = "med2"
     resources:
-        time_min = 30,
+        time_min = 60,
+        mem = 2
+
+rule parv:
+    input:
+        expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = "parv", REGION = list(regions_dict.keys()))
+    params:
+        p = "med2"
+    resources:
+        time_min = 60,
         mem = 2
