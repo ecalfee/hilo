@@ -92,7 +92,7 @@ rule thin_sites_4HMM_K2:
         min_n_maize = 44, # i.e. 80% of individuals have data (44/55). 95% of SNPs have this much data for maize.
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 60,
+        time_min = lambda wildcards, attempt: attempt * 120,
         mem = 24
     conda:
         "../envs/environment.yaml"
@@ -134,7 +134,7 @@ rule thin_sites_4HMM_K3:
         min_n_parv = 40, # i.e. 80% of individuals have data (40/50)
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). ~86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 60,
+        time_min = lambda wildcards, attempt: attempt * 120,
         mem = 24
     conda:
         "../envs/environment.yaml"

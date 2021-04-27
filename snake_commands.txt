@@ -3391,7 +3391,8 @@ hilo$ snakemake -n local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_geno
 
 snakemake -n maize --quiet --profile slurm
 # UGH getting same error as earlier about incomplete files missing. json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
-
+# region 8 is the problem:
+hilo$ rm variant_sites/results/HILO_MAIZE55_PARV50/region_8.var.sites.*
 
 # TO DO:
 # what do I need to rerun ancestry_hmm?

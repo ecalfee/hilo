@@ -144,8 +144,8 @@ rule index_sites_file:
     params:
         p = "med2"
     resources:
-        time_min = 15,
-        mem = 2
+        time_min = 30,
+        mem = 8
     shell:
         "angsd sites index {input}"
 
