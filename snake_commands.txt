@@ -3387,12 +3387,26 @@ Job counts:
 hilo Erin$ for i in 33 82 412; do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/variant_sites/results/HILO_MAIZE55_PARV50/region_$i.var.sites variant_sites/results/HILO_MAIZE55_PARV50/.; done
 hilo Erin$ for i in 33 82 412; do scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/variant_sites/results/HILO_MAIZE55_PARV50/region_$i.rpos variant_sites/results/HILO_MAIZE55_PARV50/.; done
 # also copied over var.sites files for HILO_MAIZE55 and HILO_MAIZE55_PARV50 and used variant_sites/approx_rpos.R to get rpos files to test thinning SNPs for K2 and K3 cases with just a few files
-hilo$ snakemake -n local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites --quiet --prefile slurm
 
+# where did the previous run fail/stop?
 snakemake -n maize --quiet --profile slurm
 # UGH getting same error as earlier about incomplete files missing. json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 # region 8 is the problem:
 hilo$ rm variant_sites/results/HILO_MAIZE55_PARV50/region_8.var.sites.*
+# the indexing job was cancelled because it ran out of time.
+
+# trying to rerun out to thinning snps
+hilo$ snakemake local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites --quiet --profile slurm
+Job counts:
+        count   jobs
+        124     allo_freqs
+        426     calc_rmap_pos
+        62      index_sites_file
+        29      make_sites_file
+        1       thin_sites_4HMM_K2
+        1       thin_sites_4HMM_K3
+        643 # RUNNING 4.27.2021 11:48am
+
 
 # TO DO:
 # what do I need to rerun ancestry_hmm?

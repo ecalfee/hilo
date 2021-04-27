@@ -74,7 +74,8 @@ rule thin_sites_4HMM_K2:
         rpos = expand("variant_sites/results/{{PREFIX}}/{REGION}.rpos",
         REGION=list(regions_dict.keys())),
         # master list of all regions
-        regions = "data/refMaize/divide_5Mb/ALL_regions.list"
+        regions = "data/refMaize/divide_5Mb/ALL_regions.list",
+        equations = "local_ancestry/FST_PBS_equations.R"
     output:
         # outputs 1 sites file for the whole genome and a corresponding recombination distance file
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.var.sites",

@@ -32,6 +32,7 @@ counts_out = snakemake@output[["counts"]]
 #counts_out = "test/counts_thinned_AIMs.txt"
 #regions_file = "test/TEST2_regions.list"
 
+print("loading regions")
 regions = read.table(regions_file, header = F,
                      sep = "\t", stringsAsFactors = F) %>%
   data.table::setnames(., c("chr", "start", "end", "region_n", "txt_file"))
@@ -42,6 +43,7 @@ regions = read.table(regions_file, header = F,
 # then uses the vector of T/F to thin the gl file
 
 # read in all the data first
+print("loading mafs and sites")
 d <- do.call(rbind, lapply(regions$region_n, function(n) {
   rpos0 = read.table(paste0("variant_sites/results/", prefix, "/region_", n, ".rpos"),
                      header = F, sep = "\t", stringsAsFactors = F)$V1
@@ -102,6 +104,7 @@ last_chr = 0
 last_cM = -Inf
 
 # which AIM positions to keep?
+print("thinning SNPs by cM spacing")
 keep = rep(F, nrow(aims))
 for (i in 1:nrow(aims)){
   if (last_chr != aims$chr[i] | aims$rpos[i] - last_cM >= min_cM){
@@ -119,21 +122,25 @@ aims_keep <- aims[keep, ] %>%
   # and set first rdiff of any new chromosome to 1 (only case where current chr will not equal previous chr)
   dplyr::mutate(rdiff = ifelse(chr == lag(chr, default = 0), (rpos - lag(rpos, default = 0))/100, 1)) 
 
-aims_keep %>%
-  filter(rdiff != 1) %>%
-  summarise(median = median(rdiff)*100,
-            mean = mean(rdiff)*100,
-            min = min(rdiff)*100,
-            max = max(rdiff)*100)
+#aims_keep %>%
+#  filter(rdiff != 1) %>%
+#  summarise(median = median(rdiff)*100,
+#            mean = mean(rdiff)*100,
+#            min = min(rdiff)*100,
+#            max = max(rdiff)*100)
 
 # write output files (append to file if it's not the first region)
 options(scipen = 999) # do not print scientific notation
+print("writing rpos output")
 write.table(aims_keep$rpos, file = rpos_out, append = F, col.names = F, row.names = F, quote = F, sep = "\t")
+print("writing sites output")
 write.table(dplyr::select(aims_keep, chr, pos, major, minor), file = sites_out, append = F, col.names = F, row.names = F, quote = F, sep = "\t")
+print("writing rdiff output")
 write.table(aims_keep$rdiff, file = rdiff_out, append = F, col.names = F, row.names = F, quote = F, sep = "\t")
 
 # write summary of total counts:
 tot_keep = sum(keep)
+print("writing summary output")
 data.frame(variable = c("min_ind", "is_aim", "keep", "top_fst", "min_fst", "mean_fst"),
            value = c(tot_min_ind, tot_is_aim, tot_keep, top_fst, cutoff_fst, mean(aims_keep$fst)),
            stringsAsFactors = F) %>%
