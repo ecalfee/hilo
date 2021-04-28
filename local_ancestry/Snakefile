@@ -262,7 +262,7 @@ rule make_allo_counts_K2:
 rule make_allo_counts_K3:
     input:
         mex = "samples/ALL_byPop/allopatric_mexicana_ids.list",
-        parv = "samples/ALL_byPop/allopatric_parviglumis_ids.list",
+        parv = "samples/ALL_byPop/parv_ids.list",
         maize = "samples/ALL_byPop/allopatric_maize_ids.list",
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.var.sites",
         rdiff = "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.rdiff",
