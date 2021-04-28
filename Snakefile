@@ -321,7 +321,7 @@ rule all:
 rule some:
     input:
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.completed", Ne = Nes, POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{POP}.anc.freq"
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{POP}.anc.freq", Ne = Nes, POP = symp_pops)
     params:
         p = "med2"
     resources:

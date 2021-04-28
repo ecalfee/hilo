@@ -3430,6 +3430,10 @@ Job counts:
 - snps in tail of fst/pbs : check on # SNPs that make it past thinning, if not enough reduce stringency of filter for AIMs
 - how to summarise local ancestry for K=3 pops
 
+# what do I need to rerun for other results?
+- plot_bootstrap_NGSadmix_by_r. results are ready to plot. f4s don't depend on K, so they'll be the same (just harder to interpret for sympatric mexicana)
+
+
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:
 # (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
