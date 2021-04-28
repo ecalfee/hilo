@@ -88,13 +88,13 @@ rule thin_sites_4HMM_K2:
     params:
         p = "med2",
         prefix = lambda wildcards: wildcards.PREFIX,
-        top_fst = 0.20, # keep only top X proportion of SNPs based on FST
+        top_fst = 0.15, # keep only top X proportion of SNPs based on FST
         min_cM = 0.001, # minimum spacing
         min_n_maize = 44, # i.e. 80% of individuals have data (44/55). 95% of SNPs have this much data for maize.
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 120,
-        mem = 24
+        time_min = 60 * 6,
+        mem = lambda wildcards, attempt: attempt * 16 + 16
     conda:
         "../envs/environment.yaml"
     script:
@@ -137,8 +137,8 @@ rule thin_sites_4HMM_K3:
         min_n_parv = 40, # i.e. 80% of individuals have data (40/50)
         min_n_mex = 12 # i.e. 28% of individuals have data (12/43). ~86% of SNPs have this much data for mexicana.
     resources:
-        time_min = lambda wildcards, attempt: attempt * 120,
-        mem = 24
+        time_min = 60 * 3,
+        mem = lambda wildcards, attempt: attempt * 16 + 8
     conda:
         "../envs/environment.yaml"
     script:
@@ -404,6 +404,8 @@ rule summarise_posterior_K2:
     script:
         "post2anc_K2.R"
 
+## summarise_posterior_K3: TO DO
+
 ## get_maximum_a_posterior: takes in posterior probabilities for a population from ancestry_hmm and gets maximum a posterior ancestry state and posterior probability for that state
 rule get_maximum_a_posterior:
     input: # this file tracts that the posteriors are complete, but actually posterior files vary
@@ -526,6 +528,8 @@ rule get_admix_times_K2:
         mem = 2
     shell:
         "awk -v N=4 'NR % N == 0' {input.log} | cut -f3 > {output.times}"
+
+## get_admix_times_K3: TO DO
 
 ## plot_admix_times: plots admixture timing estimates from the HMM
 rule plot_admix_times:

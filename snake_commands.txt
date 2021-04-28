@@ -3405,12 +3405,30 @@ Job counts:
         29      make_sites_file
         1       thin_sites_4HMM_K2
         1       thin_sites_4HMM_K3
-        643 # RUNNING 4.27.2021 11:48am
-
+        643 # RUNNING 4.27.2021 11:48am. oops! rule didn't have all the parv files as input so those didn't run.
+        hilo$ snakemake local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites --quiet --profile slurm
+        Job counts:
+                count   jobs
+                62      allo_freqs
+                1       thin_sites_4HMM_K2
+                1       thin_sites_4HMM_K3
+                64 # RUNNING evening 4.27.2021. K2 timed out :( so didn't rerun. will have to edit time and try again. also set it to top 15% b/c maybe just had way too many snps left
+                rule some:
+                    input:
+                        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.completed", Ne = Nes, POP = symp_pops),
+                        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{POP}.anc.freq"
+                    params:
+                        p = "med2"
+                    resources:
+                        time_min = 60,
+                        mem = 2
+                # using rule 'some' above to get local ancestry calls for K2 and K3. w/ K2 I can summarise hte ancestry, for K3 I need to look at the output first before writing a script for that.
+                hilo$ snakemake -n some --quiet --profile slurm
 
 # TO DO:
 # what do I need to rerun ancestry_hmm?
-- snps in tail of fst/pbs
+- snps in tail of fst/pbs : check on # SNPs that make it past thinning, if not enough reduce stringency of filter for AIMs
+- how to summarise local ancestry for K=3 pops
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
 # PREP FOR PRESENTATION:

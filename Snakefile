@@ -320,10 +320,8 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        #expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55", GROUP = ["allopatric_maize", "allopatric_mexicana"], REGION = list(regions_dict.keys())),
-        #expand("local_ancestry/results/alloFreqs/{PREFIX}/{GROUP}/{REGION}.mafs.gz", PREFIX = "HILO_MAIZE55_PARV50", GROUP = ["allopatric_maize", "allopatric_mexicana", "parv"], REGION = list(regions_dict.keys()))
-        #"local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites",
-        #"local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites"
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.completed", Ne = Nes, POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{POP}.anc.freq"
     params:
         p = "med2"
     resources:
