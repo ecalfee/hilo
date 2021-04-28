@@ -108,6 +108,8 @@ rule thin_sites_4HMM_K3:
         REGION=list(regions_dict.keys())),
         mex_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_mexicana/{REGION}.mafs.gz",
         REGION=list(regions_dict.keys())),
+        parv_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/parv/{REGION}.mafs.gz",
+        REGION=list(regions_dict.keys())),
         # variant sites too
         sites = expand("variant_sites/results/{{PREFIX}}/{REGION}.var.sites",
         REGION=list(regions_dict.keys())),
