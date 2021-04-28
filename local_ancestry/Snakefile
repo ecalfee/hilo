@@ -304,8 +304,8 @@ rule make_input_hmm:
 ## boot_ancestry_hmm_K2: runs ancestry_hmm with K=2 mixing groups (mex/maize) and a bootstrap for admixture timing
 rule boot_ancestry_hmm_K2:
     input:
-        counts = "local_ancestry/results/ancestry_hmm/K2/{PREFIX}/input/{POP}.counts",
-        ploidy = "local_ancestry/results/ancestry_hmm/K2/{PREFIX}/input/{POP}.ploidy",
+        counts = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.counts",
+        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.ploidy",
         alphas = "global_ancestry/results/NGSAdmix/{PREFIX}/K2_alphas_by_symp_pop.txt"
     output:
         # empty output file is created only if ancestry_hmm runs sucessfully
@@ -343,8 +343,8 @@ rule boot_ancestry_hmm_K2:
 ## boot_ancestry_hmm_K3: runs ancestry_hmm with K=3 mixing groups (mex/parv then maize) and a bootstrap for admixture timing
 rule boot_ancestry_hmm_K3:
     input:
-        counts = "local_ancestry/results/ancestry_hmm/K3/{PREFIX}/input/{POP}.counts",
-        ploidy = "local_ancestry/results/ancestry_hmm/K3/{PREFIX}/input/{POP}.ploidy",
+        counts = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/input/{POP}.counts",
+        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/input/{POP}.ploidy",
         alphas = "global_ancestry/results/NGSAdmix/{PREFIX}/K3_alphas_by_symp_pop.txt"
     output:
         # empty output file is created only if ancestry_hmm runs sucessfully
