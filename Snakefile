@@ -91,6 +91,13 @@ def get_all_ids(prefix):
         ids = f.read().splitlines()
     return ids
 
+# function to look up the path to a single bam using the prefix for the set of bams and the sample id
+def lookup_one_bam(prefix, id):
+    all_ids = get_all_ids(prefix)
+    all_bams = get_all_bams(prefix)
+    my_bam = all_bams[all_ids.index(id)]
+    return my_bam
+
 # samples with local ancesty calls (sympatric and over 0.5x coverage)
 #with open("samples/Over0.5x_byPop/sympatric_maize_ids.list") as f:
 #        symp_maize_ids = f.read().splitlines()

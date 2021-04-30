@@ -179,6 +179,23 @@ rule index_sites_4HMM:
     shell:
         "angsd sites index {input}"
 
+## make_single_bam_list: makes a bam input list for ANGSD with the path to a single sample's bam file
+make_single_bam_list:
+    input:
+        ids_list = path_hilo + "samples/{PREFIX}_ids.list",
+        bams_list = path_hilo + "samples/{PREFIX}_bams.list",
+        bam = lambda wildcards: lookup_one_bam(prefix = wildcards.PREFIX, id = wildcards.ID)
+    output:
+        bam_list = "samples/{PREFIX}_byInd/{ID}_bams.list"
+    params:
+        p = "med2"
+    resources:
+        time_min = 15,
+        mem = 2
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "echo {input.bam} > {output.bam_list}"
 
 ## count_ACGT: counts reads matching each nucleotide A, C, T or G at each position in sites file for 1 sample's bam
 rule count_ACGT:
@@ -188,12 +205,12 @@ rule count_ACGT:
         bin = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites.bin",
         ref = ref,
         fai = fai,
-        bam = "filtered_bams/merged_bams/{ID}.sort.dedup.bam", # note: to run you need to make symlink for allopatric maize from e.g. filtered_bams/MAIZE55/MAIZE1.sort.dedup.bam to filtered_bams/merged_bams/MAIZE1.sort.dedup.bam
-        bai = "filtered_bams/merged_bams/{ID}.sort.dedup.bam.bai"
+        bam_list = "samples/{PREFIX}_byInd/{ID}_bams.list",
+        bam = lambda wildcards: lookup_one_bam(prefix = wildcards.PREFIX, id = wildcards.ID), # note: to run you need to make symlink for allopatric maize from e.g. filtered_bams/MAIZE55/MAIZE1.sort.dedup.bam to filtered_bams/merged_bams/MAIZE1.sort.dedup.bam
+        bai = lambda wildcards: lookup_one_bam(prefix = wildcards.PREFIX, id = wildcards.ID) + ".bai"
     output:
         acgt = "local_ancestry/results/countsACGT/{PREFIX}/K{K}/{ID}.counts.gz",
-        pos = "local_ancestry/results/countsACGT/{PREFIX}/K{K}/{ID}.pos.gz",
-        bam_list = "samples/{PREFIX}_K{K}_byInd/{ID}_bams.list"
+        pos = "local_ancestry/results/countsACGT/{PREFIX}/K{K}/{ID}.pos.gz"
     params:
         p = "med2",
         out_prefix = lambda wildcards: "local_ancestry/results/countsACGT/" + wildcards.PREFIX + "/K" + wildcards.K + "/" + wildcards.ID
@@ -208,7 +225,6 @@ rule count_ACGT:
         2
     shell:
         """
-        echo {input.bam} > {output.bam_list}
         angsd -out {params.out_prefix} \
         -ref {input.ref} \
         -bam {output.bam_list} \

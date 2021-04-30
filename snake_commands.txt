@@ -3424,8 +3424,32 @@ Job counts:
                         mem = 2
                 # using rule 'some' above to get local ancestry calls for K2 and K3. w/ K2 I can summarise hte ancestry, for K3 I need to look at the output first before writing a script for that.
                 hilo$ snakemake -n some --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        84      boot_ancestry_hmm_K2
+                        84      boot_ancestry_hmm_K3
+                        856     count_ACGT
+                        856     count_maj_min
+                        2       index_sites_4HMM
+                        1       make_allo_counts_K2
+                        1       make_allo_counts_K3
+                        56      make_input_hmm
+                        50      merge_bams # UH OH NO BAMS SHOULD BE MERGING! CHECK BAM INPUTS FOR PARV.
+                        1       some
+                        84      summarise_posterior_K2
+                        1       thin_sites_4HMM_K2
+                        2076 # inspecting DAG further and sending to output file test/testing_dag_long.txt
+                        hilo$ snakemake local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.var.sites local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites --profile slurm > test/testing_dag_long.txt
+                        # COMPLETED! 4.29.2021
+                        # HMM THIS JUST RAN, but didn't check for the merging files for parv that were unexpected.
+                        hilo$ snakemake -n some --dag | dot -Tsvg > test/dag.svg #CANCELLED. HADN'T DONE ANYTHING IN LIKE A DAY. Maybe DAG is way too big? I thought it was a summary. Trying again with 'quiet' option:
+                        hilo$ snakemake -n some --quiet --dag | dot -Tsvg > test/dag.svg # 4.30.2021 10:38am
+                        # it's because count_ACGT has input "filtered_bams/merged_bams/{ID}.sort.dedup.bam" but I could get it from bam list instead!
+                        "samples/{PREFIX}_K{K}_byInd/{ID}_bams.list". Try again with new rule and function to lookup the correct bam (so no need for symlinks of maize and parv files to merged_bams/ directory)
+                        
 
 # TO DO:
+
 # what do I need to rerun ancestry_hmm?
 - snps in tail of fst/pbs : check on # SNPs that make it past thinning, if not enough reduce stringency of filter for AIMs
 - how to summarise local ancestry for K=3 pops
