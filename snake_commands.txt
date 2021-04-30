@@ -3446,12 +3446,28 @@ Job counts:
                         hilo$ snakemake -n some --quiet --dag | dot -Tsvg > test/dag.svg # 4.30.2021 10:38am
                         # it's because count_ACGT has input "filtered_bams/merged_bams/{ID}.sort.dedup.bam" but I could get it from bam list instead!
                         "samples/{PREFIX}_K{K}_byInd/{ID}_bams.list". Try again with new rule and function to lookup the correct bam (so no need for symlinks of maize and parv files to merged_bams/ directory)
-                        
+                        hilo$ snakemake -n some --quiet --profile slurm
+                        Job counts:
+                                count   jobs
+                                84      boot_ancestry_hmm_K2
+                                84      boot_ancestry_hmm_K3
+                                856     count_ACGT
+                                856     count_maj_min
+                                2       index_sites_4HMM
+                                1       make_allo_counts_K2
+                                1       make_allo_counts_K3
+                                56      make_input_hmm
+                                453     make_single_bam_list
+                                1       some
+                                84      summarise_posterior_K2
+                                2478 # yay! will add some mafs.gz files for Jeff G before running.
+                        hilo$ snakemake -n some files_for_jeff --quiet --profile slurm
+
 
 # TO DO:
 
 # what do I need to rerun ancestry_hmm?
-- snps in tail of fst/pbs : check on # SNPs that make it past thinning, if not enough reduce stringency of filter for AIMs
+- snps in tail of fst/pbs : check on # SNPs that make it past thinning (36-46K -- looks good!), if not enough reduce stringency of filter for AIMs
 - how to summarise local ancestry for K=3 pops
 
 # what do I need to rerun for other results?
