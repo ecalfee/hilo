@@ -3460,8 +3460,8 @@ Job counts:
                                 453     make_single_bam_list
                                 1       some
                                 84      summarise_posterior_K2
-                                2478 # yay! will add some mafs.gz files for Jeff G before running.
-                        hilo$ snakemake -n some files_for_jeff --quiet --profile slurm
+                                2478 # yay! will add some mafs.gz files for Jeff G to rule some before running.
+                        hilo$ snakemake -n some --quiet --profile slurm
 
 
 # TO DO:
