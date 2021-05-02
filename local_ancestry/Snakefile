@@ -227,7 +227,7 @@ rule count_ACGT:
         """
         angsd -out {params.out_prefix} \
         -ref {input.ref} \
-        -bam {output.bam_list} \
+        -bam {input.bam_list} \
         -minQ 20 -minMapQ 30 -baq 2\
         -remove_bads 1 \
         -doCounts 1 -dumpCounts 3 \
