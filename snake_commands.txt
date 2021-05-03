@@ -3480,7 +3480,24 @@ Job counts:
         2512 # RUNNING 4.30.2021 5:30pm
         RuleException in line 201 of /home/ecalfee/hilo/local_ancestry/Snakefile:
 'OutputFiles' object has no attribute 'bam_list'
-
+# also a bunch of jobs had failed launches?
+      33604420      med2 make_sin  ecalfee PD        0:00      1 1   2G     (launch failed requeued held)
+squeue -u ecalfee | grep 'launch failed' | awk '{print $1}' | xargs -n 1 scancel
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        84      boot_ancestry_hmm_K2
+        84      boot_ancestry_hmm_K3
+        856     count_ACGT
+        856     count_maj_min
+        1       make_allo_counts_K2
+        1       make_allo_counts_K3
+        56      make_input_hmm
+        14      make_single_bam_list
+        34      pop_allele_freqs
+        1       some
+        84      summarise_posterior_K2
+        2071 # RUNNING 5.1.2021
 
 # TO DO:
 
