@@ -3497,7 +3497,35 @@ Job counts:
         34      pop_allele_freqs
         1       some
         84      summarise_posterior_K2
-        2071 # RUNNING 5.1.2021
+        2071 # RUNNING 5.1.2021. ARG, this exception comes up when tryign to run:
+        RuleException in line 4 of /home/ecalfee/hilo/wavelets/Snakefile:
+        'Params' object has no attribute 'region'
+        # Fixed rule in wavelets: pop_allele_freqs and Rerunning
+        hilo$ snakemake some --quiet --profile slurm
+        # RUNNING 5.2.2021. SQUEUE SHOWS MANY JOBS GOING.
+# HMM.. some error with some of the maize files counting ACGT (?)
+hilo$ less snake_logs/*33676903.err
+Failed to open file "filtered_bams/merged_bams/MAIZE41.sort.dedup.bam" : No such file or directory
+# oops these didn't make over new single bam files..they are all old in the HILO_MAIZE55_byInd folder
+# which won't make a difference for sympatric individuals but won't find the file (b/c of shadow)
+# for allopatric maize (palmar chico) b/c it's pointing to the symlink not the file, e.g.
+-rw-rw-r-- 1 ecalfee ecalfee 49 Oct 27  2020 samples/HILO_MAIZE55_byInd/MAIZE41_bams.list
+hilo$ cat samples/HILO_MAIZE55_byInd/MAIZE41_bams.list
+filtered_bams/merged_bams/MAIZE41.sort.dedup.bam
+# when i want it to now point to the original file (not the symlink) like the _PARV50 files do:
+hilo$ cat samples/HILO_MAIZE55_PARV50_byInd/MAIZE41_bams.list
+filtered_bams/results/Maize55/MAIZE41.sort.dedup.bam
+# so I am now removing these old files so the pipeline will create new ones
+hilo$ rm samples/HILO_MAIZE55_byInd/MAIZE*_bams.list
+# mostly just stalled jobs in squeue right now. I will cancel and restart snakemake pipeline
+JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+33718876     high2     bash  ecalfee  R       16:13      1 1   2G     c6-93
+33666776      med2 pop_alle  ecalfee  R     4:10:40      1 5   16G    c6-95
+33666782      med2 count_AC  ecalfee  S     6:04:32      1 2   8G     c6-93
+33666704      med2 count_AC  ecalfee  S     6:00:48      1 2   8G     c6-93
+33666698      med2 pop_alle  ecalfee  S     5:33:27      1 5   16G    c6-93
+33666701      med2 count_AC  ecalfee  S     6:52:57      1 2   8G     c6-93
+hilo$ scancel 33666776 33666782 33666704 33666698 33666701
 
 # TO DO:
 
