@@ -3526,6 +3526,71 @@ JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REAS
 33666698      med2 pop_alle  ecalfee  S     5:33:27      1 5   16G    c6-93
 33666701      med2 count_AC  ecalfee  S     6:52:57      1 2   8G     c6-93
 hilo$ scancel 33666776 33666782 33666704 33666698 33666701
+# also added some pop_allele_freqs outputs requested to rule 'some':
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        84      boot_ancestry_hmm_K2
+        84      boot_ancestry_hmm_K3
+        91      count_ACGT
+        91      count_maj_min
+        1       make_allo_counts_K2
+        1       make_allo_counts_K3
+        56      make_input_hmm
+        59      make_single_bam_list
+        4       pop_allele_freqs
+        1       some
+        84      summarise_posterior_K2
+        556 # BUT I ADDED SOME POP ALLELE FREQS OUTPUTS REQUESTED IN RULE 'some'
+# a few stalled jobs and a few had problems making majmin counts files because
+# counts and pos.gz files from count_ACGT don't match in # SNPs because of a hidden error:
+e.g. hilo$ less snake_logs/count_ACGT.ID=MAIZE39,K=2,PREFIX=HILO_MAIZE55.33733486.err
+-> Printing at chr: 6 pos:156070436 chunknumber 2227700 contains 368 sites
+[master2] Problem spawning thread
+Resource temporarily unavailable at chunknumber:2227770
+[Wed May  5 08:47:59 2021]
+Finished job 0.
+1 of 1 steps (100%) done
+# squeue:
+JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+33779371     high2     bash  ecalfee  R       16:10      1 1   2G     c6-68
+33741222      med2 pop_alle  ecalfee  R     1:26:28      1 9   32G    c6-92
+33733546      med2 count_AC  ecalfee  S     6:46:29      1 2   8G     c6-95
+33719793      med2 count_AC  ecalfee  S     2:07:12      1 2   8G     c6-72
+33719794      med2 pop_alle  ecalfee  S     2:07:12      1 5   16G    c6-72
+33719795      med2 pop_alle  ecalfee  S     2:07:12      1 5   16G    c6-72
+33731714      med2 count_AC  ecalfee  S     3:31:19      1 2   8G     c6-76
+# cancelling running jobs
+hilo$ squeue -u ecalfee | grep 'med2' | awk '{print $1}' | xargs -n 1 scancel
+# which ones are potentially problem files?
+hilo$ for i in $(cat samples/HILO_MAIZE55_ids.list); do ls local_ancestry/results/countsMajMin/HILO_MAIZE55/K2/$i.counts.txt; done
+MAIZE1 - no ACGT
+MAIZE6
+MAIZE32 - no ACGT
+MAIZE39
+MAIZE40 - no ACGT
+MAIZE41 - no ACGT
+MAIZE48 - no ACGT
+MAIZE49 - no ACGT
+# confirmed those 2 have messed up files:
+hilo$ for i in MAIZE6 MAIZE39; do zcat local_ancestry/results/countsACGT/HILO_MAIZE55/K2/$i.counts.gz | wc -l; zcat local_ancestry/results/countsACGT/HILO_MAIZE55/K2/$i.pos.gz | wc -l; done
+277370
+280604
+228879
+232913
+# remove files to fix:
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55/K2/MAIZE6.counts.gz
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55/K2/MAIZE6.pos.gz
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55/K2/MAIZE39.counts.gz
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55/K2/MAIZE39.pos.gz
+hilo$ for i in $(cat samples/HILO_MAIZE55_PARV50_ids.list); do ls local_ancestry/results/countsMajMin/HILO_MAIZE55_PARV50/K3/$i.counts.txt; done
+MAIZE30 - no ACGT
+MAIZE38 - # pos doesn't match # counts
+MAIZE42 - no ACGT
+MAIZE49 - no ACGT
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55_PARV50/K3/MAIZE38.counts.gz
+hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55_PARV50/K3/MAIZE38.pos.gz
+
 
 # TO DO:
 

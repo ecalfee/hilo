@@ -340,7 +340,8 @@ rule some:
 
 rule files_for_jeff:
     input:
-        expand("wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana", "parv"])
+        expand("wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana", "parv"]),
+        expand("wavelets/results/alleleFreqs/HILO_MAIZE55/K2/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana"])
     params:
         p = "med2"
     resources:
