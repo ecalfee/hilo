@@ -3590,7 +3590,37 @@ MAIZE42 - no ACGT
 MAIZE49 - no ACGT
 hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55_PARV50/K3/MAIZE38.counts.gz
 hilo$ rm local_ancestry/results/countsACGT/HILO_MAIZE55_PARV50/K3/MAIZE38.pos.gz
-
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        84      boot_ancestry_hmm_K2
+        84      boot_ancestry_hmm_K3
+        12      count_ACGT
+        12      count_maj_min
+        1       make_allo_counts_K2
+        1       make_allo_counts_K3
+        56      make_input_hmm
+        5       pop_allele_freqs
+        1       some
+        84      summarise_posterior_K2
+        340 # RUNNING 5.5.2021.
+        ecalfee@c6-87:~/hilo$ squeue -u ecalfee
+                 JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+              33951205     high2     bash  ecalfee  R        6:32      1 1   2G     c6-87
+              33786709      med2 pop_alle  ecalfee  S    21:23:03      1 13  48G    c6-89
+        ecalfee@c6-87:~/hilo$ scancel 33786709 # cancelled this stalled job. Added memory, threads and time to pop_allele_freqs
+        # all but allopatric_maize and parv have run (out of time and out of memory always) for wavelet pop allele freqs
+        ecalfee@farm:~$ screen -ls # my screen must have shut down, I'll make another one
+        No Sockets found in /run/screen/S-ecalfee.
+        # oops I forgot to add make_allo_counts_ancestry_hmm_K3.R to github. done now.
+        hilo$ snakemake some --quiet --profile slurm                           Job counts:                                                                                                 count   jobs
+        84      boot_ancestry_hmm_K3
+        1       make_allo_counts_K3
+        28      make_input_hmm
+        3       pop_allele_freqs
+        1       some
+        5       summarise_posterior_K2
+        122
 
 # TO DO:
 

@@ -23,7 +23,7 @@ rule pop_allele_freqs:
     threads:
         1
     resources:
-        time_min = lambda wildcards, attempt: attempt * 24 * 60,
+        time_min = lambda wildcards, attempt: attempt * 48 * 60,
         mem = lambda wildcards, attempt: 16 + (attempt - 1) * 32
     shell:
         "angsd -out {params.out_prefix} "
@@ -33,8 +33,9 @@ rule pop_allele_freqs:
         "-remove_bads 1 "
         "-minMapQ 30 -minQ 20 "
         "-doMajorMinor 3 "
-        "-P 1 "
+        "-P 4 "
         "-baq 2 "
         "-doCounts 1 -doMaf 8 "
 # -doMaf 8 is a simple unbiased frequency estimator that takes a weighted average frequency across samples based on read depth (probability of having observed 1 or 2 alleles)
 # using read counts for the major and minor alleles (-doMajorMinor 3) defined in the SNP sites file (-sites)
+# -P is for using multiple threads
