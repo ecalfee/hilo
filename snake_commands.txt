@@ -3620,12 +3620,36 @@ Job counts:
         3       pop_allele_freqs
         1       some
         5       summarise_posterior_K2
-        122
+        122 # still locked :/ probably because my screen just ended unexpectedly with the stalled job?
+        snakemake some --quiet --profile slurm
+        Error: Directory cannot be locked. Please make sure that no other Snakemake process is trying to create the same files in the following directory:
+        /home/ecalfee/hilo
+        If you are sure that no other instances of snakemake are running on this directory, the remaining lock was likely caused by a kill signal or a power loss. It can be removed with the --unlock argument.
+        hilo$ snakemake some --quiet --unlock --profile slurm # unlocked. now I can rerun my pipeline:
+        hilo$ snakemake some --quiet --profile slurm
+        Job counts:
+        count   jobs
+        84      boot_ancestry_hmm_K3
+        1       make_allo_counts_K3
+        28      make_input_hmm
+        3       pop_allele_freqs
+        1       some
+        5       summarise_posterior_K2
+        122 # RUNNING 5.10.2021
+        RuleException in line 360 of /home/ecalfee/hilo/local_ancestry/Snakefile:
+        NameError: The name 'parms' is unknown in this context. Please make sure that you defined that variable. Also note that braces not used for variable access have to be escaped by repeating them, i.e. {{print $1}}
+        (hilo-env) ecalfee@farm:~/hilo$ squeue -u ecalfee
+                 JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+              33952720      med2 pop_alle  ecalfee  R     1:50:13      1 5   16G    c6-72
+              33952724      med2 pop_alle  ecalfee  R     1:50:13      1 5   16G    c6-71
+              33952727      med2 pop_alle  ecalfee  R     1:50:13      1 5   16G    c6-71
+        # cancelling these jobs so I can rerun. fixed typo parms -> params in rule boot_ancestry_hmm_K3
+
 
 # TO DO:
 
 # what do I need to rerun ancestry_hmm?
-- snps in tail of fst/pbs : check on # SNPs that make it past thinning (36-46K -- looks good!), if not enough reduce stringency of filter for AIMs
+- snps in tail of fst/pbs : check on # SNPs that make it past thinning (360-460K -- looks good!), if not enough reduce stringency of filter for AIMs
 - how to summarise local ancestry for K=3 pops
 
 # what do I need to rerun for other results?

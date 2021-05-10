@@ -24,7 +24,7 @@ rule pop_allele_freqs:
         1
     resources:
         time_min = lambda wildcards, attempt: attempt * 48 * 60,
-        mem = lambda wildcards, attempt: 16 + (attempt - 1) * 32
+        mem = lambda wildcards, attempt: 16 + attempt * 32
     shell:
         "angsd -out {params.out_prefix} "
         "-sites {input.sites} "

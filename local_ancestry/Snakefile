@@ -387,7 +387,7 @@ rule boot_ancestry_hmm_K3:
         module load Ancestry_HMM
         mkdir -p {params.dir}
         cd {params.dir}
-        ancestry_hmm -a 3 {params.alpha_mex} {params.alpha_parv} {parms.alpha_maize} \
+        ancestry_hmm -a 3 {params.alpha_mex} {params.alpha_parv} {params.alpha_maize} \
         -p 0 10000 {params.alpha_mex} \
         -p 1 {params.t_gen_parv} {params.alpha_parv} \
         -p 2 {params.t_gen_maize} {params.alpha_maize} \
