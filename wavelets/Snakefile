@@ -1,30 +1,28 @@
 ## wavelets/Snakefile: making files for JG project on admixture and wavelets
 
-## pop_allele_freqs: estimates the minor allele frequency at all SNPs for allopatric maize and mexicana
+## pop_allele_freqs: estimates the minor allele frequency at all thinned SNPs for a focal population
 rule pop_allele_freqs:
     input:
         bams = lambda wildcards: get_all_bams(wildcards.PREFIX), # all input bams
         bais = lambda wildcards: get_all_bais(wildcards.PREFIX), # all input bam indexes
-        bam_list = "samples/ALL_byPop/{POP}_bams.list", # bams for focal population
+        bam_list = "samples/ALL_byPop/{POP1}_bams.list", # bams for focal population
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         idx = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites.idx",
         bin = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites.bin",
         ref = ref,
         fai = fai
     output:
-        mafs = "wavelets/results/alleleFreqs/{PREFIX}/K{K}/{POP}.mafs.gz"
+        mafs = "wavelets/results/alleleFreqs/{PREFIX}/K{K}/{POP1}.mafs.gz"
     params:
         p = "med2",
-        out_prefix = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX + "/K" + wildcards.K + "/" + wildcards.POP
-    shadow:
-        "minimal"
+        out_prefix = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX + "/K" + wildcards.K + "/" + wildcards.POP1
     conda:
         "../envs/environment.yaml"
     threads:
-        1
+        2
     resources:
-        time_min = lambda wildcards, attempt: attempt * 48 * 60,
-        mem = lambda wildcards, attempt: 16 + attempt * 32
+        time_min = lambda wildcards, attempt: attempt * 24 * 60,
+        mem = lambda wildcards, attempt: attempt * 16
     shell:
         "angsd -out {params.out_prefix} "
         "-sites {input.sites} "
@@ -33,9 +31,69 @@ rule pop_allele_freqs:
         "-remove_bads 1 "
         "-minMapQ 30 -minQ 20 "
         "-doMajorMinor 3 "
-        "-P 4 "
+        "-P 2 "
         "-baq 2 "
         "-doCounts 1 -doMaf 8 "
 # -doMaf 8 is a simple unbiased frequency estimator that takes a weighted average frequency across samples based on read depth (probability of having observed 1 or 2 alleles)
 # using read counts for the major and minor alleles (-doMajorMinor 3) defined in the SNP sites file (-sites)
 # -P is for using multiple threads
+
+
+## group_allele_freqs_by_region: estimates the minor allele frequency at all thinned SNPs, 1 region at a time, for a focal group (1 region at a time for memory/time given larger # individuals and total coverage in a group than a pop)
+rule group_allele_freqs_by_region:
+    input:
+        bams = lambda wildcards: get_all_bams(wildcards.PREFIX), # all input bams
+        bais = lambda wildcards: get_all_bais(wildcards.PREFIX), # all input bam indexes
+        bam_list = "samples/ALL_byPop/{GROUP}_bams.list", # bams for focal population
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
+        idx = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites.idx",
+        bin = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites.bin",
+        ref = ref,
+        fai = fai
+    output:
+        mafs = "wavelets/results/alleleFreqs/{PREFIX}/K{K}/byRegion/{GROUP}/{REGION}.mafs.gz"
+    params:
+        p = "med2",
+        region = lambda wildcards: regions_dict[wildcards.REGION],
+        out_prefix = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX + "/K" + wildcards.K + "/byRegion/" + wildcards.GROUP + "/" + wildcards.REGION
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        2
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 12 * 60,
+        mem = lambda wildcards, attempt: attempt * 16
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-r {params.region} "
+        "-sites {input.sites} "
+        "-ref {input.ref} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 "
+        "-minMapQ 30 -minQ 20 "
+        "-doMajorMinor 3 "
+        "-P 2 "
+        "-baq 2 "
+        "-doCounts 1 -doMaf 8 "
+
+## concatenate_group_mafs: concatenates all the regions together for group minor allele frequencies to form 1 genomewide file with all snps
+rule concatenate_group_mafs:
+    input: # input all GL files, corresponding rpos files, and the master list of all regions
+        mafs = expand("wavelets/results/alleleFreqs/{{PREFIX}}/K{{K}}/byRegion/{{GROUP}}/{REGION}.mafs.gz",
+        REGION=list(regions_dict.keys())),
+        # master list of all regions
+        regions = "data/refMaize/divide_5Mb/ALL_regions.list"
+    output: # thinned GL file for whole genome
+        mafs = "wavelets/results/alleleFreqs/{PREFIX}/K{K}/{GROUP}.mafs.gz"
+    params:
+        p = "med2",
+        first = 0, # first region
+        last = len(regions_dict) - 1, # last region
+        prefix_in = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX "/K" + wildcards.K "/byRegion/" + wildcards.GROUP
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 6 * 60,
+        mem = lambda wildcards, attempt: attempt * 4
+    conda:
+        "../envs/environment.yaml"
+    shell:
+        "./wavelets/concatenate_group_mafs.sh {params.first} {params.last} {params.prefix_in} {output.mafs}"

@@ -23,6 +23,7 @@ wildcard_constraints:
     ZEA = "maize|mexicana",
     ALLO_MEX = "allopatric_maize|pop22", # used in f4s. pop22 is Amecameca (at 2467m, the highest elevation of 3 allopatric pops)
     SUBSAMPLE = "[0-9]+",
+    REGION = "region_[0-9]+",
     r = "[0-9]+", # numeric only
     FEATURE = "r|cd|frac", # recombination rate cM/Mb (r), coding bp/cM (cd), or frac coding bp (frac)
     COVERAGE = "ALL|Over0.5x", # we only estimate local ancestry for individuals with >0.5x mean coverage. whereas allopatric pops and global ancestry estimates we used a less stringent cutoff (individuals with >0.1x coverage)

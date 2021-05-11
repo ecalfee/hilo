@@ -3644,6 +3644,37 @@ Job counts:
               33952724      med2 pop_alle  ecalfee  R     1:50:13      1 5   16G    c6-71
               33952727      med2 pop_alle  ecalfee  R     1:50:13      1 5   16G    c6-71
         # cancelling these jobs so I can rerun. fixed typo parms -> params in rule boot_ancestry_hmm_K3
+        hilo$ snakemake some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                84      boot_ancestry_hmm_K3
+                3       pop_allele_freqs
+                1       some
+                88 # RUNNING 5.10.2021 11:30am
+  # files sent to Jeff (still waiting on parv and allopatric maize freq files):
+  hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55/K2/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55/K2/.
+  hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/.
+  # SNP/site information
+  hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome* ecalfee@169.237.66.199:~/Documents/gitErin/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/.
+  hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome* ecalfee@169.237.66.199:~/Documents/gitErin/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/.
+  # he also will need population meta data
+  hilo$ scp samples/HILO_MAIZE55_PARV50_meta.RData ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
+  hilo$ scp samples/population_metadata.csv ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
+  # and the maize recombination map:
+  hilo$ scp linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ecalfee@169.237.66.199:~/Documents/gitErin/hilo/linkage_map/results/.
+  # and maize chromosome lengths:
+  hilo$ scp data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths ecalfee@169.237.66.199:~/Documents/gitErin/hilo/data/refMaize/.
+
+  # ok so these are taking forever and only on chr 1 for parv and allopatric_maize allele freqs...
+  # I will cancel and make them run 1 region at a time instead.
+  hilo$ squeue -u ecalfee
+           JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+        33998743      med2 pop_alle  ecalfee PD        0:00      1 1   80G    (Priority)
+        33999744     high2     bash  ecalfee  R        0:00      1 1   2G     c6-72
+        33956477      med2 pop_alle  ecalfee  R  1-00:32:26      1 13  48G    c6-95
+        33956485      med2 pop_alle  ecalfee  R  1-00:32:26      1 13  48G    c6-97
+  ecalfee@c6-72:~/hilo$ scancel 33998743 33956485 33956477
+
 
 
 # TO DO:
