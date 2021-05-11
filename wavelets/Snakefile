@@ -89,7 +89,7 @@ rule concatenate_group_mafs:
         p = "med2",
         first = 0, # first region
         last = len(regions_dict) - 1, # last region
-        prefix_in = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX "/K" + wildcards.K "/byRegion/" + wildcards.GROUP
+        prefix_in = lambda wildcards: "wavelets/results/alleleFreqs/" + wildcards.PREFIX + "/K" + wildcards.K + "/byRegion/" + wildcards.GROUP
     resources:
         time_min = lambda wildcards, attempt: attempt * 6 * 60,
         mem = lambda wildcards, attempt: attempt * 4
