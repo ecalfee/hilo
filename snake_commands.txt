@@ -3674,8 +3674,19 @@ Job counts:
         33956477      med2 pop_alle  ecalfee  R  1-00:32:26      1 13  48G    c6-95
         33956485      med2 pop_alle  ecalfee  R  1-00:32:26      1 13  48G    c6-97
   ecalfee@c6-72:~/hilo$ scancel 33998743 33956485 33956477
+  hilo$ snakemake -n some --quiet --profile slurm
 
-
+  Message from jri@farm.cse.ucdavis.edu on pts/65 at 13:15 ...
+  better to not run snakemake on headnode
+  EOF
+  Job counts:
+          count   jobs
+          84      boot_ancestry_hmm_K3
+          3       concatenate_group_mafs
+          1278    group_allele_freqs_by_region
+          1       some
+          1366 # HMM..check on why the ancestry_hmm with K=3 isn't running within the time limit. it's trying to do the bootstrapping, right?
+          # as a first step I'm just adding time for it to run..no obvious errors in how we've set up the demographic model or ancestry_hmm or order of alleles in input file.
 
 # TO DO:
 

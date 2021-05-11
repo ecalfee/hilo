@@ -378,7 +378,7 @@ rule boot_ancestry_hmm_K3:
         t_gen_maize = -100, # prior for generations since maize admixture
         dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + wildcards.PREFIX + "/K3/Ne" + wildcards.Ne + "_yesBoot/posterior"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 3 * 60,
+        time_min = lambda wildcards, attempt: attempt * 24 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
         "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_yesBoot/{POP}.log"
