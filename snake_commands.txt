@@ -3691,6 +3691,10 @@ Job counts:
           Killed
           # hmm...I'm not sure why this is getting killed. I will start a new high2 instance on screen with more memory (8Gb)
           # and make the DAG smaller by commenting out the wavelets alleFreq stuff for now.
+          srun: error: c6-75: task 0: Out Of Memory
+          ecalfee@farm:~/hilo$ srun -p high2 --mem 16G -t 10-00:00:00 --pty bash
+          srun: job 34020939 queued and waiting for resources
+          srun: job 34020939 has been allocated resources
 
 # TO DO:
 
