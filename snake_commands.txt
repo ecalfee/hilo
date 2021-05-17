@@ -3695,6 +3695,35 @@ Job counts:
           ecalfee@farm:~/hilo$ srun -p high2 --mem 16G -t 10-00:00:00 --pty bash
           srun: job 34020939 queued and waiting for resources
           srun: job 34020939 has been allocated resources
+          (hilo-env) ecalfee@c6-75:~/hilo$ snakemake some --quiet --profile slurm
+          Job counts:
+              count   jobs
+              84      boot_ancestry_hmm_K3
+              3       concatenate_group_mafs
+              1278    group_allele_freqs_by_region
+              1       some
+              1366 # RUNNING 5.12.2021 12:45pm. check on it in a bit and see if it's starting any boot_ancestry_hmm_K3 jobs
+5.16.2021 status:
+ecalfee@farm:~$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      34020939     high2     bash  ecalfee  R  4-09:42:04      1 5   16G    c6-75
+      34053837      med2 group_al  ecalfee  S       31:56      1 4   16G    c6-68
+      34021626      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021627      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021628      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021629      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021630      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021631      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021636      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021643      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021650      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021654      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021655      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34021656      med2 group_al  ecalfee  S     2:57:29      1 4   16G    c6-67
+      34045146      med2 group_al  ecalfee  S     7:31:49      1 4   16G    c6-92
+      34045152      med2 group_al  ecalfee  S     1:12:38      1 4   16G    c6-92
+      # so I'm cancelling all the med2 runs and seeing what still needs to run.
+      hilo$ squeue -u ecalfee | grep 'group_al' | awk '{print $1}' | xargs -n 1 scancel
 
 # TO DO:
 
