@@ -439,11 +439,8 @@ rule run_ancestry_hmm_K3:
         -i "../../input/{wildcards.POP}.counts" \
         -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
         """
-#-b 100 1000 does 100 bootstraps for time estimates with 1000 snps/block
 
-
-
-## summarise_posterior_K2: takes in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
+## summarise_posterior_K2: takes K=2 in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
 rule summarise_posterior_K2:
     input: # this file tracts that the posteriors are complete, but actually posterior files vary
         complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
@@ -466,7 +463,31 @@ rule summarise_posterior_K2:
     script:
         "post2anc_K2.R"
 
-## summarise_posterior_K3: TO DO
+## summarise_posterior_K3: takes in K=3 posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
+rule summarise_posterior_K3:
+    input: # this file tracts that the posteriors are complete, but actually posterior files vary
+        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
+        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
+    output:
+        pop_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.anc.freq",
+        ind_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.anc.ind",
+        alpha_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.alpha.ind",
+        pop_parv = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/parv/{POP}.anc.freq",
+        ind_parv = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/parv/{POP}.anc.ind",
+        alpha_parv = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/parv/{POP}.alpha.ind",
+        pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.anc.freq",
+        ind_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.anc.ind",
+        alpha_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.alpha.ind"
+    params:
+        p = "med2",
+        dir_post = "local_ancestry/results/ancestry_hmm/{PREFIX}/K3/Ne{Ne}_{YESNO}Boot/posterior"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = lambda wildcards, attempt: attempt * 30,
+        mem = lambda wildcards, attempt: attempt * 4
+    script:
+        "post2anc_K3.R"
 
 ## get_maximum_a_posterior: takes in posterior probabilities for a population from ancestry_hmm and gets maximum a posterior ancestry state and posterior probability for that state
 rule get_maximum_a_posterior:

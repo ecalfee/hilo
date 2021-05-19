@@ -329,8 +329,8 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/{POP}.completed", Ne = Nes, POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.completed", Ne = 10000, POP = symp_pops), # only bootstrap t for Ne=10000
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
         expand("wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana", "parv"]),
         expand("wavelets/results/alleleFreqs/HILO_MAIZE55/K2/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana"])
