@@ -3724,7 +3724,38 @@ ecalfee@farm:~$ squeue -u ecalfee
       34045152      med2 group_al  ecalfee  S     1:12:38      1 4   16G    c6-92
       # so I'm cancelling all the med2 runs and seeing what still needs to run.
       hilo$ squeue -u ecalfee | grep 'group_al' | awk '{print $1}' | xargs -n 1 scancel
+      # addign more time to srun:
+      hilo$ srun -p high2 --mem 16G -t 10-00:00:00 --pty bash
+      srun: job 34394319 queued and waiting for resources
+      srun: job 34394319 has been allocated resources
+      hilo$ snakemake some --quiet --profile slurm
+      Job counts:
+           count   jobs
+           84      boot_ancestry_hmm_K3
+           1       some
+           85 # RUNNING 5.16.2021
 
+           farm:~$ squeue -u ecalfee
+         JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+      34394319     high2     bash  ecalfee  R  1-12:17:53      1 5   16G    c6-66
+      34395214      med2 boot_anc  ecalfee  S    17:26:55      1 3   8G     c6-66
+      34395215      med2 boot_anc  ecalfee  S    21:26:12      1 3   8G     c6-66
+      34395197      med2 boot_anc  ecalfee  S    17:06:05      1 3   8G     c6-66
+      34395198      med2 boot_anc  ecalfee  S    17:24:13      1 3   8G     c6-66
+      34395199      med2 boot_anc  ecalfee  S    17:36:40      1 3   8G     c6-66
+      34395134      med2 boot_anc  ecalfee  S    10:52:06      1 3   8G     c6-66
+      34395135      med2 boot_anc  ecalfee  S    10:52:06      1 3   8G     c6-66
+      34395136      med2 boot_anc  ecalfee  S    10:52:06      1 3   8G     c6-66
+      34395137      med2 boot_anc  ecalfee  S    10:52:06      1 3   8G     c6-66
+      34395140      med2 boot_anc  ecalfee  S    14:41:08      1 3   8G     c6-93
+      34395141      med2 boot_anc  ecalfee  S    14:41:08      1 3   8G     c6-93
+      # looks like 24 hrs isn't enough time for K=3. Do 48 hrs. Also I don't need to be running a bootstrap on the Ne = 1000, or Ne = 100,000 runs. Fix that to reduce the bottleneck there.
+      # would be good to have it continue on to the ancestry summary too.
+      # and to get the alleleFreqs
+      # SOOO...Cancelled the snakemake run above and also cancelling stalled jobs:
+      hilo$ squeue -u ecalfee | grep 'boot_anc' | awk '{print $1}' | xargs -n 1 scancel
+
+      
 # TO DO:
 
 # what do I need to rerun ancestry_hmm?
