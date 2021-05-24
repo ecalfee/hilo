@@ -36,7 +36,7 @@ sample_pos = function(ID, path, weights) {# summarize across posterior of all 3 
 # rows = SNPs; columns = individuals
 anc_mex = do.call(cbind,
                 lapply(pop_ids,
-                       function(id) sample_pos(ID = id, path = dir_input, weights = c(1, .5, 0))))
+                       function(id) sample_pos(ID = id, path = dir_input, weights = c(0, .5, 1))))
 # mean mexicana ancestry across all markers per individual
 alpha_mex = data.frame(hilo_id = pop_ids, alpha = apply(anc_mex, 2, mean))
 
@@ -67,7 +67,7 @@ write.table(alpha_mex,
 # posteriors are ordered mex_mex, mex_maize, maize_maize
 anc_maize = do.call(cbind,
                 lapply(pop_ids,
-                       function(id) sample_pos(ID = id, path = dir_input, weights = c(0, .5, 1))))
+                       function(id) sample_pos(ID = id, path = dir_input, weights = c(1, .5, 0))))
 # mean maize ancestry across all markers per individual
 alpha_maize = data.frame(hilo_id = pop_ids, alpha = apply(anc_maize, 2, mean))
 

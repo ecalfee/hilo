@@ -3754,8 +3754,23 @@ ecalfee@farm:~$ squeue -u ecalfee
       # and to get the alleleFreqs
       # SOOO...Cancelled the snakemake run above and also cancelling stalled jobs:
       hilo$ squeue -u ecalfee | grep 'boot_anc' | awk '{print $1}' | xargs -n 1 scancel
+      hilo$ snakemake some --quiet --profile slurm
+      Job counts:
+              count   jobs
+              26      boot_ancestry_hmm_K3
+              3       concatenate_group_mafs
+              25      group_allele_freqs_by_region
+              84      run_ancestry_hmm_K3
+              1       some
+              84      summarise_posterior_K2
+              112     summarise_posterior_K3
+              335 # RUNNING 5.18.2021. COMPLETED 5.21.2021.
 
-      
+# oops! accidentally switched maize and mexicana for summarising ancetry from K=2 only.
+# fixed script for summarise_posterior_K2 and now deleting output so that these files rerun:
+hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*/anc/*/pop*.alpha.ind
+
+
 # TO DO:
 
 # what do I need to rerun ancestry_hmm?
