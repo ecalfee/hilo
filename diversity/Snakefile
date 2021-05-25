@@ -528,11 +528,11 @@ rule plot_within_ancestry_fst_pi_peaks:
         meta = "samples/{PREFIX}_meta.RData"
     output:
         png_pi_mex = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png",
-        png_pi_mex_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif",
+        png_pi_mex_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif",
         png_pi_maize = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png",
-        png_pi_maize_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif",
+        png_pi_maize_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif",
         png_fst_mex = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png",
-        png_fst_mex_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif"
+        png_fst_mex_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif"
     params:
         p = "med2"
     conda:
