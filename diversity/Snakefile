@@ -315,7 +315,6 @@ rule print_fst_one_file_K3:
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/maize/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs),
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # fst between subspecies
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/maize/{POP1}.{POP2}.fst.allChr.txt", POP1 = symp_mexicana_pops, POP2 = symp_maize_pops),
-        expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/parv/{POP1}.{POP2}.fst.allChr.txt", POP_PAIR = symp_maize_pairs), # within subspecies, fst for introgressed ancestry
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/parv/{POP_PAIR}.fst.allChr.txt", POP1 = symp_maize_pops, POP2 = symp_mexicana_pops), # fst between subspecies for introgressed parviglumis ancestry
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/parv/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_mexicana_pairs), # within mexicana, fst for introgressed parviglumis ancestry
         expand("diversity/results/fst/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/parv/{POP_PAIR}.fst.allChr.txt", POP_PAIR = symp_maize_pairs) # within maize, fst for introgressed parviglumis ancestry
