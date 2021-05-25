@@ -155,18 +155,18 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-include: "map/Snakefile"
+#include: "map/Snakefile"
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
 #include: "global_ancestry/Snakefile"
 #include: "linkage_map/Snakefile"
 include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "ancestry_by_r/Snakefile"
+#include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
-include: "mhl1_inv/Snakefile"
-include: "domestication_scan/Snakefile"
-include: "wavelets/Snakefile"
+#include: "mhl1_inv/Snakefile"
+#include: "domestication_scan/Snakefile"
+#include: "wavelets/Snakefile"
 
 ## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
 rule all:
@@ -329,11 +329,20 @@ rule all:
 ## some: for running a subset of analyses
 rule some:
     input:
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
-        expand("wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana", "parv"]),
-        expand("wavelets/results/alleleFreqs/HILO_MAIZE55/K2/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana"])
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
+        #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K2/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K2/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
+        "diversity/results/fst/HILO_MAIZE55/K2/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
+        "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
+        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_admix_times_Ne10000_yesBoot.tif"
     params:
         p = "med2"
     resources:

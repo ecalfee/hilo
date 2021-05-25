@@ -28,13 +28,13 @@ source(snakemake@params[["colors"]]) # plotting colors
 zea = c("maize", "mexicana")
 for (z in zea){
   load(paste0("local_ancestry/results/ancestry_hmm/",
-              prefix_all, "/Ne", Ne, "_", YESNO, 
+              prefix_all, "/Ne", Ne, "_", YESNO,
               "Boot/anc/", z, ".pop.meta.RData"))
-  times = do.call(bind_cols, lapply(meta_pops$pop, function(p) 
+  times = do.call(bind_cols, lapply(meta_pops$pop, function(p)
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
-                      prefix_all, "/Ne", Ne, "_", YESNO, 
-                      "Boot/", p, ".times"), 
-               header = F, stringsAsFactors = F)))
+                      prefix_all, "/Ne", Ne, "_", YESNO,
+                      "Boot/", p, ".times"),
+               header = T, stringsAsFactors = F)$t)
   colnames(times) <- meta_pops$pop
   boots = times[2:nrow(times), ] # first row is estimate, remaining rows bootstraps
   time_est = data.frame(time = unlist(times[1, ]),
@@ -53,11 +53,11 @@ for (z in zea){
 
 # combine data
 d <- bind_rows(maize, mexicana) %>%
-  dplyr::mutate(introgress = ifelse(zea == "maize", alpha_local_ancestry, 1 - alpha_local_ancestry))
+  dplyr::mutate(introgress = ifelse(zea == "maize", alpha_local_ancestry_mexicana, alpha_local_ancestry_maize))
 
 # plot
 p_times <- d %>%
-  ggplot(., aes(x = reorder(LOCALITY, ELEVATION), 
+  ggplot(., aes(x = reorder(LOCALITY, ELEVATION),
                 y = time,
                 #alpha = introgress,
                 col = zea)) +
@@ -79,7 +79,7 @@ p_times <- d %>%
 ggsave(file = png_times,
        plot = p_times,
        device = "png",
-       width = 5, height = 4, 
+       width = 5, height = 4,
        units = "in", dpi = 300)
 
 # save plot as RDS also
@@ -96,7 +96,7 @@ print(summary_times)
 
 # write out results to a text file
 left_join(d, summary_times, by = "zea") %>%
-write.table(., file = txt_times, 
+write.table(., file = txt_times,
             col.names = T, row.names = F, sep = "\t", quote = F)
 
 # so around 1300 generations on the high end.

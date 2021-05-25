@@ -3771,6 +3771,9 @@ ecalfee@farm:~$ squeue -u ecalfee
 hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*/anc/*/pop*.alpha.ind
 
 
+# to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
+
+
 # TO DO:
 
 # what do I need to rerun ancestry_hmm?
