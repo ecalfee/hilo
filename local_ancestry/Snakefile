@@ -658,7 +658,7 @@ rule get_admix_times_K2:
         time_min = 10,
         mem = 2
     shell:
-        "echo 't ancestry' > {output.times}; awk -v N=4 'NR % N == 0' {input.log} | cut -f3 | awk '{{print $0, "mexicana"}}' >> {output.times}"
+        "echo 't ancestry' > {output.times}; awk -v N=4 'NR % N == 0' {input.log} | cut -f3 | awk '{{print $0, 'mexicana'}}' >> {output.times}"
 
 # get_admix_times_K3: takes in log files from ancestry_hmm and extracts the inferred timing of admixture for parviglumis, then maize. first entry is optimum, then bootstrap results.
 rule get_admix_times_K3:
