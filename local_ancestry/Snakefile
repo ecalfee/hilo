@@ -379,7 +379,7 @@ rule run_ancestry_hmm_K2:
         time_min = lambda wildcards, attempt: attempt * 3 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     log: # log file keeps info about inferred timing of admixture
-        "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_yesBoot/{POP}.log"
+        "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_noBoot/{POP}.log"
     shell:
         """
         module load Ancestry_HMM
