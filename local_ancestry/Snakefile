@@ -374,7 +374,7 @@ rule run_ancestry_hmm_K2:
         alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPopK2(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
         Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
         t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
-        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + wildcards.PREFIX + "/K2/Ne" + wildcards.Ne + "_yesBoot/posterior"
+        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + wildcards.PREFIX + "/K2/Ne" + wildcards.Ne + "_noBoot/posterior"
     resources:
         time_min = lambda wildcards, attempt: attempt * 3 * 60,
         mem = lambda wildcards, attempt: attempt * 8
