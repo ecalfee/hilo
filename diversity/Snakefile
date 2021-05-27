@@ -75,7 +75,7 @@ rule estimate_saf_pop:
         4
     resources:
         time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 16 + 40
+        mem = lambda wildcards, attempt: attempt * 32 + 32
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "
@@ -98,7 +98,7 @@ rule estimate_sfs:
         6
     resources:
         time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 8 + 32 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        mem = lambda wildcards, attempt: attempt * 16 + 28 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf} -P {threads} > {output.sfs}"
 
@@ -223,7 +223,7 @@ rule estimate_2D_sfs:
         6
     resources:
         time_min = 24*60,
-        mem = lambda wildcards, attempt: attempt * 16 + 40 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
+        mem = lambda wildcards, attempt: attempt * 32 + 28 # NEEDS LOTS OF MEM!! If unreasonable to load whole saf.gz into memory will need to set -nSites
     shell:
         "realSFS {input.saf1} {input.saf2} -P {threads} > {output.sfs}"
 
@@ -242,7 +242,7 @@ rule calc_fst_idx:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 12*60,
+        time_min = 24 * 60,
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix} -whichFst 1"
@@ -278,7 +278,7 @@ rule calc_fst_all_chr:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 60,
+        time_min = 60 * 3,
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"

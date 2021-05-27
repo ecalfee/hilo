@@ -3769,12 +3769,76 @@ ecalfee@farm:~$ squeue -u ecalfee
 # oops! accidentally switched maize and mexicana for summarising ancetry from K=2 only.
 # fixed script for summarise_posterior_K2 and now deleting output so that these files rerun:
 hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*/anc/*/pop*.alpha.ind
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        1890    calc_fst_all_chr
+        1890    calc_fst_idx
+        2       combine_pop_ancestry_data_K2
+        2       combine_pop_ancestry_data_K3
+        1890    estimate_2D_sfs
+        140     estimate_saf_pop
+        112     get_admix_times_K2
+        112     get_admix_times_K3
+        140     get_homozygous_ancestry_bams
+        56      get_homozygous_ancestry_tracts_K2
+        84      get_homozygous_ancestry_tracts_K3
+        2       get_tracts_from_sites
+        140     list_homozygous_ancestry_bams
+        1       plot_admix_times_K2
+        2       plot_within_ancestry_fst
+        1       print_fst_one_file_K2
+        1       print_fst_one_file_K3
+        84      run_ancestry_hmm_K2
+        1       some
+        84      summarise_posterior_K2 # good this part is rerunning :)
+        6634 # RUNNING 5.24.2021
+
+# remove old formatted files for ancestry summaries:
+hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/anc/pop*
+# now these are divided into anc/maize/ and anc/mexicana/ subdirectories
+# some rules failed, e.g. 34740199 and nothing currently running on squeue so cancelling my snakemake job
+
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        604     calc_fst_all_chr
+        600     calc_fst_idx # added time
+        594     estimate_2D_sfs # also added memory
+        24      estimate_saf_pop # I added memory when for re-runs
+        13      get_admix_times_K3 # added time
+        12      list_homozygous_ancestry_bams # added time
+        1       plot_admix_times_K2 # added missing parenthesis
+        2       plot_within_ancestry_fst
+        1       print_fst_one_file_K2
+        1       print_fst_one_file_K3
+        1       some
+        5       summarise_posterior_K2 # added time (based on hilo$ grep 'err' snake_logs/*summarise_posterior_K2*)
+        1858
 
 
-# to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
+
+# all files for Jeff Groh finished. now re-transferring all files for Jeff Groh (hilo/ on Nancy's was deleted/moved)
+hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55/K2/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55/K2/.
+hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/.
+# SNP/site information
+hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome* ecalfee@169.237.66.199:~/Documents/gitErin/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/.
+hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome* ecalfee@169.237.66.199:~/Documents/gitErin/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/.
+# he also will need population meta data
+hilo$ scp samples/HILO_MAIZE55_PARV50_meta.RData ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
+hilo$ scp samples/population_metadata.csv ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
+# and the maize recombination map:
+hilo$ scp linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ecalfee@169.237.66.199:~/Documents/gitErin/hilo/linkage_map/results/.
+# and maize chromosome lengths:
+hilo$ scp data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths ecalfee@169.237.66.199:~/Documents/gitErin/hilo/data/refMaize/.
+
+
+
+
 
 
 # TO DO:
+# to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
 
 # what do I need to rerun ancestry_hmm?
 - snps in tail of fst/pbs : check on # SNPs that make it past thinning (360-460K -- looks good!), if not enough reduce stringency of filter for AIMs

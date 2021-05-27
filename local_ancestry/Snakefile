@@ -496,7 +496,7 @@ rule summarise_posterior_K2:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
+        time_min = lambda wildcards, attempt: attempt * 2 * 60,
         mem = lambda wildcards, attempt: attempt * 2
     script:
         "post2anc_K2.R"
@@ -522,7 +522,7 @@ rule summarise_posterior_K3:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
+        time_min = lambda wildcards, attempt: attempt * 2 * 60,
         mem = lambda wildcards, attempt: attempt * 4
     script:
         "post2anc_K3.R"
@@ -622,7 +622,7 @@ rule list_homozygous_ancestry_bams:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 15,
+        time_min = 60,
         mem = 2
     shell:
         """
@@ -693,7 +693,7 @@ rule get_admix_times_K2:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 10,
+        time_min = 60,
         mem = 2
     shell:
         "echo 't ancestry' > {output.times}; awk -v N=4 'NR % N == 0' {input.log} | cut -f3 | awk '{{print $0, 'mexicana'}}' >> {output.times}"
@@ -709,7 +709,7 @@ rule get_admix_times_K3:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 10,
+        time_min = 60,
         mem = 2
     shell:
         """

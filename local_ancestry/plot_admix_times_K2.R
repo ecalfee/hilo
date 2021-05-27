@@ -34,7 +34,7 @@ for (z in zea){
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
                       prefix_all, "/Ne", Ne, "_", YESNO,
                       "Boot/", p, ".times"),
-               header = T, stringsAsFactors = F)$t)
+               header = T, stringsAsFactors = F)$t))
   colnames(times) <- meta_pops$pop
   boots = times[2:nrow(times), ] # first row is estimate, remaining rows bootstraps
   time_est = data.frame(time = unlist(times[1, ]),
