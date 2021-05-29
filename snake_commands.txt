@@ -3816,9 +3816,26 @@ Job counts:
         5       summarise_posterior_K2 # added time (based on hilo$ grep 'err' snake_logs/*summarise_posterior_K2*)
         1858
 
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        604     calc_fst_all_chr
+        600     calc_fst_idx
+        594     estimate_2D_sfs
+        24      estimate_saf_pop
+        13      get_admix_times_K3
+        12      list_homozygous_ancestry_bams
+        1       plot_admix_times_K2
+        2       plot_within_ancestry_fst
+        1       print_fst_one_file_K2
+        1       print_fst_one_file_K3
+        1       some
+        5       summarise_posterior_K2
+        1858 # RUNNING 5.27.2021 11:47am
 
 
-# all files for Jeff Groh finished. now re-transferring all files for Jeff Groh (hilo/ on Nancy's was deleted/moved)
+# transferred 5.27.2021 from farm
+# all files for Jeff Groh finished. now re-transferring all files for Jeff Groh (hilo/ on Nancy's was moved to SHARED. BY ME .. LOL)
 hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55/K2/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55/K2/.
 hilo$ scp wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/*.mafs.gz ecalfee@169.237.66.199:~/Documents/gitErin/hilo/wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/.
 # SNP/site information
@@ -3826,18 +3843,45 @@ hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome
 hilo$ scp local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome* ecalfee@169.237.66.199:~/Documents/gitErin/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/.
 # he also will need population meta data
 hilo$ scp samples/HILO_MAIZE55_PARV50_meta.RData ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
+# metadata by population, RIMME022 = pop22
 hilo$ scp samples/population_metadata.csv ecalfee@169.237.66.199:~/Documents/gitErin/hilo/samples/.
-# and the maize recombination map:
+# metadata by individual (note: there are 3 'allopatric' mexicana reference populations, Amecameca is the one with no evidence of admixtures. the other 2 likely have parviglumis admixture and all 3 have the potential for gene flow .. not mexicana is apparently truly allopatric)
+hilo$ scp samples/HILO_MAIZE55_PARV50_meta.txt ecalfee@169.237.66.199:/Users/Shared/wavelets/hilo/samples/.
+# and the maize recombination map (use approx in R to get cM <-> bp for new positions):
 hilo$ scp linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt ecalfee@169.237.66.199:~/Documents/gitErin/hilo/linkage_map/results/.
 # and maize chromosome lengths:
 hilo$ scp data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths ecalfee@169.237.66.199:~/Documents/gitErin/hilo/data/refMaize/.
+# posterior probabilities for local ancestry from ancestry_hmm
+# for K=2 mixing populations: maize, mexicana
+hilo$ scp local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/posterior/* ecalfee@169.237.66.199:/Users/Shared/wavelets/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/posterior/.
+# for K = 3 mixing populations: mexicana, parv, maize
+hilo$ scp local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/posterior/* ecalfee@169.237.66.199:/Users/Shared/wavelets/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/posterior/.
 
+# waiting on jobs to get priority to start...
+ecalfee@c6-95:~$ squeue -u ecalfee --start
+             JOBID PARTITION     NAME     USER ST          START_TIME  NODES SCHEDNODES           NODELIST(REASON)
+          34789079      med2 estimate  ecalfee PD 2021-05-29T22:33:45      1 (null)               (Priority)
+          34789081      med2 estimate  ecalfee PD 2021-05-29T22:33:45      1 (null)               (Priority)
+...
 
+# copying some completed files over for plotting:
+# global ancestry
+Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/* global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/.
+# timing of admixture estimates K2
+Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/*.times local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/.
+# timing of admixture estimates K3
+hilo Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/*.times local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/.
+# metadata and ancestry proportions (to plot admix times) K2 and K3
+hilo Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/*.pop.meta.RData local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/.
+hilo Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/*.pop.meta.RData local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/.
+# Ne 1000, 100,000 results for timing (non-bootstrap) and ind.alpha estimates and mexicana pop freq estimates
 
-
-
+# ancestry outliers? K matrix for mexicana, maize or both?
 
 # TO DO:
+# delete previous times summaries for K=2 so that these rerun with 'mexicana' label for 2nd column
+hilo$ ls local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/*.times
+
 # to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
 
 # what do I need to rerun ancestry_hmm?

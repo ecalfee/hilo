@@ -98,18 +98,18 @@ rule results_NGSAdmix:
     script:
          "results_NGSAdmix.R"
 
-## plot_NGSAdmix: plots results of NGSAdmix and produces table with linear model output for cline in mexicana ancestry with elevation
-rule plot_NGSAdmix:
+## plot_NGSAdmix_K2: plots results of NGSAdmix mex/maize admixture and produces table with linear model output for cline in mexicana ancestry with elevation
+rule plot_NGSAdmix_K2:
     input:
-        meta = "samples/HILO_MAIZE55_meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
         colors = "colors.R",
-        k2 = "global_ancestry/results/NGSAdmix/HILO_MAIZE55/K2_alphas_by_ind.RData"
+        k2 = "global_ancestry/results/NGSAdmix/{PREFIX}/K2_alphas_by_ind.RData"
     output:
-        png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png",
-        png_structure = "global_ancestry/plots/structure_K2.png",
-        lm_tex = "global_ancestry/tables/lm_elevation.tex",
-        png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png",
-        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
+        png_elev = "global_ancestry/plots/{PREFIX}_lm_mexicana_by_pop_elevation_K2.png",
+        png_structure = "global_ancestry/plots/{PREFIX}_structure_K2.png",
+        lm_tex = "global_ancestry/tables/{PREFIX}_lm_elevation_K2.tex",
+        png_global_anc_multi = "global_ancestry/plots/{PREFIX}_global_anc_multi_K2.png",
+        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/{PREFIX}_global_anc_multi_K2.tif"
     params:
         p = "med2"
     conda:
@@ -118,7 +118,31 @@ rule plot_NGSAdmix:
          time_min = 15,
          mem = 2
     script:
-         "plot_NGSAdmix.R"
+         "plot_NGSAdmix_K2.R"
+
+## plot_NGSAdmix_K3: plots results of NGSAdmix mex/maize/parv admixture and produces table with linear model output for cline in mexicana ancestry with elevation
+rule plot_NGSAdmix_K3:
+    input:
+        meta = "samples/{PREFIX}_meta.RData",
+        colors = "colors.R",
+        k3 = "global_ancestry/results/NGSAdmix/{PREFIX}/K3_alphas_by_ind.RData"
+    output:
+        png_elev = "global_ancestry/plots/{PREFIX}_lm_mexicana_by_pop_elevation_K3.png",
+        png_structure = "global_ancestry/plots/{PREFIX}_structure_K3.png",
+        png_structure_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_structure_K2.tif",
+        lm_tex = "global_ancestry/tables/{PREFIX}_lm_elevation_K3.tex",
+        png_global_anc_multi = "global_ancestry/plots/{PREFIX}_global_anc_multi_K3.png",
+        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/{PREFIX}_global_anc_multi_K3.tif"
+    params:
+        p = "med2"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 30,
+         mem = 2
+    script:
+         "plot_NGSAdmix_K3.R"
+
 
 ## plot_PCAngsd: plots genomewide PCA from genetic covariance matrix estimated by PCAngsd
 rule plot_PCAngsd:

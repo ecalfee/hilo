@@ -342,7 +342,7 @@ rule some:
         "diversity/results/fst/HILO_MAIZE55/K2/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_admix_times_Ne10000_yesBoot.tif"
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
     params:
         p = "med2"
     resources:

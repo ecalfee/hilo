@@ -12,47 +12,50 @@ YESNO = snakemake@params[["YESNO"]]
 alpha = as.numeric(snakemake@params[["alpha"]])
 # alpha = 0.05
 prefix_all = snakemake@params[["prefix_all"]]
-# prefix = "HILO_MAIZE55"
+# prefix = "HILO_MAIZE55_PARV50"
 png_times = snakemake@output[["png_times"]]
-# png_times = paste0("local_ancestry/plots/", prefix, "K2_admix_times_Ne", Ne, "_", YESNO, "Boot.png")
+# png_times = paste0("local_ancestry/plots/", prefix, "K3_admix_times_Ne", Ne, "_", YESNO, "Boot.png")
 png_times_lzw = snakemake@output[["png_times_lzw"]]
-# png_times_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "K2_admix_times_Ne", Ne, "_", YESNO, "Boot.tif")
+# png_times_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "K3_admix_times_Ne", Ne, "_", YESNO, "Boot.tif")
 txt_times = snakemake@output[["txt_times"]]
-# txt_times = paste0("local_ancestry/results/", prefix, "K2_admix_times_Ne", Ne, "_", YESNO, "Boot.txt")
+# txt_times = paste0("local_ancestry/results/", prefix, "K3_admix_times_Ne", Ne, "_", YESNO, "Boot.txt")
 rds_times = snakemake@output[["rds_times"]]
-# rds_times = paste0("local_ancestry/results/", prefix, "K2_admix_times_Ne", Ne, "_", YESNO, "Boot.RDS")
+# rds_times = paste0("local_ancestry/results/", prefix, "K3_admix_times_Ne", Ne, "_", YESNO, "Boot.RDS")
 source(snakemake@params[["colors"]]) # plotting colors
 # source("colors.R")
 
 # load meta and bootstrap data for maize and mexicana
 zea = c("maize", "mexicana")
 for (z in zea){
+  parv_maize = c("parv", "maize")
   load(paste0("local_ancestry/results/ancestry_hmm/",
-              prefix, "/K2/Ne", Ne, "_", YESNO,
+              prefix, "/K3/Ne", Ne, "_", YESNO,
               "Boot/anc/", z, ".pop.meta.RData"))
-  times = do.call(bind_cols, lapply(meta_pops$pop, function(p)
+  times = lapply(parv_maize, function(a)
+                 do.call(bind_cols, lapply(meta_pops$pop, function(p)
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
-                      prefix, "/K2/Ne", Ne, "_", YESNO,
+                      prefix, "/K3/Ne", Ne, "_", YESNO,
                       "Boot/", p, ".times"),
-               header = T, stringsAsFactors = F, set = " ")$t))
-#  times = do.call(bind_cols, lapply(meta_pops$pop, function(p)
-#    read.table(paste0("local_ancestry/results/ancestry_hmm/",
-#                      prefix, "/K2/Ne", Ne, "_", YESNO,
-#                      "Boot/", p, ".times"),
-#              header = F, skip = 1, stringsAsFactors = F)))
-  colnames(times) <- meta_pops$pop
-  boots = times[2:nrow(times), ] # first row is estimate, remaining rows bootstraps
-  time_est = data.frame(time = unlist(times[1, ]),
-                    low_boot = apply(boots, 2, function(x) quantile(x, alpha/2)),
-                    high_boot = apply(boots, 2, function(x) quantile(x, 1 - alpha/2)),
-                    mean_boot = apply(boots, 2, mean),
-                    sd_boot = apply(boots, 2, sd),
-                    pop = colnames(times), stringsAsFactors = F,
+               header = T, stringsAsFactors = F, sep = " ") %>%
+      dplyr::filter(ancestry == a) %>%
+      dplyr::select(t))) %>%
+      data.table::setnames(meta_pops$pop))
+  names(times) = parv_maize
+  boots = lapply(times, function(t) t[2:nrow(t), ]) # first row is estimate, remaining rows bootstraps
+  names(boots) = parv_maize
+  time_est = do.call(rbind,
+                     lapply(parv_maize, function(a)
+    data.frame(time = unlist(times[[a]][1, ]),
+                    low_boot = apply(boots[[a]], 2, function(x) quantile(x, alpha/2)),
+                    high_boot = apply(boots[[a]], 2, function(x) quantile(x, 1 - alpha/2)),
+                    mean_boot = apply(boots[[a]], 2, mean),
+                    sd_boot = apply(boots[[a]], 2, sd),
+                    pop = colnames(times[[a]]), stringsAsFactors = F,
                     alpha = alpha) %>%
     dplyr::mutate(low_basic = 2*time - high_boot,
                   high_basic = 2*time - low_boot,
-                  se_boot = sd_boot/sqrt(nrow(boots)),
-                  admixture_pulse = "mexicana")
+                  se_boot = sd_boot/sqrt(nrow(boots[[a]])),
+                  admixture_pulse = a)))
   assign(x = z, value = left_join(meta_pops, time_est, by = "pop"))
   rm(meta_pops, times, time_est, boots)
 }
@@ -63,10 +66,12 @@ d <- bind_rows(maize, mexicana) %>%
 
 # plot
 p_times <- d %>%
+  mutate(zea = paste("sympatric", zea)) %>%
+  mutate(admixture_pulse = ifelse(admixture_pulse == "parv", "parviglumis", ancestry)) %>%
   ggplot(., aes(x = reorder(LOCALITY, ELEVATION),
                 y = time,
                 #alpha = introgress,
-                col = zea)) +
+                col = ancestry)) +
   geom_point() + # plot time estimate
   # add errorbars for 95% percentile CI around that mean
   # based on bootstrap
@@ -76,11 +81,12 @@ p_times <- d %>%
   xlab("Sympatric population") +
   ylab("Admixture time (generations)") +
   theme_classic() +
-  ylim(0, 1650) +
-  guides(color = guide_legend("Subspecies"),
+  ylim(-100, 1650) +
+  guides(color = guide_legend("Admixture pulse"),
          alpha = guide_legend("Proportion\nminor ancestry")) +
   scale_color_manual(values = col_maize_mex_parv) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(~zea)
 # p_times
 ggsave(file = png_times,
        plot = p_times,
@@ -110,7 +116,7 @@ write.table(., file = txt_times,
 # mean block length in cM:
 mean_cM_block_length = 1/max(d$time) * 100 #cM/Morgan
 
-allo <- read.table(paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K2/whole_genome.allo.counts"),
+allo <- read.table(paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K3/whole_genome.allo.counts"),
                     stringsAsFactors = F, header = T) %>%
   dplyr::mutate(n_tot_maize = n_minor_maize + n_major_maize,
                 p_maize = n_minor_maize/(n_tot_maize),

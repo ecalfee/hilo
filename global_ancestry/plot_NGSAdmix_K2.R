@@ -14,17 +14,15 @@ library(gridExtra)
 # load variables from snakemake
 # get output plot and table filenames
 png_elev = snakemake@output[["png_elev"]]
-# png_elev = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2.png"
-png_elev_symp_allo = snakemake@output[["png_elev_symp_allo"]]
-# png_elev_symp_allo = "global_ancestry/plots/lm_mexicana_by_pop_elevation_K2_symp_allo.png"
+# png_elev = "global_ancestry/plots/HILO_MAIZE55_lm_mexicana_by_pop_elevation_K2.png"
 png_structure = snakemake@output[["png_structure"]]
-# png_structure = "global_ancestry/plots/structure_K2.png"
+# png_structure = "global_ancestry/plots/HILO_MAIZE55_structure_K2.png"
 lm_tex = snakemake@output[["lm_tex"]]
-# lm_tex = "global_ancestry/tables/lm_elevation.tex"
+# lm_tex = "global_ancestry/tables/HILO_MAIZE55_lm_elevation_K2.tex"
 png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
-# png_global_anc_multi = "global_ancestry/plots/global_anc_multi.png"
+# png_global_anc_multi = "global_ancestry/plots/HILO_MAIZE55_global_anc_multi_K2.png"
 png_global_anc_multi_lzw = snakemake@output[["png_global_anc_multi_lzw"]]
-# png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/global_anc_multi.tif"
+# png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/HILO_MAIZE55_global_anc_multi_K2.tif"
 
 # some plot sizing constants
 smallPointSize = 0.25
@@ -98,7 +96,7 @@ p_symp_elev <- d_admix2 %>%
                 color = LOCALITY,
                 shape = zea)) +
   geom_point(alpha = 0.75, size = 2) +
-  ylab("Proportion mexicana ancestry") +
+  ylab("Mexicana ancestry proportion") +
   xlab("Elevation (m)") +
   geom_abline(intercept = c(coef(lm_mex)[1], coef(lm_maize)[1]),
               slope = c(coef(lm_mex)[2], coef(lm_maize)[2])/1000) + # divided by 1000 to put on meters, not km, x-axis scale
