@@ -3895,12 +3895,34 @@ Job counts:
         115 # RUNNING 6.1.2021. oops typose in plot_admix_times. fixed.
         # also adding lm fits and mean ancestry FDR threshold calcs to rule some.
         # Fixed thesholds -> threshold in FDR.R script too.
+        hilo$ snakemake -n some --quiet --profile slurm
+        Job counts:
+                count   jobs
+                4       calc_K_matrix_zea
+                4       calc_fdr_mean_anc
+                48      calc_overlap
+                4       fit_lm_elev
+                10      make_bed_anc_outliers
+                4       make_bed_slope_elev
+                48      merge_bed_outliers
+                1       plot_admix_times_K2
+                1       plot_admix_times_K3
+                4       simulate_MVN
+                1       some
+                2       summarise_overlap_flowering_time
+                131 # RUNNING 6.1.2021 1pm
+# removing previous version of ancestry saved in .RData to make a new version where it's a list
+hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55*/K*/Ne10000_yesBoot/anc/*.pops.anc.RData
 
-# FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
+
 
 # TO DO:
-# ancestry outliers? K matrix for mexicana, maize, parv or all 3?
-
+# FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
+# check on calc_K_matrix
+# plot ancestry outliers across genome: K matrix for mexicana, maize, parv or all 3?
+34984766
+34984767
+34984723 # anc not found
 
 
 # to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"

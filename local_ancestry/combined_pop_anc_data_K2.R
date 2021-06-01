@@ -62,11 +62,18 @@ meta_pops$alpha_local_ancestry_maize = apply(anc_maize, 2, mean)
 anc_mexicana_mean = (anc_mexicana %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)
 anc_maize_mean = (anc_maize %*% meta_pops$n_local_ancestry)/sum(meta_pops$n_local_ancestry)
 
+anc = list()
+anc[["mexicana"]] = anc_mexicana
+anc[["maize"]] = anc_maize
+anc_mean = list()
+anc_mean[["mexicana"]] = anc_mexicana_mean
+anc_mean[["maize"]] = anc_maize_mean
+
 # write output files:
 
 # RData files
 save(list = "meta_pops", file = output_meta_pop)
-save(list = c("anc_mexicana", "anc_maize", "anc_mexicana_mean", "anc_maize_mean"), file = output_pop_anc)
+save(list = c("anc", "anc_mean"), file = output_pop_anc)
 
 # write bedfiles -- 1 per ancestry -- with population ancestry frequencies for each tract
 write.table(tracts %>%

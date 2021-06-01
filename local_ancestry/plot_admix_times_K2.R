@@ -87,6 +87,12 @@ ggsave(file = png_times,
        device = "png",
        width = 5, height = 4,
        units = "in", dpi = 300)
+ggsave(file = png_times_lzw,
+       plot = p_times,
+       device = "tiff",
+       width = 5, height = 4,
+       compression = "lzw", type = "cairo",
+       units = "in", dpi = 300)
 
 # save plot as RDS also
 saveRDS(object = p_times, file = rds_times)
