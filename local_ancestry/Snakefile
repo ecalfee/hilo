@@ -720,11 +720,11 @@ rule get_admix_times_K3:
         (echo "extra buffer line"; cat {input.log}) | awk -v N=5 'NR % N == 0' | cut -f3 | awk '{{print $0, "parv"}}' >> {output.times}
         """
 
-## plot_admix_times_K2: plots admixture timing estimates from the HMM
+## plot_admix_times_K2: plots admixture timing estimates from the HMM for maize + mex K=2 scenario
 rule plot_admix_times_K2:
     input:
         expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/{POP}.log", POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/{POP}.times", POP = symp_pops),
         "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.allo.counts",
         "colors.R"
     output:
@@ -747,6 +747,31 @@ rule plot_admix_times_K2:
     script:
         "plot_admix_times_K2.R"
 
-## plot_admix_times_K3: TO DO
+## plot_admix_times_K3: plots admixture timing estimates from the HMM for (mex + parv) + maize K=3 scenario
+rule plot_admix_times_K3:
+    input:
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{{Ne}}_{{YESNO}}Boot/{POP}.times", POP = symp_pops),
+        "local_ancestry/results/thinnedSNPs/{PREFIX}/K3/whole_genome.allo.counts",
+        "colors.R"
+    output:
+        png_times = "local_ancestry/plots/{PREFIX}_K3_admix_times_Ne{Ne}_{YESNO}Boot.png",
+        png_times_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_admix_times_Ne{Ne}_{YESNO}Boot.tif",
+        txt_times = "local_ancestry/results/{PREFIX}_K3_admix_times_Ne{Ne}_{YESNO}Boot.txt",
+        rds_times = "local_ancestry/results/{PREFIX}_K3_admix_times_Ne{Ne}_{YESNO}Boot.RDS"
+    params:
+        p = "med2",
+        Ne = lambda wildcards: wildcards.Ne,
+        YESNO = lambda wildcards: wildcards.YESNO,
+        prefix_all = lambda wildcards: wildcards.PREFIX,
+        colors = "colors.R",
+        alpha = 0.05
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 10,
+        mem = 2
+    script:
+        "plot_admix_times_K3.R"
 
 ## plot_sensitivity_to_Ne: compares admixture timing estimates and correlation of local ancestry calls
