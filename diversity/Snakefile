@@ -72,10 +72,10 @@ rule estimate_saf_pop:
     conda:
         "../envs/environment.yaml"
     threads:
-        4
+        2
     resources:
-        time_min = 48*60,
-        mem = lambda wildcards, attempt: attempt * 32 + 32
+        time_min = 60*60,
+        mem = lambda wildcards, attempt: attempt * 40 + 32
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "

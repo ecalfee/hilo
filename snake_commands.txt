@@ -3876,9 +3876,16 @@ hilo Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/result
 hilo Erin$ scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/*.pop.meta.RData local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/.
 # Ne 1000, 100,000 results for timing (non-bootstrap) and ind.alpha estimates and mexicana pop freq estimates
 
-# ancestry outliers? K matrix for mexicana, maize or both?
+check on these jobs? do they need to have fewer threads to make it memory-wise?
+34867890      med2 estimate  ecalfee  R        1:24      1 32  128G   c6-86
+34867609      med2 estimate  ecalfee  R        5:54      1 32  128G   c6-66
+34867469      med2 estimate  ecalfee  R       15:19      1 32  128G   c6-56
+# reduced to 2 threads and added memory also.
 
 # TO DO:
+# ancestry outliers? K matrix for mexicana, maize or both?
+
+# REMEMBER TO GIT PULL AND DO THESE DELETIONS BEFORE STARTING MORE SNAKEMAKE JOBS!
 # delete previous times summaries for K=2 so that these rerun with 'mexicana' label for 2nd column
 hilo$ ls local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/*.times
 
