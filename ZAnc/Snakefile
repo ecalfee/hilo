@@ -236,7 +236,7 @@ rule make_bed_anc_outliers:
     input:
         fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
         sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.{ANCESTRY}_anc.bed""
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.{ANCESTRY}_anc.bed"
     output:
         pos_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed",
         neg_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_{ANCESTRY}_anc_outliers.fdr05.bed",
