@@ -34,7 +34,7 @@ for (z in zea){
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
                       prefix, "/K2/Ne", Ne, "_", YESNO,
                       "Boot/", p, ".times"),
-               header = T, stringsAsFactors = F, set = " ")$t))
+               header = T, stringsAsFactors = F, sep = " ")$t))
 #  times = do.call(bind_cols, lapply(meta_pops$pop, function(p)
 #    read.table(paste0("local_ancestry/results/ancestry_hmm/",
 #                      prefix, "/K2/Ne", Ne, "_", YESNO,

@@ -67,11 +67,11 @@ d <- bind_rows(maize, mexicana) %>%
 # plot
 p_times <- d %>%
   mutate(zea = paste("sympatric", zea)) %>%
-  mutate(admixture_pulse = ifelse(admixture_pulse == "parv", "parviglumis", ancestry)) %>%
+  mutate(admixture_pulse = ifelse(admixture_pulse == "parv", "parviglumis", admixture_pulse)) %>%
   ggplot(., aes(x = reorder(LOCALITY, ELEVATION),
                 y = time,
                 #alpha = introgress,
-                col = ancestry)) +
+                col = admixture_pulse)) +
   geom_point() + # plot time estimate
   # add errorbars for 95% percentile CI around that mean
   # based on bootstrap

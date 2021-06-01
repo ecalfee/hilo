@@ -339,7 +339,9 @@ rule some:
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
-        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea)
     params:
         p = "med2"
     resources:

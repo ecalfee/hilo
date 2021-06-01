@@ -3,15 +3,16 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-## calc_K_matrix_zea: calculate K matrix
+## calc_K_matrix_zea: calculate K matrix for each ancestry
 rule calc_K_matrix_zea:
     input:
-        pop_anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        pop_anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
         k_functions = "ZAnc/k_matrix.R"
     output:
-        K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData"
+        K_matrix = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData"
     params:
-        p = "med2"
+        p = "med2",
+        K_admix = lambda wildcards: wildcards.K
     shadow:
         "minimal"
     conda:
@@ -19,7 +20,7 @@ rule calc_K_matrix_zea:
     threads:
         1
     resources:
-        time_min = lambda wildcards, attempt: attempt * 15,
+        time_min = lambda wildcards, attempt: attempt * 20,
         mem = lambda wildcards, attempt: attempt * 2
     script:
         "calc_K_matrix_zea.R"
@@ -27,13 +28,15 @@ rule calc_K_matrix_zea:
 ## simulate_MVN: simulate ancestry data based on a multi-variate normal model of ancestry drift
 rule simulate_MVN:
     input:
-        K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData",
-        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+        K = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
     output:
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData"
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        truncated_txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.truncated.stats.txt"
     params:
         p = "med2",
-        n_sim = 100000
+        n_sim = 100000,
+        K_admix = lambda wildcards: wildcards.K
     shadow:
         "minimal"
     conda:
@@ -41,8 +44,8 @@ rule simulate_MVN:
     threads:
         1
     resources:
-        time_min = 5,
-        mem = lambda wildcards, attempt: attempt * 2
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
     script:
         "simulate_MVN.R"
 
@@ -51,13 +54,13 @@ rule fit_lm_elev:
     input:
         fdr_functions = "ZAnc/FDR.R",
         lm_functions = "ZAnc/lm_env_function.R",
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
         meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
     output:
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
-        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData" # fits from simulated MVN data
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData" # fits from simulated MVN data
     params:
         p = "med2"
     shadow:
@@ -76,13 +79,14 @@ rule fit_lm_elev:
 rule calc_fdr_mean_anc:
     input:
         fdr_functions = "ZAnc/FDR.R",
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData"
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData"
     output:
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData"
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData"
     params:
         p = "med2",
-        zea = lambda wildcards: wildcards.ZEA
+        zea = lambda wildcards: wildcards.ZEA,
+        K_admix = lambda wildcards: wildcards.K
     shadow:
         "minimal"
     conda:

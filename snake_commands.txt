@@ -3885,9 +3885,19 @@ check on these jobs? do they need to have fewer threads to make it memory-wise?
 hilo$ ls local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/*.times
 hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*Boot/*.times
 # moved 'diversity' results to it's own rule (out of rule some so I can run other things 1st)
+hilo$ snakemake some --quiet --profile slurm
+Job counts:
+        count   jobs
+        112     get_admix_times_K2
+        1       plot_admix_times_K2
+        1       plot_admix_times_K3
+        1       some
+        115 # RUNNING 6.1.2021. oops typose in plot_admix_times. fixing.
+        
+
 
 # TO DO:
-# ancestry outliers? K matrix for mexicana, maize or both?
+# ancestry outliers? K matrix for mexicana, maize, parv or all 3?
 
 
 
