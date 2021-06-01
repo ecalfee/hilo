@@ -49,7 +49,7 @@ rule simulate_MVN:
     script:
         "simulate_MVN.R"
 
-## fit_lm_elev: fits simple linear model lm(anc ~ elev)
+## fit_lm_elev: fits simple linear model lm(mexicana anc ~ elev)
 rule fit_lm_elev:
     input:
         fdr_functions = "ZAnc/FDR.R",
@@ -71,7 +71,7 @@ rule fit_lm_elev:
         1
     resources:
         time_min = 2*60,
-        mem = 2
+        mem = 4
     script:
         "fit_lm_elev.R"
 
@@ -95,7 +95,7 @@ rule calc_fdr_mean_anc:
         1
     resources:
         time_min = 15,
-        mem = 2
+        mem = 4
     script:
         "calc_fdr_mean_anc.R"
 
@@ -208,17 +208,17 @@ rule plotQQ:
 ## make_bed_slope_elev: makes bed files with outlier regions for ancestry slope with elevation
 rule make_bed_slope_elev:
     input:
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
-        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData",
-        bed = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.sim.RData",
+        bed = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
     output:
-        pos_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.fdr05.bed",
-        neg_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.fdr05.bed",
-        pos_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.perc05.bed",
-        neg_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.perc05.bed",
-        pos_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.p05.bed",
-        neg_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.p05.bed"
+        pos_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.fdr05.bed",
+        neg_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.fdr05.bed",
+        pos_perc = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.perc05.bed",
+        neg_perc = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.perc05.bed",
+        pos_p = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.p05.bed",
+        neg_p = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_lmElev_outliers.p05.bed"
     params:
         p = "med2"
     shadow:
@@ -234,18 +234,19 @@ rule make_bed_slope_elev:
 ## make_bed_anc_outliers: makes bed files with outlier regions for mean mexicana ancestry (pos is above mean, neg is below mean)
 rule make_bed_anc_outliers:
     input:
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
-        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed"
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
+        sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.{ANCESTRY}_anc.bed""
     output:
-        pos_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.fdr05.bed",
-        neg_fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.fdr05.bed",
-        pos_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.perc05.bed",
-        neg_perc = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.perc05.bed",
-        pos_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_meanAnc_outliers.p05.bed",
-        neg_p = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_meanAnc_outliers.p05.bed"
+        pos_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed",
+        neg_fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_{ANCESTRY}_anc_outliers.fdr05.bed",
+        pos_perc = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_{ANCESTRY}_anc_outliers.perc05.bed",
+        neg_perc = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_{ANCESTRY}_anc_outliers.perc05.bed",
+        pos_p = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_{ANCESTRY}_anc_outliers.p05.bed",
+        neg_p = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_neg_{ANCESTRY}_anc_outliers.p05.bed"
     params:
-        p = "med2"
+        p = "med2",
+        ANCESTRY = "{ANCESTRY}"
     shadow:
         "minimal"
     conda:

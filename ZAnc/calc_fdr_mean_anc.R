@@ -9,27 +9,34 @@ library(ggplot2)
 fdr_functions = snakemake@input[["fdr_functions"]]
 # fdr_functions = "ZAnc/FDR.R"
 sim_file = snakemake@input[["sim"]]
-# sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
+# sim_file = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".MVN.RData")
 anc_file = snakemake@input[["anc"]]
-# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
+# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
 fdr_out = snakemake@output[["fdr"]]
-# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
+# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
+K_admix = snakemake@params[["K_admix"]]
+# K_admix = 2
 
 # load data
 source(fdr_functions)
 load(anc_file)
 load(sim_file)
 
-# calculate false discovery rate thresholds
-FDRs = calc_FDR(d = anc_mean, 
-                s = MVN_mean, 
-                test_values = seq(0, 1, by = .0001))
+# define mixing ancestries
+ancestries = c("mexicana", "maize", "parv")[1:K_admix]
 
-# what % of SNPs exceed these thresholds?
-FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
-  ifelse(FDRs$tail[i] == "high", 
-         sum(anc_mean > FDRs$thesholds[i]),
-         sum(anc_mean < FDRs$thesholds[i])))
-FDRs$prop_SNPs = FDRs$n_SNPs/length(anc_mean)
+# calculate false discovery rate thresholds
+FDRs = list()
+for (a in ancestries){
+  FDRs[[a]] = calc_FDR(d = anc_mean[[a]], 
+                  s = MVN_mean[[a]], 
+                  test_values = seq(0, 1, by = .0001))
+  # what % of SNPs exceed these thresholds?
+  FDRs[[a]]$n_SNPs = sapply(1:nrow(FDRs[[a]]), function(i) 
+    ifelse(FDRs[[a]]$tail[i] == "high", 
+           sum(anc_mean[[a]] > FDRs$threshold[i]),
+           sum(anc_mean[[a]] < FDRs$threshold[i])))
+  FDRs[[a]]$prop_SNPs = FDRs[[a]]$n_SNPs/length(anc_mean[[a]])
+}
 
 save(FDRs, file = fdr_out)

@@ -19,7 +19,7 @@ calc_FDR_high <- function(d, s, FDR_values, test_values){
   test_fdr_high <- sapply(test_values, function(x) 
     fdr_high(x, data = d, sims = s))
   # find which values match the FDR thresholds in FDR_values
-  FDRs_high <- data.frame(thesholds = sapply(FDR_values, 
+  FDRs_high <- data.frame(threshold = sapply(FDR_values, 
                                              function(p) 
                                                min(test_values[test_fdr_high <= p], 
                                                    na.rm = T)),
@@ -35,7 +35,7 @@ calc_FDR_low <- function(d, s, FDR_values, test_values){
   test_fdr_low <- sapply(test_values, function(x) 
     fdr_low(x, data = d, sims = s))
   # find which values match the FDR thresholds in FDR_values
-  FDRs_low <- data.frame(thesholds = sapply(FDR_values, 
+  FDRs_low <- data.frame(threshold = sapply(FDR_values, 
                                             function(p) 
                                               max(test_values[test_fdr_low <= p], 
                                                   na.rm = T)),

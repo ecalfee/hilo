@@ -21,6 +21,7 @@ wildcard_constraints:
     STAT = "meanAnc|lmElev", # statistics defining outliers
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana|parv",
+    ANCESTRY = "maize|mexicana|parv",
     ALLO_MEX = "allopatric_maize|pop22", # used in f4s. pop22 is Amecameca (at 2467m, the highest elevation of 3 allopatric pops)
     SUBSAMPLE = "[0-9]+",
     REGION = "region_[0-9]+",
@@ -333,15 +334,25 @@ rule some:
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
+        #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
+        #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
-        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
-        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea)
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.lmElev.fit.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.lmElev.fit.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.meanAnc.fdr.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.meanAnc.fdr.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea)
     params:
         p = "med2"
     resources:

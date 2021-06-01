@@ -7,30 +7,30 @@ library(dplyr)
 # load variables from Snakefile
 # zea = "maize"
 fdr_file = snakemake@input[["fdr"]]
-# fdr_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
+# fdr_file = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
 fit_file = snakemake@input[["fit"]]
-# fit_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
+# fit_file = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
 sim_file = snakemake@input[["sim"]]
-# sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
+# sim_file = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
 sites_file = snakemake@input[["bed"]]
-# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
+# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/K2/whole_genome.bed"
 pos_fdr = snakemake@output[["pos_fdr"]] # positive slope outliers
-# pos_fdr = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.fdr05.bed")
+# pos_fdr = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.fdr05.bed")
 neg_fdr = snakemake@output[["neg_fdr"]] # negative slope outliers
-# neg_fdr = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.fdr05.bed")
+# neg_fdr = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.fdr05.bed")
 
 # less stringent than 5% FDR:
 # use 5% empirical of the genome (not ancestry tracts) as an outlier cutoff
 pos_perc = snakemake@output[["pos_perc"]] 
-# pos_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.perc05.bed")
+# pos_perc = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.perc05.bed")
 neg_perc = snakemake@output[["neg_perc"]] 
-# neg_perc = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.perc05.bed")
+# neg_perc = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.perc05.bed")
 
 # use p-value cutoff using from simulated data (p = 0.05 is top 5% simulated points)
 pos_p = snakemake@output[["pos_p"]]
-# pos_p = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.p05.bed")
+# pos_p = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_pos_lmElev_outliers.p05.bed")
 neg_p = snakemake@output[["neg_p"]]
-# neg_p = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.p05.bed")
+# neg_p = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, "_neg_lmElev_outliers.p05.bed")
 
 
 # load data
@@ -47,7 +47,7 @@ sites_bed <- read.table(sites_file, header = F, stringsAsFactors = F,
 # filter for positive slope outliers above 5% FDR
 bind_cols(sites_bed, fits) %>%
   rename(slope = envWeights) %>%
-  filter(slope > filter(FDRs, FDR == 0.1 & tail == "high")$thesholds) %>%
+  filter(slope > filter(FDRs, FDR == 0.1 & tail == "high")$threshold) %>%
   #dplyr::select(., colnames(sites_bed), slope) %>%
   dplyr::select(., chr, start, end) %>%
   write.table(., file = pos_fdr,  sep = "\t", quote = F,
@@ -56,17 +56,19 @@ bind_cols(sites_bed, fits) %>%
 # filter for negative slope outliers above 5% FDR
 bind_cols(sites_bed, fits) %>%
   rename(slope = envWeights) %>%
-  filter(slope < filter(FDRs, FDR == 0.05 & tail == "low")$thesholds) %>%
+  filter(slope < filter(FDRs, FDR == 0.05 & tail == "low")$threshold) %>%
   dplyr::select(., chr, start, end) %>%
   write.table(., file = neg_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
 # what percent of the genome is in an outlier region?
-#bind_cols(sites_bed, fits) %>%
-#  rename(slope = envWeights) %>%
-#  filter(slope > filter(FDRs, FDR == 0.05 & tail == "high")$thesholds) %>%
-#  mutate(length = end - start) %>%
-#  summarise(total = sum(length)/(2.3*10^9))
+print("what percent of the genome is in an outlier region?")
+bind_cols(sites_bed, fits) %>%
+  rename(slope = envWeights) %>%
+  filter(slope > filter(FDRs, FDR == 0.05 & tail == "high")$threshold) %>%
+  mutate(length = end - start) %>%
+  summarise(total = sum(length)/(2.3*10^9)) %>%
+  print(.)
 
 # 5% of genome outliers (less stringent outlier criteria):
 # high

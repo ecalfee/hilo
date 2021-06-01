@@ -3892,8 +3892,9 @@ Job counts:
         1       plot_admix_times_K2
         1       plot_admix_times_K3
         1       some
-        115 # RUNNING 6.1.2021. oops typose in plot_admix_times. fixing.
-        
+        115 # RUNNING 6.1.2021. oops typose in plot_admix_times. fixed.
+        # also adding lm fits and mean ancestry FDR threshold calcs to rule some.
+        # Fixed thesholds -> threshold in FDR.R script too.
 
 
 # TO DO:

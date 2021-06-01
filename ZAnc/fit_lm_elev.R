@@ -7,17 +7,17 @@ source(snakemake@input[["lm_functions"]])
 # source("ZAnc/lm_env_function.R")
 # zea = "maize"
 meta_file = snakemake@input[["meta_pop"]]
-# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
 anc_file = snakemake@input[["anc"]]
-# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
+# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
 sim_file = snakemake@input[["sim"]]
-# sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
+# sim_file = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".MVN.RData")
 fdr_out = snakemake@output[["fdr"]]
-# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
+# fdr_out = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
 fit_out = snakemake@output[["fit"]]
-# fit_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
+# fit_out = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
 sim_out = snakemake@output[["sim"]]
-# sim_out = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
+# sim_out = paste0("ZAnc/results/HILO_MAIZE55/K2/Ne10000_yesBoot/", zea, ".lmElev.sim.RData")
 
 # load data
 load(anc_file)
@@ -26,7 +26,7 @@ load(sim_file)
 
 
 # fit original data
-fits <- apply(anc, 
+fits <- apply(anc[["mexicana"]], 
               1, function(x)
                 simple_env_regression(ancFreq = x, 
                                       envWeights = meta_pops$ELEVATION/1000)) %>%
@@ -34,7 +34,7 @@ fits <- apply(anc,
   as.data.frame(.)
 
 # fit simulated data
-fits_sim <- apply(MVN_sim, 
+fits_sim <- apply(MVN_sim[["mexicana"]], 
               1, function(x)
                 simple_env_regression(ancFreq = x, 
                                       envWeights = meta_pops$ELEVATION/1000)) %>%
@@ -51,8 +51,8 @@ FDRs <- calc_FDR(d = fits$envWeights, s = fits_sim$envWeights,
 # what % of SNPs exceed these thresholds?
 FDRs$n_SNPs = sapply(1:nrow(FDRs), function(i) 
   ifelse(FDRs$tail[i] == "high", 
-         sum(fits$envWeights > FDRs$thesholds[i]),
-         sum(fits$envWeights < FDRs$thesholds[i])))
+         sum(fits$envWeights > FDRs$threshold[i]),
+         sum(fits$envWeights < FDRs$threshold[i])))
 FDRs$prop_SNPs = FDRs$n_SNPs/nrow(fits)
 
 # save results
