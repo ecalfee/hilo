@@ -18,7 +18,7 @@ wildcard_constraints:
     Ne = "[0-9]+",
     POSNEG = "pos|neg",
     SIG = "fdr05|perc05|p05", # outlier significance cutoffs: 5% FDR, 5% empirical cutoff, p = 5% (5% percentile from null simulations)
-    STAT = "meanAnc|lmElev", # statistics defining outliers
+    STAT = "meanAnc|lmElev|maize_anc|mexicana_anc|parv_anc", # statistics defining outliers
     GROUP = "sympatric_maize|sympatric_mexicana|allopatric_maize|allopatric_mexicana|parv",
     ZEA = "maize|mexicana|parv",
     ANCESTRY = "maize|mexicana|parv",
@@ -352,7 +352,8 @@ rule some:
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
-        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea)
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
     params:
         p = "med2"
     resources:

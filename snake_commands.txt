@@ -3896,6 +3896,7 @@ Job counts:
         # also adding lm fits and mean ancestry FDR threshold calcs to rule some.
         # Fixed thesholds -> threshold in FDR.R script too.
 
+# FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
 
 # TO DO:
 # ancestry outliers? K matrix for mexicana, maize, parv or all 3?

@@ -260,9 +260,9 @@ rule make_bed_anc_outliers:
 ## merge_bed_outliers: merges adjacent outliers into contiguous regions
 rule merge_bed_outliers:
     input:
-        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed"
+        "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed"
     output:
-        "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed"
+        "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed"
     params:
         p = "med2"
     shadow:
@@ -318,11 +318,11 @@ rule add_20kb_flowering_time_genes:
 rule calc_overlap:
     input:
         genes = "ZAnc/results/flowering_time_genes_v4.plus20kb.bed",
-        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
+        outliers = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
         genome = ref_chr
     output:
-        bed = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
-        shuffle = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
+        bed = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
+        shuffle = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
     params:
         p = "med2"
     shadow:
@@ -345,15 +345,15 @@ rule calc_overlap:
 ## summarise_overlap_flowering_time: summarises number of outliers in original gene set (line 1) and 1000 randomly shuffled positions from that gene set (lines 2-1001)
 rule summarise_overlap_flowering_time:
     input:
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts",
-        ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"])
+        expand("ZAnc/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts",
+        ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["lmElev", "mexicana_anc"], SIG = ["fdr05", "perc05", "p05"])
     output:
-        txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
+        txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
-        prefix = prefix_all
+        prefix = "{PREFIX}"
     shadow:
         "minimal"
     conda:
@@ -367,28 +367,28 @@ rule summarise_overlap_flowering_time:
 ## test_key_genes: checks short list of key genes against outlier regions
 rule test_key_genes:
     input:
-        anc_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
-        anc_fdr_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
-        lmElev_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
-        lmElev_fdr_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
-        meta_pop_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-        anc_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
-        anc_fdr_mexicana = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.fdr.RData",
-        lmElev_mexicana = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fit.RData",
-        lmElev_fdr_mexicana = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fdr.RData",
-        meta_pop_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+        anc_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
+        lmElev_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
+        lmElev_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
+        meta_pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        anc_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
+        anc_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.fdr.RData",
+        lmElev_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fit.RData",
+        lmElev_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fdr.RData",
+        meta_pop_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         genome = ref_chr,
         genes_list = "data/key_genes.csv",
-        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed"
+        bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
     output:
-        txt = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
+        txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
+        tbl = "ZAnc/tables/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
-        prefix = prefix_all
+        prefix = "{PREFIX}"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -486,7 +486,7 @@ rule plot_shared_peaks:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
-        prefix_all = prefix_all
+        prefix_all = "{PREFIX}"
     conda:
         "../envs/environment.yaml"
     threads:
