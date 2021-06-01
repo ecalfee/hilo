@@ -3881,19 +3881,17 @@ check on these jobs? do they need to have fewer threads to make it memory-wise?
 34867609      med2 estimate  ecalfee  R        5:54      1 32  128G   c6-66
 34867469      med2 estimate  ecalfee  R       15:19      1 32  128G   c6-56
 # reduced to 2 threads and added memory also.
+# delete previous times summaries for K=2 so that these rerun with 'mexicana' label for 2nd column
+hilo$ ls local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/*.times
+hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*Boot/*.times
+# moved 'diversity' results to it's own rule (out of rule some so I can run other things 1st)
 
 # TO DO:
 # ancestry outliers? K matrix for mexicana, maize or both?
 
-# REMEMBER TO GIT PULL AND DO THESE DELETIONS BEFORE STARTING MORE SNAKEMAKE JOBS!
-# delete previous times summaries for K=2 so that these rerun with 'mexicana' label for 2nd column
-hilo$ ls local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne*_*Boot/*.times
+
 
 # to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
-
-# what do I need to rerun ancestry_hmm?
-- snps in tail of fst/pbs : check on # SNPs that make it past thinning (360-460K -- looks good!), if not enough reduce stringency of filter for AIMs
-- how to summarise local ancestry for K=3 pops
 
 # what do I need to rerun for other results?
 - plot_bootstrap_NGSadmix_by_r. results are ready to plot. f4s don't depend on K, so they'll be the same (just harder to interpret for sympatric mexicana)

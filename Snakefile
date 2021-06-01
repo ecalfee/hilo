@@ -339,9 +339,6 @@ rule some:
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
-        "diversity/results/fst/HILO_MAIZE55/K2/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
-        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
     params:
         p = "med2"
@@ -353,6 +350,17 @@ rule files_for_jeff:
     input:
         expand("wavelets/results/alleleFreqs/HILO_MAIZE55_PARV50/K3/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana", "parv"]),
         expand("wavelets/results/alleleFreqs/HILO_MAIZE55/K2/{POP}.mafs.gz", POP = symp_pops + allo_mex_pops + ["allopatric_maize", "allopatric_mexicana"])
+    params:
+        p = "med2"
+    resources:
+        time_min = 60,
+        mem = 2
+
+rule diversity:
+    input:
+        "diversity/results/fst/HILO_MAIZE55/K2/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
+        "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
+        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
     params:
         p = "med2"
     resources:
