@@ -5,26 +5,31 @@ library(ggplot2)
 # this script plots mean ancestry across the genome
 
 # load variables from Snakefile
+# prefix = "HILO_MAIZE55_PARV50"
+# K = 3
 zea = snakemake@params[["zea"]]
 # zea = "maize"
+ancestry = snakemake@params[["ancestry"]]
+# ancestry = "mexicana"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 anc_file = snakemake@input[["anc"]]
-# anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
+# anc_file = paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K", K, "/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
 meta_file = snakemake@input[["meta_pop"]]
-# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+# meta_file = paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K", K, "/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
 sites_file = snakemake@input[["sites"]]
-# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
+# sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K", K, "/whole_genome.var.sites")
 genome_file = snakemake@input[["genome"]]
 # genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 centromeres_file = snakemake@input[["centromeres"]]
 # centromeres_file = "data/refMaize/centromere_positions_v4.txt"
 fdr_in = snakemake@input[["fdr"]]
-# fdr_in = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
+# fdr_in = paste0("ZAnc/results/", prefix, "/K", K, "/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
 png_out = snakemake@output[["png"]]
-# png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_mean_anc.png")
+# png_out = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_mean_", ancestry, "_anc.png")
 rds = snakemake@output[["rds"]]
-# rds = paste0("ZAnc/plots/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".meanAnc.plot.rds")
+# rds = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_mean_", ancestry, "_anc.plot.rds")
+
 
 # load data
 source(colors_file)
@@ -57,12 +62,12 @@ sites <- read.table(sites_file, header = F, stringsAsFactors = F,
   dplyr::mutate(pos_cum = chr_start + pos) # get cumulative chromosomal position
 
 # outlier plot whole genome
-p_combined = bind_cols(sites, anc = anc_mean) %>%
+p_combined = bind_cols(sites, anc = anc_mean[[ancestry]]) %>%
   mutate(even_chr = ifelse(chr %% 2 == 0, "even", "odd"),
          zea = zea) %>%
   ggplot(.) +
-  geom_hline(data = data.frame(intercept = filter(FDRs, FDR == 0.05, thesholds < Inf & 
-                                   thesholds > -Inf)$thesholds, 
+  geom_hline(data = data.frame(intercept = filter(FDRs[[ancestry]], FDR == 0.05, threshold < Inf & 
+                                   threshold > -Inf)$threshold, 
                                 label = "fdr5",
                                 stringsAsFactors = F),
               linetype = "solid", 
@@ -71,14 +76,14 @@ p_combined = bind_cols(sites, anc = anc_mean) %>%
   geom_point(size = .1,
              aes(pos_cum, anc, 
                  color = even_chr)) +
-  geom_hline(data = data.frame(genomewide_mean = mean(anc_mean),
+  geom_hline(data = data.frame(genomewide_mean = mean(anc_mean[[ancestry]]),
                                 label = "genomewide_mean",
                                 stringsAsFactors = F),
                 aes(yintercept = genomewide_mean, 
                     color = label), 
               linetype = "dashed") +
   xlab("bp position on chromosomes (total length = 2.3Gb)") +
-  ylab("mean mexicana ancestry") +
+  ylab(paste("mean", ancestry, "ancestry")) +
   scale_colour_manual(values = c(odd = "darkgrey", 
                                  even = unname(col_maize_mex_parv[zea]),
                                  genomewide_mean = "black",

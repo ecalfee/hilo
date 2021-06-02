@@ -353,7 +353,9 @@ rule some:
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
-        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+        expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
+        expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = ["mexicana", "maize"])
     params:
         p = "med2"
     resources:

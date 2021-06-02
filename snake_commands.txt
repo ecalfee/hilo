@@ -3914,8 +3914,16 @@ Job counts:
 # removing previous version of ancestry saved in .RData to make a new version where it's a list
 hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55*/K*/Ne10000_yesBoot/anc/*.pops.anc.RData
 #### re-ran something at ~3pm.
-# some jobs didn't run..error in anc[["mexicana"]] for fit_lm_elev
-hilo$ snakemake -n some --quiet --profile slurm
+# some jobs didn't run..error in anc[["mexicana"]] for fit_lm_elev. fixed typo in . not sure what's wrong with plot_admix_times_K2.R BUT
+# I had accidentally loaded R module R/3.6.3
+# which may be related to errors below:
+hilo$ less snake_logs/plot_admix_times_K2.Ne=10000,PREFIX=HILO_MAIZE55,YESNO=yes.34991431.err
+R script job uses conda environment but R_LIBS environment variable is set. This is likely not intended, as R_LIBS can interfere with R packages deployed via conda. Consider running `unset R_LIBS` or remove it entirely before executing Snakemake.
+Error: Argument 1 must have names
+# not sure what that error is, but unloaded R module and running snakemake pipeline again:
+# on local computer, plotting times seems fine for K=2
+scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/*.times local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/.
+hilo$ snakemake some --quiet --profile slurm
 Job counts:
         count   jobs
         24      calc_overlap
@@ -3924,10 +3932,10 @@ Job counts:
         24      merge_bed_outliers
         1       plot_admix_times_K2
         1       some
-        2       summarise_overlap_flowering_time
-        60
+        2       summarise_overlap_flowering_time # only thing that didn't run.
+        60 # RUNNING 6.1.2021 11:10pm
 
-scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/*.times local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/.
+
 
 
 # TO DO:
