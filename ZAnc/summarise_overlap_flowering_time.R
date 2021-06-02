@@ -35,6 +35,6 @@ all_combs = expand.grid(zea = mex_maize, sign = posneg, stat = stats, sig = sigs
 results = do.call(rbind,
                   apply(all_combs, 1, function(row) 
   calc_pval(zea = row[["zea"]], sign = row[["sign"]], stat = row[["stat"]], sig = row[["sig"]], 
-                  prefix = prefix, Ne = Ne, yesno = yesno)))
+                  prefix = prefix, K = K, Ne = Ne, yesno = yesno)))
 
 write.table(results, txt_out, sep = "\t", col.names = T, row.names = F, quote = F)
