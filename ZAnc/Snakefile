@@ -354,7 +354,8 @@ rule summarise_overlap_flowering_time:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         yesno = lambda wildcards: wildcards.YESNO,
-        prefix = "{PREFIX}"
+        prefix = "{PREFIX}",
+        K = "{K}"
     shadow:
         "minimal"
     conda:
