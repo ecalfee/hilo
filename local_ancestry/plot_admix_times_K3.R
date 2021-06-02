@@ -62,7 +62,8 @@ for (z in zea){
 
 # combine data
 d <- bind_rows(maize, mexicana) %>%
-  dplyr::mutate(introgress = ifelse(zea == "maize", alpha_local_ancestry_mexicana, alpha_local_ancestry_maize))
+  dplyr::mutate(introgress = ifelse(admixture_pulse == "maize", alpha_local_ancestry_maize, alpha_local_ancestry_parv))
+  #dplyr::mutate(introgress = ifelse(zea == "mexicana", 1 - alpha_local_ancestry_mexicana, 1 - alpha_local_ancestry_maize))
 
 # plot
 p_times <- d %>%
@@ -70,7 +71,9 @@ p_times <- d %>%
   mutate(admixture_pulse = ifelse(admixture_pulse == "parv", "parviglumis", admixture_pulse)) %>%
   ggplot(., aes(x = reorder(LOCALITY, ELEVATION),
                 y = time,
-                #alpha = introgress,
+                shape = admixture_pulse,
+                alpha = introgress < .1,
+                #alpha = (introgress < .1 | introgress > .9),
                 col = admixture_pulse)) +
   geom_point() + # plot time estimate
   # add errorbars for 95% percentile CI around that mean
@@ -83,8 +86,12 @@ p_times <- d %>%
   theme_classic() +
   ylim(-100, 1650) +
   guides(color = guide_legend("Admixture pulse"),
-         alpha = guide_legend("Proportion\nminor ancestry")) +
+         shape = guide_legend("Admixture pulse"),
+         alpha = guide_legend("Pulse size")) +
   scale_color_manual(values = col_maize_mex_parv) +
+  scale_shape_manual(values = c(1, 0)) +
+  scale_alpha_manual(values = c(1, .3), labels = c("> 10% total ancestry", "< 10% total ancestry")) +
+  #scale_alpha_manual(values = c(1, .3), labels = c("Intermediate\n(10%-90%)", "Small or Large\n(< 10% or > 90%)")) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   facet_wrap(~zea)
 # p_times

@@ -132,7 +132,11 @@ rule plot_NGSAdmix_K3:
         png_structure_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_structure_K2.tif",
         lm_tex = "global_ancestry/tables/{PREFIX}_lm_elevation_K3.tex",
         png_global_anc_multi = "global_ancestry/plots/{PREFIX}_global_anc_multi_K3.png",
-        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/{PREFIX}_global_anc_multi_K3.tif"
+        png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/{PREFIX}_global_anc_multi_K3.tif",
+        png_elev_parv = "global_ancestry/plots/{PREFIX}_lm_parviglumis_by_pop_elevation_K3.png",
+        png_elev_parv_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_lm_parviglumis_by_pop_elevation_K3.tif",
+        png_elev_maize = "global_ancestry/plots/{PREFIX}_lm_maize_by_pop_elevation_K3.png",
+        png_elev_maize_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_lm_maize_by_pop_elevation_K3.tif"
     params:
         p = "med2"
     conda:

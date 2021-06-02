@@ -25,6 +25,14 @@ png_global_anc_multi = snakemake@output[["png_global_anc_multi"]]
 # png_global_anc_multi = "global_ancestry/plots/HILO_MAIZE55_PARV50_global_anc_multi_K3.png"
 png_global_anc_multi_lzw = snakemake@output[["png_global_anc_multi_lzw"]]
 # png_global_anc_multi_lzw = "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_global_anc_multi_K3.tif"
+png_elev_parv = snakemake@output[["png_elev_parv"]]
+# png_elev_parv = "global_ancestry/plots/HILO_MAIZE55_PARV50_lm_parviglumis_by_pop_elevation_K3.png"
+png_elev_maize = snakemake@output[["png_elev_maize"]]
+# png_elev_maize = "global_ancestry/plots/HILO_MAIZE55_PARV50_lm_maize_by_pop_elevation_K3.png"
+png_elev_parv_lzw = snakemake@output[["png_elev_parv_lzw"]]
+# png_elev_parv_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_lm_parviglumis_by_pop_elevation_K3.tif"
+png_elev_maize_lzw = snakemake@output[["png_elev_maize_lzw"]]
+# png_elev_maize_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_lm_maize_by_pop_elevation_K3.tif"
 
 
 # get colors for plot
@@ -144,28 +152,64 @@ ggsave(filename = png_structure_lzw,
        compression = "lzw",
        type = "cairo")
 
-# how does ancestry change across elevation? linear model mexicana ancestry ~ elevation
+# how does ancestry change across elevation? linear model ancestry ~ elevation
+# mexicana ancestry ~ elevation
 lm_maize = filter(d_admix2, group == "sympatric_maize") %>%
   mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
   with(., lm(mexicana ~ elevation_km))
 lm_mex = filter(d_admix2, group == "sympatric_mexicana") %>%
   mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
   with(., lm(mexicana ~ elevation_km))
-#glance(lm_maize)
-#summary(lm_maize)
-#glance(lm_mex)
-#summary(lm_mex)
+print("linear model: mex ~ elev (km) in sympatric maize")
+glance(lm_maize)
+summary(lm_maize)
+print("linear model: mex ~ elev (km) in sympatric mexicana")
+glance(lm_mex)
+summary(lm_mex)
 
+# parviglumis ancestry ~ elevation
+lm_maize_parv = filter(d_admix2, group == "sympatric_maize") %>%
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(parviglumis ~ elevation_km))
+lm_mex_parv = filter(d_admix2, group == "sympatric_mexicana") %>%
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(parviglumis ~ elevation_km))
+print("linear model: parv ~ elev (km) in sympatric maize")
+glance(lm_maize_parv)
+summary(lm_maize_parv)
+print("linear model: parv ~ elev (km) in sympatric mexicana")
+glance(lm_mex_parv)
+summary(lm_mex_parv)
 
-lm_table <- bind_rows(mutate(broom::tidy(lm_maize), subspecies = "maize"),
-                      mutate(broom::tidy(lm_mex), subspecies = "mexicana")) %>%
-  dplyr::select(subspecies, term, estimate, std.error, statistic, p.value) %>%
+# maize ancestry ~ elevation
+lm_maize_maize = filter(d_admix2, group == "sympatric_maize") %>%
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(maize ~ elevation_km))
+lm_mex_maize = filter(d_admix2, group == "sympatric_mexicana") %>%
+  mutate(elevation_km = ELEVATION/1000) %>% # convert meters to km
+  with(., lm(maize ~ elevation_km))
+print("linear model: maize ~ elev (km) in sympatric maize")
+glance(lm_maize_maize)
+summary(lm_maize_maize)
+print("linear model: maize ~ elev (km) in sympatric mexicana")
+glance(lm_mex_maize)
+summary(lm_mex_maize)
+
+# all model results
+lm_table <- bind_rows(mutate(broom::tidy(lm_maize), subspecies = "maize", model = "mex ~ elev"),
+                      mutate(broom::tidy(lm_mex), subspecies = "mexicana", model = "mex ~ elev"),
+                      mutate(broom::tidy(lm_maize_parv), subspecies = "maize", model = "parv ~ elev"),
+                      mutate(broom::tidy(lm_mex_parv), subspecies = "mexicana", model = "parv ~ elev"),
+                      mutate(broom::tidy(lm_maize_maize), subspecies = "maize", model = "maize ~ elev"),
+                      mutate(broom::tidy(lm_mex_maize), subspecies = "mexicana", model = "maize ~ elev")) %>%
+  dplyr::select(model, subspecies, term, estimate, std.error, statistic, p.value) %>%
   mutate(term = ifelse(term == "(Intercept)", "intercept", ifelse(term == "elevation_km", "elevation (km)", term)))
+
 
 # print linear model output to a file
 print(xtable(lm_table,
              type = "latex",
-             digits = c(1, 1, 1, 4, 4, 1, -2),
+             digits = c(1, 1, 1, 1, 4, 4, 1, -2),
              latex.environments = NULL),
       include.rownames = F,
       file = lm_tex)
@@ -245,6 +289,85 @@ ggsave(filename = png_global_anc_multi_lzw,
        plot = p_combined, 
        device = "tiff", 
        width = 7.5, 
+       height = 7.5, 
+       units = "in",
+       dpi = 300, 
+       compression = "lzw", 
+       type = "cairo")
+
+
+# plot parviglumis ancestry ~ elevation in sympatric populations
+p_symp_elev_parv <- d_admix2 %>%
+  filter(., symp_allo == "sympatric") %>%
+  arrange(., ELEVATION) %>%
+  mutate(zea = reorder(zea, desc(ELEVATION))) %>%
+  mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
+  ggplot(., aes(x = ELEVATION, 
+                y = parviglumis, 
+                color = LOCALITY,
+                shape = zea)) +
+  geom_point(alpha = 0.75, size = 2) +
+  ylab("Parviglumis ancestry proportion") +
+  xlab("Elevation (m)") +
+  geom_abline(data = data.frame(
+    intercept = c(coef(lm_mex_parv)[1], coef(lm_maize_parv)[1]),
+    slope = c(coef(lm_mex_parv)[2], coef(lm_maize_parv)[2])/1000,
+    group = c("sympatric_mexicana", "sympatric_maize"),
+    stringsAsFactors = F),
+    aes(intercept = intercept, slope = slope)) + # divided by 1000 to put on meters, not km, x-axis scale
+  #ggtitle("Clines in parviglumis ancestry across elevation") +
+  labs(color = "Location", shape = "Subspecies") +
+  theme_classic() +
+  scale_color_viridis_d(direction = -1, option = "viridis") +
+  facet_wrap(~ group, labeller = labeller(group = zea_group_labels))
+# p_symp_elev_parv
+ggsave(filename = png_elev_parv,
+       plot = p_symp_elev_parv,
+       device = "png", height = 6, width = 7.5, 
+       units = "in", dpi = 300)
+ggsave(filename = png_elev_parv_lzw,
+       plot = p_symp_elev_parv, 
+       device = "tiff", 
+       width = 6, 
+       height = 7.5, 
+       units = "in",
+       dpi = 300, 
+       compression = "lzw", 
+       type = "cairo")
+
+# plot maize ancestry ~ elevation in sympatric populations
+p_symp_elev_maize <- d_admix2 %>%
+  filter(., symp_allo == "sympatric") %>%
+  arrange(., ELEVATION) %>%
+  mutate(zea = reorder(zea, desc(ELEVATION))) %>%
+  mutate(LOCALITY = factor(LOCALITY, ordered = T, levels = unique(.$LOCALITY))) %>%
+  ggplot(., aes(x = ELEVATION, 
+                y = maize, 
+                color = LOCALITY,
+                shape = zea)) +
+  geom_point(alpha = 0.75, size = 2) +
+  ylab("Maize ancestry proportion") +
+  xlab("Elevation (m)") +
+  geom_abline(data = data.frame(
+    intercept = c(coef(lm_mex_maize)[1], coef(lm_maize_maize)[1]),
+    slope = c(coef(lm_mex_maize)[2], coef(lm_maize_maize)[2])/1000,
+    group = c("sympatric_mexicana", "sympatric_maize"),
+    stringsAsFactors = F),
+    aes(intercept = intercept, slope = slope)) + # divided by 1000 to put on meters, not km, x-axis scale
+  #ggtitle("Clines in maize ancestry across elevation") +
+  labs(color = "Location", shape = "Subspecies") +
+  theme_classic() +
+  scale_color_viridis_d(direction = -1, option = "viridis") +
+  facet_wrap(~ group, labeller = labeller(group = zea_group_labels))
+# p_symp_elev_maize
+ggsave(filename = png_elev_maize,
+       plot = p_symp_elev_maize,
+       device = "png", height = 6, width = 7.5, 
+       units = "in", dpi = 300)
+ggsave(filename = png_elev_maize_lzw,
+       plot = p_symp_maize_maize, 
+       device = "tiff", 
+       width = 6, 
        height = 7.5, 
        units = "in",
        dpi = 300, 

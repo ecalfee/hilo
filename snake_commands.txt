@@ -3934,19 +3934,24 @@ Job counts:
         1       some
         2       summarise_overlap_flowering_time # only thing that didn't run. problem was with input file names within R script.
         60 # RUNNING 6.1.2021 11:10pm
-hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021 8:45am
+hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021 8:45am. included plots for mean anc
 2       summarise_overlap_flowering_time # oops 'K' is missing
-# also ran plots for mean anc
 
-
+hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021 9:06am.
+Job counts:
+        count   jobs
+        2       combine_genome_scan_plots
+        4       plot_slope_elev
+        1       some
+        2       summarise_overlap_flowering_time
+        2       test_key_genes # not sure why this failed. WORK ON THIS FILE!
+        11
 
 # TO DO:
+# Language : modeled ancestry variance-covariance marginally, marginal K matrix
 # FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
 # check on calc_K_matrix
 # plot ancestry outliers across genome: K matrix for mexicana, maize, parv or all 3?
-34984766
-34984767
-34984723 # anc not found
 
 
 # to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"

@@ -358,7 +358,8 @@ rule some:
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = ["mexicana", "maize"]),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
-        expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
+        expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_lm_{ANCESTRY}_by_pop_elevation_K3.tif", PREFIX = "HILO_MAIZE55_PARV50", ANCESTRY = ["maize", "parviglumis"]
     params:
         p = "med2"
     resources:
