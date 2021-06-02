@@ -3934,6 +3934,7 @@ Job counts:
         1       some
         2       summarise_overlap_flowering_time # only thing that didn't run. problem was with input file names within R script.
         60 # RUNNING 6.1.2021 11:10pm
+hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021 8:45am
 
 
 

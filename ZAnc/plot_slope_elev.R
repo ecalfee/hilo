@@ -6,26 +6,28 @@ library(ggplot2)
 # and calculates FDRs to show outlier loci
 
 # load variables from Snakefile
+# prefix = "HILO_MAIZE55_PARV50"
+# K = 3
 zea = snakemake@params[["zea"]]
 # zea = "maize"
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 fdr_file = snakemake@input[["fdr"]]
-# fdr_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
+# fdr_file = paste0("ZAnc/results/", prefix, "/K", K, "/Ne10000_yesBoot/", zea, ".lmElev.fdr.RData")
 fit_file = snakemake@input[["fit"]]
-# fit_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
+# fit_file = paste0("ZAnc/results/", prefix, "/K", K, "/Ne10000_yesBoot/", zea, ".lmElev.fit.RData")
 meta_file = snakemake@input[["meta_pop"]]
-# meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+# meta_file = paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K", K, "/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
 sites_file = snakemake@input[["sites"]]
-# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
+# sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K", K, "/whole_genome.var.sites")
 genome_file = snakemake@input[["genome"]]
 # genome_file = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
 centromeres_file = snakemake@input[["centromeres"]]
 # centromeres_file = "data/refMaize/centromere_positions_v4.txt"
 png_out = snakemake@output[["png"]]
-# png_out = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, "_slope_elev.png")
+# png_out = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_slope_elev.png")
 rds = snakemake@output[["rds"]]
-# rds = paste0("ZAnc/plots/Ne10000_yesBoot/", zea, ".lmElev.plot.rds")
+# rds = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, ".lmElev.plot.rds")
 
 # load data
 source(colors_file)
@@ -63,7 +65,7 @@ p_elev = bind_cols(sites, fits) %>%
          zea = zea) %>%
   ggplot(., aes(pos_cum, envWeights, 
                 color = even_chr)) +
-  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$thesholds, linetype = "solid", color = "#00BFC4") +
+  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$threshold, linetype = "solid", color = "#00BFC4") +
   geom_point(size = .1) +
   geom_hline(yintercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
   xlab("bp position on chromosomes (total length = 2.3Gb)") +

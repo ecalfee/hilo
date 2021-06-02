@@ -159,17 +159,17 @@ rule plot_slope_elev:
 ## combine_genome_scan_plots: plots maize/mex mean ancestry and slope with elevation outliers plots across the genome in one figure
 rule combine_genome_scan_plots:
     input:
-        rds_maize_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.meanAnc.plot.rds",
-        rds_mexicana_mean = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.plot.rds",
-        rds_maize_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/maize.lmElev.plot.rds",
-        rds_mexicana_elev = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.plot.rds",
+        rds_maize_mean = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
+        rds_mexicana_mean = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_mexicana_mean_mexicana_anc.plot.rds",
+        rds_maize_elev = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize.lmElev.plot.rds",
+        rds_mexicana_elev = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize.lmElev.plot.rds",
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
         mhl1_QTL =  "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed",
         inv =  "data/refMaize/inversions/knownInv_v4_coord.txt",
-        genes = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt"
+        genes = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt"
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/multi_maize_mexicana_genome_scan.png",
-        png_lzw = "../hilo_manuscript/figures_main/Ne{Ne}_{YESNO}Boot_multi_maize_mexicana_genome_scan.tif"
+        png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_multi_maize_mexicana_genome_scan.png",
+        png_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_multi_maize_mexicana_genome_scan.tif"
     params:
         p = "med2"
     conda:
