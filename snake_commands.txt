@@ -3913,7 +3913,21 @@ Job counts:
                 131 # RUNNING 6.1.2021 1pm
 # removing previous version of ancestry saved in .RData to make a new version where it's a list
 hilo$ rm local_ancestry/results/ancestry_hmm/HILO_MAIZE55*/K*/Ne10000_yesBoot/anc/*.pops.anc.RData
+#### re-ran something at ~3pm.
+# some jobs didn't run..error in anc[["mexicana"]] for fit_lm_elev
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        24      calc_overlap
+        4       fit_lm_elev
+        4       make_bed_slope_elev
+        24      merge_bed_outliers
+        1       plot_admix_times_K2
+        1       some
+        2       summarise_overlap_flowering_time
+        60
 
+scp -P 2022 ecalfee@farm.cse.ucdavis.edu:~/hilo/local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/*.times local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/.
 
 
 # TO DO:

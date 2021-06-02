@@ -55,8 +55,8 @@ rule fit_lm_elev:
         fdr_functions = "ZAnc/FDR.R",
         lm_functions = "ZAnc/lm_env_function.R",
         sim = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData"
     output:
         fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
         fit = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
@@ -70,8 +70,8 @@ rule fit_lm_elev:
     threads:
         1
     resources:
-        time_min = 2*60,
-        mem = 4
+        time_min = 4*60,
+        mem = lambda wildcards, attempt: attempt * 4
     script:
         "fit_lm_elev.R"
 
@@ -102,16 +102,16 @@ rule calc_fdr_mean_anc:
 ## plot_mean_anc: plots mean ancestry across all samples and outlier regions
 rule plot_mean_anc:
     input:
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
-        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.fdr.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
         colors = "colors.R",
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         genome = ref_chr,
         centromeres = "data/refMaize/centromere_positions_v4.txt"
-    output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_mean_anc.png",
-        rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.meanAnc.plot.rds" # ggplot object
+    output: # SPECIFY 1 ANCESTRY TO PLOT/SAVE. I CHANGED THESE PLOT NAMES
+        png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.png",
+        rds = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}.mean_{ANCESTRY}_anc.plot.rds" # ggplot object
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA
@@ -130,16 +130,16 @@ rule plot_mean_anc:
 ## plot_slope_elev: plots lm results, slope with elevation, with outlier regions
 rule plot_slope_elev:
     input:
-        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
+        meta_pop = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
         colors = "colors.R",
-        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
-        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        fdr = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fdr.RData",
+        fit = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.fit.RData",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         genome = ref_chr,
         centromeres = "data/refMaize/centromere_positions_v4.txt"
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}_slope_elev.png",
-        rds = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/{ZEA}.lmElev.plot.rds" # ggplot object
+        png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_slope_elev.png",
+        rds = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}.lmElev.plot.rds" # ggplot object
     params:
         p = "med2",
         zea = lambda wildcards: wildcards.ZEA
