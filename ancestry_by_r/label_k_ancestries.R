@@ -8,11 +8,13 @@ library(tidyr)
 
 # load variables from Snakefile
 K = snakemake@params[["k"]]
-# K = 2
+# K = 3
 admix_file = snakemake@input[["admix"]]
+# admix_file = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_1/K3/boot0.qopt"
 file_out = snakemake@output[["anc"]]
+# file_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_1/K3/boot0.anc"
 load(snakemake@input[["meta"]]) # sample metadata - samples are in the same order as NGSAdmix results
-# load("samples/HILO_MAIZE55_meta.RData")
+# load("samples/HILO_MAIZE55_PARV50_meta.RData")
 
 
 ancestries <- c("maize", "mexicana", "parviglumis")[1:K]
@@ -30,6 +32,7 @@ d <- bind_cols(meta, admix)  %>%
 
 # for each of k unlabelled ancestries, find the zea subspecies that is the best match
 which_anc <- d %>%
+  dplyr::mutate(symp_allo = ifelse(zea == "parviglumis", "allopatric", symp_allo)) %>%
   filter(., symp_allo == "allopatric") %>% # only include allopatric samples
   group_by(zea, ancestry) %>%  
   summarise(p = mean(p)) %>% # for each zea subspecies, what is the mean proportion p of each ancestry?
@@ -42,6 +45,7 @@ d %>%
   dplyr::select(-ancestry) %>%
   tidyr::spread(., ancestry_label, p) %>%
   dplyr::select(ID, ancestries) %>%
+  #View(.)
   write.table(., file_out,
               quote = F,
               sep = "\t", col.names = T, row.names = F)

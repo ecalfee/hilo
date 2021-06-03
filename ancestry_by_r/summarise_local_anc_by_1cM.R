@@ -6,13 +6,13 @@ library(dplyr)
 
 # load variables from Snakefile
 anc_bed_file = snakemake@input[["bed"]]
-# anc_bed_file = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/Ne10000_yesBoot/pop365.bed"
+# anc_bed_file = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/K2/Ne10000_yesBoot/mexicana_anc/pop365.bed"
 windows_file = snakemake@input[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 pop = snakemake@params[["pop"]]
 # pop = "pop365"
 output_file = snakemake@output[["summary"]]
-# output_file = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/Ne10000_yesBoot/pop365.anc.wind"
+# output_file = "ancestry_by_r/results/local_anc_1cM/HILO_MAIZE55/K2/Ne10000_yesBoot/mexicana_anc/pop365.anc.wind"
 
 # windows
 windows = read.table(windows_file, sep= "\t", header = T, stringsAsFactors = F) %>%

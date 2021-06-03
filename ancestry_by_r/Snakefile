@@ -198,11 +198,11 @@ rule summarise_bootstrap_anc_by_r:
 ## map_local_anc_onto_1cM_windows: maps local ancestry results onto 1cM genomic windows based on ancestry tracts bed file
 rule map_local_anc_onto_1cM_windows:
     input:
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq",
-        tracts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed", # defines ancestry tracts
+        anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/{ANCESTRY}/{POP}.anc.freq",
+        tracts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed", # defines ancestry tracts
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
     output:
-        bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.bed"
+        bed = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc/{POP}.bed"
     params:
         p = "med2"
     conda:
@@ -221,10 +221,10 @@ rule map_local_anc_onto_1cM_windows:
 ## map_sites_onto_1cM_windows: maps sites onto 1cM windows
 rule map_sites_onto_1cM_windows:
     input:
-        tracts = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed", # defines ancestry tracts
+        tracts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed", # defines ancestry tracts
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
     output:
-        bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/ancestry_hmm_sites.bed"
+        bed = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/ancestry_hmm_sites.bed"
     params:
         p = "med2"
     conda:
@@ -242,10 +242,10 @@ rule map_sites_onto_1cM_windows:
 ## summarise_local_anc_by_1cM: summarises mean local ancestry results by 1cM genomic windows
 rule summarise_local_anc_by_1cM:
     input:
-        bed = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.bed",
+        bed = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc.{POP}.bed",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
     output:
-        summary = "ancestry_by_r/results/local_anc_1cM/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.anc.wind"
+        summary = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc/{POP}.anc.wind"
     params:
         p = "med2",
         pop = lambda wildcards: wildcards.POP

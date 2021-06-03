@@ -359,7 +359,12 @@ rule some:
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
-        expand("../hilo_manuscript/figures_supp/{PREFIX}_lm_{ANCESTRY}_by_pop_elevation_K3.tif", PREFIX = "HILO_MAIZE55_PARV50", ANCESTRY = ["maize", "parviglumis"]
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_lm_{ANCESTRY}_by_pop_elevation_K3.tif", PREFIX = "HILO_MAIZE55_PARV50", ANCESTRY = ["maize", "parviglumis"],
+        "global_ancestry/tables/HILO_MAIZE55_PARV50_lm_elevation_K3.tex",
+        expand("ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata", PREFIX = "HILO_MAIZE55", K = 2, FEATURE = ["cd", "r"]),
+        expand("ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata", PREFIX = "HILO_MAIZE55_PARV50", K = 3, FEATURE = ["cd", "r"]),
+        expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ANCESTRY = ["mexicana", "maize", "parv"], POP = symp_pops),
+        expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55", K = , ANCESTRY = ["mexicana", "maize"], POP = symp_pops)
     params:
         p = "med2"
     resources:

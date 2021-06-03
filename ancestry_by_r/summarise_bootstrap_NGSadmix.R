@@ -34,7 +34,7 @@ q <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
   arrange(., quintile) %>% # order 1-5
   mutate(bin = factor(bin, ordered = T, levels = bin))
 
-# get bootstrap estimates for proportion ancestry K=2
+# get bootstrap estimates for proportion of each of K ancestries
 anc_boot <- do.call(rbind,
                     lapply(0:100, function(BOOT) do.call(rbind,
                                                          lapply(1:5, function(r)
