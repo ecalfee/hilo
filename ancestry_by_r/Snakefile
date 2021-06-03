@@ -141,8 +141,8 @@ rule run_bootstrap_NGSAdmix:
     conda:
          "../envs/environment.yaml"
     resources:
-        time_min = lambda wildcards, attempt: attempt * 30,
-        mem = lambda wildcards, attempt: attempt * 4
+        time_min = lambda wildcards, attempt: attempt * 4 * 60,
+        mem = lambda wildcards, attempt: attempt * 8
     threads:
         1
     shell:

@@ -365,7 +365,7 @@ ggsave(filename = png_elev_maize,
        device = "png", height = 6, width = 7.5, 
        units = "in", dpi = 300)
 ggsave(filename = png_elev_maize_lzw,
-       plot = p_symp_maize_maize, 
+       plot = p_symp_elev_maize, 
        device = "tiff", 
        width = 6, 
        height = 7.5, 

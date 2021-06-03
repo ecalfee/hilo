@@ -3946,6 +3946,20 @@ Job counts:
         2       summarise_overlap_flowering_time
         2       test_key_genes # not sure why this failed. WORK ON THIS FILE!
         11
+hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021
+# hmmm... some K ancestries for bootstraps are ambiguous, e.g. ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_5/K3/boot60.qopt
+# I will make these produce NAs. can't be many bootstraps with issues since most ran without errors.
+snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       combine_genome_scan_plots # id error later?
+        7       label_k_anc
+        1       plot_NGSAdmix_K3 # fixed typo p_symp_maize_maize
+        2       run_bootstrap_NGSAdmix # not sure why failed. adding time and memory.
+        1       some
+        2       summarise_bootstrap_anc_by_r
+        2       test_key_genes # fix later?
+        17
 
 # TO DO:
 # Language : modeled ancestry variance-covariance marginally, marginal K matrix

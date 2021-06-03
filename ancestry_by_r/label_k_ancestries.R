@@ -10,9 +10,9 @@ library(tidyr)
 K = snakemake@params[["k"]]
 # K = 3
 admix_file = snakemake@input[["admix"]]
-# admix_file = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_1/K3/boot0.qopt"
+# admix_file = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_5/K3/boot60.qopt"
 file_out = snakemake@output[["anc"]]
-# file_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_1/K3/boot0.anc"
+# file_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_5/K3/boot60.anc"
 load(snakemake@input[["meta"]]) # sample metadata - samples are in the same order as NGSAdmix results
 # load("samples/HILO_MAIZE55_PARV50_meta.RData")
 
@@ -39,13 +39,22 @@ which_anc <- d %>%
   group_by(ancestry) %>%
   summarise(ancestry_label = zea[which.max(p)]) # which subspecies has the most of each ancestry? assign that zea as the ancestry label
 
+if (length(unique(which_anc$ancestry_label)) == K){ # ancestries unambiguously assigned
+  d_out = d %>%
+    left_join(., which_anc, by = "ancestry") %>%
+    dplyr::select(-ancestry) %>%
+    tidyr::spread(., ancestry_label, p) %>%
+    dplyr::select(ID, ancestries)
+}else {# ancestries can't be unambiguously assigned
+  print("error: ancestries could not be unambiguously assigned")
+  which_anc
+  d_out = dplyr::select(d, ID)
+  for (a in ancestries){
+    d_out[a, ] = NA # set all ancestry values to NA
+  }
+}
 
-d %>%
-  left_join(., which_anc, by = "ancestry") %>%
-  dplyr::select(-ancestry) %>%
-  tidyr::spread(., ancestry_label, p) %>%
-  dplyr::select(ID, ancestries) %>%
-  #View(.)
-  write.table(., file_out,
+# write output
+write.table(d_out, file_out,
               quote = F,
               sep = "\t", col.names = T, row.names = F)

@@ -52,8 +52,13 @@ anc_ind <- anc_boot %>%
   filter(bootstrap == 0) %>% # the original sample is called 'bootstrap 0'
   gather(., key = "ancestry", value = "p", ancestries[1:K])
 
+# print # of bootstraps dropped for ambiguous ancestry assignment:
+print("% bootstraps dropped for ambiguous ancestry assignment:")
+print(is.na(anc_boot$p)/nrow(anc_boot)*100)
+
 # mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
 anc_boot_mean <- anc_boot %>%
+  filter(!is.na(p)) %>%
   group_by(group, zea, symp_allo, bootstrap, bin, quintile, feature) %>%
   summarise(., across(ancestries[1:K], mean), .groups = "drop") %>%
   rename_at(vars(ancestries[1:K]), ~ paste(ancestries[1:K], "ancestry", sep = "_")) # label maize ancestry columns as maize_ancestry not just maize
