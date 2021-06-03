@@ -165,7 +165,7 @@ include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
-#include: "mhl1_inv/Snakefile"
+include: "mhl1_inv/Snakefile"
 #include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
 
@@ -331,40 +331,61 @@ rule all:
 rule some:
     input:
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana"]),
+
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
+
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
+
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
+
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/{POP}.times", Ne = 10000, POP = symp_pops),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_admix_times_Ne10000_yesBoot.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.lmElev.fit.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.lmElev.fit.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.meanAnc.fdr.RData", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         #expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}.meanAnc.fdr.RData", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
+
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = ["mexicana", "maize"]),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_slope_elev.png", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
         expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
+
         expand("../hilo_manuscript/figures_supp/{PREFIX}_lm_{ANCESTRY}_by_pop_elevation_K3.tif", PREFIX = "HILO_MAIZE55_PARV50", ANCESTRY = ["maize", "parviglumis"]),
         "global_ancestry/tables/HILO_MAIZE55_PARV50_lm_elevation_K3.tex",
+
+
         expand("ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata", PREFIX = "HILO_MAIZE55", K = 2, FEATURE = ["cd", "r"]),
         expand("ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata", PREFIX = "HILO_MAIZE55_PARV50", K = 3, FEATURE = ["cd", "r"]),
         expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ANCESTRY = ["mexicana", "maize", "parv"], POP = symp_pops),
-        expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55", K = 2, ANCESTRY = ["mexicana", "maize"], POP = symp_pops)
+        expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55", K = 2, ANCESTRY = ["mexicana", "maize"], POP = symp_pops),
+
+
+        expand("mhl1_inv/plots/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.png", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.tif", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2])
     params:
         p = "med2"
     resources:

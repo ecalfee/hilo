@@ -3970,13 +3970,18 @@ Job counts:
         2       summarise_bootstrap_anc_by_r
         2       test_key_genes # made some edits to incorporate new format for K=3 ancestries
         12
+# ok so the ancestry summaries coming out of K=2 are definitely flipped mex-maize..affecting genomewide ancestry scan plots
+# I think what happened is that I didn't re-run (?) after fixing the weights to be (0,.5,1) for mexicana (and 1, .5, 0 for maize)
+# because there are no .alpha.ind files. so I've added those to the inputs of rule 'some' to trigger a rerun.
+# the homozygous ancestry tracts appear to be correctly identified (maize has more maize-maize and mex has more mex-mex), see:
+hilo$ wc -l local_ancestry/results/ancestry_hmm/HILO_MAIZE55*/K*/Ne10000_yesBoot/HOMOZYG/*/tracts/HILO18.bed
 
 # TO DO:
+# mhl1 inversion analyses/plots
+# QQ plots
+# test robustness of ancestry_hmm to choice of Ne
 # Language : modeled ancestry variance-covariance marginally, marginal K matrix
 # FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
-# check on calc_K_matrix
-# plot ancestry outliers across genome: K matrix for mexicana, maize, parv or all 3?
-
 
 # to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
 
