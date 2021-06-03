@@ -242,7 +242,7 @@ rule map_sites_onto_1cM_windows:
 ## summarise_local_anc_by_1cM: summarises mean local ancestry results by 1cM genomic windows
 rule summarise_local_anc_by_1cM:
     input:
-        bed = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc.{POP}.bed",
+        bed = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc/{POP}.bed",
         windows = "ancestry_by_r/results/map_pos_1cM_windows.txt" # 1cM windows
     output:
         summary = "ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_anc/{POP}.anc.wind"
