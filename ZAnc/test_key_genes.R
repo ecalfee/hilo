@@ -15,14 +15,16 @@ yesno = snakemake@params[["yesno"]]
 # yesno = "yes"
 prefix = snakemake@params[["prefix"]]
 # prefix = "HILO_MAIZE55"
+K = snakemake@params[["K"]]
+# K = 2
 genes_list = snakemake@input[["genes_list"]]
 # genes_list = "data/key_genes.csv"
 bed_sites_file = snakemake@input[["bed_sites"]]
-# bed_sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.bed"
+# bed_sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K", K, "/whole_genome.bed")
 txt_out = snakemake@output[["txt"]]
-# txt_out = paste0("ZAnc/results/", prefix, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.txt")
+# txt_out = paste0("ZAnc/results/", prefix, "/K", K, /Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.txt")
 tbl_out = snakemake@output[["tbl"]]
-# tbl_out = paste0("ZAnc/tables/", prefix, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.tex")
+# tbl_out = paste0("ZAnc/tables/", prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.tex")
 
 bed_sites <- read.table(bed_sites_file, header = F, 
                         sep = "\t", stringsAsFactors = F) %>%
@@ -58,24 +60,24 @@ sig_cutoffs <- list(mexicana = NULL, maize = NULL)
 for (zea in mex_maize){
   # load data
   load(paste0("local_ancestry/results/ancestry_hmm/", 
-       prefix, "/Ne", Ne, "_", yesno, "Boot/anc/", 
+       prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/anc/", 
        zea, ".pop.meta.RData")) # pop meta data
   load(paste0("local_ancestry/results/ancestry_hmm/", 
-              prefix, "/Ne", Ne, "_", yesno, "Boot/anc/", 
+              prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/anc/", 
               zea, ".pops.anc.RData")) # ancestry mean
   load(paste0("ZAnc/results/",
-              prefix, "/Ne", Ne, "_", yesno, "Boot/",
+              prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/",
               zea, ".lmElev.fit.RData")) # lmElev fits
   load(paste0("ZAnc/results/",
-              prefix, "/Ne", Ne, "_", yesno, "Boot/",
+              prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/",
               zea, ".meanAnc.fdr.RData")) # fdr ancestry mean
   assign("FDRs_meanAnc", FDRs) # give unique name
   load(paste0("ZAnc/results/",
-              prefix, "/Ne", Ne, "_", yesno, "Boot/",
+              prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/",
               zea, ".lmElev.fdr.RData")) # fdr lmElev
   assign("FDRs_lmElev", FDRs) # give unique name
   rm(FDRs) # remove ambiguous name
-  FDRs <- bind_rows(mutate(FDRs_meanAnc, stat = "meanAnc"),
+  FDRs <- bind_rows(mutate(FDRs_meanAnc[["maize"]], stat = "maize_anc"),
                     mutate(FDRs_lmElev, stat = "lmElev"))
   
   # combine lmElev fits and bed for sites
@@ -104,10 +106,10 @@ for (zea in mex_maize){
                      end = max(end),
                      min_slope = min(slope),
                      max_slope = max(slope)) %>%
-    dplyr::mutate(min_sig = min_slope < FDRs$thesholds[FDRs$tail == "low" & 
+    dplyr::mutate(min_sig = min_slope < FDRs$threshold[FDRs$tail == "low" & 
                                                           FDRs$FDR == 0.05 &
                                                           FDRs$stat == "lmElev"],
-                  max_sig = max_slope > FDRs$thesholds[FDRs$tail == "high" & 
+                  max_sig = max_slope > FDRs$threshold[FDRs$tail == "high" & 
                                                           FDRs$FDR == 0.05 &
                                                           FDRs$stat == "lmElev"]) %>%
     dplyr::mutate(min_slope = paste0(round(min_slope, 5), 
@@ -117,9 +119,9 @@ for (zea in mex_maize){
   # View(summary_lmElev)
   
   # mean ancestry
-  map_meanAnc = bedr(
+  map_maize_anc = bedr(
     input = list(a = dplyr::mutate(bed_sites[ , c("chr", "start", "end")],
-                                   meanAnc = anc_mean),
+                                   maize_anc = anc_mean[["maize"]]),
                  b = genes_coord_20kb), 
     method = "map", 
     check.chr = F,
@@ -132,53 +134,53 @@ for (zea in mex_maize){
                   meanAnc = as.numeric(meanAnc))
   
   # what are cutoffs for low ancestry as empirical % of the genome?
-  bed_anc <- dplyr::mutate(bed_sites, meanAnc = anc_mean) %>%
-    arrange(meanAnc) %>%
+  bed_maize_anc <- dplyr::mutate(bed_sites, maize_anc = anc_mean[["maize"]]) %>%
+    arrange(maize_anc) %>%
     dplyr::mutate(length_Mb = length/10^6,
                   cum_length = cumsum(length_Mb),
                   percentile = cum_length/max(cum_length)*100)
   # 5% based on genomic length (bp) covered
-  percentiles_anc <- bed_anc %>%
-    summarise(perc_95 = max(meanAnc[percentile < 95]))
+  percentiles_maize_anc <- bed_maize_anc %>%
+    summarise(perc_95 = max(maize_anc[percentile < 95])) ###############
   
   
   # add in new columns, min, max, FDR
-  summary_meanAnc <- map_meanAnc %>%
+  summary_maize_anc <- map_maize_anc %>% 
     group_by(chr, name_short) %>%
     summarise(start = min(start),
               end = max(end),
-              min_ancestry = min(meanAnc),
-              max_ancestry = max(meanAnc)) %>%
-    dplyr::mutate(min_sig = min_ancestry <= FDRs$thesholds[FDRs$tail == "low" & 
+              min_maize_ancestry = min(maize_anc),
+              max_maize_ancestry = max(maize_anc)) %>%
+    dplyr::mutate(min_sig = min_maize_ancestry <= FDRs$threshold[FDRs$tail == "low" & 
                                                              FDRs$FDR == 0.05 &
-                                                             FDRs$stat == "meanAnc"],
-                  max_sig = max_ancestry >= FDRs$thesholds[FDRs$tail == "high" & 
+                                                             FDRs$stat == "maize_anc"],
+                  max_sig = max_maize_ancestry >= FDRs$threshold[FDRs$tail == "high" & 
                                                              FDRs$FDR == 0.05 &
-                                                             FDRs$stat == "meanAnc"],
-                  min_perc5 = min_ancestry <= percentiles_anc$perc_5,
-                  max_perc5 = max_ancestry >= percentiles_anc$perc_95) %>%
-    dplyr::mutate(min_ancestry = paste0(round(min_ancestry, 5), 
+                                                             FDRs$stat == "maize_anc"],
+                  min_perc5 = min_maize_ancestry <= percentiles_maize_anc$perc_5,
+                  max_perc5 = max_maize_ancestry >= percentiles_maize_anc$perc_95) %>%
+    dplyr::mutate(min_maize_ancestry = paste0(round(min_maize_ancestry, 5), 
                                         ifelse(min_perc5, "*", ""), 
                                         ifelse(min_sig, "+", "")),
-                  max_ancestry = paste0(round(max_ancestry, 5), 
+                  max_maize_ancestry = paste0(round(max_maize_ancestry, 5), 
                                         ifelse(max_perc5, "*", ""), 
                                         ifelse(max_sig, "+", "")))
-  # View(summary_meanAnc)
+  # View(summary_maize_anc)
   
   # make table: each gene, zea, prediction, high mean anc, low mean anc, high slope, low slope
   # stars for 2%, 5% cutoffs and 5% FDR
-  genes_outliers[[zea]] <- left_join(genes, summary_meanAnc, by = "name_short") %>%
+  genes_outliers[[zea]] <- left_join(genes, summary_maize_anc, by = "name_short") %>%
     left_join(., summary_lmElev, by = "name_short") %>%
-    dplyr::select(name_short, gene, category, phenotype, citation, ensembl.org_id, chr, start, end, other_notes, max_slope, min_slope, max_ancestry, min_ancestry, admixture_prediction, phenotype, v4_coord) %>%
+    dplyr::select(name_short, gene, category, phenotype, citation, ensembl.org_id, chr, start, end, other_notes, max_slope, min_slope, max_maize_ancestry, min_maize_ancestry, admixture_prediction, phenotype, v4_coord) %>%
     dplyr::mutate(subspecies = zea)
   
   # also make table with 5% cutoffs, and all FDR cutoffs
   sig_cutoffs[[zea]] <- data.frame(percentile = c(0.05, 0.95),
-                                   threshold = c(percentiles_anc[["perc_5"]],
-                                                 percentiles_anc[["perc_95"]]),
-                                   stat = "meanAnc",
+                                   threshold = c(percentiles_maize_anc[["perc_5"]],
+                                                 percentiles_maize_anc[["perc_95"]]),
+                                   stat = "maize_anc",
                                    tail = c("low", "high")) %>%
-    bind_rows(., rename(FDRs, threshold = thesholds)) %>%
+    bind_rows(., FDRs) %>%
     arrange(stat, tail, FDR) %>%
     dplyr::select(stat, tail, FDR, percentile, threshold, n_SNPs, prop_SNPs) %>%
     mutate(subspecies = zea)
@@ -186,12 +188,12 @@ for (zea in mex_maize){
 
 # combined into 1 dataframe
 outliers <- left_join(dplyr::select(genes_outliers[["maize"]], -subspecies), 
-                      dplyr::select(genes_outliers[["mexicana"]], name_short, max_slope, min_slope, max_ancestry, min_ancestry),
+                      dplyr::select(genes_outliers[["mexicana"]], name_short, max_slope, min_slope, max_maize_ancestry, min_maize_ancestry),
                       by = "name_short",
                       suffix = c(".maize", ".mexicana")) %>%
   dplyr::select(., c("name_short", "gene", "category", "phenotype", "admixture_prediction", "v4_coord", 
-            "max_slope.maize", "min_slope.maize", "max_ancestry.maize", "min_ancestry.maize",
-            "max_slope.mexicana", "min_slope.mexicana", "max_ancestry.mexicana", "min_ancestry.mexicana",
+            "max_slope.maize", "min_slope.maize", "max_maize_ancestry.maize", "min_maize_ancestry.maize",
+            "max_slope.mexicana", "min_slope.mexicana", "max_maize_ancestry.mexicana", "min_maize_ancestry.mexicana",
             "ensembl.org_id", "chr", "start", "end", "other_notes", "citation")) %>%
   arrange(category, chr, start)
 
@@ -203,14 +205,14 @@ write.table(outliers, file = txt_out, col.names = T, row.names = F, quote = F, s
 # min introgression\n in maize, min introgression\n in mexicana, phenotype, citation
 
 tbl_outliers <- outliers %>%
-  dplyr::select(category, name_short, v4_coord, max_slope.maize, min_ancestry.maize,
-                max_slope.mexicana, max_ancestry.mexicana) %>%
+  dplyr::select(category, name_short, v4_coord, max_slope.maize, max_maize_ancestry.maize,
+                max_slope.mexicana, min_maize_ancestry.mexicana) %>%
   dplyr::rename(name = name_short,
                 `v4 coordinates` = v4_coord,
                 `max slope\nin maize` = max_slope.maize,
-                `max slope\nin mexicana` = max_slope.mexicana,
-                `min introgression\n in maize` = min_ancestry.maize,
-                `min introgression\n in mexicana` = max_ancestry.mexicana)
+                `max slope\nin mexicana` = max_slope.mexicana, # domestication here?
+                `min introgression\n in maize` = max_maize_ancestry.maize,
+                `min introgression\n in mexicana` = min_maize_ancestry.mexicana)
 
 print(xtable(tbl_outliers,
              type = "latex",

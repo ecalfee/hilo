@@ -50,7 +50,7 @@ if (length(unique(which_anc$ancestry_label)) == K){ # ancestries unambiguously a
   which_anc
   d_out = dplyr::select(d, ID)
   for (a in ancestries){
-    d_out[a, ] = NA # set all ancestry values to NA
+    d_out[ , a] = NA # set all ancestry values to NA
   }
 }
 

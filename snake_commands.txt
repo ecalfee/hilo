@@ -3949,7 +3949,7 @@ Job counts:
 hilo$ snakemake some --quiet --profile slurm # RUNNING 6.2.2021
 # hmmm... some K ancestries for bootstraps are ambiguous, e.g. ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_5/K3/boot60.qopt
 # I will make these produce NAs. can't be many bootstraps with issues since most ran without errors.
-snakemake -n some --quiet --profile slurm
+snakemake some --quiet --profile slurm
 Job counts:
         count   jobs
         2       combine_genome_scan_plots # id error later?
@@ -3959,7 +3959,17 @@ Job counts:
         1       some
         2       summarise_bootstrap_anc_by_r
         2       test_key_genes # fix later?
-        17
+        17 # RUNNING 6.2.2021 10:49pm
+        # several did not run:
+        hilo$ snakemake -n some --quiet --profile slurm
+        Job counts:
+        count   jobs
+        2       combine_genome_scan_plots # don't see any error logs
+        5       label_k_anc # fixed error with d_out[a,] needing to be d_out[,a] for ambiguous ancestry assignment bootstraps
+        1       some
+        2       summarise_bootstrap_anc_by_r
+        2       test_key_genes # made some edits to incorporate new format for K=3 ancestries
+        12
 
 # TO DO:
 # Language : modeled ancestry variance-covariance marginally, marginal K matrix
