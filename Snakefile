@@ -385,7 +385,12 @@ rule some:
 
 
         expand("mhl1_inv/plots/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.png", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
-        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.tif", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2])
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.tif", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
+
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
+        "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif"
     params:
         p = "med2"
     resources:

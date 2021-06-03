@@ -774,4 +774,26 @@ rule plot_admix_times_K3:
     script:
         "plot_admix_times_K3.R"
 
-## plot_sensitivity_to_Ne: compares admixture timing estimates and correlation of local ancestry calls
+## plot_sensitivity_to_Ne_K3: compares admixture timing estimates and correlation of local ancestry calls
+rule plot_sensitivity_to_Ne_K3: # R script still needs work but will add to rule some to generate input files.
+    input:
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/anc/{ZEA}.{ANCESTRY}_anc.bed", Ne = Nes, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/{POP}.times", POP = symp_pops),
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/anc/{ZEA}.pop.meta.RData", Ne = Nes, ZEA = zea)
+        "colors.R"
+    output:
+        png_times = "local_ancestry/plots/{PREFIX}_K3_sensitivity_to_Ne_admix_times.png",
+        png_times_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_sensitivity_to_Ne_admix_times.tif",
+        png_anc = "local_ancestry/plots/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.png",
+        png_anc_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.tif"
+    params:
+        p = "med2",
+        prefix = "{PREFIX}",
+        colors = "colors.R"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "plot_sensitivity_to_Ne_K3.R"
