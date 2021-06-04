@@ -331,15 +331,16 @@ rule all:
 rule some:
     input:
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
+
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
         expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana"]),
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana"]),
+
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana"]),
 
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = 10000, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]), # only bootstrap t for Ne=10000
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_yesBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
-
-        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = zea),
 
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/K2/Ne10000_yesBoot/anc/{ZEA}.pops.anc.RData", ZEA = zea),

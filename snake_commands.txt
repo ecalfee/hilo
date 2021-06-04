@@ -3976,9 +3976,25 @@ Job counts:
 # the homozygous ancestry tracts appear to be correctly identified (maize has more maize-maize and mex has more mex-mex), see:
 hilo$ wc -l local_ancestry/results/ancestry_hmm/HILO_MAIZE55*/K*/Ne10000_yesBoot/HOMOZYG/*/tracts/HILO18.bed
 
-hilo$ snakemake -n some --quiet --profile slurm #6.3.2021 
-
-
+hilo$ snakemake -n some --quiet --profile slurm #6.3.2021
+# oops forgot to write down a run that was run...
+# some failed though:
+35091109 # summarise_bootstrap_anc_by_r
+35091123 # test_key_genes
+35091100 # plot_sensitivity_to_Ne_K3
+# fixed inputs to some to trigger reruns for summarise_posterior_K2 (Ne10000_yesBoot)
+hilo$ snakemake -n some --quiet --profile slurm
+Job counts:
+        count   jobs
+        2       combine_genome_scan_plots
+        1       get_GL_mhl1_inv
+        1       plot_mhl1_inv_PCAngsd
+        1       plot_sensitivity_to_Ne_K3
+        1       run_PCAngsd_mhl1_inv
+        1       some
+        2       summarise_bootstrap_anc_by_r
+        2       test_key_genes
+        11
 
 # TO DO:
 # mhl1 inversion analyses/plots
