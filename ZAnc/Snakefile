@@ -385,7 +385,8 @@ rule test_key_genes:
         bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
     output:
         txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.tex"
+        tbl = "ZAnc/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex",
+        tbl2 = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,

@@ -14,17 +14,19 @@ Ne = snakemake@params[["Ne"]]
 yesno = snakemake@params[["yesno"]]
 # yesno = "yes"
 prefix = snakemake@params[["prefix"]]
-# prefix = "HILO_MAIZE55"
+# prefix = "HILO_MAIZE55_PARV50"
 K = snakemake@params[["K"]]
-# K = 2
+# K = 3
 genes_list = snakemake@input[["genes_list"]]
 # genes_list = "data/key_genes.csv"
 bed_sites_file = snakemake@input[["bed_sites"]]
 # bed_sites_file = paste0("local_ancestry/results/thinnedSNPs/", prefix, "/K", K, "/whole_genome.bed")
 txt_out = snakemake@output[["txt"]]
-# txt_out = paste0("ZAnc/results/", prefix, "/K", K, /Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.txt")
+# txt_out = paste0("ZAnc/results/", prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.txt")
 tbl_out = snakemake@output[["tbl"]]
-# tbl_out = paste0("ZAnc/tables/", prefix, "/K", K, "/Ne", Ne, "_", yesno, "Boot/genes_mapped_to_outliers.tex")
+# tbl_out = paste0("ZAnc/tables/", prefix, "_K", K, "_Ne", Ne, "_", yesno, "Boot_genes_mapped_to_outliers.tex")
+tbl_out2 = snakemake@output[["tbl2"]]
+# tbl_out2 = paste0("../hilo_manuscript/tables/", prefix, "_K", K, "_Ne", Ne, "_", yesno, "Boot_genes_mapped_to_outliers.tex")
 
 bed_sites <- read.table(bed_sites_file, header = F, 
                         sep = "\t", stringsAsFactors = F) %>%
@@ -127,11 +129,11 @@ for (zea in mex_maize){
     check.chr = F,
     params = paste("-g", genome_file, "-sorted -header -c 4 -o distinct")
   ) %>%
-    data.table::setnames(c("chr", "start", "end", "meanAnc", "name_short")) %>%
+    data.table::setnames(c("chr", "start", "end", "maize_anc", "name_short")) %>%
     dplyr::filter(name_short != ".") %>%
     dplyr::mutate(start = as.numeric(start),
                   end = as.numeric(end),
-                  meanAnc = as.numeric(meanAnc))
+                  maize_anc = as.numeric(maize_anc))
   
   # what are cutoffs for low ancestry as empirical % of the genome?
   bed_maize_anc <- dplyr::mutate(bed_sites, maize_anc = anc_mean[["maize"]]) %>%
@@ -141,7 +143,8 @@ for (zea in mex_maize){
                   percentile = cum_length/max(cum_length)*100)
   # 5% based on genomic length (bp) covered
   percentiles_maize_anc <- bed_maize_anc %>%
-    summarise(perc_95 = max(maize_anc[percentile < 95])) ###############
+    summarise(perc_95 = max(maize_anc[percentile < 95]),
+              perc_5 = min(maize_anc[percentile > 5]))
   
   
   # add in new columns, min, max, FDR
@@ -219,6 +222,11 @@ print(xtable(tbl_outliers,
              latex.environments = NULL),
       include.rownames = F,
       file = tbl_out)
+print(xtable(tbl_outliers,
+             type = "latex",
+             latex.environments = NULL),
+      include.rownames = F,
+      file = tbl_out2) # to ../hilo_manuscript/tables/.
 
 # print raw results
 write.table(outliers, file = txt_out, col.names = T, row.names = F, quote = F, sep = "\t")
