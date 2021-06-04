@@ -779,7 +779,7 @@ rule plot_sensitivity_to_Ne_K3: # R script still needs work but will add to rule
     input:
         expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/anc/{ZEA}.{ANCESTRY}_anc.bed", Ne = Nes, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/{POP}.times", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/anc/{ZEA}.pop.meta.RData", Ne = Nes, ZEA = zea)
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K3/Ne{Ne}_noBoot/anc/{ZEA}.pop.meta.RData", Ne = Nes, ZEA = zea),
         "colors.R"
     output:
         png_times = "local_ancestry/plots/{PREFIX}_K3_sensitivity_to_Ne_admix_times.png",
