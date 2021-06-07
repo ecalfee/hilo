@@ -3995,35 +3995,53 @@ Job counts:
         2       summarise_bootstrap_anc_by_r # think maybe fixed. looks for is.na(maize) now because not yet gathered for ancestry proportions to be in a p column
         2       test_key_genes # fixed perc_5 which was a missing column
         11 # I didn't start this to run. Fixing things and then running the following version which resummarises ancestry for K=2 Ne=10000 yesno=yes
-hilo$ snakemake -n some --quiet --profile slurm
-Job counts:
-        count   jobs
-        2       calc_K_matrix_zea
-        2       calc_fdr_mean_anc
-        24      calc_overlap
-        2       combine_genome_scan_plots
-        2       combine_pop_ancestry_data_K2
-        2       fit_lm_elev
-        1       get_GL_mhl1_inv
-        1       get_mhl1_inv_coord
-        4       make_bed_anc_outliers
-        2       make_bed_slope_elev
-        56      map_local_anc_onto_1cM_windows
-        24      merge_bed_outliers
-        1       plot_admix_times_K2
-        4       plot_mean_anc
-        1       plot_mhl1_inv_PCAngsd
-        1       plot_sensitivity_to_Ne_K3
-        2       plot_slope_elev
-        1       run_PCAngsd_mhl1_inv
-        2       simulate_MVN
-        1       some
-        2       summarise_bootstrap_anc_by_r
-        56      summarise_local_anc_by_1cM
-        1       summarise_overlap_flowering_time
-        28      summarise_posterior_K2
-        2       test_key_genes
-        224
+        hilo$ snakemake -n some diversity --quiet --profile slurm
+        Job counts:
+                count   jobs
+                2       calc_K_matrix_zea
+                2       calc_fdr_mean_anc
+                131     calc_fst_all_chr
+                131     calc_fst_idx
+                24      calc_overlap
+                2       combine_genome_scan_plots
+                2       combine_pop_ancestry_data_K2
+                1       diversity
+                131     estimate_2D_sfs
+                5       estimate_saf_pop
+                2       fit_lm_elev
+                1       get_GL_mhl1_inv
+                1       get_mhl1_inv_coord
+                4       make_bed_anc_outliers
+                2       make_bed_slope_elev
+                56      map_local_anc_onto_1cM_windows
+                24      merge_bed_outliers
+                1       plot_admix_times_K2
+                4       plot_mean_anc
+                1       plot_mhl1_inv_PCAngsd
+                1       plot_sensitivity_to_Ne_K3
+                2       plot_slope_elev
+                2       plot_within_ancestry_fst
+                1       print_fst_one_file_K2
+                1       print_fst_one_file_K3 # Error executing rule print_fst_one_file_K3 on cluster (jobid: 635, external: 35122565)
+                1       run_PCAngsd_mhl1_inv
+                2       simulate_MVN
+                1       some
+                2       summarise_bootstrap_anc_by_r
+                56      summarise_local_anc_by_1cM
+                1       summarise_overlap_flowering_time
+                28      summarise_posterior_K2
+                2       test_key_genes
+                627 # RUNNING 6.4.2021
+hilo$ snakemake some diversity --quiet --profile slurm
+# not waiting to see what's running...just letting it run 2.6.2021 11:15pm
+summarise_bootstrap_anc_by_r # 35193015
+there is no package called ‘dply’
+Note: Using an external vector in selections is ambiguous.
+ℹ Use `all_of(bin_col)` instead of `bin_col` to silence this message.
+Use `all_of(quintile_col)` instead of `quintile_col` to silence this message.
+
+plot_within_ancestry_fst # 35193016
+plot_sensitivity_to_Ne_K3 # 35193014
 
 # TO DO:
 # mhl1 inversion analyses/plots

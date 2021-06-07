@@ -28,7 +28,7 @@ quintile_col <- paste0("quintile_", FEATURE, "5")
 
 # get the genomic quintile ranges
 q <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t") %>%
-  dplyr::select(., all_of(c(quintile_col, bin_col))) %>%
+  dplyr::select(., all_of(quintile_col), all_of(bin_col)) %>%
   rename(quintile = quintile_col, bin = bin_col) %>%
   filter(., !duplicated(bin)) %>%
   arrange(., quintile) %>% # order 1-5
@@ -99,7 +99,7 @@ spearman = anc_boot_mean %>%
                                        boot_low = quantile(rho[bootstrap != 0], alpha/2, na.rm = T), # percentiles from bootstrap (excl. original sample)
                                        boot_high = quantile(rho[bootstrap != 0], 1 - alpha/2, na.rm = T), # must remove NAs because one bootstrap sample for allopatric maize in cd's has no variance (therefore correlation is NA)
                                        .groups = "drop") %>%
-  dply::arrange(ancestry, group)
+  dplyr::arrange(ancestry, group)
 
 # save
 feature_name = paste0(FEATURE, "5")
