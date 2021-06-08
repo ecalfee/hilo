@@ -4055,10 +4055,14 @@ Job counts:
         1       diversity
         1       plot_sensitivity_to_Ne_K3
         2       plot_within_ancestry_fst
-        1       print_fst_one_file_K3
+        1       print_fst_one_file_K3 # some weird file in awk
+        # maybe look @ individual inputs to that for loop: diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/maize/pop21.pop373.fst.allChr.txt
+        hilo$ less snake_logs/print_fst_one_file_K3.Ne=10000,PREFIX=HILO_MAIZE55_PARV50,YESNO=yes.35208925.err
         1       some
         2       summarise_bootstrap_anc_by_r
-        8 # 6.7.2021 8:36am 
+        8 # 6.7.2021 8:36am
+
+
 
 # TO DO:
 # mhl1 inversion analyses/plots

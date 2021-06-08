@@ -577,7 +577,7 @@ rule plot_bootstrap_local_ancestry_by_r_K3:
         png_cd5_local_anc = "ancestry_by_r/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_local_anc_by_cd_quintiles.png",
 
         png_r_cont_local_anc = "ancestry_by_r/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_local_anc_by_r_continuous.png",
-        png_r_cont_local_anc_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_anc_by_r_continuous.tif",
+        png_r_cont_local_anc_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_local_anc_by_r_continuous.tif",
 
         file_spearmans_rho_local_anc = "ancestry_by_r/tables/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_spearmans_rho_local_ancestry.tex",
         file_spearmans_rho_local_anc_tex = "../hilo_manuscript/tables/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_spearmans_rho_local_ancestry.tex"
