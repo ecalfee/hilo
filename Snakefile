@@ -384,6 +384,15 @@ rule some:
         expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ANCESTRY = ["mexicana", "maize", "parv"], POP = symp_pops),
         expand("ancestry_by_r/results/local_anc_1cM/{PREFIX}/K{K}/Ne10000_yesBoot/{ANCESTRY}_anc/{POP}.anc.wind", PREFIX = "HILO_MAIZE55", K = 2, ANCESTRY = ["mexicana", "maize"], POP = symp_pops),
 
+        # ancestry ~ r (or coding density) plots and tables
+        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_by_r_multi_panel.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_by_r_bootstrap_sympatric_and_allopatric.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_by_cd_bootstrap_sympatric_and_allopatric.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_by_r_bootstrap_lm_elevation_color_elev.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/tables/{PREFIX}_K{K}_elev_r_interaction_5.tex", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/tables/{PREFIX}_K{K}_spearmans_rho_ngsadmix.tex",  PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+
+
 
         expand("mhl1_inv/plots/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.png", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_pca.tif", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),

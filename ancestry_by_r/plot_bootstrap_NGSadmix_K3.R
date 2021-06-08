@@ -421,7 +421,7 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
   mutate(.,
          quintile = quintile - 1, # make quintiles 0-4 instead of 1-5
          elevation_km = ELEVATION/1000) %>%
-  nest(., -zea) %>%
+  nest(data = colnames(.), -zea) %>%
   mutate(.,
          model = map(data, 
                      ~lm(p ~ elevation_km + quintile + quintile*elevation_km, 
@@ -466,18 +466,29 @@ rho = bind_rows(mutate(r5$spearman,
                        feature = "gene density (coding bp/cM)")) %>%
   mutate(group = stringr::str_replace(group, "_", " "),
          resolution = "genomic quintiles") %>%
+  dplyr::rename(label = group) %>%
+  left_join(., 
+            data.frame(group = c("sympatric maize", "sympatric mexicana",
+                                 "reference parviglumis",
+                                 "reference maize", "reference mexicana"),
+                       label = c("sympatric maize", "sympatric mexicana",
+                                 "parviglumis",
+                                 "allopatric maize", "allopatric mexicana"),
+                       stringsAsFactors = F),
+            by = "label") %>% 
   dplyr::select(group, feature, ancestry, rho_estimate, boot_low, boot_high) %>%
-  rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
+  rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high) %>%
+  arrange(desc(feature), desc(group), ancestry)
 
 # print table to file for estimates of spearman's rank correlation
 print(xtable(rho, 
-             digits = c(1, 1, 1, 2, 2, 2),
+             digits = c(1, 1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_ngsadmix)
 print(xtable(rho, 
-             digits = c(1, 1, 1, 2, 2, 2),
+             digits = c(1, 1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
