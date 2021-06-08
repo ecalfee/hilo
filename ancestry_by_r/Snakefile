@@ -506,7 +506,7 @@ rule plot_bootstrap_NGSadmix_by_r_K3:
 
         png_r5_symp = "ancestry_by_r/plots/{PREFIX}_K3_by_r_bootstrap_sympatric_only.png",
         png_r5_symp_allo = "ancestry_by_r/plots/{PREFIX}_K3_by_r_bootstrap_sympatric_and_allopatric.png",
-        png_r5_symp_allo_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_by_r_bootstrap_sympatric_and_allopatric.tif"
+        png_r5_symp_allo_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
 
         png_cd5_symp = "ancestry_by_r/plots/{PREFIX}_K3_by_cd_bootstrap_sympatric_only.png",
         png_cd5_symp_allo = "ancestry_by_r/plots/{PREFIX}_K3_by_cd_bootstrap_sympatric_and_allopatric.png",
