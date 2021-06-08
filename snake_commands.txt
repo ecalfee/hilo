@@ -4039,9 +4039,26 @@ there is no package called ‘dply’
 Note: Using an external vector in selections is ambiguous.
 ℹ Use `all_of(bin_col)` instead of `bin_col` to silence this message.
 Use `all_of(quintile_col)` instead of `quintile_col` to silence this message.
-
+# fixed
 plot_within_ancestry_fst # 35193016
+Warning messages:
+1: Expected 8 pieces. Additional pieces discarded in 756 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].
+2: Expected 5 pieces. Missing pieces filled with `NA` in 756 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].
+Error: Faceting variables must have at least one value
+# hmm... see later.
 plot_sensitivity_to_Ne_K3 # 35193014
+Error in paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K3/Ne",  :
+  object 'Ne' not found
+# Fix later
+Job counts:
+        count   jobs
+        1       diversity
+        1       plot_sensitivity_to_Ne_K3
+        2       plot_within_ancestry_fst
+        1       print_fst_one_file_K3
+        1       some
+        2       summarise_bootstrap_anc_by_r
+        8 # 6.7.2021 8:36am 
 
 # TO DO:
 # mhl1 inversion analyses/plots

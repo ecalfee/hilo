@@ -491,6 +491,48 @@ rule plot_bootstrap_NGSadmix_by_r:
     script:
          "plot_bootstrap_NGSadmix.R"
 
+## plot_bootstrap_NGSadmix_by_r_K3: plots bootstrap results for global ancestry (NGSAdmix) K=3 mex-parv-maize by recombination rate
+rule plot_bootstrap_NGSadmix_by_r_K3:
+    input:
+        colors = "colors.R",
+        meta = "samples/{PREFIX}_meta.RData",
+        windows = "ancestry_by_r/results/map_pos_1cM_windows.txt",
+        inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
+        r5 = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/r5_K3.Rdata",
+        cd5 = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/cd5_K3.Rdata"
+    output:
+        png_multi = "ancestry_by_r/plots/{PREFIX}_K3_by_r_multi_panel.png",
+        png_multi_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K3_by_r_multi_panel.tif",
+
+        png_r5_symp = "ancestry_by_r/plots/{PREFIX}_K3_by_r_bootstrap_sympatric_only.png",
+        png_r5_symp_allo = "ancestry_by_r/plots/{PREFIX}_K3_by_r_bootstrap_sympatric_and_allopatric.png",
+        png_r5_symp_allo_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_by_r_bootstrap_sympatric_and_allopatric.tif"
+
+        png_cd5_symp = "ancestry_by_r/plots/{PREFIX}_K3_by_cd_bootstrap_sympatric_only.png",
+        png_cd5_symp_allo = "ancestry_by_r/plots/{PREFIX}_K3_by_cd_bootstrap_sympatric_and_allopatric.png",
+        png_cd5_symp_allo_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_by_cd_bootstrap_sympatric_and_allopatric.tif",
+
+        png_cor_r_cd = "ancestry_by_r/plots/{PREFIX}_K3_corr_r_cd_1cM.png",
+        png_cor_r_frac = "ancestry_by_r/plots/{PREFIX}_K3_corr_r_frac_1cM.png",
+
+        png_color_elev_r5 = "ancestry_by_r/plots/{PREFIX}_K3_by_r_bootstrap_lm_elevation_color_elev.png",
+        png_color_elev_r5_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
+
+        file_elev_r_interaction_5 = "ancestry_by_r/tables/{PREFIX}_K3_elev_r_interaction_5.tex",
+        file_elev_r_interaction_5_tex = "../hilo_manuscript/tables/{PREFIX}_K3_elev_r_interaction_5.tex",
+
+        file_spearmans_rho_ngsadmix = "ancestry_by_r/tables/{PREFIX}_K3_spearmans_rho_ngsadmix.tex",
+        file_spearmans_rho_ngsadmix_tex = "../hilo_manuscript/tables/{PREFIX}_K3_spearmans_rho_ngsadmix.tex"
+    params:
+        p = "med2"
+    conda:
+         "../envs/environment.yaml"
+    resources:
+         time_min = 15,
+         mem = 4
+    script:
+         "plot_bootstrap_NGSadmix_K3.R"
+
 ## plot_bootstrap_local_ancestry_by_r: plots bootstrap results for local ancestry by recombination rate
 rule plot_bootstrap_local_ancestry_by_r:
     input:
