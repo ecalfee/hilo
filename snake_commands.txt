@@ -4075,7 +4075,7 @@ Job counts:
         7 # check on the plot_bootstrap_NGSadmix_K3 part. why did it fail?
 
 # I need to check on this script: make_rf_outliers_by_pop.R - updated
-hilo$ snakemake -n some diversity --quiet --profile slurm
+hilo$ snakemake some diversity --quiet --profile slurm
 Job counts:
         count   jobs
         28      calc_fst_all_outliers
@@ -4090,18 +4090,53 @@ Job counts:
         14      make_rf_outliers_by_pop
         1       plot_sensitivity_to_Ne_K3
         1       plot_shared_peaks
-        2       plot_within_ancestry_fst
+        2       plot_within_ancestry_fst # errors:
+        hilo$ less snake_logs/plot_within_ancestry_fst.K=3,Ne=10000,PREFIX=HILO_MAIZE55_PARV50,YESNO=yes.35358397.err
+        # 1: Expected 8 pieces. Additional pieces discarded in 1134 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].
+        # 2: Expected 5 pieces. Missing pieces filled with `NA` in 1134 rows [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, ...].
+        # Error: Faceting variables must have at least one value
         1       plot_within_ancestry_fst_pi_peaks
         1       print_fst_ancestry_peaks_one_file
         1       print_fst_one_file_K3
         1       print_pi_mexicana_peaks_one_file
         1       print_pi_one_file
         1       some
-        501
+        501 # RUNNING 6.9.2021 1:39am. Cancelled some jobs in the morning to re-make plots:
+        farm:~$ squeue -u ecalfee
+                 JOBID PARTITION     NAME     USER ST        TIME  NODES CPU MIN_ME NODELIST(REASON)
+              35016895     high2     bash  ecalfee  R  6-14:30:56      1 5   16G    c6-54
+              35363717     high2     bash  ecalfee  R       38:19      1 1   2G     c6-59
+              35354444      med2 estimate  ecalfee  R     2:28:20      1 12  56G    c6-59
+              35354446      med2 estimate  ecalfee  R     2:28:20      1 12  56G    c6-59
+              35354605      med2 estimate  ecalfee  R     2:28:20      1 12  56G    c6-59
+              35354607      med2 estimate  ecalfee  R     2:28:20      1 12  56G    c6-59
+              35363671      med2 calc_the  ecalfee  R       40:25      1 3   8G     c6-59
+              35363672      med2 calc_fst  ecalfee  R       40:25      1 3   8G     c6-59
+hilo$ scancel 35354444 35354446 35354605 35354607 35363671 35363672
 
-
+# want to trigger rerun of mhl1 inversion plots:
+hilo$ rm mhl1_inv/results/HILO_MAIZE55*/K*/*/mhl1_inv.bed
+hilo$ rm mhl1_inv/results/HILO_MAIZE55*/K*/*/mhl1_inv.regions
+hilo$ rm mhl1_inv/results/HILO_MAIZE55*/K*/Ne*/mhl1_inv*.gz
+hilo$ rm mhl1_inv/results/PCA/HILO_MAIZE55*/K*/Ne*/mhl1_inv*.cov
+hilo$ rm mhl1_inv/plots/*.png
 
 # TO DO:
+# Qs for JEFF/GRAHAM
+- Show new figures
+- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods.
+- PARV also changes across recombination rate. local ancestry ~ r just a tad different
+- show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
+----actually re-do this first to make sure it's not spurious because of background (outside inversion)
+- What should I do about Dan's selection/domestication scan? Just add it, right? Seems accurate just not powerful. Need to redo.
+- Still running last couple plots (QQs/Nes/Pi + Fst within local ancestry peaks)
+- Make sure everyone agrees I should re-label all plots 'reference maize' instead of 'allopatric maize' (eg. mhl1 inversion, Fig S38)
+# NEED TO DELETE FILES SO mhl1 inversion RERUNS with JUST LARGEST REGION! (I think *.regions)
+# COMBINED GENOME SCAN SHOULD BE MAIZE ANCESTRY ON TOP, NOT MEXICANA ANCESTRY. 4th plot (sympatric mexicana) is WRONG. It currently shows maize.
+# MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
+
+# add back in f4 tables to github.
+
 # update for K=3: rule plotQQ, plot_shared_peaks
 # mhl1 inversion analyses/plots
 # QQ plots

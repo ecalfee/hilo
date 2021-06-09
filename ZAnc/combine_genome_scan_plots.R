@@ -144,7 +144,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               just = "center",
                                               gp = gpar(fontsize = 11)),
                                      cowplot::get_legend(plot_for_legend_only),
-                                     textGrob(label = "mean mexicana ancestry",
+                                     textGrob(label = "mean maize ancestry",
                                               rot = 90),
                                      textGrob(label = "slope mexicana ancestry ~ elevation",
                                               rot = 90)
