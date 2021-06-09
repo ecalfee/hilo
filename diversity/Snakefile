@@ -465,8 +465,8 @@ rule calc_fst_all_outliers:
 rule print_fst_ancestry_peaks_one_file:
     input:
         # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
-        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ANCESTRY}}/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ANCESTRY}}/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     output:
         fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.{ANCESTRY}_ancestry.peaks.allChr.txt"
     params:
