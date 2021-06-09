@@ -4070,12 +4070,12 @@ Job counts:
         1       plot_bootstrap_NGSadmix_by_r_K3
         1       plot_sensitivity_to_Ne_K3
         2       plot_within_ancestry_fst
-        1       print_fst_one_file_K3
+        1       print_fst_one_file_K3 # removed some repeated input files.
         1       some
         7 # check on the plot_bootstrap_NGSadmix_K3 part. why did it fail?
 
 # I need to check on this script: make_rf_outliers_by_pop.R - updated
-hilo$ snakemake -n some diversity --quiet --profile slurm # haven't run yet 
+hilo$ snakemake -n some diversity --quiet --profile slurm
 Job counts:
         count   jobs
         28      calc_fst_all_outliers
@@ -4089,6 +4089,7 @@ Job counts:
         84      estimate_sfs
         14      make_rf_outliers_by_pop
         1       plot_sensitivity_to_Ne_K3
+        1       plot_shared_peaks
         2       plot_within_ancestry_fst
         1       plot_within_ancestry_fst_pi_peaks
         1       print_fst_ancestry_peaks_one_file
@@ -4096,7 +4097,7 @@ Job counts:
         1       print_pi_mexicana_peaks_one_file
         1       print_pi_one_file
         1       some
-        500
+        501
 
 
 
