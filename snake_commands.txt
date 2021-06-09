@@ -4121,6 +4121,15 @@ hilo$ rm mhl1_inv/results/HILO_MAIZE55*/K*/Ne*/mhl1_inv*.gz
 hilo$ rm mhl1_inv/results/PCA/HILO_MAIZE55*/K*/Ne*/mhl1_inv*.cov
 hilo$ rm mhl1_inv/plots/*.png
 
+hilo$ snakemake -n some --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       plot_sensitivity_to_Ne_K3
+        1       plot_shared_peaks
+        1       some
+        3 # RUNNING 6.9.2021 9:24am
+
+
 # TO DO:
 # Qs for JEFF/GRAHAM
 - Show new figures

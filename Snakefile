@@ -159,12 +159,12 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "map/Snakefile"
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
+#include: "global_ancestry/Snakefile"
 #include: "linkage_map/Snakefile"
-include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
+#include: "local_ancestry/Snakefile"
+#include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
-include: "diversity/Snakefile"
+#include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
 #include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
@@ -402,10 +402,10 @@ rule some:
         #expand("mhl1_inv/plots/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_ancestry.png", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
         #expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_mhl1_inv_ancestry.tif", zip, PREFIX = ["HILO_MAIZE55_PARV50", "HILO_MAIZE55"], K = [3,2]),
 
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
-        "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
+        #"local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif",
 
         # introgression peaks
         expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_network_peak_sharing_data_only.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),

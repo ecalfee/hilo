@@ -34,21 +34,21 @@ prefix = snakemake@params[["PREFIX"]]
 K = snakemake@params[["K"]]
 # K = 3
 
-png_hist = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_peaks.png")
-png_net_multi = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
-png_net_multi_no_inv4m = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
-png_net_multi_sims = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
+png_hist = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_mex_maize_hist_outlier_peaks.png")
+png_net_multi = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing.png")
+png_net_multi_no_inv4m = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_no_inv4m.png")
+png_net_multi_sims = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_sims_only.png")
 
-png_net_multi_data = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
-png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
+png_net_multi_data = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.png")
+png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
 
-png_combmatrix_maize = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
-png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
+png_combmatrix_maize = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.png")
+png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
 
-png_combmatrix_mexicana = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_mexicana.png")
-png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
+png_combmatrix_mexicana = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.png")
+png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
 
-png_peaks_on_genome = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/shared_peaks_on_genome.png")
+png_peaks_on_genome = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_shared_peaks_on_genome.png")
 
 # load data
 source(colors_file)
@@ -151,9 +151,9 @@ for (zea in mex_maize){
 # plot local ancestry by population across each chromosome individually
 for (zea in mex_maize){
   # make a plot of outliers on each chromosome
-  png_chr_i_prefix = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/", zea, "_shared_outliers_chr_")
-  png_chr_i_prefix_main_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
-  png_chr_i_prefix_supp_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "/K", K, "Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_main_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_supp_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
   
   for (i in 1:10){
     p_chr_i = anc_outliers_list[[zea]] %>%
@@ -344,8 +344,8 @@ for (zea in mex_maize){
 
 # linear plot
 p_net_maize <- ggraph(peak_network[["maize"]], layout = "linear") +
-    geom_edge_arc(aes(width = surplus_shared_peaks*100,
-                      alpha = surplus_shared_peaks*100)) +
+    geom_edge_arc(aes(width = p_snps_shared_data*100,
+                      alpha = p_snps_shared_data*100)) +
     geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
     theme_graph(base_family = 'Helvetica') +
     geom_node_text(aes(label = name), 
@@ -404,7 +404,7 @@ p_net_multi <- grid.arrange(grobs = list(ggplotGrob(p_net_maize +
                                         0.7),
                             widths = c(0.1, 5, 0.2, 1.7))
 
-#p_net_multi
+# p_net_multi
 
 ggsave(file = png_net_multi,
          plot = p_net_multi,
@@ -476,10 +476,11 @@ for (zea in mex_maize){
   peak_network_no_inv4m[[zea]] <- net_tidy
 }
 
+# plot raw data % sharing
 # linear plot
 p_net_maize_no_inv4m <- ggraph(peak_network_no_inv4m[["maize"]], layout = "linear") +
-  geom_edge_arc(aes(width = surplus_shared_peaks*100,
-                    alpha = surplus_shared_peaks*100)) +
+  geom_edge_arc(aes(width = p_snps_shared_data*100,
+                    alpha = p_snps_shared_data*100)) +
   geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
   theme_graph(base_family = 'Helvetica') +
   geom_node_text(aes(label = name), 
@@ -487,8 +488,10 @@ p_net_maize_no_inv4m <- ggraph(peak_network_no_inv4m[["maize"]], layout = "linea
                  hjust = 1,
                  y = -0.5,
                  repel = F) +
-  scale_edge_alpha(range = c(0, 1.5), limits = c(0, 2.75)) +
-  scale_edge_width(range = c(0, 4), limits = c(0, 2.75)) +
+  #scale_edge_alpha(range = c(0, 1.5), limits = c(0, 2.75)) +
+  #scale_edge_width(range = c(0, 4), limits = c(0, 2.75)) +
+  scale_edge_alpha(range = c(0, 1), limits = c(0, 2.5)) +
+  scale_edge_width(range = c(0, 2.5), limits = c(0, 2.5)) +
   scale_color_viridis(direction = -1) +
   coord_cartesian(clip = "off") +
   labs(edge_width = "% SNPs in\n shared peaks\n beyond expectation",
@@ -498,16 +501,18 @@ p_net_maize_no_inv4m <- ggraph(peak_network_no_inv4m[["maize"]], layout = "linea
 # p_net_maize_no_inv4m
 
 p_net_mexicana_no_inv4m <- ggraph(peak_network_no_inv4m[["mexicana"]], layout = "linear") +
-  geom_edge_arc(aes(width = surplus_shared_peaks*100, 
-                    alpha = surplus_shared_peaks*100)) +
+  geom_edge_arc(aes(width = p_snps_shared_data*100, 
+                    alpha = p_snps_shared_data*100)) +
   geom_node_point(aes(color = ELEVATION), size = 3) + # why can't I do x = ELEVATION?
   theme_graph(base_family = 'Helvetica') +
-  scale_edge_alpha(range = c(0, 1.5), limits = c(0, 2.75)) +
-  scale_edge_width(range = c(0, 4), limits = c(0, 2.75)) +
+  #scale_edge_alpha(range = c(0, 1.5), limits = c(0, 2.75)) +
+  #scale_edge_width(range = c(0, 4), limits = c(0, 2.75)) +
+  scale_edge_alpha(range = c(0, 1), limits = c(0, 2.5)) +
+  scale_edge_width(range = c(0, 2.5), limits = c(0, 2.5)) +
   scale_color_viridis(direction = -1) +
   coord_cartesian(clip = "off") +
-  labs(edge_width = "% SNPs in\n shared peaks\n beyond expectation",
-       edge_alpha = "% SNPs in\n shared peaks\n beyond expectation",
+  labs(edge_width = "% SNPs in\n shared peaks",
+       edge_alpha = "% SNPs in\n shared peaks",
        color = "Elevation (m)") +
   ggtitle("(Excl. inv4m) Shared introgression peaks in mexicana")
 # p_net_mexicana_no_inv4m
