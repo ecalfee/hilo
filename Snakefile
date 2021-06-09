@@ -403,7 +403,18 @@ rule some:
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif"
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif",
+
+        # introgression peaks
+        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_network_peak_sharing_data_only.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("ZAnc/plots/{PREFIX}_K{K}_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea, PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana", PREFIX = "HILO_MAIZE55_PARV50", K = 3)
+
+
     params:
         p = "med2"
     resources:

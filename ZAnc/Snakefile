@@ -490,7 +490,7 @@ rule plot_shared_peaks:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
-        prefix_all = "{PREFIX}",
+        PREFIX = "{PREFIX}",
         K = "{K}"
     conda:
         "../envs/environment.yaml"

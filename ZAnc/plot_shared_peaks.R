@@ -20,7 +20,7 @@ library(ggupset)
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 sites_file = snakemake@input[["sites"]]
-# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
+# sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites"
 inv_file = snakemake@input[["inv"]]
 # inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 genome_file = snakemake@input[["genome"]]
@@ -29,24 +29,26 @@ Ne = as.integer(snakemake@params[["Ne"]])
 # Ne = 10000
 YESNO = snakemake@params[["YESNO"]]
 # YESNO = "yes"
-prefix_all = snakemake@params[["prefix_all"]]
-# prefix_all = "HILO_MAIZE55"
+prefix = snakemake@params[["PREFIX"]]
+# prefix = "HILO_MAIZE55_PARV50"
+K = snakemake@params[["K"]]
+# K = 3
 
-png_hist = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_peaks.png")
-png_net_multi = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
-png_net_multi_no_inv4m = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
-png_net_multi_sims = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
+png_hist = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/mex_maize_hist_outlier_peaks.png")
+png_net_multi = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing.png")
+png_net_multi_no_inv4m = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_no_inv4m.png")
+png_net_multi_sims = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_sims_only.png")
 
-png_net_multi_data = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
-png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
+png_net_multi_data = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/network_peak_sharing_data_only.png")
+png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
 
-png_combmatrix_maize = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
-png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
+png_combmatrix_maize = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_maize.png")
+png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
 
-png_combmatrix_mexicana = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_mexicana.png")
-png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
+png_combmatrix_mexicana = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/combmatrix_peak_sharing_mexicana.png")
+png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
 
-png_peaks_on_genome = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/shared_peaks_on_genome.png")
+png_peaks_on_genome = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/shared_peaks_on_genome.png")
 
 # load data
 source(colors_file)
@@ -93,19 +95,23 @@ sim_outliers_list = list(mexicana = NULL, maize = NULL)
 outliers_by_pop_list = list(mexicana = NULL, maize = NULL)
 
 for (zea in mex_maize){
-  sim_file = paste0("ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/", zea, ".MVN.RData")
-  anc_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pops.anc.RData")
-  meta_file = paste0("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne10000_yesBoot/anc/", zea, ".pop.meta.RData")
+  sim_file = paste0("ZAnc/results/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/", zea, ".MVN.RData")
+  anc_file = paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/anc/", zea, ".pops.anc.RData")
+  meta_file = paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/anc/", zea, ".pop.meta.RData")
 
   load(anc_file)
   load(sim_file)
   load(meta_file)
   
   # take inverse if mexicana to get 'introgressed' minor ancestry
-  if (zea == "mexicana"){
-    anc = 1 - anc
-    MVN_sim = 1 - MVN_sim
-    meta_pops$alpha_local_ancestry = 1 - meta_pops$alpha_local_ancestry
+  if (zea == "mexicana"){ # sympatric mexicana look at introgressed maize
+    anc = anc[["maize"]]
+    MVN_sim = MVN_sim[["maize"]]
+    meta_pops$alpha_local_ancestry = meta_pops$alpha_local_ancestry_maize
+  } else{ # sympatric maize look at introgressed mexicana
+    anc = anc[["mexicana"]]
+    MVN_sim = MVN_sim[["mexicana"]]
+    meta_pops$alpha_local_ancestry = meta_pops$alpha_local_ancestry_mexicana
   }
   
   # what is 2sd above the mean introgressed ancestry threshold for each pop?
@@ -145,9 +151,9 @@ for (zea in mex_maize){
 # plot local ancestry by population across each chromosome individually
 for (zea in mex_maize){
   # make a plot of outliers on each chromosome
-  png_chr_i_prefix = paste0("ZAnc/plots/Ne", Ne, "_", YESNO, "Boot/", zea, "_shared_outliers_chr_")
-  png_chr_i_prefix_main_lzw = paste0("../hilo_manuscript/figures_main/Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
-  png_chr_i_prefix_supp_lzw = paste0("../hilo_manuscript/figures_supp/Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix = paste0("ZAnc/plots/", prefix, "/K", K, "/Ne", Ne, "_", YESNO, "Boot/", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_main_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "/K", K, "Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
+  png_chr_i_prefix_supp_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "/K", K, "Ne", Ne, "_", YESNO, "Boot_", zea, "_shared_outliers_chr_")
   
   for (i in 1:10){
     p_chr_i = anc_outliers_list[[zea]] %>%

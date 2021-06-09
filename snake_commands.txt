@@ -4074,7 +4074,31 @@ Job counts:
         1       some
         7 # check on the plot_bootstrap_NGSadmix_K3 part. why did it fail?
 
-# I need to check on this script: make_rf_outliers_by_pop.R
+# I need to check on this script: make_rf_outliers_by_pop.R - updated
+hilo$ snakemake -n some diversity --quiet --profile slurm # haven't run yet 
+Job counts:
+        count   jobs
+        28      calc_fst_all_outliers
+        28      calc_fst_idx_outliers
+        84      calc_pi_all_chr
+        56      calc_pi_all_outliers
+        84      calc_thetas
+        56      calc_thetas_outliers
+        1       diversity
+        56      estimate_saf_pop_outliers
+        84      estimate_sfs
+        14      make_rf_outliers_by_pop
+        1       plot_sensitivity_to_Ne_K3
+        2       plot_within_ancestry_fst
+        1       plot_within_ancestry_fst_pi_peaks
+        1       print_fst_ancestry_peaks_one_file
+        1       print_fst_one_file_K3
+        1       print_pi_mexicana_peaks_one_file
+        1       print_pi_one_file
+        1       some
+        500
+
+
 
 # TO DO:
 # update for K=3: rule plotQQ, plot_shared_peaks
