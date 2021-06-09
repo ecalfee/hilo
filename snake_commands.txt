@@ -4074,7 +4074,10 @@ Job counts:
         1       some
         7 # check on the plot_bootstrap_NGSadmix_K3 part. why did it fail?
 
+# I need to check on this script: make_rf_outliers_by_pop.R
+
 # TO DO:
+# update for K=3: rule plotQQ, plot_shared_peaks
 # mhl1 inversion analyses/plots
 # QQ plots
 # test robustness of ancestry_hmm to choice of Ne

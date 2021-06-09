@@ -358,7 +358,7 @@ rule estimate_saf_pop_outliers:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
         bam_list = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/bams/{POP1}_bams.list",
         complete = expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ANCESTRY}}/bams/{POP}.completed", POP = symp_pops), # all pops have completed bams
-        regions_file = "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
+        regions_file = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{POP2}.{n}pop.outliers.regions"
     output:
         saf_idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
         saf_gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.gz",

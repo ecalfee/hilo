@@ -185,13 +185,13 @@ rule combine_genome_scan_plots:
 ## plot_QQ: make QQ plots for mean ancestry and slope anc ~ elev (quantiles in MVN simulations vs data)
 rule plotQQ:
     input: # all summarized simulation and observed results
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/anc/{zea}.pops.anc.RData", zea = zea),
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{zea}.MVN.RData", zea = zea),
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.fit.RData", zea = zea),
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.sim.RData", zea = zea)
+        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/anc/{zea}.pops.anc.RData", zea = zea),
+        expand("ZAnc/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/{zea}.MVN.RData", zea = zea),
+        expand("ZAnc/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.fit.RData", zea = zea),
+        expand("ZAnc/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/{zea}.lmElev.sim.RData", zea = zea)
     output:
-        png = "ZAnc/plots/Ne{Ne}_{YESNO}Boot/QQ.png",
-        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_QQ.tif"
+        png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_QQ.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_QQ.tif"
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
@@ -453,44 +453,45 @@ rule test_key_genes:
 ## plot_shared_peaks: plots shared outlier peaks for high introgression
 rule plot_shared_peaks:
     input:
-        sim_maize = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize.MVN.RData",
-        sim_mex = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana.MVN.RData",
-        anc_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
-        anc_mex = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
-        meta_pop_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-        meta_pop_mex = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
-        meta = "samples/" + prefix_all + "_meta.RData",
+        sim_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.MVN.RData",
+        sim_mex = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.MVN.RData",
+        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+        anc_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
+        meta_pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        meta_pop_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
         colors = "colors.R",
-        sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.var.sites",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
     output:
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png",
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing.png",
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_no_inv4m.png",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_mex_maize_hist_outlier_peaks.png",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing.png",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_no_inv4m.png",
 
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_data_only.png",
-        "../hilo_manuscript/figures_main/Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.tif",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.png",
+        "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.tif",
 
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/network_peak_sharing_sims_only.png",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_sims_only.png",
 
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_maize.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.tif",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.png",
+        "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.tif",
 
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/combmatrix_peak_sharing_mexicana.png",
-        "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.tif",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.png",
+        "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.tif",
 
-        "ZAnc/plots/Ne{Ne}_{YESNO}Boot/shared_peaks_on_genome.png",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_shared_peaks_on_genome.png",
 
-        expand("ZAnc/plots/Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
-        "../hilo_manuscript/figures_main/Ne{Ne}_{YESNO}Boot_maize_shared_outliers_chr_4.tif",
-        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
-        expand("../hilo_manuscript/figures_supp/Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana")
+        expand("ZAnc/plots/{{PREFIX}}_K{{K}}_Ne{{Ne}}_{{YESNO}}Boot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
+        "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize_shared_outliers_chr_4.tif",
+        expand("../hilo_manuscript/figures_supp/{{PREFIX}}_K{{K}}_Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        expand("../hilo_manuscript/figures_supp/{{PREFIX}}_K{{K}}_Ne{{Ne}}_{{YESNO}}Boot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana")
     params:
         p = "med2",
         Ne = lambda wildcards: wildcards.Ne,
         YESNO = lambda wildcards: wildcards.YESNO,
-        prefix_all = "{PREFIX}"
+        prefix_all = "{PREFIX}",
+        K = "{K}"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -504,18 +505,18 @@ rule plot_shared_peaks:
 ## make_rf_outliers_by_pop: make regions files (-rf for angsd) and bed files for high introgression outlier regions in a focal population that are shared by no other populations (1pop) or shared by at least 3 other populations (4pop)
 rule make_rf_outliers_by_pop:
     input:
-        anc_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
-        anc_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
-        meta_maize = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-        meta_mexicana = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
-        meta = "samples/" + prefix_all + "_meta.RData",
-        bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
+        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+        anc_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
+        meta_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        meta_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+        meta = "samples/{PREFIX}_meta.RData",
+        bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed",
         genome = ref_chr
     output:
-        expand("ZAnc/results/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{n}pop.outliers.{SUFFIX}", n = [1, 4], SUFFIX = ["regions", "bed"])
+        expand("ZAnc/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/{{POP}}.{n}pop.outliers.{SUFFIX}", n = [1, 4], SUFFIX = ["regions", "bed"])
     params:
         p = "med2",
-        dir_out = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot",
+        dir_out = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot",
         focal_pop = lambda wildcards: wildcards.POP
     conda:
         "../envs/environment.yaml"
