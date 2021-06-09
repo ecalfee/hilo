@@ -60,15 +60,15 @@ rule make_fasta:
 rule estimate_saf_pop:
     input:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
-        bam_list = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP1}_bams.list",
-        complete = expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}.completed", POP = symp_pops) # all pops have completed bams
+        bam_list = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/bams/{POP1}_bams.list",
+        complete = expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ANCESTRY}}/bams/{POP}.completed", POP = symp_pops) # all pops have completed bams
     output:
-        saf_idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
-        saf_gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.gz",
-        saf_pos = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.pos.gz"
+        saf_idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.gz",
+        saf_pos = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.pos.gz"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -87,9 +87,9 @@ rule estimate_saf_pop:
 ## estimate_sfs: estimates site frequency spectrum (sfs) by maximum likelihood in ANGSD
 rule estimate_sfs:
     input:
-        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx"
+        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.idx"
     output:
-        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.sfs"
+        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.sfs"
     params:
         p = "med2"
     conda:
@@ -105,14 +105,14 @@ rule estimate_sfs:
 ## calc_thetas: calculates thetas for each site from saf and sfs in ANGSD
 rule calc_thetas:
     input:
-        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.saf.idx",
-        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.sfs"
+        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.saf.idx",
+        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.sfs"
     output:
-        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz",
-        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx"
+        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.thetas.gz",
+        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.thetas.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -144,13 +144,13 @@ rule calc_thetas:
 ## calc_pi_all_chr: calculates pi for each chromosome in the genome (for background diversity rates)
 rule calc_pi_all_chr:
     input:
-        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx",
-        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz"
+        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.thetas.idx",
+        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.thetas.gz"
     output:
-        thetas = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG"
+        thetas = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.pi.allChr.pestPG"
     params:
         p = "low2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP}.pi.allChr"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -211,10 +211,10 @@ rule calc_pi_all_chr:
 ## estimate_2D_sfs: estimates 2D site frequency spectrum (sfs) for 2 populations jointly by maximum likelihood in ANGSD
 rule estimate_2D_sfs:
     input:
-        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx",
-        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.saf.idx"
+        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP2}.saf.idx"
     output:
-        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.2Dsfs"
     params:
         p = "med2"
     conda:
@@ -230,15 +230,15 @@ rule estimate_2D_sfs:
 ## calc_fst_idx: calculates fst for each sites using 2Dsfs and saf's for each population (can later be summarised by window or genomewide)
 rule calc_fst_idx:
     input:
-        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.saf.idx",
-        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.saf.idx",
-        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP2}.saf.idx",
+        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.2Dsfs"
     output:
-        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz",
-        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx"
+        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.gz",
+        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}"
+        out_prefix = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -269,10 +269,10 @@ rule calc_fst_idx:
 ## calc_fst_all_chr: calculates fst for each chromosome in the genome (for background divergence rates between population pair)
 rule calc_fst_all_chr:
     input:
-        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx",
-        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz"
+        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.idx",
+        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.gz"
     output:
-        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.allChr.txt"
+        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.fst.allChr.txt"
     params:
         p = "med2"
     conda:
@@ -336,11 +336,11 @@ rule plot_within_ancestry_fst:
         fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         meta = "samples/{PREFIX}_meta.RData"
     output:
-        png_points_maize = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_points.png",
-        png_points_mexicana = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_points.png",
-        png_heatmap_maize = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/fst_within_maize_ancestry_genomewide_heatmap.png",
-        png_heatmap_mexicana = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/fst_within_mexicana_ancestry_genomewide_heatmap.png",
-        png_heatmap_both = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+        png_points_maize = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_ancestry_genomewide_points.png",
+        png_points_mexicana = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_mexicana_ancestry_genomewide_points.png",
+        png_heatmap_maize = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_ancestry_genomewide_heatmap.png",
+        png_heatmap_mexicana = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_mexicana_ancestry_genomewide_heatmap.png",
+        png_heatmap_both = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
         png_heatmap_both_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
     params:
         p = "med2"
@@ -356,16 +356,16 @@ rule plot_within_ancestry_fst:
 rule estimate_saf_pop_outliers:
     input:
         anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
-        bam_list = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP1}_bams.list",
-        complete = expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}.completed", POP = symp_pops), # all pops have completed bams
+        bam_list = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/bams/{POP1}_bams.list",
+        complete = expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ANCESTRY}}/bams/{POP}.completed", POP = symp_pops), # all pops have completed bams
         regions_file = "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
     output:
-        saf_idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
-        saf_gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.saf.gz",
-        saf_pos = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.saf.pos.gz"
+        saf_idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.idx", # ALL or HOMOZYG/maize. maybe start with HOMOZYG/mexicana
+        saf_gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.gz",
+        saf_pos = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.pos.gz"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}"
     conda:
         "../envs/environment.yaml"
     threads:
@@ -388,14 +388,14 @@ rule estimate_saf_pop_outliers:
 ## note: uses global sfs from all regions across the genome as a prior for this subset of regions.
 rule calc_thetas_outliers:
     input:
-        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.saf.idx",
-        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.sfs"
+        saf = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.saf.idx",
+        sfs = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.sfs"
     output:
-        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.thetas.gz",
-        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.thetas.idx"
+        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.thetas.gz",
+        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.thetas.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -407,13 +407,13 @@ rule calc_thetas_outliers:
 ## calc_pi_all_outliers: calculates pi across all outlier regions only
 rule calc_pi_all_outliers:
     input:
-        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.thetas.idx",
-        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.thetas.gz"
+        idx = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.thetas.idx",
+        gz = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.thetas.gz"
     output:
-        thetas = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.pi.allChr.pestPG"
+        thetas = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.pi.allChr.pestPG"
     params:
         p = "low2",
-        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP2}.pi.allChr"
+        out_prefix = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP2}.pi.allChr"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -427,15 +427,15 @@ rule calc_pi_all_outliers:
 ## note: outliers are always defined based on the first population and 2Dsfs prior is an estimate from all sites in the genome (not just outliers)
 rule calc_fst_idx_outliers:
     input:
-        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{n}pop.outliers{POP1}.saf.idx",
-        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP2}.{n}pop.outliers{POP1}.saf.idx",
-        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.2Dsfs"
+        saf1 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{n}pop.outliers{POP1}.saf.idx",
+        saf2 = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP2}.{n}pop.outliers{POP1}.saf.idx",
+        sfs = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.2Dsfs"
     output:
-        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.gz",
-        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.idx"
+        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.gz",
+        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.idx"
     params:
         p = "med2",
-        out_prefix = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}"
+        out_prefix = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -447,10 +447,10 @@ rule calc_fst_idx_outliers:
 ## calc_fst_all_outliers: calculates fst for each chromosome in the genome across outlier regions only
 rule calc_fst_all_outliers:
     input:
-        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.idx",
-        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.gz"
+        idx = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.idx",
+        gz = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.gz"
     output:
-        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.allChr.txt"
+        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.{n}pop.outliers{POP1}.fst.allChr.txt"
     params:
         p = "med2"
     conda:
@@ -461,14 +461,14 @@ rule calc_fst_all_outliers:
     shell:
         "realSFS fst stats {input.idx} > {output.fst}"
 
-## print_fst_mexicana_peaks_one_file:: combines all fst results for high mexicana introgression peaks into 1 file
-rule print_fst_mexicana_peaks_one_file:
+## print_fst_ancestry_peaks_one_file:: combines all fst results for high introgression peaks into 1 file
+rule print_fst_ancestry_peaks_one_file:
     input:
         # fst between mexicana ancestry within sympatric mexicana and within local sympatric maize (at the introgression outliers for the local maize)
-        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
-        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/mexicana/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
+        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.1pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops),
+        expand("diversity/results/fst/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ANCESTRY}/{POP1}.{POP2}.4pop.outliers{POP1}.fst.allChr.txt", zip, POP1 = symp_maize_pops, POP2 = symp_mexicana_pops)
     output:
-        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt"
+        fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.{ANCESTRY}_ancestry.peaks.allChr.txt"
     params:
         p = "med2"
     conda:
@@ -482,7 +482,7 @@ rule print_fst_mexicana_peaks_one_file:
 ## print_pi_one_file: combines all within-ancestry pi results into 1 file (chr, Watterson's theta, nSites with data)
 rule print_pi_one_file:
     input:
-        expand("diversity/results/pi/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.allChr.pestPG", POP = symp_pops, ZEA = zea)
+        expand("diversity/results/pi/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ANCESTRY}/{POP}.pi.allChr.pestPG", POP = symp_pops, ANCESTRY = ["maize", "mexicana", "parv"])
     output:
         pi = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt"
     params:
@@ -527,11 +527,11 @@ rule plot_within_ancestry_fst_pi_peaks:
         pi_peaks = "diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt",
         meta = "samples/{PREFIX}_meta.RData"
     output:
-        png_pi_mex = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/pi_within_mexicana_ancestry_peaks.png",
+        png_pi_mex = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.png",
         png_pi_mex_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif",
-        png_pi_maize = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/pi_within_maize_ancestry.png",
+        png_pi_maize = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.png",
         png_pi_maize_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif",
-        png_fst_mex = "diversity/plots/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/local_fst_within_mexicana_ancestry_peaks.png",
+        png_fst_mex = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.png",
         png_fst_mex_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif"
     params:
         p = "med2"
