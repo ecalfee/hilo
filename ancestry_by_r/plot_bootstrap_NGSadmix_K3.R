@@ -421,7 +421,7 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
   mutate(.,
          quintile = quintile - 1, # make quintiles 0-4 instead of 1-5
          elevation_km = ELEVATION/1000) %>%
-  nest(data = colnames(.), -zea) %>%
+  nest(., -zea) %>%
   mutate(.,
          model = map(data, 
                      ~lm(p ~ elevation_km + quintile + quintile*elevation_km, 

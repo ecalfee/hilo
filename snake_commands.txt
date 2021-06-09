@@ -4061,8 +4061,18 @@ Job counts:
         1       some
         2       summarise_bootstrap_anc_by_r
         8 # 6.7.2021 8:36am
+hilo$ snakemake some diversity --quiet --profile slurm # 6.8.2021 1pm.
+# running but I didnt' catch full set of jobs before it started making error messages.
 
-
+Job counts:
+        count   jobs
+        1       diversity
+        1       plot_bootstrap_NGSadmix_by_r_K3
+        1       plot_sensitivity_to_Ne_K3
+        2       plot_within_ancestry_fst
+        1       print_fst_one_file_K3
+        1       some
+        7 # check on the plot_bootstrap_NGSadmix_K3 part. why did it fail?
 
 # TO DO:
 # mhl1 inversion analyses/plots
