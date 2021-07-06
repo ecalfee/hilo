@@ -439,10 +439,10 @@ rule diversity:
         "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
         expand("diversity/plots/{PREFIX}_K{K}_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3])
-        #expand("diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
-        #expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
-        #expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
-        #expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes")
+        expand("diversity/results/pi/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pi.allChr.txt", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_mexicana_ancestry_peaks.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_pi_within_maize_ancestry.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes"),
+        expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_local_fst_within_mexicana_ancestry_peaks.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3, Ne = 10000, YESNO = "yes")
     params:
         p = "med2"
     resources:

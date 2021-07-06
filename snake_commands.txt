@@ -4125,15 +4125,32 @@ hilo$ snakemake -n some --profile slurm --quiet
 Job counts:
         count   jobs
         1       plot_sensitivity_to_Ne_K3
+        1       plot_shared_peaks # problem with file naming (fixed)
+        1       some
+        3 # RUNNING 6.9.2021 9:24am. Both failed so i cancelled these jobs.
+hilo$ rm ZAnc/plots/*multi_maize_mexicana_genome_scan.png # to trigger re-run
+hilo$ snakemake some --profile slurm --quiet
+Job counts:
+        count   jobs
+        2       combine_genome_scan_plots
         1       plot_shared_peaks
         1       some
-        3 # RUNNING 6.9.2021 9:24am
+        4 # RUNNING 9:55am
 
+# 7.6.2021
+started new screen
+ecalfee@farm:~$ srun -p high2 --mem 16G -t 10-00:00:00 --pty bash
+ecalfee@c6-54:~$ module load conda3
+ecalfee@c6-54:~$ source activate hilo-env
+hilo$ ls mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/ # has no files so it should re-run
+# uncommented a bunch of results/plots for diversity and mhl1_inv to try to run on snakemake
 
 # TO DO:
+Add .tif plots and .png's that just finished today from farm
+CHECK ON SCREEN AND START RUNNING DIVERSITY STUFF BEFORE YOU LEAVE SO IT COMPLETES -- CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 # Qs for JEFF/GRAHAM
 - Show new figures
-- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods.
+- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
 - PARV also changes across recombination rate. local ancestry ~ r just a tad different
 - show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
 ----actually re-do this first to make sure it's not spurious because of background (outside inversion)
