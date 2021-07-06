@@ -4144,6 +4144,19 @@ ecalfee@c6-54:~$ module load conda3
 ecalfee@c6-54:~$ source activate hilo-env
 hilo$ ls mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/ # has no files so it should re-run
 # uncommented a bunch of results/plots for diversity and mhl1_inv to try to run on snakemake
+(hilo-env) ecalfee@c6-54:~/hilo$ snakemake -n some diversity --profile slurm --quiet
+MissingInputException in line 436 of /home/ecalfee/hilo/Snakefile:
+Missing input files for rule diversity:
+diversity/results/pi/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.allChr.txt
+
+../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif
+../hilo_manuscript/figures_main/HILO_MAIZE55_K2_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif
+../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif
+diversity/plots/HILO_MAIZE55_K2_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
+../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif
+../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif
+diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
+
 
 # TO DO:
 Add .tif plots and .png's that just finished today from farm
