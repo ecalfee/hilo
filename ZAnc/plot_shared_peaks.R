@@ -38,10 +38,10 @@ png_net_multi_data = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESN
 png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
 
 png_combmatrix_maize = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.png")
-png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
+png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
 
 png_combmatrix_mexicana = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.png")
-png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
+png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
 
 png_peaks_on_genome = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_shared_peaks_on_genome.png")
 
