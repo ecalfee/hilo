@@ -4193,9 +4193,10 @@ hilo$ snakemake all --profile slurm --quiet
 Job counts:
         count   jobs
         1       all
-        2       calc_and_plot_f4 # Error executing rule calc_and_plot_f4 on cluster (jobid: 6, external: 36692430
+        2       calc_and_plot_f4 # Error executing rule calc_and_plot_f4 on cluster (jobid: 6, external: 36692430)
+        # error is more complicated..need to inspect further maybe running the script manually
         85      do_abba_baba # not entirely sure why this rerun was triggered but ok
-        # Error executing rule do_abba_baba on cluster (jobid: 6977, external: 36692263
+        # Error executing rule do_abba_baba on cluster (jobid: 6977, external: ) OUT OF MEMORY (see if it works on rerun)
         1       f4_from_abba_baba
         4       plot_mean_anc
         1       plot_shared_peaks # Error executing rule plot_shared_peaks on cluster (jobid: 4, external: 36692463. Fixed: needed to output tif to figures_supp/
@@ -4204,7 +4205,11 @@ Job counts:
 # fixed main figure on ancestry ~ r and removed old file to trigger a rerun next time I do snakemake:
 hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.png
 
+
+
+
 # TO DO:
+ADD GGALLY to necessary R packages
 CHECK ON HPC1 RESULTS.
 CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 # Qs for JEFF/GRAHAM
@@ -4214,7 +4219,7 @@ CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 - show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
 ----actually re-do this first to make sure it's not spurious because of background (outside inversion)
 - Still running last couple plots (QQs/Nes/Pi + Fst within local ancestry peaks)
-- Make sure everyone agrees I should re-label all plots 'reference maize' instead of 'allopatric maize' (eg. mhl1 inversion, Fig S38)
+- YES DO THIS: Make sure everyone agrees I should re-label all plots 'reference maize' instead of 'allopatric maize' (eg. mhl1 inversion, Fig S38)
 # MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
 
 # add back in f4 tables to github.
