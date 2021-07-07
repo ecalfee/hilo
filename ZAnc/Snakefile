@@ -466,14 +466,8 @@ rule plot_shared_peaks:
         inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
     output:
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_mex_maize_hist_outlier_peaks.png",
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing.png",
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_no_inv4m.png",
-
         "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.png",
         "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.tif",
-
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_sims_only.png",
 
         "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.png",
         "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.tif",

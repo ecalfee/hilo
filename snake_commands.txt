@@ -4182,22 +4182,26 @@ ecalfee@c6-54:~/hilo_manuscript$ ls -lh figures/HILO_MAIZE55_PARV50_K3_Ne10000_y
 hilo_manuscript$ git rm -f tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex
 rm 'tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex'
 ecalfee@c6-54:~/hilo_manuscript$ rm ../hilo/ancestry_by_r/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex
+# updated all the main and supporting figures/tables in rule all for K=3 analyses. Now running snakemake to see what still needs to be completed:
+hilo$ snakemake -n all --profile slurm --quiet
+Missing input files for rule all:
+../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/maize_shared_outliers_chr_9.tif # fixed / -> _
+domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex # folder should be ZAnc/tables
+diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.png # not peaks, just within maize ancestry generally
+diversity/plots/HILO_MAIZE55/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png # removed extra HILO_MAIZE55/
+hilo$ snakemake -n all --profile slurm --quiet
 
 # TO DO:
 CHECK ON HPC1 RESULTS.
-Add .tif plots and .png's that just finished today from farm
-CHECK ON SCREEN AND START RUNNING DIVERSITY STUFF BEFORE YOU LEAVE SO IT COMPLETES -- CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
+CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 # Qs for JEFF/GRAHAM
 - Show new figures
 - HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
 - PARV also changes across recombination rate. local ancestry ~ r just a tad different
 - show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
 ----actually re-do this first to make sure it's not spurious because of background (outside inversion)
-- What should I do about Dan's selection/domestication scan? Just add it, right? Seems accurate just not powerful. Need to redo.
 - Still running last couple plots (QQs/Nes/Pi + Fst within local ancestry peaks)
 - Make sure everyone agrees I should re-label all plots 'reference maize' instead of 'allopatric maize' (eg. mhl1 inversion, Fig S38)
-# NEED TO DELETE FILES SO mhl1 inversion RERUNS with JUST LARGEST REGION! (I think *.regions)
-# COMBINED GENOME SCAN SHOULD BE MAIZE ANCESTRY ON TOP, NOT MEXICANA ANCESTRY. 4th plot (sympatric mexicana) is WRONG. It currently shows maize.
 # MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
 
 # add back in f4 tables to github.

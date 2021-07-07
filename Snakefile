@@ -198,7 +198,7 @@ rule all:
         # Fig 5
         #"ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
         #"../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.png",
         "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
 
         # Fig 6
@@ -241,7 +241,7 @@ rule all:
 
         #"domestication_scan/tables/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes.tex",
         #"../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex",
-        "domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
+        "ZAnc/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
 
 
@@ -267,8 +267,8 @@ rule all:
 
         #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_maize_ancestry.png",
         #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif",
-        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif",
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
@@ -313,14 +313,14 @@ rule all:
         #expand("ZAnc/plots/Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
         #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"), # skips chr4 (that's a main figure)
         #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
-        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
-        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
-        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
-        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
 
         #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
         #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
-        "diversity/plots/HILO_MAIZE55/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
 
         # ADD NEW QQ PLOTS
