@@ -376,39 +376,81 @@ ggsave(file = png_color_elev_r5_lzw,
 r5.labs0 <- paste0(c("lowest r", "low r", "middle r", "high r", "highest r"))
 r5.labs <- paste(levels(r5$anc_ind$bin), "cM/Mb")
 names(r5.labs) <- levels(r5$anc_ind$bin)
-p_multi <- grid.arrange(grobs = list(ggplotGrob(p_r5_symp +
-                                                  theme(legend.position = "none"#,
-                                                        #plot.margin = margin(t = 5.5, b = 20, l = 5.5, r = 5.5, unit = "pt")
-                                                        )),
-                                     ggplotGrob(p_elev_facet_r5_maize +
-                                                  theme(legend.position = "none") +
-                                                  facet_wrap(~ bin, nrow = 5, labeller = labeller(bin = r5.labs))),
-                                     textGrob(label = "A", 
+p_r5_symp_maize_mex = p_r5_symp = r5$anc_boot_perc %>%
+  dplyr::filter(symp_allo == "sympatric") %>%
+  dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
+  dplyr::filter(ancestry != zea & ancestry != "parviglumis") %>% # don't plot e.g. maize ancestry within maize
+  dplyr::mutate(label_introgression = factor(paste(ancestry, "ancestry in\n", symp_allo, zea),
+                                             ordered = T,
+                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"), 
+                                                            "ancestry in\n", "sympatric", 
+                                                            c("maize", "mexicana", "maize", "mexicana")))) %>%
+  ggplot(aes(x = bin, y = p, group = zea)) +
+  # first plot original point estimates for ind. ancestry
+  geom_point(data = filter(r5$anc_ind, 
+                           symp_allo == "sympatric" & ancestry != zea & ancestry != "parviglumis") %>%
+               dplyr::mutate(label_introgression = factor(paste(ancestry, "ancestry in\n", symp_allo, zea),
+                                                          ordered = T)),
+             aes(x = bin,
+                 y = p,
+                 shape = zea,
+                 color = ancestry),
+             alpha = 0.6,
+             size = 1,
+             position = position_jitter(0.2)) +
+  scale_color_manual(values = col_maize_mex_parv) +
+  # then add mean for that group
+  geom_point(pch = 18, size = 2) +
+  # and errorbars for 95% CI around that mean
+  # based on bootstrap with NGSAdmix (percentile method)
+  geom_errorbar(aes(ymin = low_boot,
+                    ymax = high_boot),
+                width = .5) +
+  facet_wrap(~ label_introgression) +
+  theme_classic() +
+  xlab("Recombination rate quintile (cM/Mb)") +
+  ylab("Introgressed ancestry proportion") +
+  guides(color = guide_legend("Ancestry", override.aes = list(size = 3)),
+         shape = guide_legend("Ancestry")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "None")
+p_r5_symp_maize_mex
+
+
+
+
+p_multi <- grid.arrange(grobs = list(textGrob(label = "A", 
                                               just = "top",
                                               x = unit(0.5, "lines")),
+                                     ggplotGrob(p_r5_symp_maize_mex),
                                      textGrob(label = "B", 
                                               just = "top",
-                                              x = unit(0.5, "lines"))
+                                              x = unit(0.5, "lines"),
+                                              y = unit(1.5, "lines")),
+                                     ggplotGrob(p_elev_facet_r5_maize +
+                                                  theme(legend.position = "none") +
+                                                  facet_wrap(~ bin, ncol = 5, labeller = labeller(bin = r5.labs)))
+                                     
                                      ),
-                           layout_matrix = rbind(c(3, NA, 4, NA),
-                                                 c(NA, 1, NA, 2)),
-                           heights = c(.1, 4.8),
-                           widths = c(1, 52, 1, 20))
+                           #layout_matrix = rbind(c(3, NA, 4, NA),
+                          #                       c(NA, 1, NA, 2)),
+                           nrow = 4,
+                           heights = c(.3, 5, .3, 2.5))
 
 
-# p_multi
+#p_multi
 ggsave(png_multi, 
        plot = p_multi, 
        device = "png", 
        width = 7.5, 
-       height = 7, 
+       height = 6.5, 
        units = "in",
        dpi = 300)
 ggsave(png_multi_lzw, 
        plot = p_multi, 
        device = "tiff", 
        width = 7.5, 
-       height = 7, 
+       height = 6.5, 
        units = "in",
        dpi = 300,
        compression = "lzw", type = "cairo")
