@@ -195,8 +195,10 @@ rule plotQQ:
         png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_QQ.tif"
     params:
         p = "med2",
-        Ne = lambda wildcards: wildcards.Ne,
-        yesno = lambda wildcards: wildcards.YESNO
+        Ne = "{Ne}",
+        yesno = "{YESNO}",
+        PREFIX = "{PREFIX}",
+        K = "{K}"
     conda:
         "../envs/environment.yaml"
     threads:

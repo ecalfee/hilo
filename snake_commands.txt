@@ -4189,7 +4189,17 @@ Missing input files for rule all:
 domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex # folder should be ZAnc/tables
 diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.png # not peaks, just within maize ancestry generally
 diversity/plots/HILO_MAIZE55/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png # removed extra HILO_MAIZE55/
-hilo$ snakemake -n all --profile slurm --quiet
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        2       calc_and_plot_f4
+        85      do_abba_baba
+        1       f4_from_abba_baba
+        4       plot_mean_anc
+        1       plot_shared_peaks
+        1       plot_within_ancestry_fst
+        95 # RUNNING 6.7.2021
 
 # TO DO:
 CHECK ON HPC1 RESULTS.

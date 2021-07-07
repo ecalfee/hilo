@@ -326,6 +326,8 @@ rule all:
         # ADD NEW QQ PLOTS
         #"ZAnc/plots/Ne10000_yesBoot/QQ.png",
         #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.tif",
 
         #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
