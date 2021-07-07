@@ -111,6 +111,7 @@ rule plot_mean_anc:
         centromeres = "data/refMaize/centromere_positions_v4.txt"
     output: # SPECIFY 1 ANCESTRY TO PLOT/SAVE. I CHANGED THESE PLOT NAMES
         png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.tif",
         rds = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.plot.rds" # ggplot object
     params:
         p = "med2",

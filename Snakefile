@@ -159,10 +159,10 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "map/Snakefile"
 #include: "filtered_bams/Snakefile"
 #include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
+include: "global_ancestry/Snakefile"
 #include: "linkage_map/Snakefile"
-#include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
+include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
@@ -172,66 +172,103 @@ include: "mhl1_inv/Snakefile"
 ## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
 rule all:
     input:
+        # main figures:
+        # Fig 1
         "map/plots/mexico_lines_elev_teo_color.png",
         "../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
 
-        "global_ancestry/plots/global_anc_multi.png",
-        "../hilo_manuscript/figures_main/global_anc_multi.tif",
+        # Fig 2
+        #"global_ancestry/plots/global_anc_multi.png",
+        #"../hilo_manuscript/figures_main/global_anc_multi.tif",
+        "../hilo/global_ancestry/plots/HILO_MAIZE55_PARV50_global_anc_multi_K3.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_global_anc_multi_K3.tif",
 
-        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
+        # Fig 3
+        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
 
-        "ancestry_by_r/plots/K2_by_r_multi_panel.png",
-        "../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif",
+        # Fig 4
+        #"ancestry_by_r/plots/K2_by_r_multi_panel.png",
+        #"../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif",
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
+        # Fig 5
+        #"ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
+        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/network_peak_sharing_data_only.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_network_peak_sharing_data_only.tif",
+        # Fig 6
+        #"ZAnc/plots/Ne10000_yesBoot/network_peak_sharing_data_only.png",
+        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_network_peak_sharing_data_only.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_network_peak_sharing_data_only.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_network_peak_sharing_data_only.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
-        "../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
+        # Fig 7
+        #"ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
+        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
+
 
         # tables supplement
         #samples/population_metadata.csv, # made outside snakemake pipeline (also saved to github)
         #samples/parviglumis_50_SRA_IDs.csv, # made outside snakemake pipeline (also saved to github)
-        "ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
-        "../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex",
+
+        #"ancestry_by_r/tables/spearmans_rho_ngsadmix.tex",
+        #"../hilo_manuscript/tables/spearmans_rho_ngsadmix.tex",
+        "ancestry_by_r/tables/HILO_MAIZE55_PARV50_K3_spearmans_rho_ngsadmix.tex",
+        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_spearmans_rho_ngsadmix.tex",
 
         "ancestry_by_r/tables/spearmans_rho_f4_sympatric_maize_pop22.tex",
         "../hilo_manuscript/tables/spearmans_rho_f4_sympatric_maize_pop22.tex",
 
-        "ancestry_by_r/tables/elev_r_interaction_5.tex",
-        "../hilo_manuscript/tables/elev_r_interaction_5.tex",
+        #"ancestry_by_r/tables/elev_r_interaction_5.tex",
+        #"../hilo_manuscript/tables/elev_r_interaction_5.tex",
+        "ancestry_by_r/tables/HILO_MAIZE55_PARV50_K3_elev_r_interaction_5.tex",
+        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_elev_r_interaction_5.tex",
 
         "ancestry_by_r/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex",
         "../hilo_manuscript/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex",
 
-        "ancestry_by_r/tables/spearmans_rho_local_ancestry.tex",
-        "../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex",
+        #"ancestry_by_r/tables/spearmans_rho_local_ancestry.tex",
+        #"../hilo_manuscript/tables/spearmans_rho_local_ancestry.tex",
+        "ancestry_by_r/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_spearmans_rho_local_ancestry.tex",
+        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_spearmans_rho_local_ancestry.tex",
 
-        "domestication_scan/tables/" + prefix_all + "/Ne10000_yesBoot/domestication_genes.tex",
-        "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex",
+        #"domestication_scan/tables/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes.tex",
+        #"../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex",
+        "domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
+        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
 
-        #figures_supp
-        "global_ancestry/plots/HILO_MAIZE55_pca.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif",
 
-        # need to add K=3 mex/maize/parv results to manuscript supporting figures:
+        # figures supplement
+        #"global_ancestry/plots/HILO_MAIZE55_pca.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif",
         "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif",
+
+        # K=3 structure results as a barplot for each individual
         "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
 
-        "local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
-        "../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
+        #"local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
+        #"../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
+        "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.tif",
 
-        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
+        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
 
-        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/pi_within_maize_ancestry.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif",
+        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_maize_ancestry.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry_peaks.tif",
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
@@ -241,11 +278,15 @@ rule all:
         "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.png",
         "../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_bycd5.tif",
 
-        "ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
-        "../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
+        #"ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
+        #"../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
 
-        "ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
-        "../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
+        #"ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
+        #"../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.tif",
 
         "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_byr5.png",
         "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_byr5.tif",
@@ -253,73 +294,96 @@ rule all:
         "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.png",
         "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_bycd5.tif",
 
-        "ancestry_by_r/plots/local_anc_by_r_continuous.png",
-        "../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif",
+        #"ancestry_by_r/plots/local_anc_by_r_continuous.png",
+        #"../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif",
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_maize.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
+        #"ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_maize.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_mexicana.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
+        #"ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_mexicana.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
 
-        # all the individual chromosomes for maize and mexicana (just put 1 here from each subspecies as a placeholder)
-        expand("ZAnc/plots/Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
-        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"), # skips chr4 (that's a main figure)
-        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        # local ancestry across all the individual chromosomes for maize and mexicana
+        #expand("ZAnc/plots/Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
+        #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"), # skips chr4 (that's a main figure)
+        #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
 
-        "diversity/plots/" + prefix_all + "/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
+        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
+        "diversity/plots/HILO_MAIZE55/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
 
-        "ZAnc/plots/Ne10000_yesBoot/QQ.png",
-        "../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
+        # ADD NEW QQ PLOTS
+        #"ZAnc/plots/Ne10000_yesBoot/QQ.png",
+        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
 
-        "mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
+        #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
+        "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
 
-        "mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_pca.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_pca.tif",
+        #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_pca.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_pca.tif",
+        "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif",
 
         "filtered_bams/plots/p_seq_counts.png",
         "../hilo_manuscript/figures_supp/p_seq_counts.tif",
 
-        "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png", # NEED 2 ADD 2 MANUSCRIPT
+        "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
         "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
 
-        # ADD PLOTS to SUPP for domestication scan raisd results
-        expand("domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.png", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"]),
-        expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_raisdOverlap.{ZEA}_{POSNEG}_meanAnc_outliers.perc05.tif", zip, ZEA = ["maize", "mexicana"], POSNEG = ["neg", "pos"]),
-
         # ADD SENSITIVITY TO NE FIGURE, for now as a placeholder use input files
-        expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
-        expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes),
+        #expand("local_ancestry/results/admix_times_Ne{Ne}_{YESNO}Boot.{SUFFIX}", Ne = Nes, YESNO = "yes", SUFFIX = ["txt", "RDS"]),
+        #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55/Ne{Ne}_yesBoot/anc/{ZEA}.combined.anc.bed", ZEA = zea, Ne = Nes),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.anc.freq", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}/{POP}.alpha.ind", Ne = Nes, POP = symp_pops, ZEA = ["maize", "mexicana", "parv"]),
+        # admix times?? for non-boot estimates, just different Ne's
+        expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/{POP}.times", Ne = Nes, POP = symp_pops),
+        # actual plots (needs to be finished)
+        #"local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tif",
 
-        #other_results
+
+
+        # ADD NEW FIGURES
+        # supplementary plots of parviglumis and mexicana ancestry introgression peaks (maize ancestry introgression peaks are in a main figure)
+        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.tif", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
+        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
+
+        # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
+
+        # intermediate quality control reports:
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
         "filtered_bams/metrics/picard/multiqc/multiqc_report.html",
         "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
 
         # other output files/results that go into the manuscript text:
-        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt",
-        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
-        "domestication_scan/results/" + prefix_all + "/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
-        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.mexicana_pos_meanAnc_outliers.perc05.summary",
-        "domestication_scan/plots/" + prefix_all + "/Ne10000_yesBoot/raisdOverlap.maize_neg_meanAnc_outliers.perc05.summary",
-        "ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt",
-        expand("ZAnc/results/" + prefix_all + "/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.{SUFFIX}",
-        ZEA = zea, POSNEG = ["pos", "neg"], STAT = ["meanAnc", "lmElev"], SIG = ["fdr05", "perc05", "p05"], SUFFIX = ["bed", "counts"]),
-        "ZAnc/tables/" + prefix_all + "/Ne10000_yesBoot/genes_mapped_to_outliers.tex" #,
+        # stats for percent of MVN simulations truncated to be within [0,1] range
+        expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", ZEA = zea),
 
-        # old (not used in final manuscript)
-        #"ancestry_by_r/plots/local_anc_by_r_quintiles.png",
-        #"ancestry_by_r/plots/local_anc_by_cd_quintiles.png",
-        #expand("ancestry_by_r/results/f4/{POP}.Dstats.Observed.txt", ALLO_MEX = "pop22", POP = ["sympatric_maize", "sympatric_mexicana", "pop22"]),
-        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.anc.ind", Ne = 10000, YESNO = "yes", POP = symp_pops),
-        #expand("ZAnc/plots/Ne{Ne}_{YESNO}Boot/mex_maize_hist_outlier_peaks.png", Ne = 10000, YESNO = "yes"),
-        #expand("diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG", WIN = 5000, STEP = 5000, Ne = 10000, YESNO = "yes", ZEA = zea, POP = symp_pops),
-        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}.completed", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        #expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{POP}_bams.list", POP = symp_pops, Ne = 10000, ZEA = zea, YESNO = "yes"),
-        #trip_anc
+        # outliers for maize, mexicana or parviglumis outliers as bed file
+        expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
+
+        # outliers for lm mexicana ancestry ~ elevation as bed file
+        expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", ZEA = zea),
+
+        # outliers overlap with flowering time related genes
+        #"ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
+        "ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
 
     params:
         p = "med2"
@@ -365,7 +429,7 @@ rule some:
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea, ANCESTRY = zea),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55_PARV50", K = 3, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
-        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 2, ZEA = zea),
+        expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", PREFIX = "HILO_MAIZE55", K = 3, ZEA = "mexicana"),
 
         expand("ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt", zip, PREFIX = ["HILO_MAIZE55", "HILO_MAIZE55_PARV50"], K = [2, 3]),
 
@@ -415,7 +479,6 @@ rule some:
         expand("../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize", PREFIX = "HILO_MAIZE55_PARV50", K = 3),
         expand("../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana", PREFIX = "HILO_MAIZE55_PARV50", K = 3)
-
 
     params:
         p = "med2"

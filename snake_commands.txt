@@ -4146,19 +4146,45 @@ hilo$ ls mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/ # has no files
 # uncommented a bunch of results/plots for diversity and mhl1_inv to try to run on snakemake
 (hilo-env) ecalfee@c6-54:~/hilo$ snakemake -n some diversity --profile slurm --quiet
 MissingInputException in line 436 of /home/ecalfee/hilo/Snakefile:
-Missing input files for rule diversity:
-diversity/results/pi/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.allChr.txt
+Missing input files for rule diversity: # oops I needed to import diversity/Snakefile -- trying again:
+(hilo-env) ecalfee@c6-54:~/hilo$ snakemake some diversity --profile slurm --quiet
+Job counts:
+        count   jobs
+        4       calc_fst_all_outliers
+        4       calc_fst_idx_outliers
+        2       calc_pi_all_chr
+        8       calc_pi_all_outliers
+        5       calc_thetas_outliers
+        1       diversity
+        4       estimate_saf_pop_outliers
+        2       get_GL_mhl1_inv
+        2       get_mhl1_inv_coord
+        2       plot_mhl1_inv
+        2       plot_mhl1_inv_PCAngsd
+        1       plot_shared_peaks # errors -- check
+        2       plot_within_ancestry_fst # errors -- check
+        1       plot_within_ancestry_fst_pi_peaks
+        1       print_fst_ancestry_peaks_one_file
+        1       print_pi_mexicana_peaks_one_file
+        1       print_pi_one_file
+        2       run_PCAngsd_mhl1_inv
+        1       some
+        46 # RUNNING 7.6.2021 after using --unlock (not sure why the directory was locked .. nothing is running of mine on squeue but perhaps the 10 days timed out and killed previous snakemake if there were errors in creating some files (?))
 
-../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif
-../hilo_manuscript/figures_main/HILO_MAIZE55_K2_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif
-../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif
-diversity/plots/HILO_MAIZE55_K2_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
-../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif
-../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif
-diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
-
+# I don't understand why there are no updates to this figure (doesn't trigger git to add and it's made June 9 but I thought it'd rerun..):
+hilo_manuscript$ git add figures/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png
+# hmmm... I need to check on this!
+ecalfee@c6-54:~/hilo_manuscript$ ls -lh figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif
+-rw-rw-r-- 1 ecalfee ecalfee 141K Jul  6 13:05 figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif
+ecalfee@c6-54:~/hilo_manuscript$ ls -lh figures/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png
+-rw-rw-r-- 1 ecalfee ecalfee 148K Jun  9 07:31 figures/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png
+# re-doing some tables and adding them to rule 'some':
+hilo_manuscript$ git rm -f tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex
+rm 'tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex'
+ecalfee@c6-54:~/hilo_manuscript$ rm ../hilo/ancestry_by_r/tables/spearmans_rho_f4_sympatric_mexicana_pop22.tex
 
 # TO DO:
+CHECK ON HPC1 RESULTS.
 Add .tif plots and .png's that just finished today from farm
 CHECK ON SCREEN AND START RUNNING DIVERSITY STUFF BEFORE YOU LEAVE SO IT COMPLETES -- CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 # Qs for JEFF/GRAHAM
