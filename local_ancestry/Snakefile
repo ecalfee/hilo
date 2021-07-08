@@ -784,8 +784,8 @@ rule plot_sensitivity_to_Ne_K3: # R script still needs work but will add to rule
     output:
         png_times = "local_ancestry/plots/{PREFIX}_K3_sensitivity_to_Ne_admix_times.png",
         png_times_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_sensitivity_to_Ne_admix_times.tif",
-        png_anc = "local_ancestry/plots/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.png",
-        png_anc_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.tif"
+        txt_anc = "local_ancestry/results/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.txt",
+        tex_anc = "../hilo_manuscript/tables/{PREFIX}_K3_sensitivity_to_Ne_local_ancestry.tex"
     params:
         p = "med2",
         prefix = "{PREFIX}",

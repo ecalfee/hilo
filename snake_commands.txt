@@ -4202,14 +4202,19 @@ Job counts:
         1       plot_shared_peaks # Error executing rule plot_shared_peaks on cluster (jobid: 4, external: 36692463. Fixed: needed to output tif to figures_supp/
         1       plot_within_ancestry_fst
         95 # RUNNING 6.7.2021
+stuck on an abba baba but nothing running on squeue so I did CTRL+C to cancel this snakemake 7.8.2021
+hilo$ snakemake -n all --profile slurm --quiet
+
 # fixed main figure on ancestry ~ r and removed old file to trigger a rerun next time I do snakemake:
 hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.png
 
+# problem to solve:
+made sensitivity to Ne timing plots. still working on sensitivity of local ancestry calls to Ne. little variation (?). look at how similar the original output files are..
 
 
 
 # TO DO:
-ADD GGALLY to necessary R packages
+ADD GGALLY to necessary R packages if needed for sensitivity to Ne script
 CHECK ON HPC1 RESULTS.
 CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 # Qs for JEFF/GRAHAM

@@ -2,7 +2,6 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(GGally)
 # this script plots timing of admixture estimated from ancestry_hmm for different Nes
 # and correlations between local ancestry estimates for different Nes
 
@@ -16,10 +15,10 @@ png_times = snakemake@output[["png_times"]]
 # png_times = paste0("local_ancestry/plots/", prefix, "_K3_sensitivity_to_Ne_admix_times.png")
 png_times_lzw = snakemake@output[["png_times_lzw"]]
 # png_times_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K3_sensitivity_to_Ne_admix_times.tif")
-png_anc = snakemake@output[["png_anc"]]
-# png_anc = paste0("local_ancestry/plots/", prefix, "_K3_sensitivity_to_Ne_local_ancestry.png")
-png_anc_lzw = snakemake@output[["png_anc_lzw"]]
-# png_anc_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K3_sensitivity_to_Ne_local_ancestry.tif")
+txt_anc = snakemake@output[["txt_anc"]]
+# txt_anc = paste0("local_ancestry/results/", prefix, "_K3_sensitivity_to_Ne_local_ancestry.txt")
+tex_anc = snakemake@output[["tex_anc"]]
+# tex_anc = paste0("../hilo_manuscript/tables/", prefix, "_K3_sensitivity_to_Ne_local_ancestry.tex")
 
 # variables
 Nes = c(1000, 10000, 100000)
@@ -87,32 +86,41 @@ ggsave(file = png_times_lzw,
        units = "in", dpi = 300)
 
 # plot correlations for mean local ancestry across the genome
-# pairs plot
+
+get_corr_ancestry <- function(a, z) {
 # load ancestry data
-a = "parv"
-z = "maize"
-d <- do.call(bind_rows, lapply(Nes, function(N)
-  read.table(paste0("local_ancestry/results/ancestry_hmm/", PREFIX, "/K3/Ne", N, "_noBoot/anc/", z, ".", a, "_anc.bed"),
-                header = T) %>%
-  mutate(Ne = paste0("Ne=", N), 
-         ancestry = a, 
-         zea = paste("sympatric", z)))) %>%
-  dplyr::select(zea, ancestry, Ne, anc_freq) %>%
-  group_by(Ne) %>%
-  mutate(row = row_number()) %>%
-  tidyr::pivot_wider(data = ., names_from = Ne, values_from = anc_freq) %>%
-  dplyr::select(-row)
-ggpairs(d, 
-        aes(color = ancestry, shape = zea))                
-ggpairs(filter(d, zea == "sympatric maize"), 
-        aes(color = ancestry)) +
-  scale_color_manual(values = col_maize_mex_parv)
-# what? this shouldn't be a correlation of 1 ...
-# but I could just plot/list the correlations instead of a complicated pairs plot
-# and maybe plot just mexicana ancestry in maize?
-ggplot(d, aes(color = ancestry, shape = zea, x = `Ne=1000`, y = `Ne=100000`)) +
-  geom_point() +
-  geom_smooth(method = "lm")
-#+
- # scale_shape_manual(values = shape_maize_mex_parv) +
-                
+  d <- do.call(bind_rows, lapply(Nes, function(N)
+    read.table(paste0("local_ancestry/results/ancestry_hmm/", PREFIX, "/K3/Ne", N, "_noBoot/anc/", z, ".", a, "_anc.bed"),
+                  header = T) %>%
+    mutate(Ne = paste0("Ne=", N), 
+           ancestry = a, 
+           zea = paste("sympatric", z)))) %>%
+    dplyr::select(zea, ancestry, Ne, anc_freq) %>%
+    group_by(Ne) %>%
+    mutate(row = row_number()) %>%
+    tidyr::pivot_wider(data = ., names_from = Ne, values_from = anc_freq) %>%
+    dplyr::select(-row)
+  # calculate correlations for different runs of ancestry_hmm
+  d_summary <- data.frame(zea = paste("sympatric", z),
+                          ancestry = a, 
+                          dataset1 = rep("Ne=10000", 2),
+                          dataset2 = c("Ne=1000", "Ne=100000"),
+                          correlation = c(cor(d$`Ne=10000`, d$`Ne=1000`),
+                                          cor(d$`Ne=10000`, d$`Ne=100000`)),
+                          stringsAsFactors = F) %>%
+    rename(group = zea)
+  return(d_summary)
+}
+# get all correlations
+zs <- c("maize", "maize", "mexicana", "mexicana")
+as <- c("mexicana", "parv", "maize", "parv")
+d_all <- do.call(bind_rows, lapply(1:4, function(i)
+                                   get_corr_ancestry(a = as[i], z = zs[i])))
+# write output table with all local ancestry correlations
+write.table(d_all, file = txt_anc, row.names = F, col.names = T, sep = "\t", quote = F)
+# print same output to latex table format for manuscript supporting tables
+print(xtable(d_all,
+             type = "latex",
+             latex.environments = NULL),
+      include.rownames = F,
+      file = tex_anc) # to ../hilo_manuscript/tables/.                
