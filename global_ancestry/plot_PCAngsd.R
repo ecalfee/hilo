@@ -50,6 +50,11 @@ d <- bind_cols(meta, pca_small)  %>%
   arrange(., group, ELEVATION) %>%
   mutate(group = factor(group, ordered = T, levels = names(zea_group_labels)))
 
+# update labels for plot legend:
+zea_group_labels["allopatric_maize"] <- "Reference maize"
+zea_group_labels["allopatric_mexicana"] <- "Reference mexicana"
+zea_group_labels["parviglumis"] <- "Reference parviglumis"
+
 # plot first 2 PC's
 p12 = d %>%
   ggplot(., aes(PC1, PC2)) + 

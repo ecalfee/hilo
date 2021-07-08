@@ -44,6 +44,11 @@ d <- bind_cols(meta, pca_small)  %>%
   arrange(., symp_allo) %>%
   arrange(., group, ELEVATION)
 
+# update labels for plot legend:
+zea_group_labels["allopatric_maize"] <- "Reference maize"
+zea_group_labels["allopatric_mexicana"] <- "Reference mexicana"
+zea_group_labels["parviglumis"] <- "Reference parviglumis"
+
 # plot first 2 PC's
 p12 = d %>%
   ggplot(., aes(PC1, PC2)) + 
