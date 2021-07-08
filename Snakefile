@@ -344,14 +344,14 @@ rule all:
         "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
         "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
 
-        # ADD SENSITIVITY TO NE FIGURE, for now as a placeholder use input files
+        # ADD NEW FIGURES
+        # Sensitivity to Ne
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}.{ANCESTRY}_anc.bed", Ne = Nes, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
         "local_ancestry/results/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.txt",
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tex",
 
-        # ADD NEW FIGURES
         # supplementary plots of parviglumis and mexicana ancestry introgression peaks (maize ancestry introgression peaks are in a main figure)
         expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.tif", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
         expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
@@ -367,6 +367,9 @@ rule all:
         "filtered_bams/metrics/flagstat/multiqc/multiqc_report.html",
 
         # other output files/results that go into the manuscript text:
+        # lm results for mexicana ancestry globally ~ elevation:
+        "global_ancestry/tables/HILO_MAIZE55_PARV50_lm_elevation_K3.tex"
+
         # stats for percent of MVN simulations truncated to be within [0,1] range
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", ZEA = zea),
 
