@@ -12,9 +12,9 @@ cov_file = snakemake@input[["cov"]]
 
 # get output plot filenames
 png_pca = snakemake@output[["png_pca"]]
-# png_pca = "mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_pca.png"
+# png_pca = "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png"
 png_pca_lzw = snakemake@output[["png_pca_lzw"]]
-# png_pca_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_pca.tif"
+# png_pca_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif"
 
 # get colors for plot
 # source("colors.R")
