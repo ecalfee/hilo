@@ -484,7 +484,7 @@ ggsave(file = png_combmatrix_mexicana,
        height = 5, width = 7.5, 
        units = "in",
        device = "png") 
-ggsave(file = png_combmatrix_mexicana,
+ggsave(file = png_combmatrix_mexicana_lzw,
        plot = p_combmatrix_mexicana,
        height = 5, width = 7.5, 
        units = "in",

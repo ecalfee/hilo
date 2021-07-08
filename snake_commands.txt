@@ -72,8 +72,15 @@ hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.png
 # SOME RULES WERE RUNNING BUT FOR SOME REASON THIS LOG CRASHED AND DIDN'T SAVE THE JOB LOG  I'D COPY PASTED IN :( .
 # anyways, rules runing included making Ne plots and re-making multi-panel as well as some abba baba and f4 that didn't run successfully
 # some errors:
-plot_shared_peaks 36718769
+plot_shared_peaks 36718769 # fixed typo 
+Job completed successfully, but some output files are missing. Missing files after 120 seconds:
+../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif
 calc_and_plot_f4 36718743
+Called processing error for snakemake??
+Warning messages:
+1: In ggs[i] <- p :
+  number of items to replace is not a multiple of replacement length
+
 
 # deleted some files so they'll rerun:
 ecalfee@c6-56:~/hilo$ rm global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png
