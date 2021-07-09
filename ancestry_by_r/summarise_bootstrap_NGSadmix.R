@@ -62,7 +62,7 @@ boot_drop <- anc_boot %>%
   dplyr::summarise(n_boot_dropped = sum(is.na(maize)),
                    perc_boot_dropped = sum(is.na(maize))/nrow(.)*100)
 print(boot_drop)
-write.table(X = boot_drop,
+write.table(x = boot_drop,
             file = tbl_boot_drop,
             col.names = T, row.names = F,
             quote = F, sep = "\t")

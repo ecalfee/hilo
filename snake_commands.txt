@@ -106,14 +106,13 @@ Job counts:
 
 - added a tbl output to bootstrap NGSAdmix summary script: HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
 Ran snakemake rule all (didn't capture log to run here):
-# summarise_bootstrap_anc_by_r tried to rerun but had an error 36727482
-# calc and plot f4s also triggered an error again:36727490
+# summarise_bootstrap_anc_by_r tried to rerun but had an error 36727482 - fixed X = to x = in write.table()
+# calc and plot f4s also triggered an error again:36727490 - fixed [] to [[]]
 did crtl+c because of these errors.
 # deleted file to trigger rerun on next snakemake
 hilo$ rm ZAnc/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex
 
 # TO DO:
-FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
 CHECK ON HPC1 RESULTS.
 CHECK CORRELATIONS ARE PROPERLY UPDATED IN MAIN TEXT
 FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)

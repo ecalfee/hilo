@@ -288,7 +288,7 @@ ggsave(file = png_r5_lzw,
        units = "in", dpi = 300,
        compression = "lzw", type = "cairo")
 ggsave(file = png_cd5_lzw,
-       plot = ggs[which(plots == png_cd5)],
+       plot = ggs[[which(plots == png_cd5)]],
        device = "tiff",
        width = 5.5, height = 4.5,
        units = "in", dpi = 300,
