@@ -91,7 +91,7 @@ ggsave(file = png_times_lzw,
 get_corr_ancestry <- function(a, z) {
 # load ancestry data
   d <- do.call(bind_rows, lapply(Nes, function(N)
-    read.table(paste0("local_ancestry/results/ancestry_hmm/", PREFIX, "/K3/Ne", N, "_noBoot/anc/", z, ".", a, "_anc.bed"),
+    read.table(paste0("local_ancestry/results/ancestry_hmm/", prefix, "/K3/Ne", N, "_noBoot/anc/", z, ".", a, "_anc.bed"),
                   header = T) %>%
     mutate(Ne = paste0("Ne=", N), 
            ancestry = a, 

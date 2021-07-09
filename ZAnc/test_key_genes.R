@@ -225,7 +225,7 @@ print(xtable(tbl_outliers,
 # final manuscript table is somewhat abbreviated
 print(xtable(tbl_outliers %>%
                dplyr::filter(category == "domestication") %>%
-               dplyr::select(name = name_short,
+               dplyr::select(name,
                              `v4 coordinates`,
                              `min teosinte introgression\n into maize`,
                              `min maize introgression\n into mexicana`),

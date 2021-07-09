@@ -389,7 +389,7 @@ rule all:
         # outliers for lm mexicana ancestry ~ elevation as bed file
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", ZEA = zea),
 
-        # outliers overlap with flowering time related genes
+        # count of flowering time related genes overlapping outliers from genome scan
         #"ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
         "ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
 

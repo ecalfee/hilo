@@ -111,9 +111,23 @@ Ran snakemake rule all (didn't capture log to run here):
 did crtl+c because of these errors.
 # deleted file to trigger rerun on next snakemake
 hilo$ rm ZAnc/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        2       calc_and_plot_f4
+        1       combine_genome_scan_plots # must have been triggered from rerunning plot_mean_anc
+        1       plot_bootstrap_NGSadmix_by_r_K3
+        1       plot_sensitivity_to_Ne_K3 # error: 36727516. now I've fixed typo PREFIX -> prefix
+        2       summarise_bootstrap_anc_by_r
+        1       test_key_genes # error: 36727522. got rid of reference to 'name_short'
+        9
+
+
+Plot introgression patterns at HPCI (CHECK ON HPC1 RESULTS)
 
 # TO DO:
-CHECK ON HPC1 RESULTS.
+
 CHECK CORRELATIONS ARE PROPERLY UPDATED IN MAIN TEXT
 FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
 CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
