@@ -223,7 +223,7 @@ boot_cd5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m),
 
 # make 4 plots for 4 different bootstrap analyses (cd/r * with/without inv4m):
 plots = c(png_r5, png_r5_no_inv4m, png_cd5, png_cd5_no_inv4m)
-ggs = rep(NULL, 4) # to save the ggplot output
+ggs = vector(mode = "list", length = length(plots)) # to save the ggplot output
 boots = list(boot_r5, boot_r5_no_inv4m, boot_cd5, boot_cd5_no_inv4m)
 feature = c("r", "r", "cd", "cd")
 x_axis_labels_r = filter(winds, !duplicated(paste(bin_r5))) %>%
@@ -277,12 +277,12 @@ for (i in 1:4){
          device = "png",
          width = 5.5, height = 4.5,
          units = "in", dpi = 300)
-  ggs[i] <- p # also save the ggplot
+  ggs[[i]] <- p # also save the ggplot
 }
 
 # also save compressed versions of 2 of the plots
 ggsave(file = png_r5_lzw,
-       plot = ggs[which(plots == png_r5)],
+       plot = ggs[[which(plots == png_r5)]],
        device = "tiff",
        width = 5.5, height = 4.5,
        units = "in", dpi = 300,
