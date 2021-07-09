@@ -87,8 +87,13 @@ ecalfee@c6-56:~/hilo$ rm global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png
 ecalfee@c6-56:~/hilo$ rm mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png
 
 # TO DO:
+FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
 CHECK ON HPC1 RESULTS.
+CHECK CORRELATIONS ARE PROPERLY UPDATED IN MAIN TEXT
+FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
 CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
+FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
+       # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
 # Qs for JEFF/GRAHAM
 - Show new figures
 - HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
@@ -96,22 +101,10 @@ CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 - show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
 ----actually re-do this first to make sure it's not spurious because of background (outside inversion)
 - Still running last couple plots (QQs/Nes/Pi + Fst within local ancestry peaks)
-- YES DO THIS: Make sure everyone agrees I should re-label all plots 'reference maize' instead of 'allopatric maize' (eg. mhl1 inversion, Fig S38)
-# MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
 
 # add back in f4 tables to github.
-
-# update for K=3: rule plotQQ, plot_shared_peaks
-# mhl1 inversion analyses/plots
-# QQ plots
-# test robustness of ancestry_hmm to choice of Ne
+# add plots for robustness of ancestry_hmm to choice of Ne -- reference in methods
 # Language : modeled ancestry variance-covariance marginally, marginal K matrix
-# FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
-
-# to get all diversity stuff to run I need to ID ancestry outliers: "ZAnc/results/{PREFIX}/K{K}/Ne10000_yesBoot/{POP2}.{n}pop.outliers.regions"
-
-# what do I need to rerun for other results?
-- plot_bootstrap_NGSadmix_by_r. results are ready to plot. f4s don't depend on K, so they'll be the same (just harder to interpret for sympatric mexicana)
 
 
 # ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR

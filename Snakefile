@@ -368,7 +368,10 @@ rule all:
 
         # other output files/results that go into the manuscript text:
         # lm results for mexicana ancestry globally ~ elevation:
-        "global_ancestry/tables/HILO_MAIZE55_PARV50_lm_elevation_K3.tex"
+        "global_ancestry/tables/HILO_MAIZE55_PARV50_lm_elevation_K3.tex",
+
+        # summary of admixture times (median, min, max) estimated by ancestry_hmm:
+        "local_ancestry/results/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.txt",
 
         # stats for percent of MVN simulations truncated to be within [0,1] range
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", ZEA = zea),
