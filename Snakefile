@@ -360,6 +360,10 @@ rule all:
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
 
+        # supplementary plot of within-parviglumis-ancestry diversity (fst) as a heat map
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif",
+
         # intermediate quality control reports:
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",

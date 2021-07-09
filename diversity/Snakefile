@@ -334,12 +334,10 @@ rule plot_within_ancestry_fst:
         fst = "diversity/results/fst/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/HOMOZYG/summary_pop_pairs_fst.allChr.txt",
         meta = "samples/{PREFIX}_meta.RData"
     output:
-        png_points_maize = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_ancestry_genomewide_points.png",
-        png_points_mexicana = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_mexicana_ancestry_genomewide_points.png",
-        png_heatmap_maize = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_ancestry_genomewide_heatmap.png",
-        png_heatmap_mexicana = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_mexicana_ancestry_genomewide_heatmap.png",
         png_heatmap_both = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
-        png_heatmap_both_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif"
+        png_heatmap_both_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
+        png_heatmap_parv = "diversity/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
+        png_heatmap_parv_lzw = "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif"
     params:
         p = "med2"
     conda:

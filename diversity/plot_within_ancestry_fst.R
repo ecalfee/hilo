@@ -16,10 +16,6 @@ png_points_maize = snakemake@output[["png_points_maize"]]
 # png_points_maize = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_ancestry_genomewide_points.png"
 png_points_mexicana = snakemake@output[["png_points_mexicana"]]
 # png_points_mexicana = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_mexicana_ancestry_genomewide_points.png"
-#png_heatmap_maize = snakemake@output[["png_heatmap_maize"]]
-# png_heatmap_maize = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_ancestry_genomewide_heatmap.png"
-#png_heatmap_mexicana = snakemake@output[["png_heatmap_mexicana"]]
-# png_heatmap_mexicana = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_mexicana_ancestry_genomewide_heatmap.png"
 png_heatmap_both = snakemake@output[["png_heatmap_both"]]
 # png_heatmap_both = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
 png_heatmap_both_lzw = snakemake@output[["png_heatmap_both_lzw"]]
@@ -68,67 +64,6 @@ fst <- bind_rows(dplyr::mutate(fst0, comparison_order = 1), # because fst is sym
                 ELEVATION.pop1 = ELEVATION,
                 LAT.pop1 = LAT,
                 LON.pop1 = LON)
-
-# plot fst within mexicana ancestry
-p_points_mexicana <- fst %>%
-  dplyr::filter(ancestry == "mexicana") %>%
-  mutate(symp_allo = ifelse(LOCALITY.pop1==LOCALITY.pop2, "sympatric", "allopatric")) %>%
-  mutate(comparison_type = factor(paste(zea.pop1, zea.pop2, sep = "-"),
-                                  ordered = T,
-                                  levels = c("maize-maize", "mexicana-mexicana", "maize-mexicana", "mexicana-maize")),
-         LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
-         LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
-  ggplot(., aes(x = LOCALITY.pop1, 
-                y = fst,
-                color = LOCALITY.pop2,
-                shape = symp_allo,
-                size = symp_allo)) +
-  geom_jitter(width = .2) +
-  facet_wrap(~comparison_type, nrow = 2) +
-  coord_flip() +
-  theme_light() +
-  labs(x = "Population 1", color = "Population 2", y = expression(F[ST]),
-       shape = "Comparison Type", size = "Comparison Type") +
-  scale_shape_manual(values = c(19, 1)) +
-  scale_size_manual(values = c(1, 2)) +
-  scale_color_viridis_d(direction = 1, option = "viridis")# +
-  #ggtitle("Fst within mexicana ancestry tracts (genomewide)")
-
-ggsave(filename = png_points_mexicana,
-       plot = p_points_mexicana,
-       height = 7, width = 7.5, 
-       units = "in", device = "png", dpi = 300)
-
-# plot fst within maize ancestry
-p_points_maize <- fst %>%
-  dplyr::filter(ancestry == "maize") %>%
-  mutate(symp_allo = ifelse(LOCALITY.pop1==LOCALITY.pop2, "sympatric", "allopatric")) %>%
-  mutate(comparison_type = factor(paste(zea.pop1, zea.pop2, sep = "-"),
-                                  ordered = T,
-                                  levels = c("maize-maize", "mexicana-mexicana", "maize-mexicana", "mexicana-maize")),
-         LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1),
-         LOCALITY.pop2 = reorder(LOCALITY.pop2, -ELEVATION.pop2)) %>%
-  ggplot(., aes(x = LOCALITY.pop1, 
-                y = fst,
-                color = LOCALITY.pop2,
-                shape = symp_allo,
-                size = symp_allo)) +
-  geom_jitter(width = .2) +
-  facet_wrap(~comparison_type, nrow = 2) +
-  coord_flip() +
-  theme_light() +
-  labs(x = "Population 1", color = "Population 2", y = expression(F[ST]),
-       shape = "Comparison Type", size = "Comparison Type") +
-  scale_shape_manual(values = c(19, 1)) +
-  scale_size_manual(values = c(1, 2)) +
-  scale_color_viridis_d(direction = 1, option = "viridis")# +
-  #ggtitle("Fst within maize ancestry tracts (genomewide)")
-
-ggsave(filename = png_points_maize,
-       plot = p_points_maize,
-       height = 7, width = 7.5, 
-       units = "in", device = "png", dpi = 300)
-
 
 # plot the fst distance matrix as a heatmap:
 fst_mexicana = filter(fst, ancestry == "mexicana")
