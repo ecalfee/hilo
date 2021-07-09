@@ -100,7 +100,7 @@ Job counts:
         2       calc_and_plot_f4
         1       combine_supp_genome_scan_plots
         3       plot_mean_anc
-        1       plot_sensitivity_to_Ne_K3 # fixed. needed to load  meta data within lapply for each Ne combo
+        1       plot_sensitivity_to_Ne_K3 # fixed. needed to load  meta data within lapply for each Ne combo. Hmm.. failed again: 36727312
         1       plot_within_ancestry_fst
         9
 

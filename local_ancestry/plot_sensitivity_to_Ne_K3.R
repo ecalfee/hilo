@@ -35,20 +35,19 @@ load(paste0("samples/", prefix, "_meta.RData"))
 times = list()
 
 for (z in zea){
+  # load meta data (same for all Ne so just pick one)
+  load(paste0("local_ancestry/results/ancestry_hmm/",
+              prefix, "/K3/Ne", Nes[1], "_", YESNO, 
+              "Boot/anc/", z, ".pop.meta.RData"))
+  # get admixture times for each population
   times[[z]] = do.call(bind_rows, lapply(meta_pops$pop, function(p)
-    do.call(bind_rows, lapply(Nes, function(N){
-    # load meta data
-    load(paste0("local_ancestry/results/ancestry_hmm/",
-                      prefix, "/K3/Ne", N, "_", YESNO,
-                      "Boot/anc/", z, ".pop.meta.RData"))
+    do.call(bind_rows, lapply(Nes, function(N)
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
                       prefix, "/K3/Ne", N, "_", YESNO,
                       "Boot/", p, ".times"),
                header = T, stringsAsFactors = F, sep = " ") %>%
       dplyr::mutate(pop = p,
-                    Ne = N)
-    }
-    )))) %>%
+                    Ne = N))))) %>%
     left_join(., dplyr::select(meta_pops, pop, zea, LOCALITY, ELEVATION), by = "pop")
 }
 
