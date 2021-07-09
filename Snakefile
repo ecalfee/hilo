@@ -353,8 +353,8 @@ rule all:
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tex",
 
         # supplementary plots of parviglumis and mexicana ancestry introgression peaks (maize ancestry introgression peaks are in a main figure)
-        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.tif", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
-        expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_mean_{ANCESTRY}_anc.png", ZEA = zea, ANCESTRY = ["mexicana", "parv"]),
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.tif",
 
         # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",

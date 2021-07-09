@@ -27,8 +27,6 @@ fdr_in = snakemake@input[["fdr"]]
 # fdr_in = paste0("ZAnc/results/", prefix, "/K", K, "/Ne10000_yesBoot/", zea, ".meanAnc.fdr.RData")
 png_out = snakemake@output[["png"]]
 # png_out = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_mean_", ancestry, "_anc.png")
-png_lzw_out = snakemake@output[["png_lzw"]]
-# png_lzw_out = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_mean_", ancestry, "_anc.png")
 rds = snakemake@output[["rds"]]
 # rds = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne10000_yesBoot_", zea, "_mean_", ancestry, "_anc.plot.rds")
 
@@ -112,16 +110,6 @@ ggsave(plot = p_combined,
        height = 3, width = 12,
        units = "in", dpi = 300,
        device = "png")
-
-# save tif
-ggsave(file = png_lzw_out,
-       plot = p_combined,
-       height = 3,
-       width = 12,
-       units = "in",
-       device = "tiff",
-       dpi = 300,
-       compression = "lzw", type = "cairo")
 
 # also save ggplot as R object
 saveRDS(object = p_combined, file = rds)

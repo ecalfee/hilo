@@ -86,6 +86,16 @@ Warning messages:
 ecalfee@c6-56:~/hilo$ rm global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png
 ecalfee@c6-56:~/hilo$ rm mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png
 
+
+# f4 from abba_baba failed a few times e.g. 36720743
+hilo$ snakemake all --profile slurm --quiet # 7.8.2021 6:30pm
+# plot_within_ancestry_fst failed 36721164
+# also calc_and_plot_f4 failed 36721167
+# and plot_mean_anc failed 36721163 # need to remove shadow or just make a different script to combine the supplementary figs for this...
+
+- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
+
+
 # TO DO:
 FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
 CHECK ON HPC1 RESULTS.
@@ -96,7 +106,6 @@ FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
 # Qs for JEFF/GRAHAM
 - Show new figures
-- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
 - PARV also changes across recombination rate. local ancestry ~ r just a tad different
 - show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
 ----actually re-do this first to make sure it's not spurious because of background (outside inversion)

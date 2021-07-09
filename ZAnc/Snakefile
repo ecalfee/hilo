@@ -109,9 +109,8 @@ rule plot_mean_anc:
         sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
         genome = ref_chr,
         centromeres = "data/refMaize/centromere_positions_v4.txt"
-    output: # SPECIFY 1 ANCESTRY TO PLOT/SAVE. I CHANGED THESE PLOT NAMES
+    output:
         png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.png",
-        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.tif",
         rds = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_{ZEA}_mean_{ANCESTRY}_anc.plot.rds" # ggplot object
     params:
         p = "med2",
@@ -182,6 +181,30 @@ rule combine_genome_scan_plots:
         mem = 2
     script:
         "combine_genome_scan_plots.R"
+
+## combine_supp_genome_scan_plots: plots mex/parv mean ancestry supplementary outliers plots across the genome in one figure
+rule combine_supp_genome_scan_plots:
+    input:
+        rds_maize_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_parv_anc.plot.rds",
+        rds_mexicana_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_mexicana_mean_parv_anc.plot.rds",
+        rds_maize_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
+        rds_mexicana_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
+        genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
+    output:
+        png = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_maize_mexicana_genome_scan.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_maize_mexicana_genome_scan.tif"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 2
+    script:
+        "combine_supp_genome_scan_plots.R"
+
 
 ## plot_QQ: make QQ plots for mean ancestry and slope anc ~ elev (quantiles in MVN simulations vs data)
 rule plotQQ:
