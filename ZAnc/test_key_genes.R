@@ -214,15 +214,21 @@ tbl_outliers <- outliers %>%
                 `v4 coordinates` = v4_coord,
                 `max slope\nin maize` = max_slope.maize,
                 `max slope\nin mexicana` = max_slope.mexicana, # domestication here?
-                `min introgression\n in maize` = max_maize_ancestry.maize,
-                `min introgression\n in mexicana` = min_maize_ancestry.mexicana)
-
+                `min teosinte introgression\n into maize` = max_maize_ancestry.maize,
+                `min maize introgression\n into mexicana` = min_maize_ancestry.mexicana)
+# save table
 print(xtable(tbl_outliers,
              type = "latex",
              latex.environments = NULL),
       include.rownames = F,
       file = tbl_out)
-print(xtable(tbl_outliers,
+# final manuscript table is somewhat abbreviated
+print(xtable(tbl_outliers %>%
+               dplyr::filter(category == "domestication") %>%
+               dplyr::select(name = name_short,
+                             `v4 coordinates`,
+                             `min teosinte introgression\n into maize`,
+                             `min maize introgression\n into mexicana`),
              type = "latex",
              latex.environments = NULL),
       include.rownames = F,

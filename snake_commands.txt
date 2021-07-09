@@ -97,15 +97,20 @@ hilo$ snakemake -n all --profile slurm --quiet
 Job counts:
         count   jobs
         1       all
-        2       calc_and_plot_f4
+        2       calc_and_plot_f4 # error with vector instead of list to save gg plots together
         1       combine_supp_genome_scan_plots
         3       plot_mean_anc
         1       plot_sensitivity_to_Ne_K3 # fixed. needed to load  meta data within lapply for each Ne combo. Hmm.. failed again: 36727312
         1       plot_within_ancestry_fst
         9
 
-- HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
-
+- added a tbl output to bootstrap NGSAdmix summary script: HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
+Ran snakemake rule all (didn't capture log to run here):
+# summarise_bootstrap_anc_by_r tried to rerun but had an error 36727482
+# calc and plot f4s also triggered an error again:36727490
+did crtl+c because of these errors.
+# deleted file to trigger rerun on next snakemake
+hilo$ rm ZAnc/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex
 
 # TO DO:
 FINISH FIXING UP 'TEST_KEY_GENES' rule -- look at all input files, fix prefixes to be maize_anc and lm_elev
