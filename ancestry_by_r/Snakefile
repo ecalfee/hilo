@@ -178,7 +178,8 @@ rule summarise_bootstrap_anc_by_r:
         expand("ancestry_by_r/results/bootstrap_1cM/{{PREFIX}}/{{FEATURE}}5_{r}/K{{K}}/boot{BOOT}.anc",
         r = [1, 2, 3, 4, 5], BOOT = list(range(0, 101)))
     output:
-        rdata = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata"
+        rdata = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}.Rdata",
+        tbl_boot_drop = "ancestry_by_r/results/bootstrap_1cM/{PREFIX}/{FEATURE}5_K{K}_boot_drop_stats.txt"
     params:
         p = "med2",
         k = lambda wildcards: wildcards.K,

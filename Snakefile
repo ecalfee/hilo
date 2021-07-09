@@ -380,6 +380,9 @@ rule all:
         # stats for percent of MVN simulations truncated to be within [0,1] range
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}.MVN.truncated.stats.txt", ZEA = zea),
 
+        # stats for number of bootstraps with ambiguous K ancestry assignments (ancestry ~ r/cd analysis)
+        expand("ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/{FEATURE}5_K3_boot_drop_stats.txt", FEATURE = ["r", "cd"]),
+
         # outliers for maize, mexicana or parviglumis outliers as bed file
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
 

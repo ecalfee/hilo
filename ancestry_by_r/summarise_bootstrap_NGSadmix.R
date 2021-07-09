@@ -19,7 +19,9 @@ windows_file = snakemake@params[["windows"]]
 alpha = snakemake@params[["alpha"]]
 # alpha = 0.05 # use 95% confidence intervals for bootstrap
 rdata_out = snakemake@output[["rdata"]]
-# rdata_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55/r5_K2.Rdata"
+# rdata_out = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3.Rdata"
+tbl_boot_drop = snakemake@output[["tbl_boot_drop"]]
+# tbl_boot_drop = "ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3_boot_drop_stats.txt"
 
 ancestries <- c("maize", "mexicana", "parviglumis")[1:K] # ancestries
 
@@ -52,9 +54,19 @@ anc_ind <- anc_boot %>%
   filter(bootstrap == 0) %>% # the original sample is called 'bootstrap 0'
   gather(., key = "ancestry", value = "p", ancestries[1:K])
 
-# print # of bootstraps dropped for ambiguous ancestry assignment:
+# save # of bootstraps dropped for ambiguous ancestry assignment:
 print("% bootstraps dropped for ambiguous ancestry assignment:")
-print(is.na(anc_boot$maize)/nrow(anc_boot)*100) # if maize is na then all ancestries are NA
+print(sum(is.na(anc_boot$maize))/nrow(anc_boot)*100) # if maize is na then all ancestries are NA
+boot_drop <- anc_boot %>%
+  dplyr::group_by(., feature, quintile) %>%
+  dplyr::summarise(n_boot_dropped = sum(is.na(maize)),
+                   perc_boot_dropped = sum(is.na(maize))/nrow(.)*100)
+print(boot_drop)
+write.table(X = boot_drop,
+            file = tbl_boot_drop,
+            col.names = T, row.names = F,
+            quote = F, sep = "\t")
+
 
 # mean of bootstrap for groups defined by symp/allo, recombination rate and zea subspecies
 anc_boot_mean <- anc_boot %>%
