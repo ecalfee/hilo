@@ -12,10 +12,6 @@ input_file = snakemake@input[["fst"]]
 # input_file = "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt"
 load(snakemake@input[["meta"]])
 # load("samples/HILO_MAIZE55_PARV50_meta.RData")
-png_points_maize = snakemake@output[["png_points_maize"]]
-# png_points_maize = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_ancestry_genomewide_points.png"
-png_points_mexicana = snakemake@output[["png_points_mexicana"]]
-# png_points_mexicana = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_mexicana_ancestry_genomewide_points.png"
 png_heatmap_both = snakemake@output[["png_heatmap_both"]]
 # png_heatmap_both = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png"
 png_heatmap_both_lzw = snakemake@output[["png_heatmap_both_lzw"]]

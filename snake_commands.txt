@@ -93,6 +93,17 @@ hilo$ snakemake all --profile slurm --quiet # 7.8.2021 6:30pm
 # also calc_and_plot_f4 failed 36721167
 # and plot_mean_anc failed 36721163 # FIXED: needed to remove shadow or just make a different script to combine the supplementary figs for this...
 
+hilo$ snakemake -n all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        2       calc_and_plot_f4
+        1       combine_supp_genome_scan_plots
+        3       plot_mean_anc
+        1       plot_sensitivity_to_Ne_K3 # fixed. needed to load  meta data within lapply for each Ne combo
+        1       plot_within_ancestry_fst
+        9
+
 - HOW MANY BOOTSTRAPS 'AMBIGUOUS' for NGSAdmix ancestry? Add 2 methods...say a range of how many were dropped per set of bootstraps (or max or something).
 
 

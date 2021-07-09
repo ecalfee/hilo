@@ -35,18 +35,20 @@ load(paste0("samples/", prefix, "_meta.RData"))
 times = list()
 
 for (z in zea){
-  # load meta data
-  load(paste0("local_ancestry/results/ancestry_hmm/",
-              prefix, "/K3/Ne", Ne, "_", YESNO,
-              "Boot/anc/", z, ".pop.meta.RData"))
   times[[z]] = do.call(bind_rows, lapply(meta_pops$pop, function(p)
-    do.call(bind_rows, lapply(Nes, function(N)
+    do.call(bind_rows, lapply(Nes, function(N){
+    # load meta data
+    load(paste0("local_ancestry/results/ancestry_hmm/",
+                      prefix, "/K3/Ne", N, "_", YESNO,
+                      "Boot/anc/", z, ".pop.meta.RData"))
     read.table(paste0("local_ancestry/results/ancestry_hmm/",
                       prefix, "/K3/Ne", N, "_", YESNO,
                       "Boot/", p, ".times"),
                header = T, stringsAsFactors = F, sep = " ") %>%
       dplyr::mutate(pop = p,
-                    Ne = N))))) %>%
+                    Ne = N)
+    }
+    )))) %>%
     left_join(., dplyr::select(meta_pops, pop, zea, LOCALITY, ELEVATION), by = "pop")
 }
 
