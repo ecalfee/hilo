@@ -123,6 +123,13 @@ Job counts:
         1       test_key_genes # error: 36727522. got rid of reference to 'name_short'
         9
 hilo$ snakemake all --profile slurm --quiet # RUNNING 7.9.2021 12:33pm
+Job counts:
+        count   jobs
+        1       all
+        1       combine_genome_scan_plots
+        1       plot_sensitivity_to_Ne_K3 # didn't run: 36727656 - adding xtable library to script
+        1       test_key_genes
+        4
 
 
 Plot introgression patterns at HPCI (CHECK ON HPC1 RESULTS)

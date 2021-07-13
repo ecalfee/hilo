@@ -2,6 +2,7 @@
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+library(xtable)
 # this script plots timing of admixture estimated from ancestry_hmm for different Nes
 # and correlations between local ancestry estimates for different Nes
 
