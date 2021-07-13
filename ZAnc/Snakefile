@@ -429,6 +429,32 @@ rule test_key_genes:
     script:
         "test_key_genes.R"
 
+# plot_hpc1_anc: plots mexicana ancestry ~ elevation around flowering time gene HPC1
+rule plot_hpc1_anc:
+    input:
+        colors = "colors.R",
+        fdr_lmElev = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
+        fit_lmElev = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
+        fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
+        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+        meta_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites"
+    output:
+        png = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_hpc1_lm_ancestry.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_hpc1_lm_ancestry.tif",
+        png_mex_anc = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_hpc1_mean_ancestry.png"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 8
+    script:
+        "plot_hpc1_anc.R"
+
 ## fit_zAnc: zTz, lm(zAnc ~ zElev) and lm(zAnc ~ intercept) transforms ancestry using cholesky rotation, then fits association with transformed variables, or null model
 #rule fit_zAnc:
 #    input:

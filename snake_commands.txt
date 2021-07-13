@@ -122,6 +122,7 @@ Job counts:
         2       summarise_bootstrap_anc_by_r
         1       test_key_genes # error: 36727522. got rid of reference to 'name_short'
         9
+hilo$ snakemake all --profile slurm --quiet # RUNNING 7.9.2021 12:33pm
 
 
 Plot introgression patterns at HPCI (CHECK ON HPC1 RESULTS)

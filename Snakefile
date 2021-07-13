@@ -364,6 +364,10 @@ rule all:
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
         "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif",
 
+        # supplementary plot of hpc1
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif",
+
         # intermediate quality control reports:
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files
         "filtered_bams/metrics/fastQC_trimmed/multiqc/multiqc_report.html",
