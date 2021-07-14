@@ -36,15 +36,11 @@ png_multi = snakemake@output[["png_multi"]]
 png_multi_lzw = snakemake@output[["png_multi_lzw"]]
 # png_multi_lzw = "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.tif"
 
-png_r5_symp = snakemake@output[["png_r5_symp"]]
-# png_r5_symp = "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_only.png"
 png_r5_symp_allo = snakemake@output[["png_r5_symp_allo"]]
 # png_r5_symp_allo = "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png"
 png_r5_symp_allo_lzw = snakemake@output[["png_r5_symp_allo_lzw"]]
 # png_r5_symp_allo_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif"
 
-png_cd5_symp = snakemake@output[["png_cd5_symp"]]
-# png_cd5_symp = "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_only.png"
 png_cd5_symp_allo = snakemake@output[["png_cd5_symp_allo"]]
 # png_cd5_symp_allo = "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.png"
 png_cd5_symp_allo_lzw = snakemake@output[["png_cd5_symp_allo_lzw"]]
@@ -111,52 +107,7 @@ meta_symp = dplyr::filter(meta, symp_allo == "sympatric") %>%
 
 # make plots
 # K=3 introgression ~ r
-p_r5_symp = r5$anc_boot_perc %>%
-  dplyr::filter(symp_allo == "sympatric") %>%
-  dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
-  dplyr::filter(ancestry != zea) %>% # don't plot e.g. maize ancestry within maize
-  dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
-                                             ordered = T,
-                levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"),
-                               "in\n", "sympatric",
-                               c("maize", "mexicana", "maize", "mexicana")))) %>%
-  ggplot(aes(x = bin, y = p, group = zea)) +
-  # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(r5$anc_ind,
-                           symp_allo == "sympatric" & ancestry != zea) %>%
-               dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
-                                                          ordered = T)),
-             aes(x = bin,
-                 y = p,
-                 shape = zea,
-                 color = ancestry),
-             alpha = 0.6,
-             size = 1,
-             position = position_jitter(0.2)) +
-  scale_color_manual(values = col_maize_mex_parv) +
-  # then add mean for that group
-  geom_point(pch = 18, size = 2) +
-  # and errorbars for 95% CI around that mean
-  # based on bootstrap with NGSAdmix (percentile method)
-  geom_errorbar(aes(ymin = low_boot,
-                    ymax = high_boot),
-                width = .5) +
-  facet_wrap(~ label_introgression) +
-  theme_classic() +
-  xlab("Recombination rate quintile (cM/Mb)") +
-  ylab("Introgressed ancestry proportion") +
-  guides(color = guide_legend("Ancestry", override.aes = list(size = 3)),
-         shape = guide_legend("Ancestry")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "None")
-# p_r5_symp
-ggsave(file = png_r5_symp,
-       plot = p_r5_symp,
-       device = "png",
-       width = 5, height = 4,
-       units = "in", dpi = 300)
-
-# plot sympatric and reference together: NGSAdmix ancestry ~ r
+# plot sympatric and reference together as facets
 p_r5_symp_allo = r5$anc_boot_perc %>%
   dplyr::mutate(ref_symp = ifelse(zea == "parviglumis" | symp_allo == "allopatric",
                 "reference populations", "sympatric populations")) %>%
@@ -195,52 +146,6 @@ ggsave(file = png_r5_symp_allo_lzw,
        units = "in", dpi = 300,
        compression = "lzw", type = "cairo")
 
-# by coding bp per cM
-p_cd5_symp = cd5$anc_boot_perc %>%
-  dplyr::filter(symp_allo == "sympatric") %>%
-  dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
-  dplyr::filter(ancestry != zea) %>% # don't plot e.g. maize ancestry within maize
-  dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
-                                             ordered = T,
-                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"),
-                                                            "in\n", "sympatric",
-                                                            c("maize", "mexicana", "maize", "mexicana")))) %>%
-  ggplot(aes(x = bin, y = p, group = zea)) +
-  # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(cd5$anc_ind,
-                           symp_allo == "sympatric" & ancestry != zea) %>%
-               dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
-                                                          ordered = T)),
-             aes(x = bin,
-                 y = p,
-                 shape = zea,
-                 color = ancestry),
-             alpha = 0.6,
-             size = 1,
-             position = position_jitter(0.2)) +
-  scale_color_manual(values = col_maize_mex_parv) +
-  # then add mean for that group
-  geom_point(pch = 18, size = 2) +
-  # and errorbars for 95% CI around that mean
-  # based on bootstrap with NGSAdmix (percentile method)
-  geom_errorbar(aes(ymin = low_boot,
-                    ymax = high_boot),
-                width = .5) +
-  facet_wrap(~ label_introgression) +
-  theme_classic() +
-  xlab("Gene density (coding bp/cM)") +
-  ylab("Introgressed ancestry proportion") +
-  guides(color = guide_legend("Ancestry", override.aes = list(size = 3)),
-         shape = guide_legend("Ancestry")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "None")
-# p_cd5_symp
-ggsave(file = png_cd5_symp,
-       plot = p_cd5_symp,
-       device = "png",
-       width = 5, height = 4,
-       units = "in", dpi = 300)
-
 
 # sympatric and reference populations together: NGSAdmix ancestry ~ coding density
 p_cd5_symp_allo = cd5$anc_boot_perc %>%
@@ -260,8 +165,8 @@ p_cd5_symp_allo = cd5$anc_boot_perc %>%
   #scale_shape_manual(values = c(19,17,0)) +
   facet_grid(ref_symp ~ zea, scales="free_y") +
   theme_light() +
-  xlab("Recombination rate quintile (cM/Mb)") +
-  ylab("Gene density (coding bp/cM)") +
+  xlab("Gene density (coding bp/cM)") +
+  ylab("Introgressed ancestry proportion") +
   guides(color = guide_legend("Introgressed ancestry",
                               override.aes = list(size = 2, linetype = 0)),
          shape = guide_legend("Population subspecies"),
@@ -376,7 +281,7 @@ ggsave(file = png_color_elev_r5_lzw,
 r5.labs0 <- paste0(c("lowest r", "low r", "middle r", "high r", "highest r"))
 r5.labs <- paste(levels(r5$anc_ind$bin), "cM/Mb")
 names(r5.labs) <- levels(r5$anc_ind$bin)
-p_r5_symp_maize_mex = p_r5_symp = r5$anc_boot_perc %>%
+p_r5_symp_maize_mex = r5$anc_boot_perc %>%
   dplyr::filter(symp_allo == "sympatric") %>%
   dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
   dplyr::filter(ancestry != zea & ancestry != "parviglumis") %>% # don't plot e.g. maize ancestry within maize

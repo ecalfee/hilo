@@ -141,8 +141,13 @@ Job counts:
         3 # completed 7.13.2021
 # removed ancestry ~ r/cd supplementary plots so they are remade
 hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_*_bootstrap_sympatric_and_allopatric.png
-
-
+hilo$ Job counts:
+        count   jobs
+        1       all
+        1       plot_bootstrap_NGSadmix_by_r_K3
+        2
+rm ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png
+rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png
 # TO DO:
 Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
 fix shuffle test for domestication genes from the literature-- add P-values to the text
