@@ -90,7 +90,7 @@ windows <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t"
 windows_by_inv = bedr(engine = "bedtools",
      input = list(a = windows %>%
                     dplyr::select("chr", "start", "end", "window") %>%
-                    dplyr::mutate(., chr = as.character(chr)), 
+                    dplyr::mutate(., chr = as.character(chr)),
                   b = dplyr::mutate(inv, chr = as.character(chr)) %>%
                     dplyr::select(chr, start, end, ID) %>%
                     dplyr::arrange(chr, start)),
@@ -117,12 +117,12 @@ p_r5_symp = r5$anc_boot_perc %>%
   dplyr::filter(ancestry != zea) %>% # don't plot e.g. maize ancestry within maize
   dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
                                              ordered = T,
-                levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"), 
-                               "in\n", "sympatric", 
+                levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"),
+                               "in\n", "sympatric",
                                c("maize", "mexicana", "maize", "mexicana")))) %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(r5$anc_ind, 
+  geom_point(data = filter(r5$anc_ind,
                            symp_allo == "sympatric" & ancestry != zea) %>%
                dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
                                                           ordered = T)),
@@ -153,12 +153,12 @@ p_r5_symp = r5$anc_boot_perc %>%
 ggsave(file = png_r5_symp,
        plot = p_r5_symp,
        device = "png",
-       width = 5, height = 4, 
+       width = 5, height = 4,
        units = "in", dpi = 300)
 
 # plot sympatric and reference together: NGSAdmix ancestry ~ r
 p_r5_symp_allo = r5$anc_boot_perc %>%
-  dplyr::mutate(ref_symp = ifelse(zea == "parviglumis" | symp_allo == "allopatric", 
+  dplyr::mutate(ref_symp = ifelse(zea == "parviglumis" | symp_allo == "allopatric",
                 "reference populations", "sympatric populations")) %>%
   #dplyr::filter(symp_allo == "sympatric") %>%
   dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
@@ -173,11 +173,11 @@ p_r5_symp_allo = r5$anc_boot_perc %>%
                 width = 0.5) +
   scale_color_manual(values = col_maize_mex_parv) +
   #scale_shape_manual(values = c(19,17,0)) +
-  facet_grid(ref_symp ~ zea) +
-  theme_classic() +
+  facet_grid(ref_symp ~ zea, scales="free_y") +
+  theme_light() +
   xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Introgressed ancestry proportion") +
-  guides(color = guide_legend("Introgressed ancestry", 
+  guides(color = guide_legend("Introgressed ancestry",
                               override.aes = list(size = 2, linetype = 0)),
          shape = guide_legend("Population subspecies"),
          fill = F) +
@@ -186,12 +186,12 @@ p_r5_symp_allo = r5$anc_boot_perc %>%
 ggsave(file = png_r5_symp_allo,
        plot = p_r5_symp_allo,
        device = "png",
-       width = 7, height = 7, 
+       width = 7, height = 7,
        units = "in", dpi = 300)
 ggsave(file = png_r5_symp_allo_lzw,
        plot = p_r5_symp_allo,
        device = "tiff",
-       width = 7, height = 7, 
+       width = 7, height = 7,
        units = "in", dpi = 300,
        compression = "lzw", type = "cairo")
 
@@ -202,12 +202,12 @@ p_cd5_symp = cd5$anc_boot_perc %>%
   dplyr::filter(ancestry != zea) %>% # don't plot e.g. maize ancestry within maize
   dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
                                              ordered = T,
-                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"), 
-                                                            "in\n", "sympatric", 
+                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"),
+                                                            "in\n", "sympatric",
                                                             c("maize", "mexicana", "maize", "mexicana")))) %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(cd5$anc_ind, 
+  geom_point(data = filter(cd5$anc_ind,
                            symp_allo == "sympatric" & ancestry != zea) %>%
                dplyr::mutate(label_introgression = factor(paste(ancestry, "in\n", symp_allo, zea),
                                                           ordered = T)),
@@ -238,13 +238,13 @@ p_cd5_symp = cd5$anc_boot_perc %>%
 ggsave(file = png_cd5_symp,
        plot = p_cd5_symp,
        device = "png",
-       width = 5, height = 4, 
+       width = 5, height = 4,
        units = "in", dpi = 300)
 
 
 # sympatric and reference populations together: NGSAdmix ancestry ~ coding density
 p_cd5_symp_allo = cd5$anc_boot_perc %>%
-  dplyr::mutate(ref_symp = ifelse(zea == "parviglumis" | symp_allo == "allopatric", 
+  dplyr::mutate(ref_symp = ifelse(zea == "parviglumis" | symp_allo == "allopatric",
                                   "reference populations", "sympatric populations")) %>%
   dplyr::mutate(ancestry = stringr::str_extract(ancestry, "[a-z]+")) %>% # makes 'maize_ancestry' into just 'maize'
   dplyr::filter(zea != ancestry) %>% # introgressed ancestry only
@@ -258,11 +258,11 @@ p_cd5_symp_allo = cd5$anc_boot_perc %>%
                 width = 0.5) +
   scale_color_manual(values = col_maize_mex_parv) +
   #scale_shape_manual(values = c(19,17,0)) +
-  facet_grid(ref_symp ~ zea) +
-  theme_classic() +
+  facet_grid(ref_symp ~ zea, scales="free_y") +
+  theme_light() +
   xlab("Recombination rate quintile (cM/Mb)") +
   ylab("Gene density (coding bp/cM)") +
-  guides(color = guide_legend("Introgressed ancestry", 
+  guides(color = guide_legend("Introgressed ancestry",
                               override.aes = list(size = 2, linetype = 0)),
          shape = guide_legend("Population subspecies"),
          fill = F) +
@@ -271,17 +271,17 @@ p_cd5_symp_allo = cd5$anc_boot_perc %>%
 ggsave(file = png_cd5_symp_allo,
        plot = p_cd5_symp_allo,
        device = "png",
-       width = 7, height = 7, 
+       width = 7, height = 7,
        units = "in", dpi = 300)
 ggsave(file = png_cd5_symp_allo_lzw,
        plot = p_cd5_symp_allo,
        device = "tiff",
-       width = 7, height = 7, 
+       width = 7, height = 7,
        units = "in", dpi = 300,
        compression = "lzw", type = "cairo")
 
 # plot feature correlations for genomic windows
-p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding, 
+p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding,
                     col = bin_frac5, shape = bin_r5)) +
   geom_point() +
   ggtitle("Log(cM/Mb) vs. fraction coding (vs. noncoding) bp in 1cM windows")
@@ -289,7 +289,7 @@ p_cor_r_frac <- ggplot(windows, aes(x = log10(cM_Mb), y = frac_bp_coding,
 ggsave(file = png_cor_r_frac,
        plot = p_cor_r_frac,
        device = "png",
-       width = 7, height = 4, 
+       width = 7, height = 4,
        units = "in", dpi = 300)
 print("Genomic feature correlation at 1cM window scale:")
 print("cM_Mb ~ frac_bp_coding")
@@ -299,7 +299,7 @@ print(cor(windows$quintile_r5, windows$quintile_frac5))
 print("log10(cM_Mb) ~ frac_bp_coding")
 print(cor(log10(windows$cM_Mb), windows$frac_bp_coding))
 
-p_cor_r_cd <- ggplot(windows, aes(x = log10(cM_Mb), y = coding_bp, 
+p_cor_r_cd <- ggplot(windows, aes(x = log10(cM_Mb), y = coding_bp,
                     col = bin_cd5, shape = bin_r5)) +
   geom_point() +
   #ggtitle("Log(cM/Mb) vs. coding bp in 1cM windows") +
@@ -311,7 +311,7 @@ p_cor_r_cd <- ggplot(windows, aes(x = log10(cM_Mb), y = coding_bp,
 ggsave(file = png_cor_r_cd,
        plot = p_cor_r_cd,
        device = "png",
-       width = 6, height = 4, 
+       width = 6, height = 4,
        units = "in", dpi = 300)
 print("log10(cM_Mb_ ~ coding_bp")
 print(cor(log10(windows$cM_Mb), windows$coding_bp))
@@ -348,7 +348,7 @@ p_color_elev_r5 <- r5$anc_ind %>%
   dplyr::filter(., ancestry == "mexicana") %>%
   ggplot(., aes(x = bin, y = p,
                 color = ELEVATION)) +
-  geom_smooth(method = "lm", se = FALSE, 
+  geom_smooth(method = "lm", se = FALSE,
               aes(group = popN, color = ELEVATION)) +
   #ggtitle("Mexicana ancestry by recombination rate and elevation") +
   scale_color_viridis_c(direction = -1, option = "viridis") +
@@ -362,12 +362,12 @@ p_color_elev_r5 <- r5$anc_ind %>%
 ggsave(file = png_color_elev_r5,
        plot = p_color_elev_r5,
        device = "png",
-       width = 7, height = 6, 
+       width = 7, height = 6,
        units = "in", dpi = 300)
 ggsave(file = png_color_elev_r5_lzw,
        plot = p_color_elev_r5,
        device = "tiff",
-       width = 7, height = 6, 
+       width = 7, height = 6,
        units = "in", dpi = 300,
        compression = "lzw", type = "cairo")
 
@@ -382,12 +382,12 @@ p_r5_symp_maize_mex = p_r5_symp = r5$anc_boot_perc %>%
   dplyr::filter(ancestry != zea & ancestry != "parviglumis") %>% # don't plot e.g. maize ancestry within maize
   dplyr::mutate(label_introgression = factor(paste(ancestry, "ancestry in\n", symp_allo, zea),
                                              ordered = T,
-                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"), 
-                                                            "ancestry in\n", "sympatric", 
+                                             levels = paste(c("mexicana", "maize", "parviglumis", "parviglumis"),
+                                                            "ancestry in\n", "sympatric",
                                                             c("maize", "mexicana", "maize", "mexicana")))) %>%
   ggplot(aes(x = bin, y = p, group = zea)) +
   # first plot original point estimates for ind. ancestry
-  geom_point(data = filter(r5$anc_ind, 
+  geom_point(data = filter(r5$anc_ind,
                            symp_allo == "sympatric" & ancestry != zea & ancestry != "parviglumis") %>%
                dplyr::mutate(label_introgression = factor(paste(ancestry, "ancestry in\n", symp_allo, zea),
                                                           ordered = T)),
@@ -419,18 +419,18 @@ p_r5_symp_maize_mex
 
 
 
-p_multi <- grid.arrange(grobs = list(textGrob(label = "A", 
+p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               just = "top",
                                               x = unit(0.5, "lines")),
                                      ggplotGrob(p_r5_symp_maize_mex),
-                                     textGrob(label = "B", 
+                                     textGrob(label = "B",
                                               just = "top",
                                               x = unit(0.5, "lines"),
                                               y = unit(1.5, "lines")),
                                      ggplotGrob(p_elev_facet_r5_maize +
                                                   theme(legend.position = "none") +
                                                   facet_wrap(~ bin, ncol = 5, labeller = labeller(bin = r5.labs)))
-                                     
+
                                      ),
                            #layout_matrix = rbind(c(3, NA, 4, NA),
                           #                       c(NA, 1, NA, 2)),
@@ -439,18 +439,18 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
 
 
 #p_multi
-ggsave(png_multi, 
-       plot = p_multi, 
-       device = "png", 
-       width = 7.5, 
-       height = 6.5, 
+ggsave(png_multi,
+       plot = p_multi,
+       device = "png",
+       width = 7.5,
+       height = 6.5,
        units = "in",
        dpi = 300)
-ggsave(png_multi_lzw, 
-       plot = p_multi, 
-       device = "tiff", 
-       width = 7.5, 
-       height = 6.5, 
+ggsave(png_multi_lzw,
+       plot = p_multi,
+       device = "tiff",
+       width = 7.5,
+       height = 6.5,
        units = "in",
        dpi = 300,
        compression = "lzw", type = "cairo")
@@ -465,8 +465,8 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
          elevation_km = ELEVATION/1000) %>%
   nest(., -zea) %>%
   mutate(.,
-         model = map(data, 
-                     ~lm(p ~ elevation_km + quintile + quintile*elevation_km, 
+         model = map(data,
+                     ~lm(p ~ elevation_km + quintile + quintile*elevation_km,
                                data = .)),
          tidy = map(model, tidy)) %>%
   unnest(tidy) %>%
@@ -481,26 +481,26 @@ tbl_elev_r_interaction_5 = r5$anc_ind %>%
                           stringsAsFactors = F),
             by = "term_messy") %>%
   dplyr::mutate(group = paste("sympatric", zea)) %>%
-  dplyr::select(group, term, estimate, std.error, statistic, p.value) 
+  dplyr::select(group, term, estimate, std.error, statistic, p.value)
 
 # print table to file
-print(xtable(tbl_elev_r_interaction_5, 
+print(xtable(tbl_elev_r_interaction_5,
              digits = c(1, 0, 0, 3, 3, 3, -2),
              label = "tbl_elev_r_interaction_5",
-             type = "latex", 
+             type = "latex",
              latex.environments = NULL),
       include.rownames = F,
-      file = file_elev_r_interaction_5)  
-print(xtable(tbl_elev_r_interaction_5, 
+      file = file_elev_r_interaction_5)
+print(xtable(tbl_elev_r_interaction_5,
              digits = c(1, 0, 0, 3, 3, 3, -2),
              label = "tbl_elev_r_interaction_5",
-             type = "latex", 
+             type = "latex",
              latex.environments = NULL),
       include.rownames = F,
-      file = file_elev_r_interaction_5_tex) 
+      file = file_elev_r_interaction_5_tex)
 
 # make tidy table of rho spearman's rank correlations across quintiles
-rho = bind_rows(mutate(r5$spearman, 
+rho = bind_rows(mutate(r5$spearman,
                        method = "NGSAdmix",
                        feature = "recombination rate (cM/Mb)"),
                 mutate(cd5$spearman,
@@ -509,7 +509,7 @@ rho = bind_rows(mutate(r5$spearman,
   mutate(group = stringr::str_replace(group, "_", " "),
          resolution = "genomic quintiles") %>%
   dplyr::rename(label = group) %>%
-  left_join(., 
+  left_join(.,
             data.frame(group = c("sympatric maize", "sympatric mexicana",
                                  "reference parviglumis",
                                  "reference maize", "reference mexicana"),
@@ -517,21 +517,21 @@ rho = bind_rows(mutate(r5$spearman,
                                  "parviglumis",
                                  "allopatric maize", "allopatric mexicana"),
                        stringsAsFactors = F),
-            by = "label") %>% 
+            by = "label") %>%
   dplyr::select(group, feature, ancestry, rho_estimate, boot_low, boot_high) %>%
   rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high) %>%
   arrange(desc(feature), desc(group), ancestry)
 
 # print table to file for estimates of spearman's rank correlation
-print(xtable(rho, 
+print(xtable(rho,
              digits = c(1, 1, 1, 1, 2, 2, 2),
-             type = "latex", 
+             type = "latex",
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_ngsadmix)
-print(xtable(rho, 
+print(xtable(rho,
              digits = c(1, 1, 1, 1, 2, 2, 2),
-             type = "latex", 
+             type = "latex",
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_ngsadmix_tex)

@@ -131,25 +131,29 @@ Job counts:
         1       test_key_genes
         4
 
-
 Plot introgression patterns at HPCI (CHECK ON HPC1 RESULTS)
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       plot_hpc1_anc
+        1       plot_sensitivity_to_Ne_K3
+        3 # completed 7.13.2021
+# removed ancestry ~ r/cd supplementary plots so they are remade
+hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_*_bootstrap_sympatric_and_allopatric.png
+
 
 # TO DO:
-
-CHECK CORRELATIONS ARE PROPERLY UPDATED IN MAIN TEXT
+Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
+fix shuffle test for domestication genes from the literature-- add P-values to the text
+add 5% FDR line to inv9m!!
+remove hpc1 from Figure multi_maize_mexicana_genome_scan.png ?
+UPDATE ALL FIGURES/SUPP/.png/.tex into overleaf
 FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
-CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
+>>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
-# Qs for JEFF/GRAHAM
-- Show new figures
-- PARV also changes across recombination rate. local ancestry ~ r just a tad different
-- show them inversion pca at mhl1 -- segregates at parviglumis...should we say it could be ancestrally sorting?
-----actually re-do this first to make sure it's not spurious because of background (outside inversion)
-- Still running last couple plots (QQs/Nes/Pi + Fst within local ancestry peaks)
 
-# add back in f4 tables to github.
-# add plots for robustness of ancestry_hmm to choice of Ne -- reference in methods
 # Language : modeled ancestry variance-covariance marginally, marginal K matrix
 
 
