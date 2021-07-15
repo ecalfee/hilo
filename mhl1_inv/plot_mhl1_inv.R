@@ -21,9 +21,9 @@ meta_maize_file = snakemake@input[["meta_maize"]]
 sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55/whole_genome.var.sites"
 png_out = snakemake@output[["png"]]
-# png_out = paste0("mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_ancestry.png")
+# png_out = "mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_ancestry.png"
 png_out_lzw = snakemake@output[["png_lzw"]]
-# png_out_lzw = paste0("../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_ancestry.tif")
+# png_out_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_mhl1_inv_ancestry.tif"
 mhl1_QTL_bed = snakemake@input[["mhl1_QTL_bed"]]
 # mhl1_QTL_bed = "data/known_QTL/chr9_bin4_mhl1_locus_v4.bed"
 mhl1_inv_bed = snakemake@input[["mhl1_inv_bed"]]
@@ -52,7 +52,7 @@ p_mhl1 <- bind_cols(sites, fits) %>%
   ggplot(., aes(pos/10^6, envWeights, 
                 color = even_chr)) +
   #geom_vline(xintercept = c(inv_mhl1[["start"]], inv_mhl1[["end"]])/10^6, linetype = "dashed", color = "orange") +
-  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$thesholds, linetype = "solid", color = "#00BFC4") +
+  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$thresholds, linetype = "solid", color = "#00BFC4") +
   geom_point(size = .1) +
   geom_hline(yintercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
   xlab("position on chr9 (Mbp)") +

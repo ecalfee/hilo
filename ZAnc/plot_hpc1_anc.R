@@ -27,11 +27,11 @@ meta_maize_file = snakemake@input[["meta_maize"]]
 sites_file = snakemake@input[["sites"]]
 # sites_file = "local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/whole_genome.var.sites"
 png_out = snakemake@output[["png"]]
-# png_out = paste0("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png")
+# png_out = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png"
 png_out_lzw = snakemake@output[["png_lzw"]]
-# png_out_lzw = paste0("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif")
+# png_out_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif"
 png_out_mex_anc = snakemake@output[["png_mex_anc"]]
-# png_out_mex_anc = paste0("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_mean_ancestry.png")
+# png_out_mex_anc = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_mean_ancestry.png"
 
 # load data
 source(colors_file)
@@ -111,7 +111,7 @@ ggsave(png_out_mex_anc,
 p_hpc1_lm <- bind_cols(sites, fits) %>%
   filter(chr == 3, pos/10^6 > 5, pos/10^6 < 11) %>%
   ggplot(., aes(pos/10^6, envWeights)) +
-  geom_hline(yintercept = filter(FDRs, model == "lmElev")$threshold, linetype = "solid", color = "#00BFC4") +
+  geom_hline(yintercept = filter(FDRs, model == "lmElev", tail == "high")$threshold, linetype = "solid", color = "#00BFC4") +
   geom_point(size = .1, color = "darkgrey") +
   geom_hline(yintercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
   xlab("position on chr3 (Mbp)") +
@@ -131,8 +131,9 @@ p_hpc1_lm <- bind_cols(sites, fits) %>%
 # at a few snps with the highest slopes mexicana anc ~ elevation, plot ancestry for each population across elevation
 top_snps <- bind_cols(sites, fits) %>%
   filter(chr == 3, pos/10^6 > 5, pos/10^6 < 12) %>%
-  mutate(hpc1 = (pos + 20000 > hpc1[["start"]] & pos - 20000 < hpc1[["end"]])) %>%
-  filter(hpc1) %>%
+  mutate(hpc1_20kb = (pos + 20000 > hpc1[["start"]] & pos - 20000 < hpc1[["end"]]),
+         in_hpc1 = (pos > hpc1[["start"]] & pos < hpc1[["end"]])) %>%
+  filter(hpc1_20kb) %>%
   dplyr::arrange(., desc(envWeights)) %>%
   mutate(snp = 1:nrow(.)) %>%
   filter(snp <= 3)
@@ -148,6 +149,7 @@ pop_means = apply(anc[["mexicana"]], 2, mean) %>%
   dplyr::mutate(SNP = "genomewide mean") %>%
   left_join(., meta_pops, by = "pop")
 p_snps = a %>%
+  filter(in_hpc1) %>% # only plot top snp within hpc1
   pivot_longer(cols = starts_with("pop"), names_to = "pop", values_to = "mexicana_anc") %>%
   left_join(., meta_pops, by = "pop") %>%
   dplyr::mutate(SNP = paste(chr, pos, sep = ":")) %>%
@@ -159,7 +161,10 @@ p_snps = a %>%
   ylab("Introgressed mexicana ancestry") +
   xlab("Elevation (km)") +
   labs(color = "SNP") +
-  scale_color_manual(values = c("#D55E00", "#009E73", "#F0E442", "Black"))
+  scale_color_manual(values = c(#"#D55E00", 
+                                "#009E73", 
+                                #"#F0E442", 
+                                "Black"))
 
 
 p_lm <- grid.arrange(grobs = list(textGrob(label = "A",

@@ -179,7 +179,11 @@ Job counts:
 (hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
 (hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png
 (hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png
-        
+# remake hpc1 and inv9f plots for better FDR lines (simpler hpc1 and add to inv9f)
+hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png
+hilo$ rm mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_ancestry.png
+
+
 # TO DO:
 
 Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
