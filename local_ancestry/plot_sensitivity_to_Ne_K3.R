@@ -77,13 +77,13 @@ p_times <- do.call(bind_rows, times) %>%
 ggsave(file = png_times,
        plot = p_times,
        device = "png",
-       width = 5, height = 4,
+       width = 6.5, height = 4,
        units = "in", dpi = 300)
 
 ggsave(file = png_times_lzw,
        plot = p_times,
        device = "tiff",
-       width = 5, height = 4,
+       width = 6.5, height = 4,
        compression = "lzw", type = "cairo",
        units = "in", dpi = 300)
 

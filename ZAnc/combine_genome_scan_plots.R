@@ -120,7 +120,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               x = unit(0.5, "lines"), 
                                               y = unit(0.5, "lines")),
                                      ggplotGrob(plot_maize_mean + 
-                                                  labs(subtitle = "  mexicana ancestry in sympatric maize") +
+                                                  labs(subtitle = "  mexicana introgression in sympatric maize") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
@@ -129,7 +129,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               x = unit(0.5, "lines"), 
                                               y = unit(0.5, "lines")),
                                      ggplotGrob(plot_mexicana_mean + 
-                                                  labs(subtitle = "  maize ancestry in sympatric mexicana") +
+                                                  labs(subtitle = "  maize introgression in sympatric mexicana") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),

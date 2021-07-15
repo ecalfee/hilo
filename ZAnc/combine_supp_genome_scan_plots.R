@@ -88,7 +88,7 @@ p_multi <- grid.arrange(grobs = list(
                           c(5, 2),
                           c(NA, 3),
                           c(NA, 4)),
-                        heights = c(2,2,.1,.25),
+                        heights = c(1,1,.25,.25),
                         widths = c(.1, 5))
 
 # p_multi
@@ -96,14 +96,14 @@ ggsave(png_out,
        plot = p_multi, 
        device = "png", 
        width = 7.5, 
-       height = 4, 
+       height = 5, 
        units = "in",
        dpi = 300)
 ggsave(png_out_lzw, 
        plot = p_multi, 
        device = "tiff", 
        width = 7.5, 
-       height = 4, 
+       height = 5, 
        units = "in",
        compression = "lzw", type = "cairo",
        dpi = 300)

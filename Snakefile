@@ -255,6 +255,10 @@ rule all:
         "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
 
+        # supplementary plot of within-parviglumis-ancestry diversity (fst) as a heat map
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
+        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif",
+
         #"local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
         #"../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.png",
@@ -282,6 +286,10 @@ rule all:
         #"../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
+
+        # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
+        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
 
         #"ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
         #"../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
@@ -328,6 +336,10 @@ rule all:
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.tif",
 
+        # supplementary plots of parviglumis ancestry introgression peaks
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif",
+
         #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
         "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png",
@@ -337,6 +349,10 @@ rule all:
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_pca.tif",
         "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png",
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif",
+
+        # supplementary plot of hpc1
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif",
 
         "filtered_bams/plots/p_seq_counts.png",
         "../hilo_manuscript/figures_supp/p_seq_counts.tif",
@@ -350,24 +366,6 @@ rule all:
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
         "local_ancestry/results/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.txt",
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tex",
-
-        # ADD NEW FIGURES
-
-        # supplementary plots of parviglumis and mexicana ancestry introgression peaks (maize ancestry introgression peaks are in a main figure)
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif",
-
-        # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
-        "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
-
-        # supplementary plot of within-parviglumis-ancestry diversity (fst) as a heat map
-        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif",
-
-        # supplementary plot of hpc1
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif",
 
         # intermediate quality control reports:
         "filtered_bams/metrics/fastQC/multiqc/multiqc_report.html", # bam metrics files

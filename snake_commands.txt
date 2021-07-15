@@ -201,6 +201,13 @@ Job counts:
         1       plot_mhl1_inv
         1
 hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
+hilo$ snakemake all --profile slurm --quiet
+# hmm something  ran..
+# trigger new rerun of some plots after very minor formatting chagnes:
+(hilo-env) ecalfee@c6-54:~/hilo$ rm local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.png
+(hilo-env) ecalfee@c6-54:~/hilo$ rm local_ancestry/plots/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.png
+(hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png
+(hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
 
 # TO DO:
 
