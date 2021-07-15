@@ -146,14 +146,33 @@ hilo$ Job counts:
         1       all
         1       plot_bootstrap_NGSadmix_by_r_K3
         2
+
+hilo$ rm ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_*_bootstrap_sympatric_and_allopatric.png
+hilo$ snakemake all --profile slurm --quiet # 7.14.2021 4:20pm
+Job counts:
+        count   jobs
+        1       all
+        1       plot_bootstrap_NGSadmix_by_r_K3
+        2 # updated and in overleaf
 rm ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png
 rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png
+hilo$ snakemake all --profile slurm --quiet                                                                                         Job counts:
+        count   jobs
+        1       all
+        1       combine_supp_genome_scan_plots
+        2 # ran the supplementary figure again but didn't remove the right one to get a rerun for the main figure:
+(hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
+(hilo-env) ecalfee@c6-54:~/hilo$ snakemake all --profile slurm --quiet
+# oops try to cancel. needed to update scripts first:
+hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
+hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png
+
 # TO DO:
+
 Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
 fix shuffle test for domestication genes from the literature-- add P-values to the text
 add 5% FDR line to inv9m!!
 remove hpc1 from Figure multi_maize_mexicana_genome_scan.png ?
-UPDATE ALL FIGURES/SUPP/.png/.tex into overleaf
 FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
 >>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS

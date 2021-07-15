@@ -20,13 +20,13 @@ png_out_lzw = snakemake@output[["png_lzw"]]
 
 # individual plots input
 rds_maize_mean = snakemake@input[["rds_maize_mean"]]
-# rds_maize_mean = paste0("ZAnc/plots/Ne10000_yesBoot/maize.meanAnc.plot.rds")
+# rds_maize_mean = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_mean_mexicana_anc.plot.rds"
 rds_mexicana_mean = snakemake@input[["rds_mexicana_mean"]]
-# rds_mexicana_mean = paste0("ZAnc/plots/Ne10000_yesBoot/mexicana.meanAnc.plot.rds")
+# rds_mexicana_mean = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mexicana_mean_maize_anc.plot.rds"
 rds_maize_elev = snakemake@input[["rds_maize_elev"]]
-# rds_maize_elev = paste0("ZAnc/plots/Ne10000_yesBoot/maize.lmElev.plot.rds")
+# rds_maize_elev = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize.lmElev.plot.rds"
 rds_mexicana_elev = snakemake@input[["rds_mexicana_elev"]]
-# rds_mexicana_elev = paste0("ZAnc/plots/Ne10000_yesBoot/mexicana.lmElev.plot.rds")
+# rds_mexicana_elev = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mexicana.lmElev.plot.rds"
 
 # other genome coordinates input
 genome_file = snakemake@input[["genome"]]
@@ -78,7 +78,7 @@ plot_mexicana_mean = readRDS(rds_mexicana_mean)
 plot_maize_elev = readRDS(rds_maize_elev)
 plot_mexicana_elev = readRDS(rds_mexicana_elev)
 
-# make simple plot just to extract legend only for genomewide mean and 5% FDR lines on each plot
+# make simple plot just to extract legend only for genomewide mean FDR lines on each plot
 plot_for_legend_only <- ggplot(data = data.frame(lines = c("genomewide_mean", "fdr5"), 
                          value = 1)) +
   geom_hline(aes(yintercept = value, color = lines, linetype = lines)) +
@@ -97,7 +97,7 @@ plot_for_legend_only <- ggplot(data = data.frame(lines = c("genomewide_mean", "f
 
 # add labels for key loci to maize elevation plot
 plot_maize_elev_labelled <- plot_maize_elev + 
-             labs(subtitle = "  sympatric maize") +
+             labs(subtitle = "  cline in sympatric maize") +
              guides(color = F) + 
              theme(axis.title.x = element_blank(),
                    axis.title.y = element_blank(),
@@ -118,7 +118,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               x = unit(0.5, "lines"), 
                                               y = unit(0.5, "lines")),
                                      ggplotGrob(plot_maize_mean + 
-                                                  labs(subtitle = "  sympatric maize") +
+                                                  labs(subtitle = "  mexicana ancestry in sympatric maize") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
@@ -127,14 +127,14 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               x = unit(0.5, "lines"), 
                                               y = unit(0.5, "lines")),
                                      ggplotGrob(plot_mexicana_mean + 
-                                                  labs(subtitle = "  sympatric mexicana") +
+                                                  labs(subtitle = "  maize ancestry sympatric mexicana") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
                                                         plot.title = element_blank())),
                                      ggplotGrob(plot_maize_elev_labelled),
                                      ggplotGrob(plot_mexicana_elev + 
-                                                  labs(subtitle = "  sympatric mexicana") +
+                                                  labs(subtitle = "  cline in sympatric mexicana") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
@@ -144,7 +144,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               just = "center",
                                               gp = gpar(fontsize = 11)),
                                      cowplot::get_legend(plot_for_legend_only),
-                                     textGrob(label = "mean maize ancestry",
+                                     textGrob(label = "mean introgressed ancestry",
                                               rot = 90),
                                      textGrob(label = "slope mexicana ancestry ~ elevation",
                                               rot = 90)

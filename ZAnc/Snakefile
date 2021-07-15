@@ -159,7 +159,7 @@ rule plot_slope_elev:
 ## combine_genome_scan_plots: plots maize/mex mean ancestry and slope with elevation outliers plots across the genome in one figure
 rule combine_genome_scan_plots:
     input:
-        rds_maize_mean = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize_mean_maize_anc.plot.rds",
+        rds_maize_mean = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
         rds_mexicana_mean = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_mexicana_mean_maize_anc.plot.rds",
         rds_maize_elev = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_maize.lmElev.plot.rds",
         rds_mexicana_elev = "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_mexicana.lmElev.plot.rds",
@@ -187,8 +187,8 @@ rule combine_supp_genome_scan_plots:
     input:
         rds_maize_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_parv_anc.plot.rds",
         rds_mexicana_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_mexicana_mean_parv_anc.plot.rds",
-        rds_maize_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
-        rds_mexicana_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_mexicana_anc.plot.rds",
+        rds_maize_maize = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_maize_anc.plot.rds",
+        rds_mexicana_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_mexicana_mean_mexicana_anc.plot.rds",
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
     output:
         png = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_maize_mexicana_genome_scan.png",
