@@ -13,30 +13,30 @@ library(viridis)
 source(snakemake@input[["colors"]])
 # source("colors.R")
 fst_peaks_file = snakemake@input[["fst_peaks"]]
-# fst_peaks_file = "diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt"
+# fst_peaks_file = "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.mexicana_ancestry.peaks.allChr.txt"
 fst_genomewide_file = snakemake@input[["fst_genomewide"]]
-# fst_genomewide_file = "diversity/results/fst/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt"
+# fst_genomewide_file = "diversity/results/fst/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pairs_fst.allChr.txt"
 pi_peaks_file = snakemake@input[["pi_peaks"]]
-# pi_peaks_file = "diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt"
+# pi_peaks_file = "diversity/results/pi/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.mexicana_ancestry.peaks.allChr.txt"
 pi_genomewide_file = snakemake@input[["pi_genomewide"]]
-# pi_genomewide_file = "diversity/results/pi/HILO_MAIZE55/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.allChr.txt"
+# pi_genomewide_file = "diversity/results/pi/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/HOMOZYG/summary_pop_pi.allChr.txt"
 load(snakemake@input[["meta"]])
-# load("samples/HILO_MAIZE55_meta.RData")
+# load("samples/HILO_MAIZE55_PARV50_meta.RData")
 
 png_pi_mexicana_anc = snakemake@output[["png_pi_mex"]]
-# png_pi_mexicana_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png"
+# png_pi_mexicana_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png"
 png_pi_mexicana_anc_lzw = snakemake@output[["png_pi_mex_lzw"]]
-# png_pi_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif"
+# png_pi_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif"
 
 png_pi_maize_anc = snakemake@output[["png_pi_maize"]]
-# png_pi_maize_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_maize_ancestry.png"
+# png_pi_maize_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png"
 png_pi_maize_anc_lzw = snakemake@output[["png_pi_maize_lzw"]]
-# png_pi_maize_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif"
+# png_pi_maize_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif"
 
 png_fst_mexicana_anc = snakemake@output[["png_fst_mex"]]
-# png_fst_mexicana_anc = "diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png"
+# png_fst_mexicana_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png"
 png_fst_mexicana_anc_lzw = snakemake@output[["png_fst_mex_lzw"]]
-# png_fst_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif"
+# png_fst_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif"
 
 
 meta_pops = meta %>%
@@ -50,11 +50,11 @@ fst_genomewide <- read.table(fst_genomewide_file, sep = " ", header = F) %>%
   data.table::setnames(c("file_name", "fst")) %>%
   tidyr::separate(data = .,
                   col = file_name, 
-                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "ancestry", "pops"), 
+                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "v7", "ancestry", "pops"), 
                   sep = "/") %>%
   tidyr::separate(data = .,
                   col = pops,
-                  into = c("pop1", "pop2", "v7", "v8", "v9"),
+                  into = c("pop1", "pop2", "v8", "v9", "v10"),
                   sep = "[.]") %>%
   dplyr::mutate(genomic_region = "genomewide") %>%
   dplyr::select(ancestry, pop1, pop2, genomic_region, fst)
@@ -63,7 +63,7 @@ fst_peaks <- read.table(fst_peaks_file, sep = " ", header = F) %>%
   data.table::setnames(c("file_name", "fst")) %>%
   tidyr::separate(data = .,
                   col = file_name, 
-                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "ancestry", "pops"), 
+                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "v7", "ancestry", "pops"), 
                   sep = "/") %>%
   tidyr::separate(data = .,
                   col = pops,
@@ -102,11 +102,11 @@ pi_genomewide <- read.table(pi_genomewide_file, sep = " ", header = F, stringsAs
   summarise(pi = sum(pi)/sum(nSites)) %>% # get mean pi across all chromosomes
   tidyr::separate(data = .,
                   col = file_name, 
-                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "ancestry", "label"), 
+                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "v7", "ancestry", "label"), 
                   sep = "/") %>%
   tidyr::separate(data = .,
                   col = label,
-                  into = c("pop", "v7", "v8", "v9"),
+                  into = c("pop", "v8", "v9", "v10"),
                   sep = "[.]") %>%
   dplyr::mutate(genomic_region = "genomewide") %>%
   dplyr::select(ancestry, pop, genomic_region, pi)
@@ -120,11 +120,11 @@ pi_peaks <- read.table(pi_peaks_file, sep = " ", header = F, stringsAsFactors = 
   summarise(pi = sum(pi)/sum(nSites)) %>% # get mean pi across all chromosomes
   tidyr::separate(data = .,
                   col = file_name, 
-                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "ancestry", "label"), 
+                  into = c("v1", "v2", "v3", "v4", "v5", "v6", "v7", "ancestry", "label"), 
                   sep = "/") %>%
   tidyr::separate(data = .,
                   col = label,
-                  into = c("pop", "genomic_region", "outliers_pop", "v7", "v8", "v9"),
+                  into = c("pop", "genomic_region", "outliers_pop", "v8", "v9", "v10"),
                   sep = "[.]") %>%
   dplyr::select(ancestry, pop, genomic_region, pi)
 
@@ -135,8 +135,8 @@ pi = bind_rows(pi_genomewide, pi_peaks) %>%
 # ---------- plot data ---------- #
 shapes_peaks <- c(17, 16, 0)
 names(shapes_peaks) <- c("1pop", "4pop", "genomewide")
-labels_peaks_maize <- c("1 population\npeaks in maize", "4+ population\npeaks in maize", "all ancestry\ngenomewide")
-labels_peaks_mex <- c("1 population\npeaks in mexicana", "4+ population\npeaks in mexicana", "all ancestry\ngenomewide")
+labels_peaks_maize <- c("1 population\npeaks in maize", "4+ population\npeaks in maize", "all mexicana ancestry\ngenomewide")
+labels_peaks_mex <- c("1 population\npeaks in mexicana", "4+ population\npeaks in mexicana", "all maize ancestry\ngenomewide")
 
 
 p_fst_mex <- fst %>%
@@ -145,7 +145,7 @@ p_fst_mex <- fst %>%
            zea.pop1 == "maize") %>%
   mutate(LOCALITY.pop1 = reorder(LOCALITY.pop1, ELEVATION.pop1)) %>%
   ggplot(aes(x = LOCALITY.pop1, shape = genomic_region, y = fst)) +
-  geom_point() +
+  geom_point(color = col_maize_mex_parv[["maize"]]) +
   coord_flip() +
   theme_light() +
   scale_shape_manual(values = shapes_peaks, 
@@ -177,7 +177,8 @@ p_pi_mex <- pi %>%
   theme_light() +
   scale_shape_manual(values = shapes_peaks,
                      labels = labels_peaks_maize) +
-  scale_color_manual(values = col_maize_mex_parv) +
+  scale_color_manual(values = col_maize_mex_parv,
+                     labels = paste("sympatric", names(col_maize_mex_parv))) +
   labs(#title = "Diversity within mexicana ancestry", 
        x = "Location", 
        y = expression(pi), 
@@ -187,12 +188,12 @@ p_pi_mex <- pi %>%
 
 ggsave(filename = png_pi_mexicana_anc,
        plot = p_pi_mex,
-       height = 3, width = 5.5, units = "in", 
+       height = 4, width = 6.5, units = "in", 
        device = "png", dpi = 300)
 
 ggsave(filename = png_pi_mexicana_anc_lzw,
        plot = p_pi_mex,
-       height = 3, width = 5.5, units = "in", 
+       height = 4, width = 6.5, units = "in", 
        device = "tiff", dpi = 300,
        compression = "lzw", type = "cairo")
 
@@ -205,7 +206,8 @@ p_pi_maize <- pi %>%
   theme_light() +
   scale_shape_manual(values = shapes_peaks[3],
                      labels = labels_peaks_mex[3]) +
-  scale_color_manual(values = col_maize_mex_parv) +
+  scale_color_manual(values = col_maize_mex_parv,
+                     labels = paste("sympatric", names(col_maize_mex_parv))) +
   labs(#title = "Diversity within maize ancestry", 
        x = "Location", 
        y = expression(pi), 

@@ -164,9 +164,22 @@ hilo$ snakemake all --profile slurm --quiet                                     
 (hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
 (hilo-env) ecalfee@c6-54:~/hilo$ snakemake all --profile slurm --quiet
 # oops try to cancel. needed to update scripts first:
+# (still need to delete these 2 again:)
 hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
 hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png
-
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       combine_genome_scan_plots
+        1       combine_supp_genome_scan_plots
+        1       plot_mean_anc
+        4 # done 7.15.2021
+# remake within ancestry diversity plots
+(hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
+(hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png
+(hilo-env) ecalfee@c6-54:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png
+        
 # TO DO:
 
 Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
