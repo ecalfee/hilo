@@ -182,13 +182,27 @@ Job counts:
 # remake hpc1 and inv9f plots for better FDR lines (simpler hpc1 and add to inv9f)
 hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png
 hilo$ rm mhl1_inv/plots/HILO_MAIZE55/Ne10000_yesBoot/mhl1_inv_ancestry.png
-
-
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       plot_hpc1_anc
+        1       plot_within_ancestry_fst_pi_peaks
+        3 # done but wanted to replot mhl1 too
+hilo$ rm mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png
+hilo$ snakemake mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png --profile slurm --quiet
+Job counts:
+    count   jobs
+    1       plot_mhl1_inv
+    1 # redo again to add the FDR line:
+    hilo$ snakemake mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png --profile slurm --quiet
+    Job counts:
+        count   jobs
+        1       plot_mhl1_inv
+        1
 # TO DO:
 
-Fix problem with: HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png
 fix shuffle test for domestication genes from the literature-- add P-values to the text
-add 5% FDR line to inv9m!!
 remove hpc1 from Figure multi_maize_mexicana_genome_scan.png ?
 FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
 >>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION

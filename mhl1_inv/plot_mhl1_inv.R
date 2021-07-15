@@ -52,7 +52,7 @@ p_mhl1 <- bind_cols(sites, fits) %>%
   ggplot(., aes(pos/10^6, envWeights, 
                 color = even_chr)) +
   #geom_vline(xintercept = c(inv_mhl1[["start"]], inv_mhl1[["end"]])/10^6, linetype = "dashed", color = "orange") +
-  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$thresholds, linetype = "solid", color = "#00BFC4") +
+  geom_hline(yintercept = filter(FDRs, FDR == 0.05)$threshold, linetype = "solid", color = "#00BFC4") +
   geom_point(size = .1) +
   geom_hline(yintercept = mean(fits$envWeights), color = "black", linetype = "dashed") +
   xlab("position on chr9 (Mbp)") +
