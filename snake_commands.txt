@@ -209,11 +209,14 @@ hilo$ snakemake all --profile slurm --quiet
 (hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png
 (hilo-env) ecalfee@c6-54:~/hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
 
+# also redo counting of # bootstraps with ambiguous ancestry calls:
+hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3_boot_drop_stats.txt
+hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3_boot_drop_stats.txt
+
 # TO DO:
 
 fix shuffle test for domestication genes from the literature-- add P-values to the text
-remove hpc1 from Figure multi_maize_mexicana_genome_scan.png ?
-FIX ALL INTROGRESSION DESERT RESULTS (really lack of crop-wild introgression here..)
+
 >>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.

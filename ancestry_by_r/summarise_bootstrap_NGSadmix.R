@@ -11,9 +11,9 @@ load(snakemake@params[["meta"]])
 FEATURE = snakemake@params[["feature"]]
 # FEATURE = "r" # vs. "cd"
 PREFIX = snakemake@params[["prefix"]]
-# PREFIX = "HILO_MAIZE55"
+# PREFIX = "HILO_MAIZE55_PARV50"
 K = snakemake@params[["k"]]
-# K = 2
+# K = 3
 windows_file = snakemake@params[["windows"]]
 # windows_file = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 alpha = snakemake@params[["alpha"]]
@@ -56,11 +56,13 @@ anc_ind <- anc_boot %>%
 
 # save # of bootstraps dropped for ambiguous ancestry assignment:
 print("% bootstraps dropped for ambiguous ancestry assignment:")
-print(sum(is.na(anc_boot$maize))/nrow(anc_boot)*100) # if maize is na then all ancestries are NA
+print(sum(is.na(anc_boot[anc_boot$boot != 0, ]$maize))/nrow(anc_boot[anc_boot$boot != 0, ])*100) # if maize is na then all ancestries are NA
 boot_drop <- anc_boot %>%
-  dplyr::group_by(., feature, quintile) %>%
-  dplyr::summarise(n_boot_dropped = sum(is.na(maize)),
-                   perc_boot_dropped = sum(is.na(maize))/nrow(.)*100)
+  group_by(bootstrap, quintile, feature) %>%
+  summarise(is_ambiguous = sum(is.na(maize)) > 0) %>%
+  filter(bootstrap != 0) %>%
+  group_by(quintile, feature) %>%
+  summarise(n_boot_dropped = sum(is_ambiguous))
 print(boot_drop)
 write.table(x = boot_drop,
             file = tbl_boot_drop,
