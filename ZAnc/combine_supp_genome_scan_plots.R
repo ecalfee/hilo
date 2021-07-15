@@ -13,9 +13,9 @@ library(cowplot)
 
 # mulipanel plot output
 png_out = snakemake@output[["png"]]
-# png_out = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png"
+# png_out = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png"
 png_out_lzw = snakemake@output[["png_lzw"]]
-# png_out_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.tif"
+# png_out_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif"
 
 
 # individual plots input
@@ -23,10 +23,6 @@ rds_maize_parv = snakemake@input[["rds_maize_parv"]]
 # rds_maize_parv = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_mean_parv_anc.plot.rds"
 rds_mexicana_parv = snakemake@input[["rds_mexicana_parv"]]
 # rds_mexicana_parv = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mexicana_mean_parv_anc.plot.rds"
-rds_maize_maize = snakemake@input[["rds_maize_maize"]]
-# rds_maize_mexicana = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_mean_maize_anc.plot.rds"
-rds_mexicana_mexicana = snakemake@input[["rds_mexicana_mexicana"]]
-# rds_mexicana_mexicana = "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mexicana_mean_mexicana_anc.plot.rds"
 
 # other genome coordinates input
 genome_file = snakemake@input[["genome"]]
@@ -45,8 +41,6 @@ genome <- read.table(genome_file, header = F, stringsAsFactors = F,
 # load plots from rds
 plot_maize_parv = readRDS(rds_maize_parv)
 plot_mexicana_parv = readRDS(rds_mexicana_parv)
-plot_maize_maize = readRDS(rds_maize_maize)
-plot_mexicana_mexicana = readRDS(rds_mexicana_mexicana)
 
 # make simple plot just to extract legend only for genomewide mean and FDR lines on each plot
 plot_for_legend_only <- ggplot(data = data.frame(lines = c("genomewide_mean", "fdr5"), 
@@ -68,32 +62,15 @@ plot_for_legend_only <- ggplot(data = data.frame(lines = c("genomewide_mean", "f
 
 
 # make multi-panel plot
-p_multi <- grid.arrange(grobs = list(textGrob(label = "A", 
-                                              x = unit(0.5, "lines"), 
-                                              y = unit(0.5, "lines")),
-                                     ggplotGrob(plot_maize_maize + 
-                                                  labs(subtitle = "  maize ancestry in sympatric maize") +
-                                                  guides(color = F) + 
-                                                  theme(axis.title.x = element_blank(),
-                                                        axis.title.y = element_blank(),
-                                                        plot.title = element_blank())),
-                                     textGrob(label = "B", 
-                                              x = unit(0.5, "lines"), 
-                                              y = unit(0.5, "lines")),
-                                     ggplotGrob(plot_mexicana_mexicana + 
-                                                  labs(subtitle = "  mexicana ancestry in sympatric mexicana") +
-                                                  guides(color = F) + 
-                                                  theme(axis.title.x = element_blank(),
-                                                        axis.title.y = element_blank(),
-                                                        plot.title = element_blank())),
+p_multi <- grid.arrange(grobs = list(
                                      ggplotGrob(plot_maize_parv + 
-                                                  labs(subtitle = "  parvigluims ancestry in sympatric mexicana") +
+                                                  labs(subtitle = "  sympatric maize") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
                                                         plot.title = element_blank())),
                                      ggplotGrob(plot_mexicana_parv + 
-                                                  labs(subtitle = "  parvigluims ancestry in sympatric mexicana") +
+                                                  labs(subtitle = "  sympatric mexicana") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),
@@ -103,36 +80,30 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               just = "center",
                                               gp = gpar(fontsize = 11)),
                                      cowplot::get_legend(plot_for_legend_only),
-                                     textGrob(label = "mean ancestry proportion",
-                                              rot = 90),
-                                     textGrob(label = "mean ancestry proportion",
+                                     textGrob(label = "mean parviglumis ancestry",
                                               rot = 90)
                                      ),
                         layout_matrix = rbind(
-                          c(1, 9, NA),
-                          c(NA, 9, 2),
-                          c(NA, 9, 4),
-                          c(3, 10, NA),
-                          c(NA, 10, 5),
-                          c(NA, 10, 6),
-                          c(NA, NA, 8),
-                          c(NA, NA, 7)),
-                        heights = c(0.15,1,1,0.05,1,1,.1,.25),
-                        widths = c(.1, .1, 5))
+                          c(5, 1),
+                          c(5, 2),
+                          c(NA, 3),
+                          c(NA, 4)),
+                        heights = c(2,2,.1,.25),
+                        widths = c(.1, 5))
 
 # p_multi
 ggsave(png_out, 
        plot = p_multi, 
        device = "png", 
        width = 7.5, 
-       height = 7.5, 
+       height = 4, 
        units = "in",
        dpi = 300)
 ggsave(png_out_lzw, 
        plot = p_multi, 
        device = "tiff", 
        width = 7.5, 
-       height = 7.5, 
+       height = 4, 
        units = "in",
        compression = "lzw", type = "cairo",
        dpi = 300)

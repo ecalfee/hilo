@@ -187,12 +187,10 @@ rule combine_supp_genome_scan_plots:
     input:
         rds_maize_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_parv_anc.plot.rds",
         rds_mexicana_parv = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_mexicana_mean_parv_anc.plot.rds",
-        rds_maize_maize = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_maize_mean_maize_anc.plot.rds",
-        rds_mexicana_mexicana = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_mexicana_mean_mexicana_anc.plot.rds",
         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths"
     output:
-        png = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_maize_mexicana_genome_scan.png",
-        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_maize_mexicana_genome_scan.tif"
+        png = "ZAnc/plots/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_parv_genome_scan.png",
+        png_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K3_Ne{Ne}_{YESNO}Boot_supp_parv_genome_scan.tif"
     params:
         p = "med2"
     conda:

@@ -58,13 +58,15 @@ mhl1 <- read.table(mhl1_QTL_bed, header = F, sep = "\t", stringsAsFactors = F) %
   data.table::setnames(c("chr", "start", "end")) %>%
   dplyr::mutate(name = "mhl1")
 
-hpc1 <- read.csv(genes_list, header = T, sep = "\t", stringsAsFactors = F) %>%
-  dplyr::rename(name = name_short) %>%
-  dplyr::filter(name == "HPC1") %>%
-  dplyr::select(name, chr, start, end)
+#hpc1 <- read.csv(genes_list, header = T, sep = "\t", stringsAsFactors = F) %>%
+#  dplyr::rename(name = name_short) %>%
+#  dplyr::filter(name == "HPC1") %>%
+#  dplyr::select(name, chr, start, end)
 
 # get (cumulative bp) positions of key loci on the genome
-loci = bind_rows(inv4m, mhl1, hpc1) %>%
+loci = bind_rows(inv4m,
+                 #hpc1,
+                 mhl1) %>%
   left_join(., genome, by = "chr") %>%
   dplyr::mutate(start_cum = start + chr_start,
                 end_cum = end + chr_start,
@@ -127,7 +129,7 @@ p_multi <- grid.arrange(grobs = list(textGrob(label = "A",
                                               x = unit(0.5, "lines"), 
                                               y = unit(0.5, "lines")),
                                      ggplotGrob(plot_mexicana_mean + 
-                                                  labs(subtitle = "  maize ancestry sympatric mexicana") +
+                                                  labs(subtitle = "  maize ancestry in sympatric mexicana") +
                                                   guides(color = F) + 
                                                   theme(axis.title.x = element_blank(),
                                                         axis.title.y = element_blank(),

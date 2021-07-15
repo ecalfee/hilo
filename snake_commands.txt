@@ -200,6 +200,8 @@ Job counts:
         count   jobs
         1       plot_mhl1_inv
         1
+hilo$ rm ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png
+
 # TO DO:
 
 fix shuffle test for domestication genes from the literature-- add P-values to the text

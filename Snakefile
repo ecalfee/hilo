@@ -344,7 +344,6 @@ rule all:
         "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
         "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
 
-        # ADD NEW FIGURES
         # Sensitivity to Ne
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}.{ANCESTRY}_anc.bed", Ne = Nes, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.png",
@@ -352,9 +351,11 @@ rule all:
         "local_ancestry/results/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.txt",
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tex",
 
+        # ADD NEW FIGURES
+
         # supplementary plots of parviglumis and mexicana ancestry introgression peaks (maize ancestry introgression peaks are in a main figure)
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_maize_mexicana_genome_scan.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif",
 
         # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
