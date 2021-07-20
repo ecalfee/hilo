@@ -7,30 +7,30 @@ library(xtable)
 
 # load variables from Snakefile
 maize_bed = snakemake@input[["maize_bed"]]
-# maize_bed = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed"
+# maize_bed = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize.max_maize_ancestry.bed"
 maize_overlap = snakemake@input[["maize_overlap"]]
-# maize_overlap = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.perc05.bed"
+# maize_overlap = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize_pos_maize_anc_outliers.perc05.bed"
 mexicana_bed = snakemake@input[["mexicana_bed"]]
-# mexicana_bed = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed"
+# mexicana_bed = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana.min_maize_ancestry.bed"
 mexicana_overlap = snakemake@input[["mexicana_overlap"]]
-# mexicana_overlap = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc05.bed"
+# mexicana_overlap = "domestication_scan/results/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.mexicana_neg_maize_anc_outliers.perc05.bed"
 
 tbl_out = snakemake@output[["tbl"]]
-# tbl_out = "domestication_scan/tables/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes.tex"
+# tbl_out = "domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_domestication_genes.tex"
 tbl_out_tex = snakemake@output[["tbl_tex"]]
-# tbl_out_tex = "../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex"
+# tbl_out_tex = "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_domestication_genes.tex"
 
 
 maize_hits <- read.table(maize_overlap, stringsAsFactors = F, sep = "\t", header = F)$V4
 maize <- read.table(maize_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
-  data.table::setnames(c("chr", "start", "end", "gene", "min_mex")) %>%
-  mutate(min_intro = round(min_mex, 3),
+  data.table::setnames(c("chr", "start", "end", "gene", "max_maize_anc")) %>%
+  mutate(min_intro = round(1 - max_maize_anc, 3), # minimum teosinte introgression = 1 - maximum maize ancestry
          min_intro_maize = ifelse(gene %in% maize_hits, paste0(min_intro, "*"), min_intro))
 
 mexicana_hits <- read.table(mexicana_overlap, stringsAsFactors = F, sep = "\t", header = F)$V4
 mexicana <- read.table(mexicana_bed, sep = "\t", header = F, stringsAsFactors = F) %>%
-  data.table::setnames(c("chr", "start", "end", "gene", "max_mex")) %>%
-  mutate(min_intro = round(1 - max_mex, 3),
+  data.table::setnames(c("chr", "start", "end", "gene", "min_maize_anc")) %>%
+  mutate(min_intro = round(min_maize_anc, 3),
          min_intro_mex = ifelse(gene %in% mexicana_hits, paste0(min_intro, "*"), min_intro))
 
 combined <- full_join(maize, mexicana, by = c("chr", "start", "end", "gene")) %>%
@@ -38,8 +38,8 @@ combined <- full_join(maize, mexicana, by = c("chr", "start", "end", "gene")) %>
   mutate(v4_coord = paste0(chr, ":", start + 1, "-", end)) %>%
   dplyr::select(gene, v4_coord, min_intro_maize, min_intro_mex) %>%
   rename(`v4 coordinates` = v4_coord,
-         `min introgression\n in maize` = min_intro_maize,
-         `min introgression\n in mexicana` = min_intro_mex)
+         `min teosinte\\introgression\\into maize` = min_intro_maize,
+         `min maize\\introgression\\into mexicana` = min_intro_mex)
 
 meta <- rbind(c("zagl1", "ear size" , "cite{Wills:2018_zagl1}"),
               c("gt1", "prolificacy" , "cite{Wills:2013_gt1}"),

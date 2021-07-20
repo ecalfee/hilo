@@ -391,41 +391,41 @@ rule summarise_overlap_flowering_time:
         "summarise_overlap_flowering_time.R"
 
 ## test_key_genes: checks short list of key genes against outlier regions
-rule test_key_genes:
-    input:
-        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
-        anc_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
-        lmElev_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
-        lmElev_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
-        meta_pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-        anc_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
-        anc_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.fdr.RData",
-        lmElev_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fit.RData",
-        lmElev_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fdr.RData",
-        meta_pop_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
-        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
-        genome = ref_chr,
-        genes_list = "data/key_genes.csv",
-        bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
-    output:
-        txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-        tbl = "ZAnc/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex",
-        tbl2 = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex"
-    params:
-        p = "med2",
-        Ne = lambda wildcards: wildcards.Ne,
-        yesno = lambda wildcards: wildcards.YESNO,
-        prefix = "{PREFIX}",
-        K = "{K}"
-    conda:
-        "../envs/environment.yaml"
-    threads:
-        1
-    resources:
-        time_min = 15,
-        mem = 8
-    script:
-        "test_key_genes.R"
+#rule test_key_genes:
+#    input:
+#        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
+#        anc_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
+#        lmElev_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
+#        lmElev_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
+#        meta_pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
+#        anc_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
+#        anc_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.fdr.RData",
+#        lmElev_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fit.RData",
+#        lmElev_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fdr.RData",
+#        meta_pop_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
+#        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
+#        genome = ref_chr,
+#        genes_list = "data/key_genes.csv",
+#        bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
+#    output:
+#        txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
+#        tbl = "ZAnc/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex",
+#        tbl2 = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex"
+#    params:
+#        p = "med2",
+#        Ne = lambda wildcards: wildcards.Ne,
+#        yesno = lambda wildcards: wildcards.YESNO,
+#        prefix = "{PREFIX}",
+#        K = "{K}"
+#    conda:
+#        "../envs/environment.yaml"
+#    threads:
+#        1
+#    resources:
+#        time_min = 15,
+#        mem = 8
+#    script:
+#        "test_key_genes.R"
 
 # plot_hpc1_anc: plots mexicana ancestry ~ elevation around flowering time gene HPC1
 rule plot_hpc1_anc:

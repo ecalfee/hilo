@@ -166,7 +166,7 @@ include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
-#include: "domestication_scan/Snakefile"
+include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
 
 ## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
@@ -241,9 +241,8 @@ rule all:
 
         #"domestication_scan/tables/HILO_MAIZE55/Ne10000_yesBoot/domestication_genes.tex",
         #"../hilo_manuscript/tables/Ne10000_yesBoot_domestication_genes.tex",
-        "ZAnc/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
-        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_genes_mapped_to_outliers.tex",
-
+        "domestication_scan/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_domestication_genes.tex",
+        "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_domestication_genes.tex",
 
         # figures supplement
         #"global_ancestry/plots/HILO_MAIZE55_pca.png",
@@ -388,6 +387,9 @@ rule all:
 
         # outliers for maize, mexicana or parviglumis outliers as bed file
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
+
+        # overlap between domestication genes and outliers as bed file
+        expand("domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.{ZEA}_pos_lmElev_outliers.fdr05.bed", ZEA = zea),
 
         # outliers for lm mexicana ancestry ~ elevation as bed file
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_lmElev_outliers.fdr05.bed", ZEA = zea),

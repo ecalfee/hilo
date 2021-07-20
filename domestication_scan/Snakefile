@@ -4,113 +4,6 @@
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
 
-## id_raisd_hits: creates bed file of top X% raisd hits (as contiguous regions) from raw raisd output
-rule id_raisd_hits:
-    input:
-        raisd = "domestication_scan/results/RAiSD_Output2.Raisd"
-    output:
-        bed = "domestication_scan/results/raisdHits.bed"
-    params:
-        p = "high2",
-        top_x = .0005
-    resources:
-        time_min = 15,
-        mem = 8
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "id_raisd_hits.R"
-
-## get_fasta_hits: gets fasta reference genome sequence for raisd hits
-rule get_fasta_hits:
-    input:
-        ref = ref,
-        bed = "domestication_scan/results/raisdHits.bed"
-    output:
-        fa = "domestication_scan/results/raisdHits.fa"
-    params:
-        p = "high2"
-    resources:
-        time_min = 15,
-        mem = 8
-    conda:
-        "../envs/environment.yaml"
-    shell:
-        "bedtools getfasta -fi {input.ref} -fo {output.fa} -bed {input.bed}"
-
-## filter_raisd_hits: script filters raisd hits for too many Ns (missing data in reference genome)
-rule filter_raisd_hits:
-    input:
-        bed = "domestication_scan/results/raisdHits.bed",
-        fa = "domestication_scan/results/raisdHits.fa"
-    output:
-        bed_keep = "domestication_scan/results/raisdHits_keep.bed",
-        bed_excl = "domestication_scan/results/raisdHits_exclude.bed"
-    params:
-        p = "high2",
-        maxN = .5
-    resources:
-        time_min = 15,
-        mem = 8
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "filter_raisd_hits.R"
-
-## calc_overlap_hits: find overlap (in bp) for raisd hits & outliers for original raisd hits positions and 100 randomly shuffled positions
-rule calc_overlap_hits:
-    input:
-        hits = "domestication_scan/results/raisdHits_keep.bed",
-        excl = "domestication_scan/results/raisdHits_exclude.bed",
-        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
-        genome = ref_chr
-        # introgression desert files:
-        #maize_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/maize_neg_meanAnc_outliers.perc05.bed",
-        #mexicana_deserts = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/mexicana_pos_meanAnc_outliers.perc05.bed",
-    output:
-        bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
-        shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
-    params:
-        p = "high2"
-    shadow:
-        "minimal"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 15,
-        mem = 2
-    shell:
-        """
-        bedtools intersect -a {input.hits} -b {input.outliers} -wo > {output.bed}
-        awk '{{count += 1; sum += $7;}} END{{print count,sum;}}' {output.bed} > {output.shuffle}
-        for i in {{1..1000}}
-            do bedtools shuffle -i {input.hits} -g {input.genome} -excl {input.excl} | \\
-            bedtools intersect -a - -b {input.outliers} -wo | \\
-            awk '{{count += 1; sum += $7;}} END{{print count,sum;}}' >> {output.shuffle}
-        done
-        """
-
-## plot_overlap_hits: plots overlap between raisd hits and introgression deserts in shuffled data and original data
-rule plot_overlap_hits:
-    input:
-        overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts",
-        hits = "domestication_scan/results/raisdHits_keep.bed",
-        genome = ref_chr
-    output:
-        png = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.png",
-        png_lzw = "../hilo_manuscript/figures_supp/Ne{Ne}_{YESNO}Boot_raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.tif",
-        summary = "domestication_scan/plots/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/raisdOverlap.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.summary"
-    params:
-        p = "high2"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 15,
-        mem = 2
-    script:
-        "plot_overlap_hits.R"
-
-
 ## make_bed_domestication_genes_from_lit.R: makes bed file for all domestication genes in the list from the literature
 rule make_bed_domestication_genes_from_lit:
     input:
@@ -153,11 +46,11 @@ rule add_20kb_domestication_genes:
 rule calc_overlap_domestication_genes:
     input:
         genes = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed",
-        outliers = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
+        outliers = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.merged.bed",
         genome = ref_chr
     output:
-        bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
-        shuffle = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
+        bed = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.bed",
+        shuffle = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_{POSNEG}_{STAT}_outliers.{SIG}.counts"
     params:
         p = "med2"
     shadow:
@@ -180,15 +73,15 @@ rule calc_overlap_domestication_genes:
 ## summarise_overlap_domestication_genes: summarises number of outliers in original gene set (line 1) and 1000 randomly shuffled positions from that gene set (lines 2-1001)
 rule summarise_overlap_domestication_genes:
     input:
-        maize = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.perc05.counts",
-        mexicana = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc05.counts"
+        maize = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_pos_maize_anc_outliers.perc05.counts",
+        mexicana = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_neg_maize_anc_outliers.perc05.counts"
     output:
-        txt = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
+        txt = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt"
     params:
         p = "med2",
-        Ne = lambda wildcards: wildcards.Ne,
-        yesno = lambda wildcards: wildcards.YESNO,
-        prefix = prefix_all
+        Ne = "{Ne}",
+        yesno = "{YESNO}",
+        prefix = "{PREFIX}"
     conda:
         "../envs/environment.yaml"
     resources:
@@ -197,15 +90,16 @@ rule summarise_overlap_domestication_genes:
     script:
         "summarise_overlap_domestication_genes.R"
 
-## get_ancestry_domestication_genes: find min and max ancestry that overlaps domestication genes
+## get_ancestry_domestication_genes: find min and max maize ancestry that overlaps domestication genes for mexicana and maize sympatric samples
 rule get_ancestry_domestication_genes:
     input:
         genes = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed",
-        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.combined.anc.bed",
+        maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.maize_anc.bed",
+        mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.maize_anc.bed",
         genome = ref_chr
     output:
-        bed_max = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}.max_mexicana_ancestry.bed",
-        bed_min = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}.min_mexicana_ancestry.bed"
+        bed_mexicana_min_maize_anc = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.min_maize_ancestry.bed",
+        bed_maize_max_maize_anc = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.max_maize_ancestry.bed"
     params:
         p = "med2"
     shadow:
@@ -217,20 +111,20 @@ rule get_ancestry_domestication_genes:
         mem = 2
     shell:
         """
-        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o max > {output.bed_max}
-        bedtools map -g {input.genome} -a {input.genes} -b {input.anc} -c 5 -o min > {output.bed_min}
+        bedtools map -g {input.genome} -a {input.genes} -b {input.mexicana} -c 5 -o min > {output.bed_mexicana_min_maize_anc}
+        bedtools map -g {input.genome} -a {input.genes} -b {input.maize} -c 5 -o max > {output.bed_maize_max_maize_anc}
         """
 
 ## make_table_domestication_genes: make table with minimum introgression domestication genes
 rule make_table_domestication_genes:
     input:
-        maize_bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.min_mexicana_ancestry.bed",
-        maize_overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_neg_meanAnc_outliers.perc05.bed",
-        mexicana_bed = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.max_mexicana_ancestry.bed",
-        mexicana_overlap = "domestication_scan/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_pos_meanAnc_outliers.perc05.bed"
+        maize_bed = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize.max_maize_ancestry.bed",
+        maize_overlap = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.maize_pos_maize_anc_outliers.perc05.bed",
+        mexicana_bed = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana.min_maize_ancestry.bed",
+        mexicana_overlap = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.mexicana_neg_maize_anc_outliers.perc05.bed"
     output:
-        tbl = "domestication_scan/tables/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/domestication_genes.tex",
-        tbl_tex = "../hilo_manuscript/tables/Ne{Ne}_{YESNO}Boot_domestication_genes.tex"
+        tbl = "domestication_scan/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_domestication_genes.tex",
+        tbl_tex = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_domestication_genes.tex"
     params:
         p = "med2"
     conda:

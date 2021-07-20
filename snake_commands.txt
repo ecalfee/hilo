@@ -212,19 +212,27 @@ hilo$ snakemake all --profile slurm --quiet
 # also redo counting of # bootstraps with ambiguous ancestry calls:
 hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/r5_K3_boot_drop_stats.txt
 hilo$ rm ancestry_by_r/results/bootstrap_1cM/HILO_MAIZE55_PARV50/cd5_K3_boot_drop_stats.txt
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       combine_genome_scan_plots
+        1       combine_supp_genome_scan_plots
+        1       plot_admix_times_K3
+        1       plot_bootstrap_NGSadmix_by_r_K3
+        1       plot_sensitivity_to_Ne_K3
+        2       summarise_bootstrap_anc_by_r
+        8 # COMPLETED. 7.15.2021
+# re-doing domestication gene - ancestry desert overlap analysis. Using scripts from hilo/domestication_scan/Snakefile
+# and updated for mexicana deserts = low maize in mexicana and maize deserts = low teosinte (i.e. high maize) in maize
+
 
 # TO DO:
 
 fix shuffle test for domestication genes from the literature-- add P-values to the text
+RERUN GENES/DOMESTICATION SHUFFLE/TABLE MAKING SCRIPTS FROM hilo/domestication_scan
+Make all tables their own supplementary files
 
 >>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
-
-# Language : modeled ancestry variance-covariance marginally, marginal K matrix
-
-
-# ASK IF THE EQUATION IN SORAGGI SHOULD HAVE A NEGATIVE IN THE NUMERATOR
-# PREP FOR PRESENTATION:
-# (1) Get list of flowering time GWAS hits and compare overlap. If time, at end, control for recombination rate using BEDTools
-# (2) Plot freq in maize vs. freq in mexicana with domestication loci highlighted a different color
