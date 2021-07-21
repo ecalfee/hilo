@@ -1,5 +1,5 @@
 ## domestication_scan/Snakefile: pipeline to test for enrichment of overlap between domestication
-# scan outlier regions and 'introgression deserts'
+# gnees and 'introgression deserts'
 
 workdir: path_hilo
 # note: working directory is hilo/ and all file inputs/outputs below are relative to that working directory
@@ -81,7 +81,8 @@ rule summarise_overlap_domestication_genes:
         p = "med2",
         Ne = "{Ne}",
         yesno = "{YESNO}",
-        prefix = "{PREFIX}"
+        prefix = "{PREFIX}",
+        K = "{K}"
     conda:
         "../envs/environment.yaml"
     resources:

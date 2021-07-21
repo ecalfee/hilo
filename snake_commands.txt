@@ -234,6 +234,11 @@ Job counts:
         1       make_table_domestication_genes
         2       merge_bed_outliers
         9 # 7.20.2021
+        hilo$ snakemake domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt --quiet --profile slurm
+        Job counts:
+                count   jobs
+                1       summarise_overlap_domestication_genes # failed : 37135633. added K as a parameter to fix.
+                1 # 7.21.2021
 
 # TO DO:
 
