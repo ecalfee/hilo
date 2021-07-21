@@ -225,7 +225,15 @@ Job counts:
         8 # COMPLETED. 7.15.2021
 # re-doing domestication gene - ancestry desert overlap analysis. Using scripts from hilo/domestication_scan/Snakefile
 # and updated for mexicana deserts = low maize in mexicana and maize deserts = low teosinte (i.e. high maize) in maize
-
+hilo$ snakemake -n all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        4       calc_overlap_domestication_genes
+        1       get_ancestry_domestication_genes
+        1       make_table_domestication_genes
+        2       merge_bed_outliers
+        9 # 7.20.2021
 
 # TO DO:
 
