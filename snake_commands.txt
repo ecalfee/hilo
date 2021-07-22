@@ -325,6 +325,17 @@ Job counts:
         # really it's ok that they differ because what's different is the order of non-chromosomal contigs that come after the chromosomes (wether mt/pt come before or after the other contigs).
         # so I'll add a line to ignore the headers and repeat.
 
+        hilo$ rm mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster/maize.saf.*
+        hilo$ rm mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster/maize.sfs
+        hilo$ snakemake all --profile slurm --quiet
+        Job counts:
+            count   jobs
+            1       all
+            1       calc_pi_inv
+            1       calc_thetas_inv
+            1       estimate_saf_inv
+            1       estimate_sfs_inv
+            5 # COMPLETED. 7.21.2021. now summarising in 1 file:
 
 # TO DO:
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
