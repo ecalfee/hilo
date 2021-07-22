@@ -150,12 +150,13 @@ rule plot_mhl1_inv_PCAngsd:
 rule get_sample_list_mhl1_inv:
     input:
         meta = "samples/{PREFIX}_meta.RData",
-        cov = "mhl1_inv/results/PCA/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
+        cov = "mhl1_inv/results/PCA/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov",
+        bam_list = "samples/{PREFIX}_bams.list"
     output:
-        maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_parv_samples.list",
-        maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_maize_samples.list",
-        mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_maize_samples.list",
-        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_samples.list"
+        maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_parv_bams.list",
+        maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_maize_bams.list",
+        mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_maize_bams.list",
+        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_bams.list"
     params:
         p = "med2"
     conda:
@@ -167,7 +168,87 @@ rule get_sample_list_mhl1_inv:
         mem = 4
     script:
         "get_sample_list_mhl1_inv.R"
-#- need list of samples for parv, maize (ref or symp) with homozygous for maize allele at the inversion
-#- as well as list of samples from mexicana and maize (ref or symp grouped together) homozygous for mexicana allele at the inversion
-#- defined by the PCA
-#- then use angsd to calculate
+
+## estimate_saf_inv: estimate site allele frequency likelihoods using ANGSD at the inversion
+rule estimate_saf_inv:
+    input:
+        anc = "filtered_bams/results/SRR7758238/TRIP.fa.gz",
+        bam_list = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}_bams.list",
+        regions_file = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mhl1_inv.regions"
+    output:
+        saf_idx = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.idx",
+        saf_gz = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.gz",
+        saf_pos = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.pos.gz"
+    params:
+        p = "med2",
+        out_prefix = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        2
+    resources:
+        time_min = 60*60,
+        mem = lambda wildcards, attempt: attempt * 40 + 32
+    shell:
+        "angsd -out {params.out_prefix} "
+        "-doSaf 1 -anc {input.anc} "
+        "-rf {input.regions_file} "
+        "-GL 1 "
+        "-P {threads} "
+        "-bam {input.bam_list} "
+        "-remove_bads 1 -minMapQ 30 -minQ 20 "
+
+## estimate_sfs_inv: estimates site frequency spectrum (sfs) by maximum likelihood in ANGSD across the inversion
+rule estimate_sfs_inv:
+    input:
+        saf = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.idx"
+    output:
+        sfs = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.sfs"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        6
+    resources:
+        time_min = 4*60,
+        mem = lambda wildcards, attempt: attempt * 16
+    shell:
+        "realSFS {input.saf} -P {threads} > {output.sfs}"
+
+## calc_thetas_inv: calculates thetas for each site from saf and sfs in ANGSD for the inversion
+rule calc_thetas_inv:
+    input:
+        saf = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.idx",
+        sfs = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.sfs"
+    output:
+        gz = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.gz",
+        idx = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.idx"
+    params:
+        p = "med2",
+        out_prefix = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 4*60,
+        mem = lambda wildcards, attempt: attempt * 8
+    shell:
+        "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"
+
+## calc_pi_inv: calculates pi for the whole inversion
+rule calc_pi_all_chr:
+    input:
+        idx = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.idx",
+        gz = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.gz"
+    output:
+        thetas = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.pi.inv.pestPG"
+    params:
+        p = "low2",
+        out_prefix = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.pi.inv"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = lambda wildcards, attempt: attempt * 4
+    shell:
+        "thetaStat do_stat {input.idx} -outnames {params.out_prefix}"

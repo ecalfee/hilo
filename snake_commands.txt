@@ -295,24 +295,24 @@ Job counts:
         30 # ok error was in the r script make_Bed_slope_elev and i've fixed it.
         # however, remaking these bed files means there are other files with the inversion at mhl1 that are also getting redone:
         hilo$ snakemake all --profile slurm --quiet
-Job counts:
-        count   jobs
-        1       all
-        12      calc_overlap
-        1       get_GL_mhl1_inv
-        1       get_mhl1_inv_coord
-        2       make_bed_slope_elev
-        2       map_lmElev_domestication_genes
-        12      merge_bed_outliers
-        1       plot_mhl1_inv
-        1       plot_mhl1_inv_PCAngsd
-        1       run_PCAngsd_mhl1_inv
-        1       summarise_overlap_flowering_time
-        35 # 7.21.2021
+        Job counts:
+                count   jobs
+                1       all
+                12      calc_overlap
+                1       get_GL_mhl1_inv
+                1       get_mhl1_inv_coord
+                2       map_lmElev_domestication_genes
+                10      merge_bed_outliers
+                1       plot_mhl1_inv
+                1       plot_mhl1_inv_PCAngsd
+                1       run_PCAngsd_mhl1_inv
+                1       summarise_overlap_flowering_time
+                31 # 7.21.2021. completed.
+# added scripts to get pi within the inversion at mhl1:
+
 
 # TO DO:
 Get slope across elevation for sugary1
->>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
 
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.

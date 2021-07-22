@@ -399,7 +399,10 @@ rule all:
 
         # count of flowering time related genes overlapping outliers from genome scan
         #"ZAnc/results/HILO_MAIZE55/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
-        "ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt"
+        "ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/flowering_time_genes_v4.plus20kb.overlap.summary_overlap_outliers.txt",
+
+        # pi at the mhl1 inversion
+        expand("mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ANCESTRY}_cluster/{ZEA}.pi.inv.pestPG", zip, ANCESTRY = ["maize", "maize", "mexicana", "mexicana"], ZEA = ["parv", "maize", "maize", "mexicana"])
 
     params:
         p = "med2"
