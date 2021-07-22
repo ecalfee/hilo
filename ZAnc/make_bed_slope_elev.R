@@ -49,7 +49,7 @@ bind_cols(sites_bed, fits) %>%
   rename(slope = envWeights) %>%
   filter(slope > filter(FDRs, FDR == 0.1 & tail == "high")$threshold) %>%
   #dplyr::select(., colnames(sites_bed), slope) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = pos_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
@@ -57,7 +57,7 @@ bind_cols(sites_bed, fits) %>%
 bind_cols(sites_bed, fits) %>%
   rename(slope = envWeights) %>%
   filter(slope < filter(FDRs, FDR == 0.05 & tail == "low")$threshold) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = neg_fdr,  sep = "\t", quote = F,
               col.names = F, row.names = F) # write bed output file
 
@@ -79,7 +79,7 @@ bind_cols(sites_bed, fits) %>%
          quantile = cum_length/sum(length)) %>%
   filter(quantile > .95) %>%
   arrange(., chr, start) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = pos_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
@@ -90,7 +90,7 @@ bind_cols(sites_bed, fits) %>%
          quantile = cum_length/sum(length)) %>%
   filter(quantile < .05) %>%
   arrange(., chr, start) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = neg_perc,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 
@@ -98,12 +98,12 @@ bind_cols(sites_bed, fits) %>%
 # high
 bind_cols(sites_bed, fits) %>%
   filter(envWeights > quantile(fits_sim$envWeights, 0.975)) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = pos_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 bind_cols(sites_bed, fits) %>%
   filter(envWeights < quantile(fits_sim$envWeights, 0.025)) %>%
-  dplyr::select(., chr, start, end) %>%
+  dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = neg_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)

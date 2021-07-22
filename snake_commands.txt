@@ -233,12 +233,46 @@ Job counts:
         1       get_ancestry_domestication_genes
         1       make_table_domestication_genes
         2       merge_bed_outliers
-        9 # 7.20.2021
+        9 # 7.20.2021 completed.
         hilo$ snakemake domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt --quiet --profile slurm
         Job counts:
                 count   jobs
                 1       summarise_overlap_domestication_genes # failed : 37135633. added K as a parameter to fix.
                 1 # 7.21.2021
+                hilo$ snakemake domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt --quiet --profile slurm
+                Job counts:
+                        count   jobs
+                        1       summarise_overlap_domestication_genes
+                        1 # 7.21.2021
+                        # check on this sentence:
+                        Among these, \textit{sugary1} (\textit{su1}) in the starch pathway has low maize ancestry in \mexicana but shows a steep increase in introgressed \mexicana ancestry proportion with elevation in maize \ec{(+0.95 per km}, $<$ 5\% FDR), which suggests this gene has pleiotropic effects
+                        hilo$ ls ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/m*_*_lmElev_outliers.*.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.fdr05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.fdr05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.p05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.p05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.perc05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_neg_lmElev_outliers.perc05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.fdr05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.fdr05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.p05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.p05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.perc05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_pos_lmElev_outliers.perc05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.fdr05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.fdr05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.p05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.p05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.perc05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_neg_lmElev_outliers.perc05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.fdr05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.fdr05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.p05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.p05.merged.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.perc05.bed
+                        ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.perc05.merged.bed
+                        # I deleted the above so that they would rerun saving not only chr start end but slope as well.
+
 
 # TO DO:
 

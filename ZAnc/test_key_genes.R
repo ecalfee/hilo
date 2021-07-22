@@ -30,7 +30,7 @@ tbl_out2 = snakemake@output[["tbl2"]]
 
 bed_sites <- read.table(bed_sites_file, header = F, 
                         sep = "\t", stringsAsFactors = F) %>%
-  data.table::setnames(c("chr", "start", "end", "length")) %>%
+  data.table::setnames(c("chr", "start", "end", "pos")) %>%
   dplyr::mutate(chr = as.character(chr))
 
 # load list of key genes
@@ -138,9 +138,10 @@ for (zea in mex_maize){
   # what are cutoffs for low ancestry as empirical % of the genome?
   bed_maize_anc <- dplyr::mutate(bed_sites, maize_anc = anc_mean[["maize"]]) %>%
     arrange(maize_anc) %>%
-    dplyr::mutate(length_Mb = length/10^6,
-                  cum_length = cumsum(length_Mb),
-                  percentile = cum_length/max(cum_length)*100)
+    dplyr::mutate(length = end - start,
+                  cum_length = cumsum(length),
+                  percentile = cum_length/sum(length)*100)
+    
   # 5% based on genomic length (bp) covered
   percentiles_maize_anc <- bed_maize_anc %>%
     summarise(perc_95 = max(maize_anc[percentile < 95]),

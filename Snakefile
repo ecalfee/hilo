@@ -163,7 +163,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "linkage_map/Snakefile"
 #include: "local_ancestry/Snakefile"
 #include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
+include: "ZAnc/Snakefile"
 #include: "diversity/Snakefile"
 #include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
@@ -389,7 +389,7 @@ rule all:
         expand("ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/{ZEA}_pos_{ANCESTRY}_anc_outliers.fdr05.bed", ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
 
         # overlap between domestication genes and outliers as bed file
-        expand("domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.{ZEA}_pos_lmElev_outliers.fdr05.bed", ZEA = zea),
+        expand("domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.{ZEA}_pos_lmElev_outliers.fdr05.slopes.bed", ZEA = zea),
 
         # summary overlap domestication genes and outliers
         "domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.overlap.summary_overlap_outliers.txt",

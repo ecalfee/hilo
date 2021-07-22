@@ -135,3 +135,25 @@ rule make_table_domestication_genes:
         mem = 2
     script:
         "make_table_domestication_genes.R"
+
+## map_lmElev_domestication_genes: find max slope mexicana ancestry ~ elevation that overlaps domestication genes for mexicana and maize sympatric samples
+rule map_lmElev_domestication_genes:
+    input:
+        genes = "domestication_scan/results/domestication_genes_from_lit.plus20kb.bed",
+        outliers = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ZEA}_pos_lmElev_outliers.{SIG}.bed",
+        genome = ref_chr
+    output:
+        bed = "domestication_scan/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/domestication_genes_from_lit.plus20kb.{ZEA}_pos_lmElev_outliers.{SIG}.slopes.bed"
+    params:
+        p = "med2"
+    shadow:
+        "minimal"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 15,
+        mem = 2
+    shell:
+        """
+        bedtools map -g {input.genome} -a {input.genes} -b {input.mexicana} -c 4 -o max > {output.bed}
+        """

@@ -390,43 +390,6 @@ rule summarise_overlap_flowering_time:
     script:
         "summarise_overlap_flowering_time.R"
 
-## test_key_genes: checks short list of key genes against outlier regions
-#rule test_key_genes:
-#    input:
-#        anc_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pops.anc.RData",
-#        anc_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.meanAnc.fdr.RData",
-#        lmElev_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fit.RData",
-#        lmElev_fdr_maize = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize.lmElev.fdr.RData",
-#        meta_pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/maize.pop.meta.RData",
-#        anc_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pops.anc.RData",
-#        anc_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.meanAnc.fdr.RData",
-#        lmElev_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fit.RData",
-#        lmElev_fdr_mexicana = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana.lmElev.fdr.RData",
-#        meta_pop_mexicana = "local_ancestry/results/ancestry_hmm/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/anc/mexicana.pop.meta.RData",
-#        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.var.sites",
-#        genome = ref_chr,
-#        genes_list = "data/key_genes.csv",
-#        bed_sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K{K}/whole_genome.bed"
-#    output:
-#        txt = "ZAnc/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/genes_mapped_to_outliers.txt",
-#        tbl = "ZAnc/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex",
-#        tbl2 = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_genes_mapped_to_outliers.tex"
-#    params:
-#        p = "med2",
-#        Ne = lambda wildcards: wildcards.Ne,
-#        yesno = lambda wildcards: wildcards.YESNO,
-#        prefix = "{PREFIX}",
-#        K = "{K}"
-#    conda:
-#        "../envs/environment.yaml"
-#    threads:
-#        1
-#    resources:
-#        time_min = 15,
-#        mem = 8
-#    script:
-#        "test_key_genes.R"
-
 # plot_hpc1_anc: plots mexicana ancestry ~ elevation around flowering time gene HPC1
 rule plot_hpc1_anc:
     input:
@@ -452,53 +415,6 @@ rule plot_hpc1_anc:
         mem = 8
     script:
         "plot_hpc1_anc.R"
-
-## fit_zAnc: zTz, lm(zAnc ~ zElev) and lm(zAnc ~ intercept) transforms ancestry using cholesky rotation, then fits association with transformed variables, or null model
-#rule fit_zAnc:
-#    input:
-#        zAnc_functions = "ZAnc/other_functions.R",
-#        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.MVN.RData",
-#        anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-#        meta_pop = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData",
-#        K = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.K.RData"
-#    output:
-#        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.sim.RData",
-#        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData"
-#    params:
-#        p = "med2"
-#    shadow:
-#        "minimal"
-#    conda:
-#        "../envs/environment.yaml"
-#    threads:
-#        1
-#    resources:
-#        time_min = 3*60,
-#        mem = 8
-#    script:
-#        "fit_zAnc_models.R"
-
-## fdr_zAnc: calculates false discovery rates for zAnc models based on comparing enrichment for outliers in the data to the simulated MVN null model
-#rule fdr_zAnc:
-#    input:
-#        sim = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.sim.RData",
-#        fit = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fit.RData",
-#        fdr_functions = "ZAnc/FDR.R"
-#    output:
-#        fdr = "ZAnc/results/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{ZEA}.zAnc.fdr.RData"
-#    params:
-#        p = "med2"
-#    shadow:
-#        "minimal"
-#    conda:
-#        "../envs/environment.yaml"
-#    threads:
-#        1
-#    resources:
-#        time_min = 6*60,
-#        mem = 8
-#    script:
-#        "fdr_zAnc_models.R"
 
 ## plot_shared_peaks: plots shared outlier peaks for high introgression
 rule plot_shared_peaks:
