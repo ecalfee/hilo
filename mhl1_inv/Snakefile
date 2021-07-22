@@ -261,7 +261,7 @@ rule summarise_pi_inv:
         "colors.R"
     output:
         tex = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_summary_pi_inv_mhl1.tex",
-        tbl = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/summary.pi.inv.txt"
+        tbl = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/summary_pi_inv.txt"
     params:
         p = "med2",
         PREFIX = "{PREFIX}",
