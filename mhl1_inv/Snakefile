@@ -257,7 +257,7 @@ rule calc_pi_inv:
 ## summarise_pi_inv: summarises pi for the different groups across the inversion
 rule summarise_pi_inv:
     input:
-        expand("mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.pi.inv.pestPG", zip, ANCESTRY = ["maize", "maize", "mexicana", "mexicana"], ZEA = ["parv", "maize", "maize", "mexicana"]),
+        expand("mhl1_inv/results/{{PREFIX}}/K{{K}}/Ne{{Ne}}_{{YESNO}}Boot/{ANCESTRY}_cluster/{ZEA}.pi.inv.pestPG", zip, ANCESTRY = ["maize", "maize", "mexicana", "mexicana"], ZEA = ["parv", "maize", "maize", "mexicana"]),
         "colors.R"
     output:
         tex = "../hilo_manuscript/tables/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_summary_pi_inv_mhl1.tex",
