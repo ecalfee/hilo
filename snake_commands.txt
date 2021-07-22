@@ -336,7 +336,12 @@ Job counts:
             1       estimate_saf_inv
             1       estimate_sfs_inv
             5 # COMPLETED. 7.21.2021. now summarising in 1 file:
-
+            hilo$ snakemake all --profile slurm --quiet
+            Job counts:
+                    count   jobs
+                    1       all
+                    1       summarise_pi_inv
+                    2 # 7.21.2021 completed.
 # TO DO:
-FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
-       # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
+done with analyses!
+clean up github and create nice readme. move old scripts not used in the snakemake pipleline into an old_scripts/ or drafts/ folder or just remove from repository.
