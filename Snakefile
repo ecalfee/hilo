@@ -165,7 +165,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
 #include: "diversity/Snakefile"
-#include: "mhl1_inv/Snakefile"
+include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
 

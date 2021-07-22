@@ -74,6 +74,7 @@ bind_cols(sites_bed, fits) %>%
 # high
 bind_cols(sites_bed, fits) %>%
   arrange(., envWeights) %>%
+  dplyr::rename(slope = envWeights) %>%
   mutate(length = end - start,
          cum_length = cumsum(length),
          quantile = cum_length/sum(length)) %>%
@@ -85,6 +86,7 @@ bind_cols(sites_bed, fits) %>%
 # low
 bind_cols(sites_bed, fits) %>%
   arrange(., envWeights) %>%
+  dplyr::rename(slope = envWeights) %>%
   mutate(length = end - start,
          cum_length = cumsum(length),
          quantile = cum_length/sum(length)) %>%
@@ -98,12 +100,14 @@ bind_cols(sites_bed, fits) %>%
 # high
 bind_cols(sites_bed, fits) %>%
   filter(envWeights > quantile(fits_sim$envWeights, 0.975)) %>%
+  dplyr::rename(slope = envWeights) %>%
   dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = pos_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)
 # low
 bind_cols(sites_bed, fits) %>%
   filter(envWeights < quantile(fits_sim$envWeights, 0.025)) %>%
+  dplyr::rename(slope = envWeights) %>%
   dplyr::select(., chr, start, end, slope) %>%
   write.table(., file = neg_p,  sep = "\t", quote = F,
               col.names = F, row.names = F)

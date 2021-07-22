@@ -251,8 +251,8 @@ rule make_bed_slope_elev:
     conda:
         "../envs/environment.yaml"
     resources:
-        time_min = 15,
-        mem = 2
+        time_min = 30,
+        mem = 4
     script:
         "make_bed_slope_elev.R"
 

@@ -272,14 +272,33 @@ Job counts:
                         ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.perc05.bed
                         ZAnc/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_pos_lmElev_outliers.perc05.merged.bed
                         # I deleted the above so that they would rerun saving not only chr start end but slope as well.
-
+                        hilo$ snakemake all --profile slurm --quiet
+                        Job counts:
+                                count   jobs
+                                1       all
+                                12      calc_overlap
+                                2       make_bed_slope_elev
+                                2       map_lmElev_domestication_genes
+                                12      merge_bed_outliers
+                                1       summarise_overlap_flowering_time
+                                30 # 7.21.2021 .. hmm...didn't look like it was doing anything
+                                # so I cancelled and restarted but doesn't look like it accomplished any jobs..
+                                hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        12      calc_overlap
+        2       make_bed_slope_elev
+        2       map_lmElev_domestication_genes
+        12      merge_bed_outliers
+        1       summarise_overlap_flowering_time
+        30 # stuff is running:
+        37137479      med2 make_bed  ecalfee  R        0:10      1 1   2G     c6-72
+37137480      med2 make_bed  ecalfee  R        0:10      1 1   2G     c6-72
 
 # TO DO:
-
-fix shuffle test for domestication genes from the literature-- add P-values to the text
-RERUN GENES/DOMESTICATION SHUFFLE/TABLE MAKING SCRIPTS FROM hilo/domestication_scan
-Make all tables their own supplementary files
-
+Get slope across elevation for sugary1
 >>>>>CAN ALSO TRY IF YOU HAVE TIME TO GET PI WITHIN THE INVERSION
+
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
