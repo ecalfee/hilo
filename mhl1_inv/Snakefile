@@ -235,8 +235,8 @@ rule calc_thetas_inv:
     shell:
         "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"
 
-## calc_pi_inv: calculates pi for the whole inversion
-rule calc_pi_all_chr:
+## calc_pi_inv: calculates pi across the whole inversion
+rule calc_pi_inv:
     input:
         idx = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.idx",
         gz = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.thetas.gz"

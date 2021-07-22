@@ -310,10 +310,18 @@ Job counts:
                 31 # 7.21.2021. completed. no updates for hilo_manuscript because the plots didn't change even though it forced a rerun.
                 Get slope across elevation for sugary1 = 0.95 increase over 1km (5% FDR, see domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize_pos_lmElev_outliers.fdr05.slopes.bed)
 # added scripts to get pi within the inversion at mhl1:
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        4       calc_pi_all_chr
+        4       calc_thetas_inv
+        4       estimate_saf_inv
+        4       estimate_sfs_inv
+        1       get_sample_list_mhl1_inv
+        18 # RUNNING 7.21.2021
 
 
 # TO DO:
-
-
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
