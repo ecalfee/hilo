@@ -155,5 +155,5 @@ rule map_lmElev_domestication_genes:
         mem = 2
     shell:
         """
-        bedtools map -g {input.genome} -a {input.genes} -b {input.mexicana} -c 4 -o max > {output.bed}
+        bedtools map -g {input.genome} -a {input.genes} -b {input.outliers} -c 4 -o max > {output.bed}
         """

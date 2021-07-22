@@ -145,3 +145,29 @@ rule plot_mhl1_inv_PCAngsd:
          mem = 2
     script:
          "plot_mhl1_inv_PCAngsd.R"
+
+## get_sample_list_mhl1_inv: splits samples by inversion allele (homozygous maize/parv or mexicana) and the inversion
+rule get_sample_list_mhl1_inv:
+    input:
+        meta = "samples/{PREFIX}_meta.RData",
+        cov = "mhl1_inv/results/PCA/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov"
+    output:
+        maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_parv_samples.list",
+        maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_maize_samples.list",
+        mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_maize_samples.list",
+        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_samples.list
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    threads:
+        1
+    resources:
+        time_min = 15,
+        mem = 4
+    script:
+        "get_sample_list_mhl1_inv.R"
+#- need list of samples for parv, maize (ref or symp) with homozygous for maize allele at the inversion
+#- as well as list of samples from mexicana and maize (ref or symp grouped together) homozygous for mexicana allele at the inversion
+#- defined by the PCA
+#- then use angsd to calculate

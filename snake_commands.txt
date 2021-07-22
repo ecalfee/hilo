@@ -292,9 +292,23 @@ Job counts:
         2       map_lmElev_domestication_genes
         12      merge_bed_outliers
         1       summarise_overlap_flowering_time
-        30 # stuff is running:
-        37137479      med2 make_bed  ecalfee  R        0:10      1 1   2G     c6-72
-37137480      med2 make_bed  ecalfee  R        0:10      1 1   2G     c6-72
+        30 # ok error was in the r script make_Bed_slope_elev and i've fixed it.
+        # however, remaking these bed files means there are other files with the inversion at mhl1 that are also getting redone:
+        hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        12      calc_overlap
+        1       get_GL_mhl1_inv
+        1       get_mhl1_inv_coord
+        2       make_bed_slope_elev
+        2       map_lmElev_domestication_genes
+        12      merge_bed_outliers
+        1       plot_mhl1_inv
+        1       plot_mhl1_inv_PCAngsd
+        1       run_PCAngsd_mhl1_inv
+        1       summarise_overlap_flowering_time
+        35 # 7.21.2021
 
 # TO DO:
 Get slope across elevation for sugary1
