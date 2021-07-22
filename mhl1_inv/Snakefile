@@ -153,10 +153,10 @@ rule get_sample_list_mhl1_inv:
         cov = "mhl1_inv/results/PCA/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mhl1_inv.cov",
         bam_list = "samples/{PREFIX}_bams.list"
     output:
-        maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_parv_bams.list",
-        maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_maize_bams.list",
-        mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_maize_bams.list",
-        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_bams.list"
+        maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster/parv_bams.list",
+        maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster/maize_bams.list",
+        mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster/maize_bams.list",
+        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster/mexicana_bams.list"
     params:
         p = "med2"
     conda:

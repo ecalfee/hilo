@@ -14,13 +14,13 @@ bam_list = snakemake@input[["bam_list"]]
 
 # get output filenames
 maize2_parv = snakemake@output[["maize2_parv"]]
-#maize2_parv = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster_parv_bams.list"
+#maize2_parv = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster/parv_bams.list"
 maize2_maize = snakemake@output[["maize2_maize"]]
-#maize2_maize = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster_maize_bams.list"
+#maize2_maize = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster/maize_bams.list"
 mexicana2_maize = snakemake@output[["mexicana2_maize"]]
-#mexicana2_maize = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_cluster_maize_bams.list"
+#mexicana2_maize = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_cluster/maize_bams.list"
 mexicana2_mexicana = snakemake@output[["mexicana2_mexicana"]]
-#mexicana2_mexicana = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_cluster_mexicana_bams.list"
+#mexicana2_mexicana = "mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/mexicana_cluster/mexicana_bams.list"
 
 # get sample metadata, including estimated sequence coverage
 load(snakemake@input[["meta"]]) 
