@@ -319,7 +319,11 @@ Job counts:
         4       estimate_saf_inv
         4       estimate_sfs_inv
         1       get_sample_list_mhl1_inv
-        18 # RUNNING 7.21.2021
+        18 # RUNNING 7.21.2021. hmm error is in thetas but really sfs is an empty file and the saf for maize_cluster/maize didn't end properly:
+        gzip: mhl1_inv/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/maize_cluster/maize.saf.gz: unexpected end of file
+        # it's because of a difference in bam headers: Difference in BAM headers for 'filtered_bams/results/Maize55/MAIZE1.sort.dedup.bam' and 'filtered_bams/merged_bams/HILO154.sort.dedup.bam'
+        # really it's ok that they differ because what's different is the order of non-chromosomal contigs that come after the chromosomes (wether mt/pt come before or after the other contigs).
+        # so I'll add a line to ignore the headers and repeat.
 
 
 # TO DO:

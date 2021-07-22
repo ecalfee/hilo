@@ -197,6 +197,7 @@ rule estimate_saf_inv:
         "-P {threads} "
         "-bam {input.bam_list} "
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
+        "-checkBamHeaders 0 "
 
 ## estimate_sfs_inv: estimates site frequency spectrum (sfs) by maximum likelihood in ANGSD across the inversion
 rule estimate_sfs_inv:
