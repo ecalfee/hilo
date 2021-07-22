@@ -155,7 +155,7 @@ rule get_sample_list_mhl1_inv:
         maize2_parv = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_parv_samples.list",
         maize2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/maize_cluster_maize_samples.list",
         mexicana2_maize = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_maize_samples.list",
-        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_samples.list
+        mexicana2_mexicana = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/mexicana_cluster_mexicana_samples.list"
     params:
         p = "med2"
     conda:
