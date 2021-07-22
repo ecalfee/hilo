@@ -181,14 +181,14 @@ rule estimate_saf_inv:
         saf_pos = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}.saf.pos.gz"
     params:
         p = "med2",
-        out_prefix = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}
+        out_prefix = "mhl1_inv/results/{PREFIX}/K{K}/Ne{Ne}_{YESNO}Boot/{ANCESTRY}_cluster/{ZEA}"
     conda:
         "../envs/environment.yaml"
     threads:
         2
     resources:
-        time_min = 60*60,
-        mem = lambda wildcards, attempt: attempt * 40 + 32
+        time_min = 6*60,
+        mem = lambda wildcards, attempt: attempt * 40
     shell:
         "angsd -out {params.out_prefix} "
         "-doSaf 1 -anc {input.anc} "

@@ -307,12 +307,13 @@ Job counts:
                 1       plot_mhl1_inv_PCAngsd
                 1       run_PCAngsd_mhl1_inv
                 1       summarise_overlap_flowering_time
-                31 # 7.21.2021. completed.
+                31 # 7.21.2021. completed. no updates for hilo_manuscript because the plots didn't change even though it forced a rerun.
+                Get slope across elevation for sugary1 = 0.95 increase over 1km (5% FDR, see domestication_scan/results/HILO_MAIZE55_PARV50/K3/Ne10000_yesBoot/domestication_genes_from_lit.plus20kb.maize_pos_lmElev_outliers.fdr05.slopes.bed)
 # added scripts to get pi within the inversion at mhl1:
 
 
 # TO DO:
-Get slope across elevation for sugary1
+
 
 FORMAT ALL TABLES AS EXTRA FILES FOR UPLOAD TO PLOS GENETICS
        # instead of MAKE SMALLER SPEARMAN'S RHO TABLES (or turn sideways). Same with domestication genes table.
