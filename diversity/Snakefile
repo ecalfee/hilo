@@ -26,36 +26,6 @@ rule make_fasta:
         "-remove_bads 1 -minMapQ 30 -minQ 20 "
         "-doCounts 1 "
 
-# ## list_not_pops: makes lists of all homozygous ancestry bams in sympatric maize or mexicana EXCEPT one focal population (only included samples at 0.05x threshold ("samples/ALL_byPop"))
-# rule list_not_pops:
-#     input:
-#         symp_pops = expand("local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{{ZEA}}/bams/{POP}_bams.list", POP = symp_pops)
-#     output:
-#         file = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/{NOTPOP}_bams.list"
-#     params:
-#         p = "med2",
-#         file_prefix = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/bams/",
-#         POP = lambda wildcards: "pop" + wildcards.NOTPOP[3:] # extract just the population number and add prefix 'pop'
-#     resources:
-#         time_min = 5,
-#         mem = 2
-#     run:
-#         print("Get all individuals EXCEPT population: " + params.POP)
-#         if params.POP in symp_maize_pops:
-#             print("a maize population!")
-#             all_pops = symp_maize_pops
-#         elif params.POP in symp_mexicana_pops:
-#             print("a mexicana population!")
-#             all_pops = symp_mexicana_pops
-#         else:
-#             raise NameError('oops! not a recognized sympatric population')
-#         with open(output.file, 'w') as outfile:
-#             for p in all_pops:
-#                 if p != params.POP:
-#                     with open(params.file_prefix + p + "_bams.list") as infile:
-#                         for line in infile:
-#                             outfile.write(line)
-
 ## estimate_saf_pop: estimate site allele frequency likelihoods using ANGSD for a population
 rule estimate_saf_pop:
     input:
@@ -121,26 +91,6 @@ rule calc_thetas:
     shell:
         "realSFS saf2theta {input.saf} -sfs {input.sfs} -outname {params.out_prefix}"
 
-# ## calc_pi_by_windows: calculates pi for windows of set size
-# rule calc_pi_by_windows:
-#     input:
-#         idx = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.idx",
-#         gz = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.thetas.gz"
-#     output:
-#         thetas = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG"
-#     params:
-#         p = "low2",
-#         WIN = lambda wildcards: wildcards.WIN,
-#         STEP = lambda wildcards: wildcards.STEP,
-#         out_prefix = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}"
-#     conda:
-#         "../envs/environment.yaml"
-#     resources:
-#         time_min = 15,
-#         mem = lambda wildcards, attempt: attempt * 4
-#     shell:
-#         "thetaStat do_stat {input.idx} -win {params.WIN} -step {params.STEP} -outnames {params.out_prefix}"
-
 ## calc_pi_all_chr: calculates pi for each chromosome in the genome (for background diversity rates)
 rule calc_pi_all_chr:
     input:
@@ -158,55 +108,6 @@ rule calc_pi_all_chr:
         mem = lambda wildcards, attempt: attempt * 4
     shell:
         "thetaStat do_stat {input.idx} -outnames {params.out_prefix}"
-
-# ## calc_mean_pi_in_outliers_vs_not: script to summarise diversity (pi) for homozygous ancestry windows within high introgression outliers vs outside
-# rule calc_mean_pi_in_outliers_vs_not:
-#     input:
-#         genome = "data/refMaize/Zea_mays.AFPv4.dna.chr.autosome.lengths",
-#         bed_sites = "local_ancestry/results/thinnedSNPs/" + prefix_all + "/whole_genome.bed",
-#         meta = "samples/" + prefix_all + "_meta.RData",
-#         pi_windows = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.windows.{WIN}.{STEP}.pestPG",
-#         pop_freq = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/anc/{POP}.anc.freq"
-#     output:
-#         txt = "diversity/results/pi/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{WIN}.{STEP}.txt"
-#     params:
-#         p = "low2",
-#         pop = lambda wildcards: wildcards.POP,
-#         zea = lambda wildcards: wildcards.ZEA
-#     shadow:
-#         "minimal"
-#     conda:
-#         "../envs/environment.yaml"
-#     resources:
-#         time_min = 15,
-#         mem = lambda wildcards, attempt: attempt * 4
-#     script:
-#         "calc_mean_pi_in_outliers_vs_not.R"
-
-# ## plot_mean_pi_in_outliers_vs_not: script to plot diversity (pi) by population and ancestry for homozygous ancestry windows within high introgression outliers vs outside
-# rule plot_mean_pi_in_outliers_vs_not:
-#     input:
-#         meta = "samples/" + prefix_all + "_meta.RData",
-#         colors = "colors.R",
-#         txt = expand("diversity/results/pi/" + prefix_all + "/Ne{{Ne}}_{{YESNO}}Boot/HOMOZYG/{ZEA}/{POP}.pi.outliers_vs_not.{{WIN}}.{{STEP}}.txt", ZEA = zea, POP = symp_pops)
-#     output:
-#         png_out = "diversity/plots/Ne{Ne}_{YESNO}Boot/pi.outliers_vs_not.{WIN}.{STEP}.png"
-#     params:
-#         p = "low2",
-#         pop = lambda wildcards: wildcards.POP,
-#         Ne = lambda wildcards: wildcards.Ne,
-#         yesno = lambda wildcards: wildcards.YESNO,
-#         win = lambda wildcards: wildcards.WIN,
-#         step = lambda wildcards: wildcards.STEP,
-#         prefix_all = prefix_all
-#     conda:
-#         "../envs/environment.yaml"
-#     resources:
-#         time_min = 15,
-#         mem = lambda wildcards, attempt: attempt * 4
-#     script:
-#         "plot_mean_pi_in_outliers_vs_not.R"
-
 
 ## estimate_2D_sfs: estimates 2D site frequency spectrum (sfs) for 2 populations jointly by maximum likelihood in ANGSD
 rule estimate_2D_sfs:
@@ -246,25 +147,6 @@ rule calc_fst_idx:
         mem = lambda wildcards, attempt: attempt * 8
     shell:
         "realSFS fst index {input.saf1} {input.saf2} -sfs {input.sfs} -fstout {params.out_prefix} -whichFst 1"
-
-# ## calc_fst_by_windows: calculates fst for windows of set size
-# rule calc_fst_by_windows:
-#     input:
-#         idx = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.idx",
-#         gz = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.gz"
-#     output:
-#         fst = "diversity/results/fst/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/{POP1}.{POP2}.fst.windows.{WIN}.{STEP}.txt"
-#     params:
-#         p = "med2",
-#         WIN = lambda wildcards: wildcards.WIN,
-#         STEP = lambda wildcards: wildcards.STEP
-#     conda:
-#         "../envs/environment.yaml"
-#     resources:
-#         time_min = 60,
-#         mem = lambda wildcards, attempt: attempt * 4
-#     shell:
-#         "realSFS fst stats2 {input.idx} -win {params.WIN} -step {params.STEP} > {output.fst}"
 
 ## calc_fst_all_chr: calculates fst for each chromosome in the genome (for background divergence rates between population pair)
 rule calc_fst_all_chr:
