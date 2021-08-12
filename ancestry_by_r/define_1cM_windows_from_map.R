@@ -7,7 +7,7 @@ library(bedr)
 file_out = snakemake@output[["windows"]]
 # file_out = "ancestry_by_r/results/map_pos_1cM_windows.txt"
 rmap_file = snakemake@input[["rmap"]]
-# rmap_file = "data/linkage_map/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
+# rmap_file = "linkage_map/results/ogut_2015_rmap_v2_to_v4_EXTENDED.txt"
 cds_file = snakemake@input[["cds"]] # coding regions
 # cds_file = "data/refMaize/geneAnnotations/Zea_mays.B73_RefGen_v4.41.chr.CDS.bed"
 genome_file = snakemake@input[["genome"]] # genome order

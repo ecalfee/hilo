@@ -76,7 +76,8 @@ p_heatmap_parv <- fst_parv %>%
   mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
          zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
          zea_loc1 = reorder(zea_loc1, INDEX.pop1),
-         zea_loc2 = reorder(zea_loc2, INDEX.pop2))%>%
+         zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+  filter(INDEX.pop1 > INDEX.pop2 | INDEX.pop1 == INDEX.pop2) %>%
   ggplot(data = .,
          aes(x = zea_loc1,
              y = zea_loc2,
@@ -87,7 +88,7 @@ p_heatmap_parv <- fst_parv %>%
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.025, 0.5)) +
   labs(x = "population 1", y = "population 2", fill = expression(F[ST])) +
   #ggtitle("fst within parviglumis ancestry") +
-  coord_fixed() +
+  coord_equal() +
   geom_point(data = fst_parv %>%
                arrange(., zea.pop1, ELEVATION.pop1) %>%
                mutate(INDEX.pop1 = 1:nrow(.)) %>%
@@ -97,6 +98,7 @@ p_heatmap_parv <- fst_parv %>%
                       zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
                       zea_loc1 = reorder(zea_loc1, INDEX.pop1),
                       zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+               filter(INDEX.pop1 > INDEX.pop2 | INDEX.pop1 == INDEX.pop2) %>%
                mutate(comparison_type = ifelse(LOCALITY.pop1 == LOCALITY.pop2, "same location", "different location")) %>%
                filter(comparison_type == "same location"),
     aes(color = comparison_type),
@@ -105,7 +107,21 @@ p_heatmap_parv <- fst_parv %>%
   scale_color_manual(values = "white", labels = "sympatric\npopulation pair") +
   theme(legend.key = element_rect(fill = "darkgrey", color = NA),
         plot.title = element_blank()) +
-  labs(color = NULL, fill = expression(F[ST]))
+  labs(color = NULL, fill = expression(F[ST])) +
+  theme(axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(angle = 0, hjust = 0.5),
+        axis.text.y = element_text(angle = 90, hjust = 0.5),
+        axis.title = element_blank()) +
+  #add lines marking division between maize and mexicana populations
+  geom_segment(aes(x = 13.5, xend = 13.5, y = 0, yend = 29), size = 0.1) +
+  geom_segment(aes(x = -1, xend = 28, y = 14.5, yend = 14.5), size = 0.1) +
+  scale_x_discrete("Population 1", breaks = c("Santa Clara maize","Santa Clara mexicana"), 
+                   labels = c("maize\npopulations", "mexicana\npopulations")) +
+  scale_y_discrete("Population 2", breaks = c("Santa Clara maize","Santa Clara mexicana"),
+                   labels = c("maize\npopulations", "mexicana\npopulations"))
+
+
 # p_heatmap_parv
 ggsave(filename = png_heatmap_parv,
        plot = p_heatmap_parv,
@@ -148,9 +164,8 @@ p_heatmap_both <- fst_maize %>%
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.025, 0.5)) +
-  labs(x = "population 1", y = "population 2") +
   #ggtitle("fst within maize (top left)\nor mexicana (bottom right) ancestry") +
-  coord_fixed() +
+  coord_equal() +
   geom_point(data = fst %>%
                            arrange(., zea.pop1, ELEVATION.pop1) %>%
                            mutate(INDEX.pop1 = 1:nrow(.)) %>%
@@ -168,7 +183,20 @@ p_heatmap_both <- fst_maize %>%
   scale_color_manual(values = "white", labels = "sympatric\npopulation pair") +
   theme(legend.key = element_rect(fill = "darkgrey", color = NA),
         plot.title = element_blank()) +
-  labs(color = NULL, fill = expression(F[ST]))
+  labs(color = NULL, fill = expression(F[ST])) +
+  theme(axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(angle = 0, hjust = 0.5),
+        axis.text.y = element_text(angle = 90, hjust = 0.5),
+        axis.title = element_blank()) +
+  #add lines marking division between maize and mexicana populations
+  geom_segment(aes(x = 14.5, xend = 14.5, y = 0, yend = 29), size = 0.1) +
+  geom_segment(aes(x = 0, xend = 29, y = 14.5, yend = 14.5), size = 0.1) +
+  scale_x_discrete("Population 1", breaks = c("Santa Clara maize","Santa Clara mexicana"), 
+                   labels = c("maize\npopulations", "mexicana\npopulations")) +
+  scale_y_discrete("Population 2", breaks = c("Santa Clara maize","Santa Clara mexicana"),
+                   labels = c("maize\npopulations", "mexicana\npopulations"))
+
 # note: one fst value is very small but negative
 # p_heatmap_both
 
@@ -182,3 +210,61 @@ ggsave(filename = png_heatmap_both_lzw,
        height = 4.75, width = 6,
        units = "in", device = "tiff", dpi = 300,
        compression = "lzw", type = "cairo")
+
+# alternative: just a plot of Fst within mexicana ancestry (to place side-by-side):
+# fst_mexicana %>%
+#               arrange(., zea.pop1, ELEVATION.pop1) %>%
+#               mutate(INDEX.pop1 = 1:nrow(.)) %>%
+#               arrange(., zea.pop2, ELEVATION.pop2) %>%
+#               mutate(INDEX.pop2 = 1:nrow(.)) %>%
+#               mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+#                      zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
+#                      zea_loc1 = reorder(zea_loc1, INDEX.pop1),
+#                      zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+#               filter(INDEX.pop1 > INDEX.pop2 | INDEX.pop1 == INDEX.pop2) %>%
+#   mutate( comparison_type = ifelse(LOCALITY.pop1 == LOCALITY.pop2, "same location", "different location")) %>%
+#   ggplot(.,
+#          aes(x = zea_loc1,
+#              y = zea_loc2)) +
+#   geom_tile(aes(fill = fst)) +
+#   theme_classic() +
+#   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+#   scale_fill_viridis(option = "magma", direction = -1, limits = c(-0.025, 0.5)) +
+#   #ggtitle("fst within maize (top left)\nor mexicana (bottom right) ancestry") +
+#   coord_equal() +
+#   geom_point(data = fst_mexicana %>%
+#                arrange(., zea.pop1, ELEVATION.pop1) %>%
+#                mutate(INDEX.pop1 = 1:nrow(.)) %>%
+#                arrange(., zea.pop2, ELEVATION.pop2) %>%
+#                mutate(INDEX.pop2 = 1:nrow(.)) %>%
+#                filter(INDEX.pop1 > INDEX.pop2 | INDEX.pop1 == INDEX.pop2) %>%
+#                mutate(zea_loc1 = paste(LOCALITY.pop1, zea.pop1),
+#                       zea_loc2 = paste(LOCALITY.pop2, zea.pop2),
+#                       zea_loc1 = reorder(zea_loc1, INDEX.pop1),
+#                       zea_loc2 = reorder(zea_loc2, INDEX.pop2)) %>%
+#                mutate(comparison_type = ifelse(LOCALITY.pop1 == LOCALITY.pop2, "same location", "different location")) %>%
+#                filter(comparison_type == "same location"),
+#              aes(color = comparison_type),
+#              size = 0.5,
+#              pch = 19) +
+#   scale_color_manual(values = "white", labels = "sympatric\npopulation pair") +
+#   theme(legend.key = element_rect(fill = "darkgrey", color = NA),
+#         plot.title = element_blank()) +
+#   labs(color = NULL, fill = expression(F[ST])) +
+#   theme(axis.line = element_blank(),
+#         axis.ticks = element_blank(),
+#         axis.text.x = element_text(angle = 0, hjust = 0.5),
+#         axis.text.y = element_text(angle = 90, hjust = 0.5),
+#         axis.title = element_blank()) +
+#   geom_text(data = data.frame(label = "mexicana ancestry", 
+#                        zea_loc1 = "San Pedro maize", 
+#                        zea_loc2 = "Amatlan mexicana"), 
+#             aes(label = label), angle = 45) +
+#   #add lines marking division between maize and mexicana populations
+#   geom_segment(aes(x = 13.5, xend = 13.5, y = 0, yend = 14.5), size = 0.1) +
+#   geom_segment(aes(x = 13.5, xend = 28, y = 14.5, yend = 14.5), size = 0.1) +
+#   scale_x_discrete("Population 1", breaks = c("Santa Clara maize","Santa Clara mexicana"), 
+#                    labels = c("maize\npopulations", "mexicana\npopulations")) +
+#   scale_y_discrete("Population 2", position = "right", breaks = c("Santa Clara maize","Santa Clara mexicana"),
+#                    labels = c("maize\npopulations", "mexicana\npopulations"))
+
