@@ -347,7 +347,12 @@ Job counts:
 diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
 diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png
 (hilo-env) ecalfee@c6-93:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_*_heatmap_*.png
-hilo$ snakemake -n all --profile slurm --quiet
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       plot_within_ancestry_fst
+        2
 
 # TO DO:
 done with analyses!

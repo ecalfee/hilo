@@ -156,17 +156,17 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-include: "map/Snakefile"
-include: "filtered_bams/Snakefile"
-include: "variant_sites/Snakefile"
-include: "global_ancestry/Snakefile"
-include: "linkage_map/Snakefile"
-include: "local_ancestry/Snakefile"
-include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "map/Snakefile"
+#include: "filtered_bams/Snakefile"
+#include: "variant_sites/Snakefile"
+#include: "global_ancestry/Snakefile"
+#include: "linkage_map/Snakefile"
+#include: "local_ancestry/Snakefile"
+#include: "ancestry_by_r/Snakefile"
+#include: "ZAnc/Snakefile"
 include: "diversity/Snakefile"
-include: "mhl1_inv/Snakefile"
-include: "domestication_scan/Snakefile"
+#include: "mhl1_inv/Snakefile"
+#include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
 
 ## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
@@ -259,8 +259,8 @@ rule all:
         "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
 
         # supplementary plot of within-parviglumis-ancestry diversity (fst) as a heat map
-        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap.png",
+        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap.tif",
 
         #"local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
         #"../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
