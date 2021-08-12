@@ -342,6 +342,13 @@ Job counts:
                     1       all
                     1       summarise_pi_inv
                     2 # 7.21.2021 completed.
+# simplified axes for heatmaps of within ancestry fst. remaking those plots:
+(hilo-env) ecalfee@c6-93:~/hilo$ ls diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_*_heatmap_*.png
+diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
+diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap_both.png
+(hilo-env) ecalfee@c6-93:~/hilo$ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_*_heatmap_*.png
+hilo$ snakemake -n all --profile slurm --quiet
+
 # TO DO:
 done with analyses!
 clean up github and create nice readme. move old scripts not used in the snakemake pipleline into an old_scripts/ or drafts/ folder or just remove from repository.

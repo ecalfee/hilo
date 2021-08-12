@@ -156,15 +156,15 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 
 # snakemake sub-workflows
 # note: commenting out some workflows that are already completed makes DAG a lot faster!
-#include: "map/Snakefile"
-#include: "filtered_bams/Snakefile"
-#include: "variant_sites/Snakefile"
-#include: "global_ancestry/Snakefile"
-#include: "linkage_map/Snakefile"
-#include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
+include: "map/Snakefile"
+include: "filtered_bams/Snakefile"
+include: "variant_sites/Snakefile"
+include: "global_ancestry/Snakefile"
+include: "linkage_map/Snakefile"
+include: "local_ancestry/Snakefile"
+include: "ancestry_by_r/Snakefile"
 include: "ZAnc/Snakefile"
-#include: "diversity/Snakefile"
+include: "diversity/Snakefile"
 include: "mhl1_inv/Snakefile"
 include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
