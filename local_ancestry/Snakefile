@@ -59,47 +59,6 @@ rule allo_freqs:
         "-GL 1 -doMaf 1"
 
 
-## thin_sites_4HMM_K2: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize and mexicana and high differentiation (Fst) between them
-rule thin_sites_4HMM_K2:
-    input:
-        # input minor allele freq files for allopatric maize and mexicana
-        maize_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_maize/{REGION}.mafs.gz",
-        REGION=list(regions_dict.keys())),
-        mex_maf = expand("local_ancestry/results/alloFreqs/{{PREFIX}}/allopatric_mexicana/{REGION}.mafs.gz",
-        REGION=list(regions_dict.keys())),
-        # variant sites too
-        sites = expand("variant_sites/results/{{PREFIX}}/{REGION}.var.sites",
-        REGION=list(regions_dict.keys())),
-        # and recombination positions (in cM)
-        rpos = expand("variant_sites/results/{{PREFIX}}/{REGION}.rpos",
-        REGION=list(regions_dict.keys())),
-        # master list of all regions
-        regions = "data/refMaize/divide_5Mb/ALL_regions.list",
-        equations = "local_ancestry/FST_PBS_equations.R"
-    output:
-        # outputs 1 sites file for the whole genome and a corresponding recombination distance file
-        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.var.sites",
-        # difference in Morgans between positions (1st position on any chromosome = 0)
-        rdiff = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.rdiff",
-        # recombination position (in cM)
-        rpos = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.rpos",
-        # summary counts of the number of snps that passed filters
-        counts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/counts_thinned_aims.txt"
-    params:
-        p = "med2",
-        prefix = lambda wildcards: wildcards.PREFIX,
-        top_fst = 0.15, # keep only top X proportion of SNPs based on FST
-        min_cM = 0.001, # minimum spacing
-        min_n_maize = 44, # i.e. 80% of individuals have data (44/55). 95% of SNPs have this much data for maize.
-        min_n_mex = 12 # i.e. 28% of individuals have data (12/43). 86% of SNPs have this much data for mexicana.
-    resources:
-        time_min = 60 * 6,
-        mem = lambda wildcards, attempt: attempt * 16 + 16
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "thin_sites_4HMM_K2.R"
-
 ## thin_sites_4HMM_K3: thins sites to a set of ancestry informative markers in low LD based on sufficient coverage within allopatric maize/mexicana/parviglumis and high freq difference (pop branch statistic) between them
 rule thin_sites_4HMM_K3:
     input:
@@ -253,26 +212,6 @@ rule count_maj_min:
     script:
         "count_maj_min.R"
 
-## make_allo_counts_K2: for allopatric populations maize/mex (output order), sample 1 read (based on major/minor read counts) per individual to get an allele count. Also add SNP information to output file.
-rule make_allo_counts_K2:
-    input:
-        maize = "samples/ALL_byPop/allopatric_maize_ids.list",
-        mex = "samples/ALL_byPop/allopatric_mexicana_ids.list",
-        sites = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.var.sites",
-        rdiff = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.rdiff",
-        counts = lambda wildcards: ["local_ancestry/results/countsMajMin/{PREFIX}/K2/" + id + ".counts.txt" for id in get_all_ids(wildcards.PREFIX)]
-    output:
-        allo_counts = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.allo.counts"
-    params:
-        p = "high2", # only 1 job, high priority b/c other jobs wait on this one
-        dir_counts = lambda wildcards: "local_ancestry/results/countsMajMin/" + wildcards.PREFIX + "/K2"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 10,
-        mem = lambda wildcards, attempt: attempt * 4
-    conda:
-        "../envs/environment.yaml"
-    script:
-        "make_allo_counts_ancestry_hmm_K2.R"
 
 ## make_allo_counts_K3: for allopatric populations mex/parv/maize (output order), sample 1 read (based on major/minor read counts) per individual to get an allele count. Also add SNP information to output file.
 rule make_allo_counts_K3:
@@ -317,82 +256,6 @@ rule make_input_hmm:
     script:
         "make_input_ancestry_hmm.R"
 
-## boot_ancestry_hmm_K2: runs ancestry_hmm with K=2 mixing groups (mex/maize) and a bootstrap for admixture timing
-rule boot_ancestry_hmm_K2:
-    input:
-        counts = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.counts",
-        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.ploidy",
-        alphas = "global_ancestry/results/NGSAdmix/{PREFIX}/K2_alphas_by_symp_pop.txt"
-    output:
-        # empty output file is created only if ancestry_hmm runs sucessfully
-        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_yesBoot/{POP}.completed"
-        # also creates posterior files for each ID in POP, but snakemake can't track dynamic output like this
-        # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{Ne}_yesBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
-        # note: can't use 'shadow' with these extra output files!
-    params:
-        p = "med2",
-        alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPopK2(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
-        alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPopK2(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
-        Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
-        t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
-        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + wildcards.PREFIX + "/K2/Ne" + wildcards.Ne + "_yesBoot/posterior"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 3 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
-    log: # log file keeps info about inferred timing of admixture
-        "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_yesBoot/{POP}.log"
-    shell:
-        """
-        module load Ancestry_HMM
-        mkdir -p {params.dir}
-        cd {params.dir}
-        ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
-        -p 0 10000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
-        --ne {params.Ne} --tmin 0 --tmax 10000 \
-        -e 3e-3 \
-        -b 100 1000 \
-        -i "../../input/{wildcards.POP}.counts" \
-        -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
-        """
-#-b 100 1000 does 100 bootstraps for time estimates with 1000 snps/block
-
-## run_ancestry_hmm_K2: runs ancestry_hmm with K=2 mixing groups (mex/maize) and NO bootstrap for admixture timing
-rule run_ancestry_hmm_K2:
-    input:
-        counts = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.counts",
-        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.ploidy",
-        alphas = "global_ancestry/results/NGSAdmix/{PREFIX}/K2_alphas_by_symp_pop.txt"
-    output:
-        # empty output file is created only if ancestry_hmm runs sucessfully
-        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_noBoot/{POP}.completed"
-        # also creates posterior files for each ID in POP, but snakemake can't track dynamic output like this
-        # posteriors = lambda wildcards: expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{Ne}_noBoot/posterior/{ID}.posterior", ID = symp_dict[wildcards.POP])
-        # note: can't use 'shadow' with these extra output files!
-    params:
-        p = "med2",
-        alpha_maize = lambda wildcards, input: Alphas4LocalAncestrybyPopK2(wildcards.POP, input.alphas)["alpha_maize"],  # proportion maize ancestry from NGSAdmix
-        alpha_mex = lambda wildcards, input: Alphas4LocalAncestrybyPopK2(wildcards.POP, input.alphas)["alpha_mex"], # proportion mexicana ancestry from NGSAdmix
-        Ne = lambda wildcards: wildcards.Ne, # Ne = effective population size after admixture
-        t_gen = -100, # prior for generations. negative means not a fixed parameter (estimated by the hmm instead)
-        dir = lambda wildcards: "local_ancestry/results/ancestry_hmm/" + wildcards.PREFIX + "/K2/Ne" + wildcards.Ne + "_noBoot/posterior"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 3 * 60,
-        mem = lambda wildcards, attempt: attempt * 8
-    log: # log file keeps info about inferred timing of admixture
-        "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_noBoot/{POP}.log"
-    shell:
-        """
-        module load Ancestry_HMM
-        mkdir -p {params.dir}
-        cd {params.dir}
-        ancestry_hmm -a 2 {params.alpha_maize} {params.alpha_mex} \
-        -p 0 10000 {params.alpha_maize} -p 1 {params.t_gen} {params.alpha_mex} \
-        --ne {params.Ne} --tmin 0 --tmax 10000 \
-        -e 3e-3 \
-        -i "../../input/{wildcards.POP}.counts" \
-        -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
-        """
-#-b 100 1000 does 100 bootstraps for time estimates with 1000 snps/block
 
 ## boot_ancestry_hmm_K3: runs ancestry_hmm with K=3 mixing groups (mex/parv then maize) and a bootstrap for admixture timing
 rule boot_ancestry_hmm_K3:
@@ -478,29 +341,6 @@ rule run_ancestry_hmm_K3:
         -s "../../input/{wildcards.POP}.ploidy" > ../{wildcards.POP}.log && echo "all done!" > ../{wildcards.POP}.completed
         """
 
-## summarise_posterior_K2: takes K=2 in posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
-rule summarise_posterior_K2:
-    input: # this file tracts that the posteriors are complete, but actually posterior files vary
-        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
-        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
-    output:
-        pop_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.anc.freq",
-        ind_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.anc.ind",
-        alpha_mex = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/mexicana/{POP}.alpha.ind",
-        pop_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.anc.freq",
-        ind_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.anc.ind",
-        alpha_maize = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/maize/{POP}.alpha.ind"
-    params:
-        p = "med2",
-        dir_post = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/posterior"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 2 * 60,
-        mem = lambda wildcards, attempt: attempt * 2
-    script:
-        "post2anc_K2.R"
-
 ## summarise_posterior_K3: takes in K=3 posterior probabilities for a population from ancestry_hmm and summarises ancestry proportions for each individual genomewide and for each population for SNPs along the genome
 rule summarise_posterior_K3:
     input: # this file tracts that the posteriors are complete, but actually posterior files vary
@@ -527,45 +367,6 @@ rule summarise_posterior_K3:
     script:
         "post2anc_K3.R"
 
-# ## get_maximum_a_posterior: takes in posterior probabilities for a population from ancestry_hmm and gets maximum a posterior ancestry state and posterior probability for that state
-# rule get_maximum_a_posterior:
-#     input: # this file tracts that the posteriors are complete, but actually posterior files vary
-#         complete = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/{POP}.completed", # YESNO can be yes or no
-#         ploidy = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/input/{POP}.ploidy" #"samples/Over0.5x_byPop/{POP}_ids.list"
-#     output:
-#         anc = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.anc.ind",
-#         prob = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/MAP/{POP}.prob.ind"
-#     params:
-#         p = "med2",
-#         dir_post = "local_ancestry/results/ancestry_hmm/" + prefix_all + "/Ne{Ne}_{YESNO}Boot/posterior"
-#     conda:
-#         "../envs/environment.yaml"
-#     resources:
-#         time_min = lambda wildcards, attempt: attempt * 10,
-#         mem = lambda wildcards, attempt: attempt * 2
-#     script:
-#         "post2map.R" # NEED TO CHANGE!!
-
-## get_homozygous_ancestry_tracts_K2: maize-mex K=2 admixture, finds homozygous ancestry tracts for every sample in a sympatric population
-rule get_homozygous_ancestry_tracts_K2:
-    input: # this file tracts that the posteriors are complete, but actually posterior files vary
-        bed = "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.bed", # ancestry tracts around each site
-        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/{POP}.completed",
-        ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input/{POP}.ploidy"
-    output: # doesn't track all output files, just one file that updates when the population is completed
-        complete = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts/{POP}.completed"
-    params:
-        p = "med2",
-        dir_out = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/HOMOZYG/{ZEA}/tracts",
-        dir_post = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/posterior",
-        ZEA = "{ZEA}"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 1 * 60,
-        mem = lambda wildcards, attempt: attempt * 2
-    shell:
-        "./local_ancestry/get_homozygous_ancestry_tracts_K2.sh {input.bed} {params.ZEA} {input.ploidy} {params.dir_post} {params.dir_out} && touch {output.complete}"
 
 ## get_homozygous_ancestry_tracts_K3: mex-parv-maize K=3 admixture, finds homozygous ancestry tracts for every sample in a sympatric population
 rule get_homozygous_ancestry_tracts_K3:
@@ -631,30 +432,6 @@ rule list_homozygous_ancestry_bams:
         done) > {output.list}
         """
 
-## rule combine_pop_ancestry_data_K2: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample ancestry frequency file, and pop-level metadata for all included inds
-rule combine_pop_ancestry_data_K2:
-    input:
-        "samples/{PREFIX}_meta.RData",
-        "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.bed",
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/input/{POP}.ploidy", POP = symp_pops),
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/anc/{ANCESTRY}/{POP}.anc.freq", ANCESTRY = ["mexicana", "maize"], POP = symp_pops)
-    output:
-        pop_anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pops.anc.RData",
-        mexicana_anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.mexicana_anc.bed",
-        maize_anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.maize_anc.bed",
-        meta_pop = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc/{ZEA}.pop.meta.RData" # meta_pops dataframe has n_local_ancestry, ELEVATION, and alpha_local_ancestry for each pop, sorted in same order as anc
-    params:
-        p = "med2",
-        dir_anc = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/anc",
-        dir_ploidy = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/input",
-        zea = lambda wildcards: wildcards.ZEA
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = lambda wildcards, attempt: attempt * 10,
-        mem = lambda wildcards, attempt: attempt * 8
-    script:
-        "combined_pop_anc_data_K2.R"
 
 ## rule combine_pop_ancestry_data_K3: takes in population ancestry frequencies for all sympatric pops in maize or mexicana and saves a summary R dataframe SNPs X Pops, a combined sample ancestry frequency file, and pop-level metadata for all included inds
 rule combine_pop_ancestry_data_K3:
@@ -682,23 +459,6 @@ rule combine_pop_ancestry_data_K3:
     script:
         "combined_pop_anc_data_K3.R"
 
-## get_admix_times_K2: takes in log files from ancestry_hmm and extracts the inferred timing of admixture. first entry is optimum, then bootstrap results.
-rule get_admix_times_K2:
-    input:
-        log = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/{POP}.log"
-    output:
-        times = "local_ancestry/results/ancestry_hmm/{PREFIX}/K2/Ne{Ne}_{YESNO}Boot/{POP}.times"
-    params:
-        p = "med2"
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 60,
-        mem = 2
-    shell:
-        """
-        echo 't ancestry' > {output.times}; awk -v N=4 'NR % N == 0' {input.log} | cut -f3 | awk '{{print $0, "mexicana"}}' >> {output.times}
-        """
 
 # get_admix_times_K3: takes in log files from ancestry_hmm and extracts the inferred timing of admixture for parviglumis, then maize. first entry is optimum, then bootstrap results.
 rule get_admix_times_K3:
@@ -720,32 +480,6 @@ rule get_admix_times_K3:
         (echo "extra buffer line"; cat {input.log}) | awk -v N=5 'NR % N == 0' | cut -f3 | awk '{{print $0, "parv"}}' >> {output.times}
         """
 
-## plot_admix_times_K2: plots admixture timing estimates from the HMM for maize + mex K=2 scenario
-rule plot_admix_times_K2:
-    input:
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/anc/{ZEA}.pop.meta.RData", ZEA = zea),
-        expand("local_ancestry/results/ancestry_hmm/{{PREFIX}}/K2/Ne{{Ne}}_{{YESNO}}Boot/{POP}.times", POP = symp_pops),
-        "local_ancestry/results/thinnedSNPs/{PREFIX}/K2/whole_genome.allo.counts",
-        "colors.R"
-    output:
-        png_times = "local_ancestry/plots/{PREFIX}_K2_admix_times_Ne{Ne}_{YESNO}Boot.png",
-        png_times_lzw = "../hilo_manuscript/figures_supp/{PREFIX}_K2_admix_times_Ne{Ne}_{YESNO}Boot.tif",
-        txt_times = "local_ancestry/results/{PREFIX}_K2_admix_times_Ne{Ne}_{YESNO}Boot.txt",
-        rds_times = "local_ancestry/results/{PREFIX}_K2_admix_times_Ne{Ne}_{YESNO}Boot.RDS"
-    params:
-        p = "med2",
-        Ne = lambda wildcards: wildcards.Ne,
-        YESNO = lambda wildcards: wildcards.YESNO,
-        prefix_all = lambda wildcards: wildcards.PREFIX,
-        colors = "colors.R",
-        alpha = 0.05
-    conda:
-        "../envs/environment.yaml"
-    resources:
-        time_min = 10,
-        mem = 2
-    script:
-        "plot_admix_times_K2.R"
 
 ## plot_admix_times_K3: plots admixture timing estimates from the HMM for (mex + parv) + maize K=3 scenario
 rule plot_admix_times_K3:

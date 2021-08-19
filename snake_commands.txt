@@ -352,7 +352,7 @@ Job counts:
         count   jobs
         1       all
         1       plot_within_ancestry_fst
-        2
+        2 # COMPLETED 8.11.2021
 
 # TO DO:
 done with analyses!

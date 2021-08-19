@@ -1,0 +1,1 @@
+Scripts to detect and plot outliers for local ancestry and slopes ancestry ~ elevation. Includes scripts to calculating the K ancestry variance-covariance matrix and simulate from the multivariate null model to get false discovery rates. Also includes test of overlap with flowering time genes, but domestication genes analysis is found in hilo/domestication_scan. See Snakefile.

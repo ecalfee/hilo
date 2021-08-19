@@ -1,9 +1,0 @@
-Sugary1 - Su1 starch debranching enzyme Whitt 2002 PNAS and Jaenicke-Despres 2003 Science
-c1 - kernel color anthocyanin regulation - Hanson 1996 Genetics
-tb1 - apical dominance tillering inflorescence position - Doebley 1997 Nature
-box binding factor (pbf)
-
-starch metabolism pathway - candidate gene approach to test for selection: 6 key genes were the focus of Whitt 2002
-amylose extender1 (ae1), brittle2 (bt2), shrunken1 (sh1), shrunken2 (sh2), sugary1 (su1), and waxy1 (wx1): found lower pi in su1, bt2 and ae1, additional HKA significant results indicate selection at su1 and bt2, with possible ongoing/segregating selection at ae1
-
-tga - de novo mutation, teosinte glum architecture
