@@ -207,7 +207,7 @@ p_heatmap_both <- fst_maize %>%
   scale_y_discrete(name = NULL, label = function(x) stringr::word(x, 1, -2)) 
 
 # note: one fst value is very small but negative
-p_heatmap_both
+# p_heatmap_both
 
 ggsave(filename = png_heatmap_both,
        plot = p_heatmap_both,
