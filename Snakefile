@@ -173,45 +173,37 @@ include: "diversity/Snakefile"
 rule all:
     input:
         # main figures:
+        # note: .tif files are commented out because they get renamed, e.g. Fig1, Fig2
+        # but modifying upstream files or deleting the corresponding .png will trigger a rerun
+        # of the plotting script to generate that tiff
+
         # Fig 1
         "map/plots/mexico_lines_elev_teo_color.png",
-        "../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
+        #"../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
 
         # Fig 2
-        #"global_ancestry/plots/global_anc_multi.png",
-        #"../hilo_manuscript/figures_main/global_anc_multi.tif",
         "../hilo/global_ancestry/plots/HILO_MAIZE55_PARV50_global_anc_multi_K3.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_global_anc_multi_K3.tif",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_global_anc_multi_K3.tif",
 
         # Fig 3
-        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
-        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.tif",
 
         # Fig 4
-        #"ancestry_by_r/plots/K2_by_r_multi_panel.png",
-        #"../hilo_manuscript/figures_main/K2_by_r_multi_panel.tif",
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.tif",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_by_r_multi_panel.tif",
 
         # Fig 5
-        #"ZAnc/plots/Ne10000_yesBoot/maize_shared_outliers_chr_4.png",
-        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_maize_shared_outliers_chr_4.tif",
 
         # Fig 6
-        #"ZAnc/plots/Ne10000_yesBoot/network_peak_sharing_data_only.png",
-        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_network_peak_sharing_data_only.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_network_peak_sharing_data_only.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_network_peak_sharing_data_only.tif",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_network_peak_sharing_data_only.tif",
 
         # Fig 7
-        #"ZAnc/plots/Ne10000_yesBoot/multi_maize_mexicana_genome_scan.png",
-        #"../hilo_manuscript/figures_main/Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.png",
-        "../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
+        #"../hilo_manuscript/figures_main/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_multi_maize_mexicana_genome_scan.tif",
 
 
         # tables supplement
@@ -249,124 +241,95 @@ rule all:
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_domestication_genes.tex",
 
         # figures supplement
-        #"global_ancestry/plots/HILO_MAIZE55_pca.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_pca.tif",
         "global_ancestry/plots/HILO_MAIZE55_PARV50_pca.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_pca.tif",
 
         # K=3 structure results as a barplot for each individual
         "global_ancestry/plots/HILO_MAIZE55_PARV50_structure_K3.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_structure_K3.tif",
 
         # supplementary plot of within-parviglumis-ancestry diversity (fst) as a heat map
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_parviglumis_ancestry_genomewide_heatmap.tif",
 
-        #"local_ancestry/plots/admix_times_Ne10000_yesBoot.png",
-        #"../hilo_manuscript/figures_supp/admix_times_Ne10000_yesBoot.tif",
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.tif",
 
-        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_mexicana_ancestry_peaks.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
 
-        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/pi_within_maize_ancestry.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_pi_within_maize_ancestry.tif",
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif",
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
         "ancestry_by_r/plots/f4_sympatric_maize_pop22_byr5.png",
-        "../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_byr5.tif",
+        #"../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_byr5.tif",
 
         "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.png",
-        "../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_bycd5.tif",
+        #"../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_bycd5.tif",
 
-        #"ancestry_by_r/plots/K2_by_r_bootstrap_lm_elevation_color_elev.png",
-        #"../hilo_manuscript/figures_supp/K2_by_r_bootstrap_lm_elevation_color_elev.tif",
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
 
         # supplementary plot of all NGSAdmix-estimated ancestries, including parviglumis ancestry, by recombination rate
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_sympatric_and_allopatric.tif",
 
-        #"ancestry_by_r/plots/K2_by_cd_bootstrap_sympatric_and_allopatric.png",
-        #"../hilo_manuscript/figures_supp/K2_by_cd_bootstrap_sympatric_and_allopatric.tif",
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.tif",
 
         "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_byr5.png",
-        "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_byr5.tif",
+        #"../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_byr5.tif",
 
         "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.png",
-        "../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_bycd5.tif",
+        #"../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_bycd5.tif",
 
-        #"ancestry_by_r/plots/local_anc_by_r_continuous.png",
-        #"../hilo_manuscript/figures_supp/local_anc_by_r_continuous.tif",
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.tif",
 
-        #"ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_maize.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
 
-        #"ZAnc/plots/Ne10000_yesBoot/combmatrix_peak_sharing_mexicana.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
 
         # local ancestry across all the individual chromosomes for maize and mexicana
-        #expand("ZAnc/plots/Ne10000_yesBoot/{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = zea),
-        #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"), # skips chr4 (that's a main figure)
-        #expand("../hilo_manuscript/figures_supp/Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
         expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
         expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
-        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
-        expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
+        #expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),
+        #expand("../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.tif", i = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ZEA = "mexicana"),
 
-        #"diversity/plots/HILO_MAIZE55/Ne10000_yesBoot/local_fst_within_mexicana_ancestry_peaks.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
         "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif",
 
-        #"ZAnc/plots/Ne10000_yesBoot/QQ.png",
-        #"../hilo_manuscript/figures_supp/Ne10000_yesBoot_QQ.tif",
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_QQ.tif",
 
         # supplementary plots of parviglumis ancestry introgression peaks
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_supp_parv_genome_scan.tif",
 
-        #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_ancestry.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
         "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_ancestry.tif",
 
-        #"mhl1_inv/plots/HILO_MAIZE55/K2/Ne10000_yesBoot/mhl1_inv_pca.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_K2_Ne10000_yesBoot_mhl1_inv_pca.tif",
         "mhl1_inv/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_mhl1_inv_pca.tif",
 
         # supplementary plot of hpc1
         "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_hpc1_lm_ancestry.tif",
 
         "filtered_bams/plots/p_seq_counts.png",
-        "../hilo_manuscript/figures_supp/p_seq_counts.tif",
+        #"../hilo_manuscript/figures_supp/p_seq_counts.tif",
 
         "linkage_map/plots/ogut_2015_v2_to_v4_rmap.png",
-        "../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
+        #"../hilo_manuscript/figures_supp/ogut_2015_v2_to_v4_rmap.tif",
 
         # Sensitivity to Ne
         #expand("local_ancestry/results/ancestry_hmm/HILO_MAIZE55_PARV50/K3/Ne{Ne}_noBoot/anc/{ZEA}.{ANCESTRY}_anc.bed", Ne = Nes, ZEA = zea, ANCESTRY = ["mexicana", "maize", "parv"]),
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.png",
-        "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_admix_times.tif",
         "local_ancestry/results/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.txt",
         "../hilo_manuscript/tables/HILO_MAIZE55_PARV50_K3_sensitivity_to_Ne_local_ancestry.tex",
 
