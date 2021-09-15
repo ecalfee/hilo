@@ -170,13 +170,12 @@ include: "diversity/Snakefile"
 #include: "wavelets/Snakefile"
 
 ## all:  main rule to run all workflows: main figures, tables supplement, figures supplement, other output
+# note: .tif files are commented out because they get renamed, e.g. Fig1, Fig2
+# but modifying upstream files or deleting the corresponding .png will trigger a rerun
+# of the plotting script to generate that tiff
 rule all:
     input:
         # main figures:
-        # note: .tif files are commented out because they get renamed, e.g. Fig1, Fig2
-        # but modifying upstream files or deleting the corresponding .png will trigger a rerun
-        # of the plotting script to generate that tiff
-
         # Fig 1
         "map/plots/mexico_lines_elev_teo_color.png",
         #"../hilo_manuscript/figures_main/mexico_lines_elev_teo_color.tif",
