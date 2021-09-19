@@ -131,7 +131,7 @@ pi = bind_rows(pi_genomewide, pi_peaks) %>%
 shapes_peaks <- c(17, 16, 0)
 names(shapes_peaks) <- c("1pop", "4pop", "genomewide")
 labels_peaks <- c("1 population\nintrogression peaks", "4+ population\nintrogression peaks", "all ancestry tracts\ngenomewide")
-
+labels_peaks_maize <- c("1 population\npeaks in maize", "4+ population\npeaks in maize", "all mexicana ancestry\ngenomewide")
 
 p_fst_mex <- fst %>%
   filter(LOCALITY.pop1 == LOCALITY.pop2 & 
@@ -183,7 +183,7 @@ p_pi_both <- pi %>%
     color = "Sample", 
     shape = "Ancestry tracts") +
   theme(legend.key.size = unit(10, "mm"))
-p_pi_both
+#p_pi_both
 
 ggsave(filename = png_pi_anc,
        plot = p_pi_both,
