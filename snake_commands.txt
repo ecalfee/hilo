@@ -357,3 +357,18 @@ Job counts:
 # response to reviews 9.14.2021:
 # remaking Fig 3 with population labels:
 $ rm diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_maize_or_mexicana_ancestry_genomewide_heatmap_both.png
+hilo$ snakemake all --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       all
+        1       plot_within_ancestry_fst
+        2 # completed.
+# combined pi within maize and mexicana ancestry into 1 figure:
+(S4 Fig) diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry_peaks.png
+
+
+# to do:
+add Figshare files. update readme of 'wavelets to explain alleleFreq files'
+ls Shared/wavelets/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/
+whole_genome.allo.counts	whole_genome.rdiff		whole_genome.var.sites		whole_genome.var.sites.idx
+whole_genome.bed		whole_genome.rpos		whole_genome.var.sites.bin

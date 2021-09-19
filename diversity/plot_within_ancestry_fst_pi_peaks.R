@@ -28,16 +28,10 @@ png_pi_mexicana_anc = snakemake@output[["png_pi_mex"]]
 png_pi_mexicana_anc_lzw = snakemake@output[["png_pi_mex_lzw"]]
 # png_pi_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif"
 
-png_pi_maize_anc = snakemake@output[["png_pi_maize"]]
-# png_pi_maize_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png"
-png_pi_maize_anc_lzw = snakemake@output[["png_pi_maize_lzw"]]
-# png_pi_maize_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif"
-
-png_fst_mexicana_anc = snakemake@output[["png_fst_mex"]]
-# png_fst_mexicana_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.png"
-png_fst_mexicana_anc_lzw = snakemake@output[["png_fst_mex_lzw"]]
-# png_fst_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_fst_within_mexicana_ancestry_peaks.tif"
-
+png_pi_anc = snakemake@output[["png_pi_anc"]]
+# png_pi_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry.png"
+png_pi_anc_lzw = snakemake@output[["png_pi_anc_lzw"]]
+# png_pi_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry.tif"
 
 meta_pops = meta %>%
   dplyr::select(popN, zea, symp_allo, group, LOCALITY, ELEVATION, LAT, LON) %>%
@@ -137,6 +131,7 @@ shapes_peaks <- c(17, 16, 0)
 names(shapes_peaks) <- c("1pop", "4pop", "genomewide")
 labels_peaks_maize <- c("1 population\npeaks in maize", "4+ population\npeaks in maize", "all mexicana ancestry\ngenomewide")
 labels_peaks_mex <- c("1 population\npeaks in mexicana", "4+ population\npeaks in mexicana", "all maize ancestry\ngenomewide")
+labels_peaks <- c("1 population\nintrogression peaks", "4+ population\nintrogression peaks", "all ancestry tracts\ngenomewide")
 
 
 p_fst_mex <- fst %>%
@@ -168,60 +163,36 @@ ggsave(filename = png_fst_mexicana_anc_lzw,
        device = "tiff", dpi = 300,
        compression = "lzw", type = "cairo")
 
-p_pi_mex <- pi %>%
-  filter(ancestry == "mexicana") %>%
-  mutate(LOCALITY = reorder(LOCALITY, ELEVATION)) %>%
+# plot diversity (pi) for maize/mexicana ancestry tracts
+# found in sympatric maize and mexicana populations
+p_pi_both <- pi %>%
+  mutate(LOCALITY = reorder(LOCALITY, ELEVATION)) %>%  
+  filter(ancestry %in% c("maize", "mexicana")) %>%
+  mutate(ancestry = paste(ancestry, "ancestry")) %>%
   ggplot(aes(x = LOCALITY, color = zea, shape = genomic_region, y = pi)) +
   geom_point() +
   coord_flip() +
   theme_light() +
+  facet_grid(ancestry ~ .) +
   scale_shape_manual(values = shapes_peaks,
-                     labels = labels_peaks_maize) +
+                     labels = labels_peaks) +
   scale_color_manual(values = col_maize_mex_parv,
                      labels = paste("sympatric", names(col_maize_mex_parv))) +
-  labs(#title = "Diversity within mexicana ancestry", 
-       x = "Location", 
-       y = expression(pi), 
-       color = NULL, 
-       shape = NULL) +
+  labs(
+    x = "Location of sampled population", 
+    y = expression(pi), 
+    color = "Sample", 
+    shape = "Ancestry tracts") +
   theme(legend.key.size = unit(10, "mm"))
+p_pi_both
 
-ggsave(filename = png_pi_mexicana_anc,
-       plot = p_pi_mex,
-       height = 4, width = 6.5, units = "in", 
+ggsave(filename = png_pi_anc,
+       plot = p_pi_both,
+       height = 6, width = 5.5, units = "in", 
        device = "png", dpi = 300)
 
-ggsave(filename = png_pi_mexicana_anc_lzw,
-       plot = p_pi_mex,
-       height = 4, width = 6.5, units = "in", 
-       device = "tiff", dpi = 300,
-       compression = "lzw", type = "cairo")
-
-p_pi_maize <- pi %>%
-  filter(ancestry == "maize") %>%
-  mutate(LOCALITY = reorder(LOCALITY, ELEVATION)) %>%
-  ggplot(aes(x = LOCALITY, color = zea, shape = genomic_region, y = pi)) +
-  geom_point() +
-  coord_flip() +
-  theme_light() +
-  scale_shape_manual(values = shapes_peaks[3],
-                     labels = labels_peaks_mex[3]) +
-  scale_color_manual(values = col_maize_mex_parv,
-                     labels = paste("sympatric", names(col_maize_mex_parv))) +
-  labs(#title = "Diversity within maize ancestry", 
-       x = "Location", 
-       y = expression(pi), 
-       color = NULL, 
-       shape = NULL) +
-  theme(legend.key.size = unit(10, "mm"))
-
-ggsave(filename = png_pi_maize_anc,
-       plot = p_pi_maize,
-       height = 3, width = 5.5, units = "in", 
-       device = "png", dpi = 300)
-
-ggsave(filename = png_pi_maize_anc_lzw,
-       plot = p_pi_maize,
-       height = 3, width = 5.5, units = "in", 
+ggsave(filename = png_pi_anc_lzw,
+       plot = p_pi_both,
+       height = 6, width = 5.5, units = "in", 
        device = "tiff", dpi = 300,
        compression = "lzw", type = "cairo")

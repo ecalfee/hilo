@@ -254,11 +254,8 @@ rule all:
         "local_ancestry/plots/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_admix_times_Ne10000_yesBoot.tif",
 
-        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif",
-
-        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_maize_ancestry.tif",
+        "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry_peaks.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry_peaks.tif",
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
