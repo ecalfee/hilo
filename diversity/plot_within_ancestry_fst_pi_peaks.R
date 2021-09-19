@@ -23,10 +23,11 @@ pi_genomewide_file = snakemake@input[["pi_genomewide"]]
 load(snakemake@input[["meta"]])
 # load("samples/HILO_MAIZE55_PARV50_meta.RData")
 
-png_pi_mexicana_anc = snakemake@output[["png_pi_mex"]]
-# png_pi_mexicana_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.png"
-png_pi_mexicana_anc_lzw = snakemake@output[["png_pi_mex_lzw"]]
-# png_pi_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_mexicana_ancestry_peaks.tif"
+# output plots
+png_fst_mexicana_anc = snakemake@output[["png_fst_mex"]]
+# png_fst_mexicana_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_mexicana_ancestry_peaks.png"
+png_fst_mexicana_anc_lzw = snakemake@output[["png_fst_mex_lzw"]]
+# png_fst_mexicana_anc_lzw = "../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_fst_within_mexicana_ancestry_peaks.tif"
 
 png_pi_anc = snakemake@output[["png_pi_anc"]]
 # png_pi_anc = "diversity/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_pi_within_ancestry.png"
@@ -129,8 +130,6 @@ pi = bind_rows(pi_genomewide, pi_peaks) %>%
 # ---------- plot data ---------- #
 shapes_peaks <- c(17, 16, 0)
 names(shapes_peaks) <- c("1pop", "4pop", "genomewide")
-labels_peaks_maize <- c("1 population\npeaks in maize", "4+ population\npeaks in maize", "all mexicana ancestry\ngenomewide")
-labels_peaks_mex <- c("1 population\npeaks in mexicana", "4+ population\npeaks in mexicana", "all maize ancestry\ngenomewide")
 labels_peaks <- c("1 population\nintrogression peaks", "4+ population\nintrogression peaks", "all ancestry tracts\ngenomewide")
 
 
