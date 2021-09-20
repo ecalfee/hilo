@@ -400,7 +400,7 @@ rule combine_f4_plots:
         rds_mexicana_cd5 = "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.plot.rds"
     output:
         png = "ancestry_by_r/plots/f4_multi.png",
-        lzw = "../hilo_manuscript/figures_supp/f4_multi.tif"
+        png_lzw = "../hilo_manuscript/figures_supp/f4_multi.tif"
     params:
         p = "med2"
     conda:

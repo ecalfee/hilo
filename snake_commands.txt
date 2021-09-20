@@ -378,12 +378,13 @@ Job counts:
         1       plot_shared_peaks
         1 # COMPLETED
 # make all f4 plots 1 figure, e.g. f4_sympatric_maize_pop22_byr5.png
-ancestry_by_r/plots/f4_multi.png
-
+hilo$ snakemake -n ancestry_by_r/plots/f4_multi.png --profile slurm --quiet
+Job counts:
+        count   jobs
+        2       calc_and_plot_f4
+        1       combine_f4_plots
+        3 # need to rerun combine_f4_plots because of typo in output lzw file
 
 
 # to do:
 add Figshare files. update readme of 'wavelets to explain alleleFreq files'
-ls Shared/wavelets/hilo/local_ancestry/results/thinnedSNPs/HILO_MAIZE55_PARV50/K3/
-whole_genome.allo.counts	whole_genome.rdiff		whole_genome.var.sites		whole_genome.var.sites.idx
-whole_genome.bed		whole_genome.rpos		whole_genome.var.sites.bin
