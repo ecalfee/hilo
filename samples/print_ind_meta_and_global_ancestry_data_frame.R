@@ -5,19 +5,19 @@
 load("global_ancestry/results/NGSAdmix/HILO_MAIZE55_PARV50/K3_alphas_by_ind.RData")
 d <- d_admix2 %>%
   dplyr::select(., ID, popN, RI_ACCESSION,
-                zea, 
-                #symp_allo, group, 
+                zea,
                 LOCALITY,
-                #ELEVATION, LAT, LON, 
+                symp_allo, 
                 reads_q30,
                 est_coverage, 
-                #dataset, 
-                parviglumis,mexicana, maize) %>%
+                parviglumis, mexicana, maize) %>%
   dplyr::rename(parviglumis_ancestry = parviglumis,
                 mexicana_ancestry = mexicana,
                 maize_ancestry = maize) %>%
-  dplyr::mutate(has_local_ancestry = (est_coverage >= 0.5 & !reference_sample),
-                has_local_ancestry = ifelse(reference_sample, NA, has_local_ancestry))
+  dplyr::mutate(reference_sample = (symp_allo == "allopatric" | zea == "parviglumis"),
+                has_local_ancestry = (est_coverage >= 0.5 & !reference_sample),
+                has_local_ancestry = ifelse(reference_sample, NA, has_local_ancestry)) %>%
+  dplyr::select(-reference_sample, -symp_allo)
 write.table(d, "samples/ind_metadata_and_genomewide_ancestry.csv",
             col.names = T, row.names = F, sep = ",")
 
