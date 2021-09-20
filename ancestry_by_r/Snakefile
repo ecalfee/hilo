@@ -391,8 +391,8 @@ rule calc_and_plot_f4:
     script:
         "calc_and_plot_f4.R"
 
-## calc_and_plot_f4: calculates and plots f4 ratio for admixture proportion estimates (with bootstrap results)
-rule calc_and_plot_f4:
+## combine_f4_plots: combines f4 ancestry estimates ~ r/cd for maize and mexicana into 1 figure
+rule combine_f4_plots:
     input:
         rds_maize_r5 = "ancestry_by_r/plots/f4_sympatric_maize_pop22_byr5.plot.rds",
         rds_maize_cd5 = "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.plot.rds",
