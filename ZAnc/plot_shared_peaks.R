@@ -37,11 +37,8 @@ K = snakemake@params[["K"]]
 png_net_multi_data = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.png")
 png_net_multi_data_lzw = paste0("../hilo_manuscript/figures_main/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_network_peak_sharing_data_only.tif")
 
-png_combmatrix_maize = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.png")
-png_combmatrix_maize_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_maize.tif")
-
-png_combmatrix_mexicana = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.png")
-png_combmatrix_mexicana_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing_mexicana.tif")
+png_combmatrix = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing.png")
+png_combmatrix_lzw = paste0("../hilo_manuscript/figures_supp/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_combmatrix_peak_sharing.tif")
 
 png_peaks_on_genome = paste0("ZAnc/plots/", prefix, "_K", K, "_Ne", Ne, "_", YESNO, "Boot_shared_peaks_on_genome.png")
 
@@ -419,21 +416,10 @@ p_combmatrix_maize <- maize_pops_shared %>%
   theme(plot.margin = margin(t = 5, b = 5, l = 50, r = 5, unit = "pt"),
         axis.ticks.x = element_blank(),
         axis.line.x = element_blank()) +
-  xlab("populations sharing high introgression peaks") +
-  ylab("% SNPs within peaks") +
+  xlab("maize populations sharing high introgression peaks") +
+  ylab("% SNPs\nwithin peaks") +
   labs(fill = "number of\npopulations")
 # p_combmatrix_maize
-ggsave(file = png_combmatrix_maize,
-       plot = p_combmatrix_maize,
-       height = 5, width = 7.5, 
-       units = "in",
-       device = "png") 
-ggsave(file = png_combmatrix_maize_lzw,
-       plot = p_combmatrix_maize,
-       height = 5, width = 7.5, 
-       device = "tiff",
-       dpi = 300, units = "in",
-       compression = "lzw", type = "cairo")
 
 # now mexicana
 mexicana_pops_shared <- anc_outliers_list[["mexicana"]] %>% 
@@ -475,18 +461,33 @@ p_combmatrix_mexicana <- mexicana_pops_shared %>%
   theme(plot.margin = margin(t = 5, b = 5, l = 50, r = 5, unit = "pt"),
         axis.ticks.x = element_blank(),
         axis.line.x = element_blank()) +
-  xlab("populations sharing high introgression peaks") +
-  ylab("% SNPs within peaks") +
+  xlab("mexicana populations sharing high introgression peaks") +
+  ylab("% SNPs\nwithin peaks") +
   labs(fill = "number of\npopulations")
 # p_combmatrix_mexicana
-ggsave(file = png_combmatrix_mexicana,
-       plot = p_combmatrix_mexicana,
-       height = 5, width = 7.5, 
+
+# combine maize and mexicana combination matrix plots into 1 multi-figure
+p_combmatrix <- grid.arrange(grobs = list(ggplotGrob(p_combmatrix_maize),
+                          ggplotGrob(p_combmatrix_mexicana),
+                          textGrob(label = "A"),
+                          textGrob(label = "B")),
+             layout_matrix = rbind(c(3, NA),
+                                   c(NA, 1),
+                                   c(4, NA),
+                                   c(NA, 2)),
+             heights = c(0.1, 1, 0.1, 1),
+             widths = c(0.1, 5))
+
+# p_combmatrix
+
+ggsave(file = png_combmatrix,
+       plot = p_combmatrix,
+       height = 8.75, width = 7.5, 
        units = "in",
        device = "png") 
-ggsave(file = png_combmatrix_mexicana_lzw,
-       plot = p_combmatrix_mexicana,
-       height = 5, width = 7.5, 
+ggsave(file = png_combmatrix,
+       plot = p_combmatrix,
+       height = 8.75, width = 7.5, 
        units = "in",
        device = "tiff",
        dpi = 300,

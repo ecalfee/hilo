@@ -162,9 +162,9 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "global_ancestry/Snakefile"
 #include: "linkage_map/Snakefile"
 #include: "local_ancestry/Snakefile"
-#include: "ancestry_by_r/Snakefile"
-#include: "ZAnc/Snakefile"
-include: "diversity/Snakefile"
+include: "ancestry_by_r/Snakefile"
+include: "ZAnc/Snakefile"
+#include: "diversity/Snakefile"
 #include: "mhl1_inv/Snakefile"
 #include: "domestication_scan/Snakefile"
 #include: "wavelets/Snakefile"
@@ -284,11 +284,8 @@ rule all:
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.tif",
 
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_maize.tif",
-
-        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.png",
-        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing_mexicana.tif",
+        "ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing.png",
+        #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing.tif",
 
         # local ancestry across all the individual chromosomes for maize and mexicana
         expand("ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_{ZEA}_shared_outliers_chr_{i}.png", i = [1, 2, 3, 5, 6, 7, 8, 9, 10], ZEA = "maize"),

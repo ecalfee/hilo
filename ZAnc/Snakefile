@@ -434,11 +434,8 @@ rule plot_shared_peaks:
         "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.png",
         "../hilo_manuscript/figures_main/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_network_peak_sharing_data_only.tif",
 
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.png",
-        "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_maize.tif",
-
-        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.png",
-        "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing_mexicana.tif",
+        "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing.png",
+        "../hilo_manuscript/figures_supp/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_combmatrix_peak_sharing.tif",
 
         "ZAnc/plots/{PREFIX}_K{K}_Ne{Ne}_{YESNO}Boot_shared_peaks_on_genome.png",
 

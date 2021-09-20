@@ -370,8 +370,10 @@ Job counts:
         count   jobs
         1       all
         1       plot_within_ancestry_fst_pi_peaks
-        2 #
-        
+        2 # completed
+# combine combmatrix peak sharing plots for maize and mexicana into 1 supp figure:
+
+
 
 # to do:
 add Figshare files. update readme of 'wavelets to explain alleleFreq files'
