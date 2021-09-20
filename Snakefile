@@ -163,7 +163,7 @@ with open("data/refMaize/divide_5Mb/ALL_regions.list") as f:
 #include: "linkage_map/Snakefile"
 #include: "local_ancestry/Snakefile"
 include: "ancestry_by_r/Snakefile"
-include: "ZAnc/Snakefile"
+#include: "ZAnc/Snakefile"
 #include: "diversity/Snakefile"
 #include: "mhl1_inv/Snakefile"
 #include: "domestication_scan/Snakefile"
@@ -259,11 +259,8 @@ rule all:
 
         # tree_f4_stats.png, # made outside of snakemake pipeline
 
-        "ancestry_by_r/plots/f4_sympatric_maize_pop22_byr5.png",
-        #"../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_byr5.tif",
-
-        "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.png",
-        #"../hilo_manuscript/figures_supp/f4_sympatric_maize_pop22_bycd5.tif",
+        "ancestry_by_r/plots/f4_multi.png",
+        #"../hilo_manuscript/figures_supp/f4_multi.tif"
 
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_r_bootstrap_lm_elevation_color_elev.tif",
@@ -274,12 +271,6 @@ rule all:
 
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_by_cd_bootstrap_sympatric_and_allopatric.tif",
-
-        "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_byr5.png",
-        #"../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_byr5.tif",
-
-        "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.png",
-        #"../hilo_manuscript/figures_supp/f4_sympatric_mexicana_pop22_bycd5.tif",
 
         "ancestry_by_r/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.png",
         #"../hilo_manuscript/figures_supp/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_local_anc_by_r_continuous.tif",

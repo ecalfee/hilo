@@ -26,29 +26,13 @@ windows_file = snakemake@input[["windows"]]
 colors_file = snakemake@input[["colors"]]
 # colors_file = "colors.R"
 
-png_r5 = snakemake@output[["png_r5"]]
-# png_r5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5.png")
-png_r5_lzw = snakemake@output[["png_r5_lzw"]]
-# png_r5_lzw = paste0("../hilo_manuscript/figures_supp/f4_pop22_symp_", sympatric_pop, "_byr5.tif")
-
-png_cd5 = snakemake@output[["png_cd5"]]
-# png_cd5 = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5.png")
-png_cd5_lzw = snakemake@output[["png_cd5_lzw"]]
-# png_cd5_lzw = paste0("../hilo_manuscript/figures_supp/f4_pop22_symp_", sympatric_pop, "_bycd5.tif")
-
-png_r5_no_inv4m = snakemake@output[["png_r5_no_inv4m"]]
-# png_r5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_byr5_noinv4m.png")
-
-png_cd5_no_inv4m = snakemake@output[["png_cd5_no_inv4m"]]
-# png_cd5_no_inv4m = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_bycd5_noinv4m.png")
-
-png_f4_num_denom = snakemake@output[["png_f4_num_denom"]]
-# png_f4_num_denom = paste0("ancestry_by_r/plots/f4_pop22_symp_", sympatric_pop, "_num_denom.png")
+rds_r5 = snakemake@output[["rds_r5"]]
+# rds_r5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_pop22_byr5.plot.rds")
+rds_cd5 = snakemake@output[["rds_cd5"]]
+# rds_cd5 = paste0("ancestry_by_r/plots/f4_", sympatric_pop, "_pop22_bycd5.plot.rds")
 
 n_boot = snakemake@params[["n_boot"]]
 # n_boot = 10000
-inv_file = snakemake@input[["inv"]]
-# inv_file = "data/refMaize/inversions/knownInv_v4_coord.txt"
 file_spearmans_rho_f4 = snakemake@output[["file_spearmans_rho_f4"]]
 # file_spearmans_rho_f4 = paste0("ancestry_by_r/tables/spearmans_rho_f4_", zea, ".tex")
 file_spearmans_rho_f4_tex = snakemake@output[["file_spearmans_rho_f4_tex"]]
@@ -76,15 +60,6 @@ alpha = (sum(f4_num$Numer)/sum(f4_num$numSites))/(sum(f4_denom$Numer)/sum(f4_den
 # look at f4 across recombination rates:
 # get windows
 winds <- read.table(windows_file, header = T, stringsAsFactors = F, sep = "\t")
-# get inversion coordinates
-inv <- read.table(inv_file, header = F, stringsAsFactors = F) %>%
-  data.table::setnames(c("inv", "chr", "start", "end", "length"))
-
-# which windows overlap inv4m?
-winds$inv4m = winds$chr == inv$chr[inv$inv == "inv4m"] &
-  winds$start < inv$end[inv$inv == "inv4m"] &
-  winds$end > inv$start[inv$inv == "inv4m"]
-
 
 # combine data
 d_f4 <- group_by(f4_num, window) %>%
@@ -162,18 +137,6 @@ boot_r5 <- boot(data = filter(d_f4, !is.na(num_sites)),
 
 #boot.ci(boot_r5, index = 1, type = c("norm", "basic", "perc"))
 
-# bootstrap resampling each recombination rate quintile independently, BUT
-# excluding all windows overlapping inv4m
-set.seed(random_seed)
-boot_r5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
-                         statistic = calc_cor_r5,
-                         sim = "ordinary",
-                         stype = "i",
-                         R = n_boot)
-
-#boot.ci(boot_r5_no_inv4m, index = 1, type = c("norm", "basic", "perc"))
-
-
 # re-sampling is done within each quintile separately
 # bootstrapping by coding density (cd) function:
 calc_cor_cd5 <- function(d, i) { # d is data, i is indices
@@ -210,22 +173,11 @@ boot_cd5 <- boot(data = filter(d_f4, !is.na(num_sites)),
 # bootstrap ci for spearman's rank correlation:
 #boot.ci(boot_cd5, index = 1, type = c("norm", "basic", "perc"))
 
-# bootstrap of correlation across coding density
-set.seed(random_seed)
-boot_cd5_no_inv4m <- boot(data = filter(d_f4, !is.na(num_sites) & !inv4m), 
-                         statistic = calc_cor_cd5,
-                         sim = "ordinary",
-                         stype = "i",
-                         R = n_boot)
-
-# bootstrap ci for spearman's rank correlation:
-#boot.ci(boot_cd5_no_inv4m, index = 1, type = c("norm", "basic", "perc"))
-
-# make 4 plots for 4 different bootstrap analyses (cd/r * with/without inv4m):
-plots = c(png_r5, png_r5_no_inv4m, png_cd5, png_cd5_no_inv4m)
-ggs = vector(mode = "list", length = length(plots)) # to save the ggplot output
-boots = list(boot_r5, boot_r5_no_inv4m, boot_cd5, boot_cd5_no_inv4m)
-feature = c("r", "r", "cd", "cd")
+# make 2 plots for 2 different bootstrap analyses (cd/r):
+rds = c(rds_r5, rds_cd5)
+ggs = vector(mode = "list", length = 2) # to save the ggplot output
+boots = list(boot_r5, boot_cd5)
+feature = c("r", "cd")
 x_axis_labels_r = filter(winds, !duplicated(paste(bin_r5))) %>%
   arrange(quintile_r5) %>%
   dplyr::select(bin_r5) %>%
@@ -234,10 +186,9 @@ x_axis_labels_cd = filter(winds, !duplicated(paste(bin_cd5))) %>%
   arrange(quintile_cd5) %>%
   dplyr::select(bin_cd5) %>%
   rename(bin = bin_cd5)
-x_axis_labels = c(x_axis_labels_r, x_axis_labels_r, x_axis_labels_cd, x_axis_labels_cd)
-x_labs = c("Recombination rate quintile (cM/Mb)", "Recombination rate quintile (cM/Mb)",
-           "Gene density quintile (coding bp/cM)", "Gene density quintile (coding bp/cM)")
-for (i in 1:4){
+x_axis_labels = c(x_axis_labels_r, x_axis_labels_cd)
+x_labs = c("Recombination rate quintile (cM/Mb)", "Gene density quintile (coding bp/cM)")
+for (i in 1:2){
   # make plots
   d_boot <- as.data.frame(rbind(boots[[i]]$t0, boots[[i]]$t)) %>%
     data.table::setnames(names(boots[[i]]$t0)) %>%
@@ -272,82 +223,39 @@ for (i in 1:4){
     scale_x_discrete(labels = x_axis_labels[i]$bin) +
     ylim(c(-0.1, 1))
   #p
-  ggsave(file = plots[i],
-         plot = p,
-         device = "png",
-         width = 5.5, height = 4.5,
-         units = "in", dpi = 300)
+  # save r data forms (rds) of the plots
+  saveRDS(object = p, file = rds[i])
+  
   ggs[[i]] <- p # also save the ggplot
 }
 
-# also save compressed versions of 2 of the plots
-ggsave(file = png_r5_lzw,
-       plot = ggs[[which(plots == png_r5)]],
-       device = "tiff",
-       width = 5.5, height = 4.5,
-       units = "in", dpi = 300,
-       compression = "lzw", type = "cairo")
-ggsave(file = png_cd5_lzw,
-       plot = ggs[[which(plots == png_cd5)]],
-       device = "tiff",
-       width = 5.5, height = 4.5,
-       units = "in", dpi = 300,
-       compression = "lzw", type = "cairo")
-
-# plot separately f4's for numerator and denominator
-p_f4_num_denom <- bind_rows(f4_by_r, f4_by_cd) %>%
-  pivot_longer(., cols = c("f4_num", "f4_denom"),
-               names_to = "num_denom", values_to = "f4") %>%
-  pivot_longer(., cols = c("quintile_r5", "quintile_cd5"),
-               names_to = "type", values_to = "quintile") %>%
-  filter(!is.na(quintile)) %>% # pivot longer creates some NAs because rows either have cd5 or Mbp5 data
-  mutate(neg_f4 = -f4) %>%
-  ggplot(., aes(x = quintile, y = neg_f4, color = num_denom)) +
-  geom_point() +
-  facet_wrap(~type) +
-  ggtitle(paste("f4 estimates for sympatric", zea, "(num) and allopatric maize (denom)")) +
-  xlab("Recombination rate quintile (cM/Mb)") +
-  ylab("f4 estimate (negative of angsd output)") +
-  labs(subtitle = "alpha = f4_num/f4_denom",
-       color = "f4 ratio components") +
-  theme_light() +
-  geom_hline(yintercept = 0) +
-  scale_x_discrete(labels = x_axis_labels_r$bin_r5)
-# p_f4_num_denom
-ggsave(file = png_f4_num_denom,
-       plot = p_f4_num_denom,
-       device = "png",
-       width = 7.5, height = 4.5,
-       units = "in", dpi = 300)
-
 # make table summarising spearman's correlations:
 rho = data.frame(method = "f4 ratio",
-                 feature = c(rep("recombination rate (cM/Mb)", 2),
-                             rep("gene density (coding bp/cM)", 2)),
+                 feature = c("recombination rate (cM/Mb)",
+                             "gene density (coding bp/cM)"),
                  resolution = "genomic quintiles",
-                 data = rep(c("whole genome", "excl. inv4m"), 2),
+                 ancestry = "mexicana (alpha)",
                  group = paste("sympatric", zea),
                  stringsAsFactors = F) %>%
   mutate(
-    rho_estimate = sapply(1:4, function(i) boots[[i]]$t0[["spearman"]]),
-    boot_low = sapply(1:4, function(i) boot.ci(boots[[i]], index = 1, 
+    rho_estimate = sapply(1:2, function(i) boots[[i]]$t0[["spearman"]]),
+    boot_low = sapply(1:2, function(i) boot.ci(boots[[i]], index = 1, 
                                                conf = 0.95, type = "perc")$perc[4]),
-    boot_high = sapply(1:4, function(i) boot.ci(boots[[i]], index = 1, 
+    boot_high = sapply(1:2, function(i) boot.ci(boots[[i]], index = 1, 
                                                conf = 0.95, type = "perc")$perc[5])) %>%
-  filter(data == "whole genome") %>%
-  dplyr::select(group, feature, rho_estimate, boot_low, boot_high) %>%
+  dplyr::select(group, ancestry, feature, rho_estimate, boot_low, boot_high) %>%
   rename(`Spearman's rho` = rho_estimate, `2.5%` = boot_low, `97.5%` = boot_high)
   
 
 # print table to file for estimates of spearman's rank correlation
 print(xtable(rho, 
-             digits = c(1, 1, 1, 2, 2, 2),
+             digits = c(1, 1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,
       file = file_spearmans_rho_f4)
 print(xtable(rho, 
-             digits = c(1, 1, 1, 2, 2, 2),
+             digits = c(1, 1, 1, 1, 2, 2, 2),
              type = "latex", 
              latex.environments = NULL),
       include.rownames = F,

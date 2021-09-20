@@ -375,16 +375,8 @@ rule calc_and_plot_f4:
         inv = "data/refMaize/inversions/knownInv_v4_coord.txt",
         colors = "colors.R"
     output:
-        png_r5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.png",
-        png_r5_lzw = "../hilo_manuscript/figures_supp/f4_{POP}_{ALLO_MEX}_byr5.tif",
-
-        png_cd5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5.png",
-        png_cd5_lzw = "../hilo_manuscript/figures_supp/f4_{POP}_{ALLO_MEX}_bycd5.tif",
-
-        png_r5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5_noinv4m.png",
-        png_cd5_no_inv4m = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5_noinv4m.png",
-        png_f4_num_denom = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_num_denom.png",
-
+        rds_r5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_byr5.plot.rds",
+        rds_cd5 = "ancestry_by_r/plots/f4_{POP}_{ALLO_MEX}_bycd5.plot.rds",
         file_spearmans_rho_f4 = "ancestry_by_r/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex",
         file_spearmans_rho_f4_tex = "../hilo_manuscript/tables/spearmans_rho_f4_{POP}_{ALLO_MEX}.tex"
     params:
@@ -399,6 +391,25 @@ rule calc_and_plot_f4:
     script:
         "calc_and_plot_f4.R"
 
+## calc_and_plot_f4: calculates and plots f4 ratio for admixture proportion estimates (with bootstrap results)
+rule calc_and_plot_f4:
+    input:
+        rds_maize_r5 = "ancestry_by_r/plots/f4_sympatric_maize_pop22_byr5.plot.rds",
+        rds_maize_cd5 = "ancestry_by_r/plots/f4_sympatric_maize_pop22_bycd5.plot.rds",
+        rds_mexicana_r5 = "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_byr5.plot.rds",
+        rds_mexicana_cd5 = "ancestry_by_r/plots/f4_sympatric_mexicana_pop22_bycd5.plot.rds"
+    output:
+        png = "ancestry_by_r/plots/f4_multi.png",
+        lzw = "../hilo_manuscript/figures_supp/f4_multi.tif"
+    params:
+        p = "med2"
+    conda:
+        "../envs/environment.yaml"
+    resources:
+        time_min = 60,
+        mem = 2
+    script:
+        "combine_f4_plots.R"
 
 ## plot_bootstrap_NGSadmix_by_r_K3: plots bootstrap results for global ancestry (NGSAdmix) K=3 mex-parv-maize by recombination rate
 rule plot_bootstrap_NGSadmix_by_r_K3:

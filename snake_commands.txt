@@ -376,7 +376,10 @@ hilo$ snakemake ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_pea
 Job counts:
         count   jobs
         1       plot_shared_peaks
-        1
+        1 # COMPLETED
+# make all f4 plots 1 figure, e.g. f4_sympatric_maize_pop22_byr5.png
+ancestry_by_r/plots/f4_multi.png
+
 
 
 # to do:
