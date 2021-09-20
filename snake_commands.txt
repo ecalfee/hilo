@@ -384,7 +384,21 @@ Job counts:
         2       calc_and_plot_f4
         1       combine_f4_plots
         3 # need to rerun combine_f4_plots because of typo in output lzw file
-
+        hilo$ snakemake ancestry_by_r/plots/f4_multi.png --profile slurm --quiet
+        Job counts:
+                count   jobs
+                1       combine_f4_plots
+                1 # COMPLETED
 
 # to do:
-add Figshare files. update readme of 'wavelets to explain alleleFreq files'
+# before submitting:
+Add d_admix2 (make sure this is the best version) as a txt file to Figshare (includes estimates of global ancestry). Add elevation for palmar chico samples too.
+Add DOI for figshare to response to reviewers letter.
+Upload all Figs to the figure checker and double check Figure numbers match up.
+Check on figure numbering S4 Fig vs. Fig S4 -- is there an easy solution? (like don't display title with Fig #??)
+Make 'marked pdf', then accept all changes and make 'clean pdf' and export final latex.
+Check on Figshare files upload.
+
+# after submitting:
+update readme of 'wavelets to explain alleleFreq files'
+make sure all other things on figshare are set -- all files uploaded etc.
