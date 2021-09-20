@@ -372,7 +372,11 @@ Job counts:
         1       plot_within_ancestry_fst_pi_peaks
         2 # completed
 # combine combmatrix peak sharing plots for maize and mexicana into 1 supp figure:
-
+hilo$ snakemake ZAnc/plots/HILO_MAIZE55_PARV50_K3_Ne10000_yesBoot_combmatrix_peak_sharing.png --profile slurm --quiet
+Job counts:
+        count   jobs
+        1       plot_shared_peaks
+        1
 
 
 # to do:

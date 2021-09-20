@@ -485,7 +485,7 @@ ggsave(file = png_combmatrix,
        height = 8.75, width = 7.5, 
        units = "in",
        device = "png") 
-ggsave(file = png_combmatrix,
+ggsave(file = png_combmatrix_lzw,
        plot = p_combmatrix,
        height = 8.75, width = 7.5, 
        units = "in",
